@@ -1,0 +1,48 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Dart files
+*.dart text eol=lf
+
+# YAML files
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# JSON files
+*.json text eol=lf
+
+# Markdown files
+*.md text eol=lf
+
+# License files
+LICENSE text eol=lf
+
+# Git attributes
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Documentation
+README.md text eol=lf
+
+# Configuration files
+pubspec.yaml text eol=lf
+pubspec.lock text eol=lf
+analysis_options.yaml text eol=lf
+
+# Binary files (should not be modified)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+*.apk binary
+*.aab binary
+*.ipa binary
+*.dmg binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary

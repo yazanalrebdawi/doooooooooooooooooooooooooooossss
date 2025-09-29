@@ -1,0 +1,3 @@
+enum AppLanguageEnum { arabic, english }
+
+
