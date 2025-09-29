@@ -11,7 +11,10 @@ import '../widgets/dealer_profile_app_bar.dart';
 import '../widgets/dealer_profile_header.dart';
 import '../widgets/dealer_profile_tabs.dart';
 import '../widgets/dealer_content_grid.dart';
+<<<<<<< HEAD
 import '../widgets/tab_content_loader_widget.dart';
+=======
+>>>>>>> zoz
 import '../../data/models/content_type.dart';
 
 class DealerProfileScreen extends StatefulWidget {
@@ -47,6 +50,10 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<DealerProfileCubit>().loadDealerProfile(widget.dealerId);
+<<<<<<< HEAD
+=======
+        // تحميل الريلز تلقائياً عند بداية التطبيق
+>>>>>>> zoz
         context.read<DealerProfileCubit>().loadReels(widget.dealerId);
       }
     });
@@ -61,6 +68,10 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
+=======
+      backgroundColor: AppColors.white,
+>>>>>>> zoz
       appBar: DealerProfileAppBar(
         dealerHandle: widget.dealerHandle,
       ),
@@ -104,10 +115,14 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.white,
                       ),
+<<<<<<< HEAD
                       child: Text(
                         'تسجيل الدخول',
                         style: AppTextStyles.s14w500.copyWith(color: AppColors.white),
                       ),
+=======
+                      child: const Text('تسجيل الدخول'),
+>>>>>>> zoz
                     ),
                   ],
                 ],
@@ -124,6 +139,10 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                   context.read<DealerProfileCubit>().toggleFollow();
                 },
                 onMessagePressed: () {
+<<<<<<< HEAD
+=======
+                  // Navigate to chat
+>>>>>>> zoz
                   context.push('/chat-conversation/${state.dealer?.id}');
                 },
               ),
@@ -134,6 +153,10 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                 currentIndex: _currentTabIndex,
                 onTabChanged: (index) {
                   _tabController.animateTo(index);
+<<<<<<< HEAD
+=======
+                  // تحميل البيانات الحقيقية حسب التاب المحدد
+>>>>>>> zoz
                   switch (index) {
                     case 0: // Reels
                       context.read<DealerProfileCubit>().loadReels(widget.dealerId);
@@ -153,16 +176,28 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
+<<<<<<< HEAD
+=======
+                    // Reels Tab
+>>>>>>> zoz
                     DealerContentGrid(
                       contentType: ContentType.reels,
                       content: state.reels,
                       isLoading: state.isLoadingReels,
                     ),
+<<<<<<< HEAD
+=======
+                    // Cars Tab
+>>>>>>> zoz
                     DealerContentGrid(
                       contentType: ContentType.cars,
                       content: state.cars,
                       isLoading: state.isLoadingCars,
                     ),
+<<<<<<< HEAD
+=======
+                    // Services Tab
+>>>>>>> zoz
                     DealerContentGrid(
                       contentType: ContentType.services,
                       content: state.services,
@@ -177,4 +212,9 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
       ),
     );
   }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> zoz
 }

@@ -13,6 +13,7 @@ class NumberFormatterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.black;
 
@@ -20,6 +21,12 @@ class NumberFormatterWidget extends StatelessWidget {
       _formatNumber(number),
       style: AppTextStyles.s18w700.copyWith(
         color: textColor,
+=======
+    return Text(
+      _formatNumber(number),
+      style: AppTextStyles.s18w700.copyWith(
+        color: AppColors.black,
+>>>>>>> zoz
         fontWeight: FontWeight.bold,
       ),
     );

@@ -20,6 +20,10 @@ import '../widgets/car_specifications_section.dart';
 import '../widgets/seller_notes_section.dart';
 import '../widgets/seller_info_section.dart';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> zoz
 class CarDetailsScreen extends StatefulWidget {
   final int carId;
 
@@ -49,8 +53,12 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     print('🗺️ CarDetails: Initializing map...');
     final userLocation = await LocationService.getCurrentLocation();
     if (userLocation != null) {
+<<<<<<< HEAD
       print(
           '✅ CarDetails: User location obtained: ${userLocation.latitude}, ${userLocation.longitude}');
+=======
+      print('✅ CarDetails: User location obtained: ${userLocation.latitude}, ${userLocation.longitude}');
+>>>>>>> zoz
       setState(() {
         _userLocation = userLocation;
       });
@@ -76,6 +84,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
     try {
       final encodedLocation = Uri.encodeComponent(location);
+<<<<<<< HEAD
       final url =
           'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedLocation&key=${AppConfig.googleMapsApiKey}';
 
@@ -87,17 +96,35 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
         if (data['status'] == 'OK' &&
             data['results'] != null &&
             data['results'].isNotEmpty) {
+=======
+      final url = 'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedLocation&key=${AppConfig.googleMapsApiKey}';
+      
+      print('🌐 CarDetails: Geocoding location: $location');
+      final response = await http.get(Uri.parse(url));
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'OK' && data['results'] != null && data['results'].isNotEmpty) {
+>>>>>>> zoz
           final result = data['results'][0];
           final geometry = result['geometry'];
           final location = geometry['location'];
           final lat = location['lat'].toDouble();
           final lng = location['lng'].toDouble();
+<<<<<<< HEAD
 
+=======
+          
+>>>>>>> zoz
           print('✅ CarDetails: Geocoded coordinates: $lat, $lng');
           return LatLng(lat, lng);
         }
       }
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> zoz
       print('⚠️ CarDetails: Geocoding failed, using Dubai fallback');
       return const LatLng(25.2048, 55.2708);
     } catch (e) {
@@ -136,7 +163,11 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
       print('✅ CarDetails: Markers created');
 
       final polyline = await _getRoutePolyline(carLat, carLon);
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> zoz
       setState(() {
         _markers = markers;
         if (polyline != null) {
@@ -181,6 +212,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
           'key=${AppConfig.googleMapsApiKey}';
 
       print('🌐 CarDetails: Requesting route from Google Directions API...');
+<<<<<<< HEAD
       print(
           '📍 CarDetails: Origin: ${_userLocation!.latitude},${_userLocation!.longitude}');
       print('📍 CarDetails: Destination: $carLat,$carLon');
@@ -205,6 +237,29 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
           final points = _decodePolyline(polylineEncoded);
           print('✅ CarDetails: Polyline decoded with ${points.length} points');
 
+=======
+      print('📍 CarDetails: Origin: ${_userLocation!.latitude},${_userLocation!.longitude}');
+      print('📍 CarDetails: Destination: $carLat,$carLon');
+      print('🌐 CarDetails: URL: $url');
+      
+      final response = await http.get(Uri.parse(url));
+      
+      print('📊 CarDetails: API Response status: ${response.statusCode}');
+      print('📊 CarDetails: API Response body: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print('📊 CarDetails: API Response status: ${data['status']}');
+        
+        if (data['status'] == 'OK' && data['routes'] != null && data['routes'].isNotEmpty) {
+          final route = data['routes'][0];
+          final polylineEncoded = route['overview_polyline']['points'];
+          
+          print('✅ CarDetails: Route found, decoding polyline...');
+          final points = _decodePolyline(polylineEncoded);
+          print('✅ CarDetails: Polyline decoded with ${points.length} points');
+          
+>>>>>>> zoz
           if (points.isNotEmpty) {
             return Polyline(
               polylineId: const PolylineId('route'),
@@ -231,7 +286,11 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     } catch (e) {
       print('❌ CarDetails: Error getting route polyline: $e');
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> zoz
     return null;
   }
 
@@ -268,11 +327,18 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
                   final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocProvider(
       create: (_) => di.sl<CarCubit>()..loadCarDetails(widget.carId),
       child: Scaffold(
+=======
+    return BlocProvider(
+      create: (_) => di.appLocator<CarCubit>()..loadCarDetails(widget.carId),
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+>>>>>>> zoz
         body: BlocBuilder<CarCubit, CarState>(
           buildWhen: (previous, current) =>
               previous.selectedCar != current.selectedCar ||
@@ -293,21 +359,33 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                     Icon(
                       Icons.error_outline,
                       size: 64.sp,
+<<<<<<< HEAD
                       color: isDark ? Colors.white : AppColors.gray,
+=======
+                      color: AppColors.gray,
+>>>>>>> zoz
                     ),
                     SizedBox(height: 16.h),
                     Text(
                       'Error loading car details',
+<<<<<<< HEAD
                       style:
                           AppTextStyles.s16w500.copyWith(                      color: isDark ? Colors.white : AppColors.gray,
 ),
+=======
+                      style: AppTextStyles.s16w500.copyWith(color: AppColors.gray),
+>>>>>>> zoz
                     ),
                     SizedBox(height: 8.h),
                     Text(
                       state.error!,
+<<<<<<< HEAD
                       style:
                           AppTextStyles.s14w400.copyWith(                      color: isDark ? Colors.white : AppColors.gray,
 ),
+=======
+                      style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
+>>>>>>> zoz
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -339,6 +417,10 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                         imageUrl: car.imageUrl,
                         carName: car.name,
                       ),
+<<<<<<< HEAD
+=======
+                      
+>>>>>>> zoz
                       CarOverviewSection(
                         carName: car.name,
                         price: car.price,
@@ -346,6 +428,10 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                         location: car.location,
                         mileage: car.mileage,
                       ),
+<<<<<<< HEAD
+=======
+                      
+>>>>>>> zoz
                       CarSpecificationsSection(
                         year: car.year,
                         transmission: car.transmission,
@@ -354,9 +440,17 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                         color: car.color,
                         doors: car.doors,
                       ),
+<<<<<<< HEAD
                       SellerNotesSection(
                         notes: car.sellerNotes,
                       ),
+=======
+                      
+                      SellerNotesSection(
+                        notes: car.sellerNotes,
+                      ),
+                      
+>>>>>>> zoz
                       SellerInfoSection(
                         sellerName: car.sellerName,
                         sellerType: car.sellerType,
@@ -366,11 +460,18 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                         },
                         onMessagePressed: () {
                           final dealerId = car.dealerId;
+<<<<<<< HEAD
                           context.go(
                               '${RouteNames.chatConversationScreen}/$dealerId',
                               extra: widget.carId);
                         },
                       ),
+=======
+                          context.go('${RouteNames.chatConversationScreen}/$dealerId', extra: widget.carId);
+                        },
+                      ),
+                      
+>>>>>>> zoz
                       Container(
                         padding: EdgeInsets.all(16.w),
                         child: Column(
@@ -378,17 +479,24 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           children: [
                             Row(
                               children: [
+<<<<<<< HEAD
                                 Icon(Icons.location_on,
                                                           color: isDark ? Colors.white : AppColors.gray,
  size: 20.sp),
                                 SizedBox(width: 8.w),
                                 Text('Car Location',
                                     style: AppTextStyles.blackS16W600),
+=======
+                                Icon(Icons.location_on, color: AppColors.gray, size: 20.sp),
+                                SizedBox(width: 8.w),
+                                Text('Car Location', style: AppTextStyles.blackS16W600),
+>>>>>>> zoz
                                 const Spacer(),
                                 if (_isLoadingRoute)
                                   SizedBox(
                                     width: 16.w,
                                     height: 16.w,
+<<<<<<< HEAD
                                     child: CircularProgressIndicator(
                                         strokeWidth: 2),
                                   ),
@@ -409,13 +517,32 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                           color: AppColors.primary
                                               .withOpacity(0.3),
                                           width: 1),
+=======
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    final coords = await _getCarCoordinates(car.location);
+                                    _loadRoute(coords.latitude, coords.longitude);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 1),
+>>>>>>> zoz
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
+<<<<<<< HEAD
                                         Icon(Icons.map,
                                             color: AppColors.primary,
                                             size: 16.sp),
+=======
+                                        Icon(Icons.map, color: AppColors.primary, size: 16.sp),
+>>>>>>> zoz
                                         SizedBox(width: 4.w),
                                         Text(
                                           'View Route',
@@ -436,8 +563,12 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12.r),
                                 border: Border.all(
+<<<<<<< HEAD
                                                         color: isDark ? Colors.white : AppColors.gray
 .withOpacity(0.2),
+=======
+                                  color: AppColors.gray.withOpacity(0.2),
+>>>>>>> zoz
                                   width: 1,
                                 ),
                               ),
@@ -445,8 +576,12 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                 borderRadius: BorderRadius.circular(12.r),
                                 child: GoogleMap(
                                   initialCameraPosition: CameraPosition(
+<<<<<<< HEAD
                                     target: _carCoordinates ??
                                         const LatLng(25.2048, 55.2708),
+=======
+                                    target: _carCoordinates ?? const LatLng(25.2048, 55.2708),
+>>>>>>> zoz
                                     zoom: 15.0,
                                   ),
                                   markers: _markers,
@@ -456,30 +591,48 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                   zoomControlsEnabled: false,
                                   mapToolbarEnabled: false,
                                   compassEnabled: true,
+<<<<<<< HEAD
                                   onMapCreated:
                                       (GoogleMapController controller) {
                                     print(
                                         '🗺️ CarDetails: Map controller created');
+=======
+                                  onMapCreated: (GoogleMapController controller) {
+                                    print('🗺️ CarDetails: Map controller created');
+>>>>>>> zoz
                                   },
                                 ),
                               ),
                             ),
                             SizedBox(height: 8.h),
                             Text(
+<<<<<<< HEAD
                               car.location.isNotEmpty
                                   ? car.location
                                   : 'Dubai, UAE',
                               style: AppTextStyles.s14w400
                                   .copyWith(                      color: isDark ? Colors.white : AppColors.gray,
 ),
+=======
+                              car.location.isNotEmpty ? car.location : 'Dubai, UAE',
+                              style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
+>>>>>>> zoz
                             ),
                           ],
                         ),
                       ),
+<<<<<<< HEAD
+=======
+                      
+>>>>>>> zoz
                       SizedBox(height: 20.h),
                     ],
                   ),
                 ),
+<<<<<<< HEAD
+=======
+                
+>>>>>>> zoz
                 Positioned(
                   top: MediaQuery.of(context).padding.top + 8.h,
                   left: 8.w,

@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import 'package:dooss_business_app/core/constants/text_styles.dart';
+=======
+>>>>>>> zoz
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +24,11 @@ class FullScreenReelsViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
+<<<<<<< HEAD
       value: di.sl<ReelsPlaybackCubit>(), // Use existing cubit instance
+=======
+      value: di.appLocator<ReelsPlaybackCubit>(), // Use existing cubit instance
+>>>>>>> zoz
       child: const _FullScreenReelsContent(),
     );
   }
@@ -70,6 +77,10 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
+=======
+      backgroundColor: AppColors.black,
+>>>>>>> zoz
       body: BlocBuilder<ReelsPlaybackCubit, ReelsPlaybackState>(
         buildWhen: (previous, current) =>
             previous.reels != current.reels ||
@@ -96,8 +107,11 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   }
 
   Widget _buildReelsPageView(BuildContext context, ReelsPlaybackState state) {
+<<<<<<< HEAD
                   final isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return Stack(
       children: [
         // Main page view
@@ -119,18 +133,27 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
               width: 40.w,
               height: 40.h,
               decoration: BoxDecoration(
+<<<<<<< HEAD
                 color:isDark? Colors.white : AppColors.black.withOpacity(0.5),
+=======
+                color: AppColors.black.withOpacity(0.5),
+>>>>>>> zoz
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.arrow_back,
+<<<<<<< HEAD
                 color:isDark? Colors.black : AppColors.white,
+=======
+                color: AppColors.white,
+>>>>>>> zoz
                 size: 24.sp,
               ),
             ),
           ),
         ),
 
+<<<<<<< HEAD
         // Reel counter
         Positioned(
           top: MediaQuery.of(context).padding.top + 16.h,
@@ -151,6 +174,28 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
             ),
           ),
         ),
+=======
+        // // Reel counter
+        // Positioned(
+        //   top: MediaQuery.of(context).padding.top + 16.h,
+        //   right: 16.w,
+        //   child: Container(
+        //     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        //     decoration: BoxDecoration(
+        //       color: AppColors.black.withOpacity(0.5),
+        //       borderRadius: BorderRadius.circular(20.r),
+        //     ),
+        //     child: Text(
+        //       '${state.currentIndex + 1} / ${state.reels.length}',
+        //       style: TextStyle(
+        //         color: AppColors.white,
+        //         fontSize: 14.sp,
+        //         fontWeight: FontWeight.w500,
+        //       ),
+        //     ),
+        //   ),
+        // ),
+>>>>>>> zoz
 
         // Loading indicator for pagination
         if (state.isLoading && state.reels.isNotEmpty)
@@ -162,7 +207,11 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
               child: Container(
                 padding: EdgeInsets.all(16.r),
                 decoration: BoxDecoration(
+<<<<<<< HEAD
                   color:isDark?Colors.white : AppColors.black.withOpacity(0.5),
+=======
+                  color: AppColors.black.withOpacity(0.5),
+>>>>>>> zoz
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Row(
@@ -173,15 +222,25 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
                       height: 20.h,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
+<<<<<<< HEAD
                         color:isDark? AppColors.white :Colors.black,
+=======
+                        color: AppColors.white,
+>>>>>>> zoz
                       ),
                     ),
                     SizedBox(width: 12.w),
                     Text(
                       'Loading more reels...',
                       style: TextStyle(
+<<<<<<< HEAD
                         fontSize: 14.sp,
                       ).withThemeColor(context),
+=======
+                        color: AppColors.white,
+                        fontSize: 14.sp,
+                      ),
+>>>>>>> zoz
                     ),
                   ],
                 ),
@@ -195,7 +254,10 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   Widget _buildReelPage(BuildContext context, ReelsPlaybackState state, int index) {
     final reel = state.reels[index];
     final isCurrentReel = index == state.currentIndex;
+<<<<<<< HEAD
               final isDark = Theme.of(context).brightness == Brightness.dark;
+=======
+>>>>>>> zoz
 
     return Stack(
       children: [
@@ -217,8 +279,13 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
                 colors: [
                   Colors.transparent,
                   Colors.transparent,
+<<<<<<< HEAD
               isDark ? Colors.white24 :    AppColors.black.withOpacity(0.3),
                  isDark ? Colors.white60 :      AppColors.black.withOpacity(0.7),
+=======
+                  AppColors.black.withOpacity(0.3),
+                  AppColors.black.withOpacity(0.7),
+>>>>>>> zoz
                 ],
                 stops: const [0.0, 0.5, 0.8, 1.0],
               ),
@@ -256,30 +323,48 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   }
 
   Widget _buildErrorState(BuildContext context, String error) {
+<<<<<<< HEAD
                   final isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.error_outline,
+<<<<<<< HEAD
             color:isDark ? AppColors.white : Colors.black,
+=======
+            color: AppColors.white,
+>>>>>>> zoz
             size: 64.sp,
           ),
           SizedBox(height: 16.h),
           Text(
             'Failed to load reels',
             style: TextStyle(
+<<<<<<< HEAD
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
             ).withThemeColor(context),
+=======
+              color: AppColors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+            ),
+>>>>>>> zoz
           ),
           SizedBox(height: 8.h),
           Text(
             error,
             style: TextStyle(
+<<<<<<< HEAD
               color: isDark? AppColors.white.withOpacity(0.7) : Colors.black,
+=======
+              color: AppColors.white.withOpacity(0.7),
+>>>>>>> zoz
               fontSize: 14.sp,
             ),
             textAlign: TextAlign.center,
@@ -299,30 +384,48 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+<<<<<<< HEAD
                   final isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.video_library_outlined,
+<<<<<<< HEAD
             color: isDark ? AppColors.white : Colors.black,
+=======
+            color: AppColors.white,
+>>>>>>> zoz
             size: 64.sp,
           ),
           SizedBox(height: 16.h),
           Text(
             'No reels available',
             style: TextStyle(
+<<<<<<< HEAD
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
             ).withThemeColor(context),
+=======
+              color: AppColors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+            ),
+>>>>>>> zoz
           ),
           SizedBox(height: 8.h),
           Text(
             'Check back later for new content',
             style: TextStyle(
+<<<<<<< HEAD
               color: isDark? AppColors.white.withOpacity(0.7):Colors.black,
+=======
+              color: AppColors.white.withOpacity(0.7),
+>>>>>>> zoz
               fontSize: 14.sp,
             ),
           ),

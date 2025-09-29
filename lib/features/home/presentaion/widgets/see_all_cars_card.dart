@@ -4,7 +4,11 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../data/models/car_model.dart';
 
+<<<<<<< HEAD
 class SeeAllCarsCard extends StatelessWidget {
+=======
+class SeeAllCarsCard extends StatelessWidget {  
+>>>>>>> zoz
   final CarModel car;
   final VoidCallback? onTap;
 
@@ -16,13 +20,17 @@ class SeeAllCarsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.only(bottom: 16.h),
         decoration: BoxDecoration(
+<<<<<<< HEAD
           color: isDark ? AppColors.gray.withOpacity(0.15) : AppColors.white,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
@@ -30,6 +38,13 @@ class SeeAllCarsCard extends StatelessWidget {
               color: isDark
                   ? Colors.black.withOpacity(0.3)
                   : AppColors.black.withOpacity(0.1),
+=======
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withOpacity(0.1),
+>>>>>>> zoz
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -74,7 +89,11 @@ class SeeAllCarsCard extends StatelessWidget {
                       ),
                     ),
             ),
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> zoz
             // Car Details
             Padding(
               padding: EdgeInsets.all(16.w),
@@ -84,6 +103,7 @@ class SeeAllCarsCard extends StatelessWidget {
                   // Car Name
                   Text(
                     car.name,
+<<<<<<< HEAD
                     style: isDark
                         ? AppTextStyles.blackS16W600
                             .copyWith(color: Colors.white)
@@ -105,6 +125,23 @@ class SeeAllCarsCard extends StatelessWidget {
 
                   SizedBox(height: 8.h),
 
+=======
+                    style: AppTextStyles.blackS16W600,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  
+                  SizedBox(height: 8.h),
+                  
+                  // Price
+                  Text(
+                    '\$${car.price.toStringAsFixed(0)}',
+                    style: AppTextStyles.primaryS16W700,
+                  ),
+                  
+                  SizedBox(height: 8.h),
+                  
+>>>>>>> zoz
                   // Mileage and Location
                   Row(
                     children: [
@@ -116,16 +153,24 @@ class SeeAllCarsCard extends StatelessWidget {
                             Icon(
                               Icons.speed,
                               size: 14.sp,
+<<<<<<< HEAD
                               color: isDark ? Colors.white70 : AppColors.gray,
+=======
+                              color: AppColors.gray,
+>>>>>>> zoz
                             ),
                             SizedBox(width: 4.w),
                             Expanded(
                               child: Text(
                                 '${car.mileage} km',
+<<<<<<< HEAD
                                 style: isDark
                                     ? AppTextStyles.secondaryS14W400
                                         .copyWith(color: Colors.white70)
                                     : AppTextStyles.secondaryS14W400,
+=======
+                                style: AppTextStyles.secondaryS14W400,
+>>>>>>> zoz
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -133,9 +178,15 @@ class SeeAllCarsCard extends StatelessWidget {
                           ],
                         ),
                       ),
+<<<<<<< HEAD
 
                       SizedBox(width: 16.w),
 
+=======
+                      
+                      SizedBox(width: 16.w),
+                      
+>>>>>>> zoz
                       // Location
                       Expanded(
                         flex: 1,
@@ -144,16 +195,24 @@ class SeeAllCarsCard extends StatelessWidget {
                             Icon(
                               Icons.location_on,
                               size: 14.sp,
+<<<<<<< HEAD
                               color: isDark ? Colors.white70 : AppColors.gray,
+=======
+                              color: AppColors.gray,
+>>>>>>> zoz
                             ),
                             SizedBox(width: 4.w),
                             Expanded(
                               child: Text(
                                 car.location,
+<<<<<<< HEAD
                                 style: isDark
                                     ? AppTextStyles.secondaryS14W400
                                         .copyWith(color: Colors.white70)
                                     : AppTextStyles.secondaryS14W400,
+=======
+                                style: AppTextStyles.secondaryS14W400,
+>>>>>>> zoz
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -163,9 +222,15 @@ class SeeAllCarsCard extends StatelessWidget {
                       ),
                     ],
                   ),
+<<<<<<< HEAD
 
                   SizedBox(height: 12.h),
 
+=======
+                  
+                  SizedBox(height: 12.h),
+                  
+>>>>>>> zoz
                   // View Details Button
                   GestureDetector(
                     onTap: onTap,

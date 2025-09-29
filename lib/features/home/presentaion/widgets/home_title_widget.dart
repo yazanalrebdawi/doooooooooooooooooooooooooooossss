@@ -8,8 +8,11 @@ class HomeTitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return Row(
       children: [
         Container(
@@ -19,19 +22,30 @@ class HomeTitleWidget extends StatelessWidget {
             color: AppColors.primary,
             borderRadius: BorderRadius.circular(8.r),
           ),
+<<<<<<< HEAD
           child: Icon(
             Icons.car_repair,
             color: AppColors.white,
           ),
+=======
+          child: Icon(Icons.car_repair, color: AppColors.white,),
+>>>>>>> zoz
         ),
         SizedBox(width: 8.w),
         Text(
           'Dooss',
+<<<<<<< HEAD
           style: AppTextStyles.s16w600
               .copyWith(
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : AppColors.black, // theme-aware color
               ),
+=======
+          style: AppTextStyles.s16w600.copyWith(
+            color: AppColors.black,
+            fontWeight: FontWeight.bold,
+          ),
+>>>>>>> zoz
         ),
       ],
     );

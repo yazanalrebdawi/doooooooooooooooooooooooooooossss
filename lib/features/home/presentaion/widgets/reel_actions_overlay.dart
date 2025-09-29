@@ -20,8 +20,11 @@ class ReelActionsOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return Positioned(
       right: 16.w,
       bottom: 100.h,
@@ -31,24 +34,34 @@ class ReelActionsOverlay extends StatelessWidget {
             icon: reel.liked ? Icons.favorite : Icons.favorite_border,  
             label: _formatCount(reel.likesCount),
             onTap: onLike,
+<<<<<<< HEAD
             iconColor: reel.liked ? Colors.red : (isDark ? AppColors.white : AppColors.black),
             isDark: isDark,
+=======
+            iconColor: reel.liked ? Colors.red : AppColors.white,
+>>>>>>> zoz
           ),
           SizedBox(height: 24.h),
           _buildActionButton(
             icon: Icons.comment,
             label: _formatCount(reel.likesCount),
             onTap: onComment,
+<<<<<<< HEAD
             iconColor: isDark ? AppColors.white : AppColors.black,
             isDark: isDark,
+=======
+>>>>>>> zoz
           ),
           SizedBox(height: 24.h),
           _buildActionButton(
             icon: Icons.share,
             label: 'Share',
             onTap: onShare,
+<<<<<<< HEAD
             iconColor: isDark ? AppColors.white : AppColors.black,
             isDark: isDark,
+=======
+>>>>>>> zoz
           ),
         ],
       ),
@@ -60,7 +73,10 @@ class ReelActionsOverlay extends StatelessWidget {
     required String label,
     VoidCallback? onTap,
     Color iconColor = Colors.white,
+<<<<<<< HEAD
     required bool isDark,
+=======
+>>>>>>> zoz
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -70,7 +86,11 @@ class ReelActionsOverlay extends StatelessWidget {
             width: 48.w,
             height: 48.h,
             decoration: BoxDecoration(
+<<<<<<< HEAD
               color: isDark ? AppColors.darkCard.withOpacity(0.3) : AppColors.white.withOpacity(0.3),
+=======
+              color: AppColors.black.withOpacity(0.3),
+>>>>>>> zoz
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -82,9 +102,13 @@ class ReelActionsOverlay extends StatelessWidget {
           SizedBox(height: 4.h),
           Text(
             label,
+<<<<<<< HEAD
             style: isDark
                 ? AppTextStyles.whiteS12W400
                 : AppTextStyles.blackS12W400,
+=======
+            style: AppTextStyles.whiteS12W400,
+>>>>>>> zoz
             textAlign: TextAlign.center,
           ),
         ],
@@ -101,4 +125,8 @@ class ReelActionsOverlay extends StatelessWidget {
       return count.toString();
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> zoz

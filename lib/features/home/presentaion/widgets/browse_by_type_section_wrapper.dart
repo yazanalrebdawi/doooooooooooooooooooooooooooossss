@@ -10,6 +10,12 @@ class BrowseByTypeSectionWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
+<<<<<<< HEAD
+=======
+      buildWhen:
+          (previous, current) =>
+              previous.selectedBrowseType != current.selectedBrowseType,
+>>>>>>> zoz
       builder: (context, homeState) {
         return BrowseByTypeSection(
           selectedIndex: homeState.selectedBrowseType,
@@ -20,4 +26,8 @@ class BrowseByTypeSectionWrapper extends StatelessWidget {
       },
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> zoz

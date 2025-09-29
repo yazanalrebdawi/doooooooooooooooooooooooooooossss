@@ -225,6 +225,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
                       final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -232,16 +233,33 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: isDark ?  AppColors.black : Colors.white, size: 24.sp),
+=======
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppColors.black, size: 24.sp),
+>>>>>>> zoz
           onPressed: () => context.pop(),
         ),
         title: Text(
           AppLocalizations.of(context)!.translate('serviceLocation'),
+<<<<<<< HEAD
           style: AppTextStyles.blackS18W700.withThemeColor(context),
+=======
+          style: AppTextStyles.blackS18W700,
+>>>>>>> zoz
         ),
         centerTitle: true,
         actions: [
           IconButton(
+<<<<<<< HEAD
             icon: Icon(Icons.share, color:isDark ? Colors.white: AppColors.black, size: 24.sp),
+=======
+            icon: Icon(Icons.share, color: AppColors.black, size: 24.sp),
+>>>>>>> zoz
             onPressed: () {},
           ),
         ],
@@ -283,7 +301,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                   SizedBox(height: 8.h),
                   Text(
                     widget.service.address,
+<<<<<<< HEAD
                     style: AppTextStyles.secondaryS14W400.copyWith(color:isDark ?  AppColors.gray : Colors.black),
+=======
+                    style: AppTextStyles.secondaryS14W400.copyWith(color: AppColors.gray),
+>>>>>>> zoz
                   ),
                   SizedBox(height: 8.h),
                   // Removed fake location and verification data - using only real API data
@@ -296,13 +318,21 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: Row(
                 children: [
+<<<<<<< HEAD
                   Icon(Icons.directions_car, color:isDark ?  AppColors.gray : Colors.black, size: 20.sp),
+=======
+                  Icon(Icons.directions_car, color: AppColors.gray, size: 20.sp),
+>>>>>>> zoz
                   SizedBox(width: 8.w),
                   Text(
                     widget.service.distance != null 
                       ? '${(widget.service.distance! / 1000).toStringAsFixed(1)} ${AppLocalizations.of(context)!.translate('kmAway')}'
                       : '${AppLocalizations.of(context)!.translate('distanceNotAvailable')}',
+<<<<<<< HEAD
                     style: AppTextStyles.secondaryS14W400.copyWith(color:isDark ?  AppColors.gray : Colors.black),
+=======
+                    style: AppTextStyles.secondaryS14W400.copyWith(color: AppColors.gray),
+>>>>>>> zoz
                   ),
                   const Spacer(),
                   ElevatedButton(
@@ -321,15 +351,26 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+<<<<<<< HEAD
                         Icon(Icons.send,  color:isDark ? Colors.white : Colors.black, size: 14.sp),
+=======
+                        Icon(Icons.send, color: AppColors.white, size: 14.sp),
+>>>>>>> zoz
                         SizedBox(width: 8.w),
                         Text(
                           'Get\nDirections',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.secondaryS12W400.copyWith(
+<<<<<<< HEAD
                             fontWeight: FontWeight.w600,
                             fontSize: 10.sp,
                           ).withThemeColor(context),
+=======
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10.sp,
+                          ),
+>>>>>>> zoz
                         ),
                       ],
                     ),
@@ -346,7 +387,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                 children: [
                   Row(
                     children: [
+<<<<<<< HEAD
                       Icon(Icons.access_time, color:isDark ?  AppColors.gray : Colors.black, size: 20.sp),
+=======
+                      Icon(Icons.access_time, color: AppColors.gray, size: 20.sp),
+>>>>>>> zoz
                       SizedBox(width: 8.w),
                       Text(AppLocalizations.of(context)!.translate('workingHours'), style: AppTextStyles.blackS16W600),
                     ],
@@ -372,7 +417,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+<<<<<<< HEAD
                   Text(AppLocalizations.of(context)!.translate('contact'), style: AppTextStyles.blackS16W600.withThemeColor(context)),
+=======
+                  Text(AppLocalizations.of(context)!.translate('contact'), style: AppTextStyles.blackS16W600),
+>>>>>>> zoz
                   SizedBox(height: 12.h),
                   SizedBox(
                     width: double.infinity,
@@ -383,10 +432,17 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                           await launchUrl(Uri.parse(url));
                         }
                       },
+<<<<<<< HEAD
                       icon: Icon(Icons.phone, color:isDark ?  Colors.white : Colors.black, size: 18.sp),
                       label: Text(
                         '${AppLocalizations.of(context)!.translate('callNow')}: ${widget.service.phonePrimary}',
                         style: AppTextStyles.secondaryS14W400.copyWith( fontWeight: FontWeight.w600).withThemeColor(context),
+=======
+                      icon: Icon(Icons.phone, color: AppColors.white, size: 18.sp),
+                      label: Text(
+                        '${AppLocalizations.of(context)!.translate('callNow')}: ${widget.service.phonePrimary}',
+                        style: AppTextStyles.secondaryS14W400.copyWith(color: AppColors.white, fontWeight: FontWeight.w600),
+>>>>>>> zoz
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -409,9 +465,15 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                 children: [
                   Row(
                     children: [
+<<<<<<< HEAD
                       Icon(Icons.location_on, color:isDark ?  AppColors.gray : Colors.black, size: 20.sp),
                       SizedBox(width: 8.w),
                       Text(AppLocalizations.of(context)!.translate('location'), style: AppTextStyles.blackS16W600.withThemeColor(context)),
+=======
+                      Icon(Icons.location_on, color: AppColors.gray, size: 20.sp),
+                      SizedBox(width: 8.w),
+                      Text(AppLocalizations.of(context)!.translate('location'), style: AppTextStyles.blackS16W600),
+>>>>>>> zoz
                       const Spacer(),
                       if (_isLoadingRoute)
                         SizedBox(
@@ -455,7 +517,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(
+<<<<<<< HEAD
                         color:isDark ?  AppColors.gray : Colors.black.withOpacity(0.2),
+=======
+                        color: AppColors.gray.withOpacity(0.2),
+>>>>>>> zoz
                         width: 1,
                       ),
                     ),
@@ -482,7 +548,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                   SizedBox(height: 8.h),
                   Text(
                     widget.service.address,
+<<<<<<< HEAD
                     style: AppTextStyles.s14w400.copyWith(color:isDark ?  AppColors.gray : Colors.black),
+=======
+                    style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
+>>>>>>> zoz
                   ),
                 ],
               ),
@@ -496,7 +566,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+<<<<<<< HEAD
                   Text(AppLocalizations.of(context)!.translate('aboutServiceProvider'), style: AppTextStyles.blackS16W600.withThemeColor(context)),
+=======
+                  Text(AppLocalizations.of(context)!.translate('aboutServiceProvider'), style: AppTextStyles.blackS16W600),
+>>>>>>> zoz
                   SizedBox(height: 12.h),
                   Row(
                     children: [
@@ -509,7 +583,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                         ),
                         child: Icon(
                           widget.service.type.toLowerCase().contains('station') ? Icons.local_gas_station : Icons.directions_car, 
+<<<<<<< HEAD
                           color:isDark ?  Colors.white : Colors.black, 
+=======
+                          color: AppColors.white, 
+>>>>>>> zoz
                           size: 24.sp
                         ),
                       ),
@@ -539,7 +617,11 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+<<<<<<< HEAD
                     Text(AppLocalizations.of(context)!.translate('servicesAtLocation'), style: AppTextStyles.blackS16W600.withThemeColor(context)),
+=======
+                    Text(AppLocalizations.of(context)!.translate('servicesAtLocation'), style: AppTextStyles.blackS16W600),
+>>>>>>> zoz
                     SizedBox(height: 12.h),
                     Wrap(
                       spacing: 8.w,
@@ -547,6 +629,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                       children: widget.service.services.map((serviceName) => Container(
                         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                         decoration: BoxDecoration(
+<<<<<<< HEAD
                           color:isDark ?  AppColors.gray : Colors.black.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20.r),
                           border: Border.all(color:isDark ?  AppColors.gray : Colors.black.withOpacity(0.3), width: 1),
@@ -554,6 +637,15 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                         child: Text(
                           serviceName,
                           style: AppTextStyles.secondaryS12W400.copyWith(color:isDark ?  AppColors.gray : Colors.black, fontWeight: FontWeight.w500),
+=======
+                          color: AppColors.gray.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(color: AppColors.gray.withOpacity(0.3), width: 1),
+                        ),
+                        child: Text(
+                          serviceName,
+                          style: AppTextStyles.secondaryS12W400.copyWith(color: AppColors.gray, fontWeight: FontWeight.w500),
+>>>>>>> zoz
                         ),
                       )).toList(),
                     ),

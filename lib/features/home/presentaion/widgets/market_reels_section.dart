@@ -4,7 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dooss_business_app/core/constants/colors.dart';
 import 'package:dooss_business_app/core/constants/text_styles.dart';
+<<<<<<< HEAD
 import '../../../../core/routes/route_names.dart';
+=======
+import 'package:dooss_business_app/core/services/native_video_service.dart';
+import '../../../../core/routes/route_names.dart';
+import '../../../../core/services/locator_service.dart' as di;
+>>>>>>> zoz
 import '../manager/reel_cubit.dart';
 import '../manager/reel_state.dart';
 import '../../data/models/reel_model.dart';
@@ -70,7 +76,14 @@ class MarketReelsViewAllButton extends StatelessWidget {
 class MarketReelsList extends StatelessWidget {
   final ReelState state;
 
+<<<<<<< HEAD
   const MarketReelsList({super.key, required this.state});
+=======
+  const MarketReelsList({
+    super.key,
+    required this.state,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
@@ -106,12 +119,23 @@ class MarketReelsEmptyState extends StatelessWidget {
 class MarketReelsLoadedState extends StatelessWidget {
   final List<ReelModel> reels;
 
+<<<<<<< HEAD
   const MarketReelsLoadedState({super.key, required this.reels});
+=======
+  const MarketReelsLoadedState({
+    super.key,
+    required this.reels,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
     final displayCount = reels.length > 3 ? 3 : reels.length;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> zoz
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       scrollDirection: Axis.horizontal,
@@ -125,7 +149,14 @@ class MarketReelsLoadedState extends StatelessWidget {
 class MarketReelCard extends StatelessWidget {
   final ReelModel reel;
 
+<<<<<<< HEAD
   const MarketReelCard({super.key, required this.reel});
+=======
+  const MarketReelCard({
+    super.key,
+    required this.reel,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +166,16 @@ class MarketReelCard extends StatelessWidget {
 
 class MarketReelCardContainer extends StatelessWidget {
   final ReelModel reel;
+<<<<<<< HEAD
 
   const MarketReelCardContainer({super.key, required this.reel});
+=======
+  
+  const MarketReelCardContainer({
+    super.key,
+    required this.reel,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
@@ -161,8 +200,16 @@ class MarketReelCardContainer extends StatelessWidget {
 
 class MarketReelCardContent extends StatelessWidget {
   final ReelModel reel;
+<<<<<<< HEAD
 
   const MarketReelCardContent({super.key, required this.reel});
+=======
+  
+  const MarketReelCardContent({
+    super.key,
+    required this.reel,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
@@ -175,8 +222,16 @@ class MarketReelCardContent extends StatelessWidget {
 
 class MarketReelCardInkWell extends StatelessWidget {
   final ReelModel reel;
+<<<<<<< HEAD
 
   const MarketReelCardInkWell({super.key, required this.reel});
+=======
+  
+  const MarketReelCardInkWell({
+    super.key,
+    required this.reel,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
@@ -193,8 +248,16 @@ class MarketReelCardInkWell extends StatelessWidget {
 
 class MarketReelCardStack extends StatelessWidget {
   final ReelModel reel;
+<<<<<<< HEAD
 
   const MarketReelCardStack({super.key, required this.reel});
+=======
+  
+  const MarketReelCardStack({
+    super.key,
+    required this.reel,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
@@ -301,8 +364,16 @@ class MarketReelCardPlayButton extends StatelessWidget {
 
 class MarketReelCardTitle extends StatelessWidget {
   final ReelModel reel;
+<<<<<<< HEAD
 
   const MarketReelCardTitle({super.key, required this.reel});
+=======
+  
+  const MarketReelCardTitle({
+    super.key,
+    required this.reel,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
@@ -328,4 +399,8 @@ class MarketReelCardTitle extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> zoz

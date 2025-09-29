@@ -5,10 +5,19 @@ import 'home_state.dart';
 class HomeCubit extends OptimizedCubit<HomeState> {
   HomeCubit() : super(const HomeState());
 
+<<<<<<< HEAD
   void updateCurrentIndex(int index) {
     emitOptimized(state.copyWith(currentIndex: index));
   }
 
+=======
+  //! Done
+  void updateCurrentIndex(int index) {
+    emitOptimized(state.copyWith(currentIndex: index));
+  }
+  
+  //! Done
+>>>>>>> zoz
   void updateSelectedBrowseType(int type) {
     emitOptimized(state.copyWith(selectedBrowseType: type));
   }

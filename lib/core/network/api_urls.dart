@@ -1,11 +1,28 @@
 class ApiUrls {
   ApiUrls._();
+<<<<<<< HEAD
   static const String _baseURl = 'http://192.168.1.129:8010/api';
 
+=======
+  // static const String _baseURl = 'http://192.168.145.185:8010/api';
+  // static const String _baseURl = 'http://192.168.1.22:8010/api';
+  // IP الكمبيوتر على Wi-Fi
+
+  //192.168.1.105
+  static const String _baseURl = 'http://192.168.1.105:8010/api';
+  static const String _baseMediaUrl =
+      'http://192.168.1.105:8010'; //! للصور و الفيديو
+  // 🟢 Getter عام للصور
+  static String media(String path) => '$_baseMediaUrl$path';
+>>>>>>> zoz
   // POSTS
   static final String rigester = '$_baseURl/users/register/';
   static final String login = "$_baseURl/users/login/";
   static final String logout = "$_baseURl/users/logout/";
+<<<<<<< HEAD
+=======
+
+>>>>>>> zoz
   static final String profile = "$_baseURl/users/profile/";
   static final String requestOtp = "$_baseURl/users/request-otp/";
 
@@ -63,4 +80,23 @@ class ApiUrls {
 
   //  branches
   static final String branches = "$_baseURl/";
+<<<<<<< HEAD
+=======
+
+  //* Edit Profile
+  static final String getInfoProfile = "$_baseURl/users/profile/";
+  static final String editInfoProfile = "$_baseURl/users/profile/update/";
+  static final String changePasswordInProfile =
+      "$_baseURl/users/set-new-password/";
+
+  //* Favorites
+  static final String getFavorites = "$_baseURl/favorites/";
+  static final String removeIttemOfFavorites = "$_baseURl/favorites/";
+
+  //* Change Phone Number
+  static final String cancelUpdatePhoneOtp =
+      '$_baseURl/users/profile/phone/cancel/';
+  static final String confirmUpdatePhone =
+      '$_baseURl/users/profile/phone/confirm/';
+>>>>>>> zoz
 }

@@ -15,17 +15,24 @@ class StatItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final valueColor = isDark ? AppColors.white : AppColors.black;
     final labelColor = isDark ? AppColors.gray : AppColors.gray;
 
+=======
+>>>>>>> zoz
     return Column(
       children: [
         Text(
           value,
           style: AppTextStyles.s18w700.copyWith(
+<<<<<<< HEAD
             color: valueColor,
+=======
+            color: AppColors.black,
+>>>>>>> zoz
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -33,7 +40,11 @@ class StatItemWidget extends StatelessWidget {
         Text(
           label,
           style: AppTextStyles.s14w400.copyWith(
+<<<<<<< HEAD
             color: labelColor,
+=======
+            color: AppColors.gray,
+>>>>>>> zoz
           ),
         ),
       ],

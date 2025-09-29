@@ -21,6 +21,7 @@ class SellerInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final backgroundColor = isDark ? Colors.grey[900]! : AppColors.white;
@@ -32,13 +33,24 @@ class SellerInfoSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(20.w),
       color: backgroundColor,
+=======
+    return Container(
+      padding: EdgeInsets.all(20.w),
+      color: AppColors.white,
+>>>>>>> zoz
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Section Title
           Text(
             'Seller Information',
+<<<<<<< HEAD
             style: AppTextStyles.s18w700.copyWith(color: textColor),
+=======
+            style: AppTextStyles.s18w700.copyWith(
+              color: AppColors.black,
+            ),
+>>>>>>> zoz
           ),
           SizedBox(height: 16.h),
           
@@ -46,7 +58,11 @@ class SellerInfoSection extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
+<<<<<<< HEAD
               color: cardColor,
+=======
+              color: AppColors.white,
+>>>>>>> zoz
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: AppColors.gray.withOpacity(0.2),
@@ -54,9 +70,13 @@ class SellerInfoSection extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
+<<<<<<< HEAD
                   color: isDark
                       ? Colors.black.withOpacity(0.5)
                       : Colors.black.withOpacity(0.05),
+=======
+                  color: Colors.black.withOpacity(0.05),
+>>>>>>> zoz
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -72,7 +92,11 @@ class SellerInfoSection extends StatelessWidget {
                       width: 60.w,
                       height: 60.w,
                       decoration: BoxDecoration(
+<<<<<<< HEAD
                         color: iconColor.withOpacity(0.1),
+=======
+                        color: AppColors.primary.withOpacity(0.1),
+>>>>>>> zoz
                         shape: BoxShape.circle,
                       ),
                       child: sellerImage.isNotEmpty
@@ -84,7 +108,11 @@ class SellerInfoSection extends StatelessWidget {
                                   return Icon(
                                     Icons.person,
                                     size: 30.sp,
+<<<<<<< HEAD
                                     color: iconColor,
+=======
+                                    color: AppColors.primary,
+>>>>>>> zoz
                                   );
                                 },
                               ),
@@ -92,7 +120,11 @@ class SellerInfoSection extends StatelessWidget {
                           : Icon(
                               Icons.person,
                               size: 30.sp,
+<<<<<<< HEAD
                               color: iconColor,
+=======
+                              color: AppColors.primary,
+>>>>>>> zoz
                             ),
                     ),
                     SizedBox(width: 16.w),
@@ -105,14 +137,22 @@ class SellerInfoSection extends StatelessWidget {
                           Text(
                             sellerName,
                             style: AppTextStyles.s16w600.copyWith(
+<<<<<<< HEAD
                               color: textColor,
+=======
+                              color: AppColors.black,
+>>>>>>> zoz
                             ),
                           ),
                           SizedBox(height: 4.h),
                           Text(
                             sellerType,
                             style: AppTextStyles.s14w400.copyWith(
+<<<<<<< HEAD
                               color: secondaryTextColor,
+=======
+                              color: AppColors.gray,
+>>>>>>> zoz
                             ),
                           ),
                         ],

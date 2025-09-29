@@ -22,12 +22,19 @@ class ServiceCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : Colors.white,
+=======
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+>>>>>>> zoz
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -42,26 +49,47 @@ class ServiceCardWidget extends StatelessWidget {
         children: [
           // Service Image
           ClipRRect(
+<<<<<<< HEAD
             borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+=======
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.r),
+              topRight: Radius.circular(16.r),
+            ),
+>>>>>>> zoz
             child: service.image != null && service.image!.isNotEmpty
                 ? Image.network(
                     service.image!,
                     width: double.infinity,
                     height: 200.h,
                     fit: BoxFit.cover,
+<<<<<<< HEAD
                     errorBuilder: (context, error, stackTrace) =>
                         const ServicePlaceholderImageWidget(),
                   )
                 : const ServicePlaceholderImageWidget(),
           ),
 
+=======
+                    errorBuilder: (context, error, stackTrace) {
+                      return const ServicePlaceholderImageWidget();
+                    },
+                  )
+                : const ServicePlaceholderImageWidget(),
+          ),
+          
+>>>>>>> zoz
           // Service Details
           Padding(
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+<<<<<<< HEAD
                 // Name & Status
+=======
+                // Service Name and Status
+>>>>>>> zoz
                 Row(
                   children: [
                     Expanded(
@@ -76,6 +104,7 @@ class ServiceCardWidget extends StatelessWidget {
                     ServiceStatusIndicatorWidget(isOpen: service.openNow),
                   ],
                 ),
+<<<<<<< HEAD
 
                 SizedBox(height: 8.h),
 
@@ -83,6 +112,19 @@ class ServiceCardWidget extends StatelessWidget {
                 Row(
                   children: [
                     Icon(Icons.location_on, color: AppColors.gray, size: 16.sp),
+=======
+                
+                SizedBox(height: 8.h),
+                
+                // Location
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: AppColors.gray,
+                      size: 16.sp,
+                    ),
+>>>>>>> zoz
                     SizedBox(width: 4.w),
                     Expanded(
                       child: Text(
@@ -94,6 +136,7 @@ class ServiceCardWidget extends StatelessWidget {
                     ),
                   ],
                 ),
+<<<<<<< HEAD
 
                 SizedBox(height: 4.h),
 
@@ -101,6 +144,19 @@ class ServiceCardWidget extends StatelessWidget {
                 Row(
                   children: [
                     Icon(Icons.access_time, color: AppColors.gray, size: 16.sp),
+=======
+                
+                SizedBox(height: 4.h),
+                
+                // Operating Hours
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      color: AppColors.gray,
+                      size: 16.sp,
+                    ),
+>>>>>>> zoz
                     SizedBox(width: 4.w),
                     Text(
                       service.openingText,
@@ -108,6 +164,7 @@ class ServiceCardWidget extends StatelessWidget {
                     ),
                   ],
                 ),
+<<<<<<< HEAD
 
                 SizedBox(height: 16.h),
 
@@ -115,6 +172,15 @@ class ServiceCardWidget extends StatelessWidget {
                 Row(
                   children: [
                     // View Details
+=======
+                
+                SizedBox(height: 16.h),
+                
+                // Action Buttons
+                Row(
+                  children: [
+                    // View Details Button
+>>>>>>> zoz
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: onViewDetails,
@@ -130,10 +196,17 @@ class ServiceCardWidget extends StatelessWidget {
                         ),
                       ),
                     ),
+<<<<<<< HEAD
 
                     SizedBox(width: 8.w),
 
                     // Maps
+=======
+                    
+                    SizedBox(width: 8.w),
+                    
+                    // Maps Button
+>>>>>>> zoz
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: onMaps,
@@ -149,9 +222,15 @@ class ServiceCardWidget extends StatelessWidget {
                         ),
                       ),
                     ),
+<<<<<<< HEAD
 
                     SizedBox(width: 8.w),
 
+=======
+                    
+                    SizedBox(width: 8.w),
+                    
+>>>>>>> zoz
                     // Call Button
                     Container(
                       width: 48.w,
@@ -162,8 +241,16 @@ class ServiceCardWidget extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: onCall,
+<<<<<<< HEAD
                         icon: Icon(Icons.phone,
                             color: AppColors.gray, size: 20.sp),
+=======
+                        icon: Icon(
+                          Icons.phone,
+                          color: AppColors.gray,
+                          size: 20.sp,
+                        ),
+>>>>>>> zoz
                       ),
                     ),
                   ],
@@ -175,4 +262,9 @@ class ServiceCardWidget extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> zoz
 }

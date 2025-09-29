@@ -18,6 +18,7 @@ class ServicesSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ServiceCubit, ServiceState>(
+<<<<<<< HEAD
       builder: (context, state) {
         if (state.isLoading) {
           return const Center(
@@ -32,10 +33,32 @@ class ServicesSectionWidget extends StatelessWidget {
             return Center(child: _buildLocationPermissionWidget(context));
           }
           
+=======
+      buildWhen: (previous, current) {
+        return previous.services != current.services ||
+            previous.filteredServices != current.filteredServices ||
+            previous.isLoading != current.isLoading ||
+            previous.error != current.error ||
+            previous.selectedFilter != current.selectedFilter;
+      },
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state.error != null) {
+          // Check if error is related to location permission
+          if (state.error!.contains('location') ||
+              state.error!.contains('permission')) {
+            return Center(child: _buildLocationPermissionWidget(context));
+          }
+
+>>>>>>> zoz
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+<<<<<<< HEAD
                 Icon(
                   Icons.error_outline,
                   color: AppColors.gray,
@@ -45,6 +68,13 @@ class ServicesSectionWidget extends StatelessWidget {
                 Text(
                   'Error: ${state.error}',
                   style: AppTextStyles.secondaryS14W400.copyWith(color: AppColors.black),
+=======
+                Icon(Icons.error_outline, color: AppColors.gray, size: 48.sp),
+                SizedBox(height: 16.h),
+                Text(
+                  'Error: ${state.error}',
+                  style: AppTextStyles.secondaryS14W400,
+>>>>>>> zoz
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -52,9 +82,16 @@ class ServicesSectionWidget extends StatelessWidget {
           );
         }
 
+<<<<<<< HEAD
         final services = state.selectedFilter.toLowerCase() == 'all'
             ? state.services
             : state.filteredServices;
+=======
+        final services =
+            state.selectedFilter == 'all' || state.selectedFilter == 'All'
+                ? state.services
+                : state.filteredServices;
+>>>>>>> zoz
 
         if (services.isEmpty) {
           return Center(
@@ -74,7 +111,11 @@ class ServicesSectionWidget extends StatelessWidget {
                 SizedBox(height: 8.h),
                 Text(
                   'Check back later for new services',
+<<<<<<< HEAD
                   style: AppTextStyles.secondaryS14W400.copyWith(color: AppColors.gray),
+=======
+                  style: AppTextStyles.secondaryS14W400,
+>>>>>>> zoz
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -84,13 +125,24 @@ class ServicesSectionWidget extends StatelessWidget {
 
         return Column(
           children: [
+<<<<<<< HEAD
+=======
+            // Filter Chips
+>>>>>>> zoz
             ServiceFilterChipsWidget(
               selectedFilter: state.selectedFilter,
               onFilterChanged: (filter) {
                 context.read<ServiceCubit>().filterServices(filter);
               },
             ),
+<<<<<<< HEAD
             SizedBox(height: 16.h),
+=======
+
+            SizedBox(height: 16.h),
+
+            // Services List
+>>>>>>> zoz
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -100,15 +152,34 @@ class ServicesSectionWidget extends StatelessWidget {
                   return ServiceCardWidget(
                     service: service,
                     onViewDetails: () {
+<<<<<<< HEAD
                       context.push('/service-details', extra: service);
                     },
                     onMaps: () async {
+=======
+                      // Navigate to service details
+                      print(
+                        '🔍 ServicesSection: View Details pressed for service: ${service.name}',
+                      );
+                      print('🔍 ServicesSection: Service ID: ${service.id}');
+                      print(
+                        '🔍 ServicesSection: Service location: ${service.lat}, ${service.lon}',
+                      );
+                      context.push('/service-details', extra: service);
+                    },
+                    onMaps: () async {
+                      // Launch maps
+>>>>>>> zoz
                       final url = service.mapsUrl;
                       if (await canLaunchUrl(Uri.parse(url))) {
                         await launchUrl(Uri.parse(url));
                       }
                     },
                     onCall: () async {
+<<<<<<< HEAD
+=======
+                      // Launch call
+>>>>>>> zoz
                       final url = service.callUrl;
                       if (await canLaunchUrl(Uri.parse(url))) {
                         await launchUrl(Uri.parse(url));
@@ -130,6 +201,7 @@ class ServicesSectionWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+<<<<<<< HEAD
           Icon(
             Icons.location_off,
             color: AppColors.gray,
@@ -139,27 +211,57 @@ class ServicesSectionWidget extends StatelessWidget {
           Text(
             AppLocalizations.of(context)!.translate('locationPermissionRequired'),
             style: AppTextStyles.blackS18W700.copyWith(color: AppColors.black),
+=======
+          Icon(Icons.location_off, color: AppColors.gray, size: 64.sp),
+          SizedBox(height: 16.h),
+          Text(
+            AppLocalizations.of(
+              context,
+            )!.translate('locationPermissionRequired'),
+            style: AppTextStyles.blackS18W700,
+>>>>>>> zoz
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 8.h),
           Text(
+<<<<<<< HEAD
             AppLocalizations.of(context)!.translate('locationPermissionMessage'),
             style: AppTextStyles.secondaryS14W400.copyWith(color: AppColors.gray),
+=======
+            AppLocalizations.of(
+              context,
+            )!.translate('locationPermissionMessage'),
+            style: AppTextStyles.secondaryS14W400,
+>>>>>>> zoz
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24.h),
           ElevatedButton(
             onPressed: () async {
+<<<<<<< HEAD
               bool hasPermission = await LocationService.requestLocationPermission();
+=======
+              // Request location permission
+              bool hasPermission =
+                  await LocationService.requestLocationPermission();
+>>>>>>> zoz
               if (hasPermission) {
                 context.read<ServiceCubit>().loadServices();
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
+<<<<<<< HEAD
                       AppLocalizations.of(context)!.translate('locationPermissionMessage'),
                     ),
                     backgroundColor: AppColors.primary,
+=======
+                      AppLocalizations.of(
+                        context,
+                      )!.translate('locationPermissionMessage'),
+                    ),
+                    backgroundColor: Colors.orange,
+>>>>>>> zoz
                   ),
                 );
               }

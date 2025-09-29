@@ -37,8 +37,12 @@ class LoadingSection extends StatelessWidget {
                   SizedBox(height: 16.h),
                   Text(
                     'Loading...',
+<<<<<<< HEAD
                     style:
                         AppTextStyles.s16w400.copyWith(color: AppColors.gray),
+=======
+                    style: AppTextStyles.s16w400.copyWith(color: AppColors.gray),
+>>>>>>> zoz
                   ),
                 ],
               ),
@@ -48,4 +52,8 @@ class LoadingSection extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+} 
+>>>>>>> zoz

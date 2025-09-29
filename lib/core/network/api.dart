@@ -25,7 +25,11 @@ class API {
     } on DioException catch (e) {
       return Left(Failure.handleError(e));
     } catch (e) {
+<<<<<<< HEAD
       return Left(Failure(message: e.toString()));
+=======
+      return Left(Failure.handleError(e as DioException));
+>>>>>>> zoz
     }
   }
 

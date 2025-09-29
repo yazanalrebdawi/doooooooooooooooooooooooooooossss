@@ -26,7 +26,10 @@ class ContentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> zoz
     return BlocBuilder<HomeCubit, HomeState>(
       buildWhen: (previous, current) =>
           previous.currentIndex != current.currentIndex ||
@@ -41,6 +44,7 @@ class ContentSection extends StatelessWidget {
                   if (state.isLoading) {
                     return LoadingSection(title: 'Cars Available Now');
                   } else if (state.error != null) {
+<<<<<<< HEAD
                     return ErrorSection(
                       title: 'Cars Available Now',
                       message: state.error!,
@@ -55,6 +59,20 @@ class ContentSection extends StatelessWidget {
                         context.push('/car-details/${state.cars.first.id}');
                       },
                     );
+=======
+                    return ErrorSection(title: 'Cars Available Now', message: state.error!);
+                  } else if (state.cars.isNotEmpty) {
+                                         return CarsAvailableSection(
+                       cars: state.cars,
+                       onViewAllPressed: () {
+                         context.push(RouteNames.allCarsScreen);
+                       },
+                       onCarPressed: () {
+                         // Navigate to car details
+                         context.push('/car-details/${state.cars.first.id}');
+                       },
+                     );
+>>>>>>> zoz
                   } else {
                     return LoadingSection(title: 'Cars Available Now');
                   }
@@ -70,10 +88,14 @@ class ContentSection extends StatelessWidget {
                   if (state.isLoading) {
                     return LoadingSection(title: 'Car Products');
                   } else if (state.error != null) {
+<<<<<<< HEAD
                     return ErrorSection(
                       title: 'Car Products',
                       message: state.error!,
                     );
+=======
+                    return ErrorSection(title: 'Car Products', message: state.error!);
+>>>>>>> zoz
                   } else if (state.products.isNotEmpty) {
                     return ProductsSection(products: state.products);
                   } else {
@@ -91,10 +113,14 @@ class ContentSection extends StatelessWidget {
                   if (state.isLoading) {
                     return LoadingSection(title: 'Nearby Car Services');
                   } else if (state.error != null) {
+<<<<<<< HEAD
                     return ErrorSection(
                       title: 'Nearby Car Services',
                       message: state.error!,
                     );
+=======
+                    return ErrorSection(title: 'Nearby Car Services', message: state.error!);
+>>>>>>> zoz
                   } else if (state.services.isNotEmpty) {
                     return ServicesSection(services: state.services);
                   } else {
@@ -112,10 +138,14 @@ class ContentSection extends StatelessWidget {
                   if (state.isLoading) {
                     return LoadingSection(title: 'Cars Available Now');
                   } else if (state.error != null) {
+<<<<<<< HEAD
                     return ErrorSection(
                       title: 'Cars Available Now',
                       message: state.error!,
                     );
+=======
+                    return ErrorSection(title: 'Cars Available Now', message: state.error!);
+>>>>>>> zoz
                   } else if (state.cars.isNotEmpty) {
                     return CarsAvailableSection(
                       cars: state.cars,
@@ -123,6 +153,10 @@ class ContentSection extends StatelessWidget {
                         context.push(RouteNames.allCarsScreen);
                       },
                       onCarPressed: () {
+<<<<<<< HEAD
+=======
+                        
+>>>>>>> zoz
                         print('Car pressed');
                       },
                     );
@@ -133,7 +167,11 @@ class ContentSection extends StatelessWidget {
               );
           }
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> zoz
         // Otherwise show content based on bottom navigation
         switch (homeState.currentIndex) {
           case 1: // Services
@@ -146,10 +184,14 @@ class ContentSection extends StatelessWidget {
                 if (state.isLoading) {
                   return LoadingSection(title: 'Nearby Car Services');
                 } else if (state.error != null) {
+<<<<<<< HEAD
                   return ErrorSection(
                     title: 'Nearby Car Services',
                     message: state.error!,
                   );
+=======
+                  return ErrorSection(title: 'Nearby Car Services', message: state.error!);
+>>>>>>> zoz
                 } else if (state.services.isNotEmpty) {
                   return ServicesSection(services: state.services);
                 } else {
@@ -167,10 +209,14 @@ class ContentSection extends StatelessWidget {
                 if (state.isLoading) {
                   return LoadingSection(title: 'Market Reels');
                 } else if (state.error != null) {
+<<<<<<< HEAD
                   return ErrorSection(
                     title: 'Market Reels',
                     message: state.error!,
                   );
+=======
+                  return ErrorSection(title: 'Market Reels', message: state.error!);
+>>>>>>> zoz
                 } else if (state.reels.isNotEmpty) {
                   return ReelsSection(reels: state.reels);
                 } else {
@@ -192,10 +238,14 @@ class ContentSection extends StatelessWidget {
                 if (state.isLoading) {
                   return LoadingSection(title: 'Cars Available Now');
                 } else if (state.error != null) {
+<<<<<<< HEAD
                   return ErrorSection(
                     title: 'Cars Available Now',
                     message: state.error!,
                   );
+=======
+                  return ErrorSection(title: 'Cars Available Now', message: state.error!);
+>>>>>>> zoz
                 } else if (state.cars.isNotEmpty) {
                   return CarsAvailableSection(
                     cars: state.cars,
@@ -203,6 +253,10 @@ class ContentSection extends StatelessWidget {
                       context.push(RouteNames.allCarsScreen);
                     },
                     onCarPressed: () {
+<<<<<<< HEAD
+=======
+                      // Navigate to car details
+>>>>>>> zoz
                       context.push('/car-details/${state.cars.first.id}');
                     },
                   );

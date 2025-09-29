@@ -1,4 +1,8 @@
 import 'package:dartz/dartz.dart';
+<<<<<<< HEAD
+=======
+import 'package:dio/dio.dart';
+>>>>>>> zoz
 import '../../../../core/network/app_dio.dart';
 import '../../../../core/network/api_urls.dart';
 import '../../../../core/network/failure.dart';
@@ -43,7 +47,11 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
         return Left(Failure(message: 'Authentication credentials were not provided.'));
       }
       
+<<<<<<< HEAD
       return Left(Failure(message: e.toString()));
+=======
+      return Left(Failure.handleError(e as DioException));
+>>>>>>> zoz
     }
   }
 
@@ -118,7 +126,11 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
         return Left(Failure(message: 'Authentication credentials were not provided.'));
       }
       
+<<<<<<< HEAD
       return Left(Failure(message: e.toString()));
+=======
+      return Left(Failure.handleError(e as DioException));
+>>>>>>> zoz
     }
   }
 
@@ -211,7 +223,11 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
         return Left(Failure(message: 'Authentication credentials were not provided.'));
       }
       
+<<<<<<< HEAD
       return Left(Failure(message: e.toString()));
+=======
+      return Left(Failure.handleError(e as DioException));
+>>>>>>> zoz
     }
   }
 
@@ -290,7 +306,11 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
         return Left(Failure(message: 'Authentication credentials were not provided.'));
       }
       
+<<<<<<< HEAD
       return Left(Failure(message: e.toString()));
+=======
+      return Left(Failure.handleError(e as DioException));
+>>>>>>> zoz
     }
   }
 
@@ -316,7 +336,11 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
         return Left(Failure(message: 'Authentication credentials were not provided.'));
       }
       
+<<<<<<< HEAD
       return Left(Failure(message: e.toString()));
+=======
+      return Left(Failure.handleError(e as DioException));
+>>>>>>> zoz
     }
   }
 }

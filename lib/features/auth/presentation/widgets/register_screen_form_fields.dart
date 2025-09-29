@@ -47,7 +47,11 @@ class RegisterScreenFormFields extends StatefulWidget {
 class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> zoz
   // Country selection
   Country _selectedCountry = Country(
     name: 'Syria',
@@ -55,13 +59,18 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
     phoneCode: '963',
     isoCode: 'SY',
   );
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> zoz
   // Store phone number without country code
   String _phoneNumberWithoutCode = '';
 
   // List of available countries
   final List<Country> _countries = [
     Country(name: 'Syria', flagEmoji: '🇸🇾', phoneCode: '963', isoCode: 'SY'),
+<<<<<<< HEAD
     Country(
         name: 'Saudi Arabia',
         flagEmoji: '🇸🇦',
@@ -80,6 +89,16 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
     Country(name: 'Jordan', flagEmoji: '🇯🇴', phoneCode: '962', isoCode: 'JO'),
     Country(
         name: 'Lebanon', flagEmoji: '🇱🇧', phoneCode: '961', isoCode: 'LB'),
+=======
+    Country(name: 'Saudi Arabia', flagEmoji: '🇸🇦', phoneCode: '966', isoCode: 'SA'),
+    Country(name: 'United Arab Emirates', flagEmoji: '🇦🇪', phoneCode: '971', isoCode: 'AE'),
+    Country(name: 'Kuwait', flagEmoji: '🇰🇼', phoneCode: '965', isoCode: 'KW'),
+    Country(name: 'Qatar', flagEmoji: '🇶🇦', phoneCode: '974', isoCode: 'QA'),
+    Country(name: 'Bahrain', flagEmoji: '🇧🇭', phoneCode: '973', isoCode: 'BH'),
+    Country(name: 'Oman', flagEmoji: '🇴🇲', phoneCode: '968', isoCode: 'OM'),
+    Country(name: 'Jordan', flagEmoji: '🇯🇴', phoneCode: '962', isoCode: 'JO'),
+    Country(name: 'Lebanon', flagEmoji: '🇱🇧', phoneCode: '961', isoCode: 'LB'),
+>>>>>>> zoz
     Country(name: 'Iraq', flagEmoji: '🇮🇶', phoneCode: '964', isoCode: 'IQ'),
     Country(name: 'Egypt', flagEmoji: '🇪🇬', phoneCode: '20', isoCode: 'EG'),
     Country(name: 'Turkey', flagEmoji: '🇹🇷', phoneCode: '90', isoCode: 'TR'),
@@ -87,7 +106,10 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
 
   void _showCountryPicker(BuildContext context) {
     showModalBottomSheet(
+<<<<<<< HEAD
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+=======
+>>>>>>> zoz
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -97,7 +119,11 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
             children: [
               Text(
                 'Select Country',
+<<<<<<< HEAD
                 style: AppTextStyles.s16w600.withThemeColor(context),
+=======
+                style: AppTextStyles.s16w600,
+>>>>>>> zoz
               ),
               SizedBox(height: 16.h),
               Expanded(
@@ -108,6 +134,7 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                     return ListTile(
                       leading: Text(
                         country.flagEmoji,
+<<<<<<< HEAD
                         style: AppTextStyles.s20w400.withThemeColor(context),
                       ),
                       title: Text(
@@ -117,15 +144,32 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                       subtitle: Text(
                         '+${country.phoneCode}',
                         style: AppTextStyles.s14w400.withThemeColor(context),
+=======
+                        style: AppTextStyles.s20w400,
+                      ),
+                      title: Text(
+                        country.name,
+                        style: AppTextStyles.s16w400,
+                      ),
+                      subtitle: Text(
+                        '+${country.phoneCode}',
+                        style: AppTextStyles.s14w400,
+>>>>>>> zoz
                       ),
                       onTap: () {
                         setState(() {
                           _selectedCountry = country;
                         });
+<<<<<<< HEAD
 
                         if (_phoneNumberWithoutCode.isNotEmpty) {
                           String fullPhoneNumber =
                               '+${country.phoneCode}$_phoneNumberWithoutCode';
+=======
+                        
+                        if (_phoneNumberWithoutCode.isNotEmpty) {
+                          String fullPhoneNumber = '+${country.phoneCode}$_phoneNumberWithoutCode';
+>>>>>>> zoz
                           print('📱 Updated phone number: $fullPhoneNumber');
                           widget.onPhoneChanged(fullPhoneNumber);
                         }
@@ -153,7 +197,12 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
           style: AppTextStyles.s16w400,
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.person_outline, color: AppColors.primary),
+<<<<<<< HEAD
             hintText: AppLocalizations.of(context)?.translate('username') ??
+=======
+            hintText:
+                AppLocalizations.of(context)?.translate('username') ??
+>>>>>>> zoz
                 'Username',
             hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
             border: OutlineInputBorder(
@@ -204,8 +253,12 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
               GestureDetector(
                 onTap: () => _showCountryPicker(context),
                 child: Container(
+<<<<<<< HEAD
                   padding:
                       EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+=======
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+>>>>>>> zoz
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -228,14 +281,22 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                   ),
                 ),
               ),
+<<<<<<< HEAD
 
+=======
+              
+>>>>>>> zoz
               // Divider
               Container(
                 height: 40.h,
                 width: 1,
                 color: AppColors.gray,
               ),
+<<<<<<< HEAD
 
+=======
+              
+>>>>>>> zoz
               // Phone Number Input
               Expanded(
                 child: TextFormField(
@@ -243,6 +304,7 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                   focusNode: widget.params.phonenumberNode,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
+<<<<<<< HEAD
                       return AppLocalizations.of(context)
                               ?.translate('phoneRequired') ??
                           'Phone number is required';
@@ -251,12 +313,19 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                       return AppLocalizations.of(context)
                               ?.translate('phoneInvalid') ??
                           'Phone number is too short';
+=======
+                      return AppLocalizations.of(context)?.translate('phoneRequired') ?? 'Phone number is required';
+                    }
+                    if (value.length < 9) {
+                      return AppLocalizations.of(context)?.translate('phoneInvalid') ?? 'Phone number is too short';
+>>>>>>> zoz
                     }
                     return null;
                   },
                   keyboardType: TextInputType.phone,
                   style: AppTextStyles.s16w400,
                   decoration: InputDecoration(
+<<<<<<< HEAD
                     fillColor: Colors.white,
                     filled: true,
                     hintText: AppLocalizations.of(context)
@@ -266,19 +335,33 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                     border: InputBorder.none,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+=======
+                    hintText: AppLocalizations.of(context)?.translate('phoneNumber') ?? 'Phone Number',
+                    hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+>>>>>>> zoz
                   ),
                   onChanged: (value) {
                     print('📱 Phone field changed: $value');
                     _phoneNumberWithoutCode = value;
+<<<<<<< HEAD
                     String fullPhoneNumber =
                         '+${_selectedCountry.phoneCode}$value';
+=======
+                    String fullPhoneNumber = '+${_selectedCountry.phoneCode}$value';
+>>>>>>> zoz
                     print('📱 Full phone number: $fullPhoneNumber');
                     print('📱 Calling onPhoneChanged callback');
                     widget.onPhoneChanged(fullPhoneNumber);
                   },
                   onFieldSubmitted: (value) {
+<<<<<<< HEAD
                     FocusScope.of(context)
                         .requestFocus(widget.params.passwordNode);
+=======
+                    FocusScope.of(context).requestFocus(widget.params.passwordNode);
+>>>>>>> zoz
                   },
                 ),
               ),
@@ -305,7 +388,12 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                 });
               },
             ),
+<<<<<<< HEAD
             hintText: AppLocalizations.of(context)?.translate('password') ??
+=======
+            hintText:
+                AppLocalizations.of(context)?.translate('password') ??
+>>>>>>> zoz
                 'Password',
             hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
             border: OutlineInputBorder(
@@ -336,8 +424,12 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
             widget.onPasswordChanged!(value);
           },
           onFieldSubmitted: (value) {
+<<<<<<< HEAD
             FocusScope.of(context)
                 .requestFocus(widget.params.confirmPasswordNode);
+=======
+            FocusScope.of(context).requestFocus(widget.params.confirmPasswordNode);
+>>>>>>> zoz
           },
         ),
         SizedBox(height: 18.h),
@@ -364,7 +456,11 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
             ),
             hintText:
                 AppLocalizations.of(context)?.translate('confirmPassword') ??
+<<<<<<< HEAD
                     'Confirm Password',
+=======
+                'Confirm Password',
+>>>>>>> zoz
             hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),

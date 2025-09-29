@@ -6,8 +6,11 @@ class CarsBrandList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     final brands = [
       'assets/images/bmw_logo.png',
       // 'assets/images/suzuki_logo.png',
@@ -34,11 +37,19 @@ class CarsBrandList extends StatelessWidget {
         itemBuilder: (context, index) {
           return CircleAvatar(
             radius: 24.r,
+<<<<<<< HEAD
             backgroundColor: isDark ? Color(0xFF2A2A2A) : Colors.white,
+=======
+            backgroundColor: Colors.white,
+>>>>>>> zoz
             backgroundImage: AssetImage(brands[index]),
           );
         },
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+} 
+>>>>>>> zoz

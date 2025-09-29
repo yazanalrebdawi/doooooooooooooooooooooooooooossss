@@ -7,17 +7,41 @@ import '../../../../core/constants/app_config.dart';
 import '../../data/models/service_model.dart';
 import '../manager/maps_cubit.dart';
 import '../manager/maps_state.dart';
+<<<<<<< HEAD
 class NearbyServicesMapStateless extends StatelessWidget {
   final List<ServiceModel> services;
 
   const NearbyServicesMapStateless({super.key, required this.services});
+=======
+
+class NearbyServicesMapStateless extends StatelessWidget {
+  final List<ServiceModel> services;
+
+  const NearbyServicesMapStateless({
+    super.key,
+    required this.services,
+  });
+>>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => MapsCubit()..initializeMap(services),
+<<<<<<< HEAD
       child: SizedBox(
         height: 200.h,
+=======
+      child: Container(
+        height: 200.h,
+        margin: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: AppColors.gray.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+>>>>>>> zoz
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16.r),
           child: BlocBuilder<MapsCubit, MapsState>(
@@ -31,7 +55,13 @@ class NearbyServicesMapStateless extends StatelessWidget {
                 return Container(
                   color: AppColors.gray.withOpacity(0.1),
                   child: const Center(
+<<<<<<< HEAD
                     child: CircularProgressIndicator(color: AppColors.primary),
+=======
+                    child: CircularProgressIndicator(
+                      color: AppColors.primary,
+                    ),
+>>>>>>> zoz
                   ),
                 );
               }
@@ -43,6 +73,7 @@ class NearbyServicesMapStateless extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+<<<<<<< HEAD
                         Icon(Icons.map_outlined, color: AppColors.gray, size: 48.sp),
                         SizedBox(height: 8.h),
                         Text('Map unavailable', style: TextStyle(color: AppColors.gray, fontSize: 14.sp)),
@@ -50,6 +81,25 @@ class NearbyServicesMapStateless extends StatelessWidget {
                         TextButton(
                           onPressed: () => context.read<MapsCubit>().refreshMap(),
                           child: const Text('Retry'),
+=======
+                        Icon(
+                          Icons.map_outlined,
+                          color: AppColors.gray,
+                          size: 48.sp,
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          'Map unavailable',
+                          style: TextStyle(
+                            color: AppColors.gray,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        TextButton(
+                          onPressed: () => context.read<MapsCubit>().refreshMap(),
+                          child: Text('Retry'),
+>>>>>>> zoz
                         ),
                       ],
                     ),
@@ -58,7 +108,13 @@ class NearbyServicesMapStateless extends StatelessWidget {
               }
 
               return GoogleMap(
+<<<<<<< HEAD
                 onMapCreated: context.read<MapsCubit>().setMapController,
+=======
+                onMapCreated: (GoogleMapController controller) {
+                  context.read<MapsCubit>().setMapController(controller);
+                },
+>>>>>>> zoz
                 initialCameraPosition: CameraPosition(
                   target: state.userLocation != null
                       ? LatLng(state.userLocation!.latitude, state.userLocation!.longitude)
@@ -79,4 +135,8 @@ class NearbyServicesMapStateless extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> zoz

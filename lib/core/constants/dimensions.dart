@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+=======
+
+>>>>>>> zoz
 
 class AppDimensions {
   // Card Dimensions

@@ -11,6 +11,7 @@ class MapsCubit extends OptimizedCubit<MapsState> {
 
   void initializeMap(List<ServiceModel> services) async {
     safeEmit(state.copyWith(isLoading: true, services: services));
+<<<<<<< HEAD
     
     try {
       // Get user location
@@ -19,6 +20,16 @@ class MapsCubit extends OptimizedCubit<MapsState> {
       // Create markers
       final markers = <Marker>{};
       
+=======
+
+    try {
+      // Get user location
+      final position = await LocationService.getLocationWithFallback();
+
+      // Create markers
+      final markers = <Marker>{};
+
+>>>>>>> zoz
       // User location marker
       markers.add(
         Marker(
@@ -35,9 +46,16 @@ class MapsCubit extends OptimizedCubit<MapsState> {
       // Service markers (limit to first 6 for better visibility)
       for (int i = 0; i < services.length && i < 6; i++) {
         final service = services[i];
+<<<<<<< HEAD
         final isMechanic = service.type.toLowerCase().contains('mechanic') ||
                           service.name.toLowerCase().contains('garage') ||
                           service.name.toLowerCase().contains('repair');
+=======
+        final isMechanic =
+            service.type.toLowerCase().contains('mechanic') ||
+            service.name.toLowerCase().contains('garage') ||
+            service.name.toLowerCase().contains('repair');
+>>>>>>> zoz
 
         markers.add(
           Marker(
@@ -45,14 +63,23 @@ class MapsCubit extends OptimizedCubit<MapsState> {
             position: LatLng(service.lat, service.lon),
             infoWindow: InfoWindow(
               title: service.name,
+<<<<<<< HEAD
               snippet: '${service.address}\n${MapsService.formatDistance(service.distance ?? 0)}',
             ),
             icon: BitmapDescriptor.defaultMarkerWithHue(
               isMechanic ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen
+=======
+              snippet:
+                  '${service.address}\n${MapsService.formatDistance(service.distance ?? 0)}',
+            ),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              isMechanic ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen,
+>>>>>>> zoz
             ),
           ),
         );
       }
+<<<<<<< HEAD
       
       safeEmit(state.copyWith(
         userLocation: position,
@@ -70,6 +97,27 @@ class MapsCubit extends OptimizedCubit<MapsState> {
       ));
     }
   }
+=======
+
+      safeEmit(
+        state.copyWith(
+          userLocation: position,
+          markers: markers,
+          isLoading: false,
+          error: null,
+        ),
+      );
+
+      print('✅ MapsCubit: Map initialized with ${markers.length} markers');
+    } catch (e) {
+      print('❌ MapsCubit: Error initializing map: $e');
+      safeEmit(
+        state.copyWith(isLoading: false, error: 'Failed to load map: $e'),
+      );
+    }
+  }
+  //! Done
+>>>>>>> zoz
 
   void setMapController(GoogleMapController controller) {
     safeEmit(state.copyWith(mapController: controller));
@@ -78,10 +126,18 @@ class MapsCubit extends OptimizedCubit<MapsState> {
   void clearError() {
     safeEmit(state.copyWith(error: null));
   }
+<<<<<<< HEAD
+=======
+  //! Done
+>>>>>>> zoz
 
   void refreshMap() {
     if (state.services.isNotEmpty) {
       initializeMap(state.services);
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> zoz

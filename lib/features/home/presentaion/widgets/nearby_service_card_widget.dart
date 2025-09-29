@@ -3,6 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../data/models/service_model.dart';
+<<<<<<< HEAD
+=======
+import '../../../../core/services/location_service.dart';
+>>>>>>> zoz
 import '../../../../core/localization/app_localizations.dart';
 
 class NearbyServiceCardWidget extends StatelessWidget {
@@ -19,7 +23,12 @@ class NearbyServiceCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isMechanic = service.type.toLowerCase().contains('mechanic') ||
+=======
+    final isMechanic =
+        service.type.toLowerCase().contains('mechanic') ||
+>>>>>>> zoz
         service.name.toLowerCase().contains('garage') ||
         service.name.toLowerCase().contains('repair');
 
@@ -40,12 +49,21 @@ class NearbyServiceCardWidget extends StatelessWidget {
         ],
       ),
       child: Column(
+<<<<<<< HEAD
         children: [
           // Top row: icon, info, status
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Service Icon
+=======
+        // mainAxisSize: MainAxisSize.min,
+        children: [
+          // Service Icon - مطابق للتصميم
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+>>>>>>> zoz
               Container(
                 width: 56.w,
                 height: 56.h,
@@ -59,6 +77,7 @@ class NearbyServiceCardWidget extends StatelessWidget {
                   size: 28.sp,
                 ),
               ),
+<<<<<<< HEAD
               SizedBox(width: 12.w),
 
               // Service Info
@@ -118,15 +137,70 @@ class NearbyServiceCardWidget extends StatelessWidget {
                   ),
                 ],
               ),
+=======
+              Column(
+                children: [
+                  Text(
+                    service.name,
+                    style: AppTextStyles.blackS16W600.copyWith(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  Text(
+                    '${_calculateDistance()} ${AppLocalizations.of(context)!.translate('kmAway')}',
+                    style: AppTextStyles.secondaryS14W400.copyWith(
+                      color: AppColors.gray,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  Text(
+                    service.type,
+                    style: AppTextStyles.secondaryS12W400.copyWith(
+                      color: AppColors.gray,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                service.openNow
+                    ? AppLocalizations.of(context)!.translate('open')
+                    : AppLocalizations.of(context)!.translate('closed'),
+                style: AppTextStyles.secondaryS12W400.copyWith(
+                  color: service.openNow ? Colors.green : Colors.red,
+                  fontSize: 12.sp,
+                ),
+              ),
+
+              Container(
+                width: 8.w,
+                height: 8.h,
+                decoration: BoxDecoration(
+                  color: service.openNow ? Colors.green : Colors.red,
+                  shape: BoxShape.circle,
+                ),
+              ),
+>>>>>>> zoz
             ],
           ),
 
           Spacer(),
+<<<<<<< HEAD
 
           // Bottom row: action buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+=======
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Show on Map Button
+>>>>>>> zoz
               SizedBox(
                 width: 120.w,
                 height: 35.h,
@@ -151,7 +225,14 @@ class NearbyServiceCardWidget extends StatelessWidget {
                   ),
                 ),
               ),
+<<<<<<< HEAD
               SizedBox(width: 8.w),
+=======
+
+              SizedBox(width: 8.w),
+
+              // More Details Button
+>>>>>>> zoz
               SizedBox(
                 width: 120.w,
                 height: 35.h,
@@ -187,7 +268,12 @@ class NearbyServiceCardWidget extends StatelessWidget {
   }
 
   String _calculateDistance() {
+<<<<<<< HEAD
     // Mock distance for now
+=======
+    // For now, return a mock distance
+    // In real implementation, calculate distance from user location to service location
+>>>>>>> zoz
     final distances = ['1.2', '2.1', '3.5', '4.2', '0.8', '1.9'];
     final randomIndex = service.id % distances.length;
     return distances[randomIndex];

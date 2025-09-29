@@ -35,13 +35,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
+<<<<<<< HEAD
       create: (context) => sl<AuthCubit>(),
+=======
+      create: (context) => appLocator<AuthCubit>(),
+>>>>>>> zoz
       child: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           print('🔍 Register Screen - Auth State: ${state.checkAuthState}');
           print('🔍 Register Screen - Loading: ${state.isLoading}');
           print('🔍 Register Screen - Error: ${state.error}');
           print('🔍 Register Screen - Success: ${state.success}');
+<<<<<<< HEAD
 
           if (state.checkAuthState == CheckAuthState.success) {
             print('✅ Register Success - Navigating to OTP page');
@@ -52,18 +57,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   "Account created successfully!",
             );
 
+=======
+          
+          if (state.checkAuthState == CheckAuthState.success) {
+            print('✅ Register Success - Navigating to OTP page');
+            ScaffoldMessenger.of(context).showSnackBar(customAppSnackBar(
+              AppLocalizations.of(context)?.translate('accountCreated') ?? "Account created successfully!", 
+              context
+            ));
+            
+>>>>>>> zoz
             // تأخير قصير ثم الانتقال
             Future.delayed(const Duration(milliseconds: 500), () {
               // إرسال رقم الهاتف كما هو بدون تحويل
               print('📱 Phone Number: ${_params.fullPhoneNumber}');
               print('🚀 Navigating to: ${RouteNames.verifyRegisterOtpPage}');
+<<<<<<< HEAD
 
               context.go(RouteNames.verifyRegisterOtpPage,
                   extra: _params.fullPhoneNumber);
+=======
+              
+              context.go(RouteNames.verifyRegisterOtpPage, extra: _params.fullPhoneNumber);
+>>>>>>> zoz
             });
           }
           if (state.checkAuthState == CheckAuthState.error) {
             print('❌ Register Error: ${state.error}');
+<<<<<<< HEAD
 
             sl<ToastNotification>().showErrorMessage(
               context,
@@ -71,10 +92,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   AppLocalizations.of(context)?.translate('operationFailed') ??
                   "Operation failed",
             );
+=======
+            ScaffoldMessenger.of(context).showSnackBar(customAppSnackBar(
+              state.error ?? AppLocalizations.of(context)?.translate('operationFailed') ?? "Operation failed", 
+              context,
+            ));
+>>>>>>> zoz
           }
         },
         builder: (context, state) {
           return Scaffold(
+<<<<<<< HEAD
+=======
+            backgroundColor: AppColors.background,
+>>>>>>> zoz
             body: SafeArea(
               child: SingleChildScrollView(
                 child: Padding(
@@ -87,6 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const RegisterScreenHeaderSection(),
                         RegisterScreenFormFields(
                           params: _params,
+<<<<<<< HEAD
                           onFullNameChanged: (username) {},
                           onPhoneChanged: (phone) {
                             print(
@@ -96,6 +128,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           onPasswordChanged: (password) {},
                           onConfirmPasswordChanged: (confirmPassword) {},
+=======
+                          onFullNameChanged: (username) {
+                            
+                          },
+                          onPhoneChanged: (phone) {
+                            print('📞 Register Screen - Full phone number: $phone');
+                            // تخزين الرقم الكامل في CreateAccountParams
+                            _params.fullPhoneNumber = phone;
+                          },
+                          onPasswordChanged: (password) {
+                            
+                          },
+                          onConfirmPasswordChanged: (confirmPassword) {
+                            
+                          },
+>>>>>>> zoz
                         ),
                         SizedBox(height: 18.h),
                         RegisterScreenButtonsSection(

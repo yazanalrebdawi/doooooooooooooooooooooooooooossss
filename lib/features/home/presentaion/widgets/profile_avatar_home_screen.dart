@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> zoz
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -22,6 +26,7 @@ class ProfileAvatarHomeScreen extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
+<<<<<<< HEAD
           GestureDetector(
             onTap: onPressed,
             child: Container(
@@ -35,6 +40,19 @@ class ProfileAvatarHomeScreen extends StatelessWidget {
                 radius: size.r / 2,
                 backgroundImage: AssetImage(AppAssets.fakeImg),
               ),
+=======
+          Container(
+            width: size.w,
+            height: size.h,
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.primary, width: 2),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: CircleAvatar(
+              radius: size.r/2,
+              backgroundImage:AssetImage(AppAssets.fakeImg),
+
+>>>>>>> zoz
             ),
           ),
 
@@ -49,7 +67,11 @@ class ProfileAvatarHomeScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF10B981),
                   shape: BoxShape.circle,
+<<<<<<< HEAD
                   border: Border.all(color: AppColors.white, width: 2.0),
+=======
+                  border: Border.all(color: Colors.white, width: 2.0),
+>>>>>>> zoz
                 ),
               ),
             ),

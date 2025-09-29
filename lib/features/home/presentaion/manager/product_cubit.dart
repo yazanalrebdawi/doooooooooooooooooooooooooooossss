@@ -5,11 +5,16 @@ import 'package:dooss_business_app/features/home/data/data_source/product_remote
 // Cubit
 class ProductCubit extends OptimizedCubit<ProductState> {
   final ProductRemoteDataSource dataSource;
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> zoz
   ProductCubit(this.dataSource) : super(const ProductState());
 
   void loadProducts() async {
     safeEmit(state.copyWith(isLoading: true, error: null));
+<<<<<<< HEAD
     
     final result = await dataSource.fetchProducts();
     
@@ -28,25 +33,60 @@ class ProductCubit extends OptimizedCubit<ProductState> {
           allProducts: allProducts,
           isLoading: false,
         ));
+=======
+
+    final result = await dataSource.fetchProducts();
+
+    result.fold(
+      (failure) {
+        safeEmit(state.copyWith(error: failure.message, isLoading: false));
+      },
+      (allProducts) {
+        final homeProducts = allProducts.take(10).toList();
+
+        batchEmit(
+          (currentState) => currentState.copyWith(
+            products: homeProducts,
+            allProducts: allProducts,
+            isLoading: false,
+          ),
+        );
+>>>>>>> zoz
       },
     );
   }
 
+<<<<<<< HEAD
+=======
+  //! Done
+>>>>>>> zoz
   void loadAllProducts() async {
     // If we already have all products, use them
     if (state.allProducts.isNotEmpty) {
       final first8Products = state.allProducts.take(8).toList();
+<<<<<<< HEAD
       emitOptimized(state.copyWith(
         filteredProducts: state.allProducts,
         displayedProducts: first8Products,
         selectedCategory: 'All',
         hasMoreProducts: state.allProducts.length > 8,
       ));
+=======
+      emitOptimized(
+        state.copyWith(
+          filteredProducts: state.allProducts,
+          displayedProducts: first8Products,
+          selectedCategory: 'All',
+          hasMoreProducts: state.allProducts.length > 8,
+        ),
+      );
+>>>>>>> zoz
       return;
     }
 
     // Otherwise, fetch from API
     safeEmit(state.copyWith(isLoading: true, error: null));
+<<<<<<< HEAD
     
     final result = await dataSource.fetchProducts();
     
@@ -68,6 +108,28 @@ class ProductCubit extends OptimizedCubit<ProductState> {
           hasMoreProducts: allProducts.length > 8,
           isLoading: false,
         ));
+=======
+
+    final result = await dataSource.fetchProducts();
+
+    result.fold(
+      (failure) {
+        safeEmit(state.copyWith(error: failure.message, isLoading: false));
+      },
+      (allProducts) {
+        final first8Products = allProducts.take(8).toList();
+
+        batchEmit(
+          (currentState) => currentState.copyWith(
+            allProducts: allProducts,
+            filteredProducts: allProducts,
+            displayedProducts: first8Products,
+            selectedCategory: 'All',
+            hasMoreProducts: allProducts.length > 8,
+            isLoading: false,
+          ),
+        );
+>>>>>>> zoz
       },
     );
   }
@@ -78,6 +140,7 @@ class ProductCubit extends OptimizedCubit<ProductState> {
     emitOptimized(state.copyWith(products: homeProducts));
   }
 
+<<<<<<< HEAD
   void filterByCategory(String category) {
     if (category == 'All') {
       final first8Products = state.allProducts.take(8).toList();
@@ -140,6 +203,80 @@ class ProductCubit extends OptimizedCubit<ProductState> {
           isLoading: false,
         ));
         
+=======
+  //! Done
+  void filterByCategory(String category) {
+    if (category == 'All') {
+      final first8Products = state.allProducts.take(8).toList();
+      emitOptimized(
+        state.copyWith(
+          filteredProducts: state.allProducts,
+          displayedProducts: first8Products,
+          selectedCategory: category,
+          hasMoreProducts: state.allProducts.length > 8,
+        ),
+      );
+    } else {
+      // Filter products by category (mock filtering for now)
+      final filteredProducts =
+          state.allProducts.where((product) {
+            // Mock category filtering - in real app, this would be based on product.category
+            return product.name.toLowerCase().contains(
+                  category.toLowerCase(),
+                ) ||
+                product.description.toLowerCase().contains(
+                  category.toLowerCase(),
+                );
+          }).toList();
+
+      final first8Products = filteredProducts.take(8).toList();
+      emitOptimized(
+        state.copyWith(
+          filteredProducts: filteredProducts,
+          displayedProducts: first8Products,
+          selectedCategory: category,
+          hasMoreProducts: filteredProducts.length > 8,
+        ),
+      );
+    }
+  }
+  //! Done
+
+  void loadMoreProducts() {
+    if (state.isLoadingMore || !state.hasMoreProducts) return;
+
+    safeEmit(state.copyWith(isLoadingMore: true));
+
+    final currentDisplayedCount = state.displayedProducts.length;
+    final next8Products =
+        state.filteredProducts.skip(currentDisplayedCount).take(8).toList();
+    final newDisplayedProducts = [...state.displayedProducts, ...next8Products];
+
+    batchEmit(
+      (currentState) => currentState.copyWith(
+        displayedProducts: newDisplayedProducts,
+        hasMoreProducts:
+            newDisplayedProducts.length < state.filteredProducts.length,
+        isLoadingMore: false,
+      ),
+    );
+  }
+
+  //! Done
+  void loadProductDetails(int productId) async {
+    safeEmit(state.copyWith(isLoading: true, error: null));
+
+    final productResult = await dataSource.fetchProductDetails(productId);
+
+    productResult.fold(
+      (failure) {
+        safeEmit(state.copyWith(error: failure.message, isLoading: false));
+      },
+      (product) async {
+        // First emit the main product details immediately
+        safeEmit(state.copyWith(selectedProduct: product, isLoading: false));
+
+>>>>>>> zoz
         // Then load additional data asynchronously
         _loadAdditionalProductData(productId);
       },
@@ -155,9 +292,17 @@ class ProductCubit extends OptimizedCubit<ProductState> {
   /// Load additional product data (related products and reviews) safely
   Future<void> _loadAdditionalProductData(int productId) async {
     // Load related products and reviews in parallel
+<<<<<<< HEAD
     final relatedProductsResult = await dataSource.fetchRelatedProducts(productId);
     final reviewsResult = await dataSource.fetchProductReviews(productId);
     
+=======
+    final relatedProductsResult = await dataSource.fetchRelatedProducts(
+      productId,
+    );
+    final reviewsResult = await dataSource.fetchProductReviews(productId);
+
+>>>>>>> zoz
     // Only emit if cubit is still active
     if (!isClosed) {
       relatedProductsResult.fold(
@@ -170,9 +315,13 @@ class ProductCubit extends OptimizedCubit<ProductState> {
             },
             (reviews) {
               // Only related products failed
+<<<<<<< HEAD
               safeEmit(state.copyWith(
                 productReviews: reviews,
               ));
+=======
+              safeEmit(state.copyWith(productReviews: reviews));
+>>>>>>> zoz
             },
           );
         },
@@ -180,6 +329,7 @@ class ProductCubit extends OptimizedCubit<ProductState> {
           reviewsResult.fold(
             (reviewFailure) {
               // Only reviews failed
+<<<<<<< HEAD
               safeEmit(state.copyWith(
                 relatedProducts: relatedProducts,
               ));
@@ -190,6 +340,18 @@ class ProductCubit extends OptimizedCubit<ProductState> {
                 relatedProducts: relatedProducts,
                 productReviews: reviews,
               ));
+=======
+              safeEmit(state.copyWith(relatedProducts: relatedProducts));
+            },
+            (reviews) {
+              // Everything succeeded
+              batchEmit(
+                (currentState) => currentState.copyWith(
+                  relatedProducts: relatedProducts,
+                  productReviews: reviews,
+                ),
+              );
+>>>>>>> zoz
             },
           );
         },

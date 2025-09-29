@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 
+=======
+import 'dart:developer';
+>>>>>>> zoz
 
 import 'package:dooss_business_app/features/auth/data/models/user_model.dart';
 import '../../../../core/services/token_service.dart';
 
 class AuthResponceModel {
+<<<<<<< HEAD
     final String message;
     final UserModel user;
     final String token;
@@ -32,6 +37,35 @@ class AuthResponceModel {
             refreshToken: refreshToken ?? this.refreshToken,
             expiry: expiry ?? this.expiry,
         );
+=======
+  final String message;
+  final UserModel user;
+  final String token;
+  final String? refreshToken;
+  final DateTime? expiry;
+
+  AuthResponceModel({
+    required this.message,
+    required this.user,
+    required this.token,
+    this.refreshToken,
+    this.expiry,
+  });
+
+  AuthResponceModel copyWith({
+    String? message,
+    UserModel? user,
+    String? token,
+    String? refreshToken,
+    DateTime? expiry,
+  }) => AuthResponceModel(
+    message: message ?? this.message,
+    user: user ?? this.user,
+    token: token ?? this.token,
+    refreshToken: refreshToken ?? this.refreshToken,
+    expiry: expiry ?? this.expiry,
+  );
+>>>>>>> zoz
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -47,6 +81,7 @@ class AuthResponceModel {
     final accessToken = map['access'] ?? '';
     final tokenField = map['token'] ?? '';
     final finalToken = accessToken.isNotEmpty ? accessToken : tokenField;
+<<<<<<< HEAD
     
     // استخراج الـ refresh token
     final refreshToken = map['refresh'] ?? '';
@@ -72,6 +107,33 @@ class AuthResponceModel {
       print('💾 AuthResponceModel - Tokens saved automatically');
     }
     
+=======
+
+    // استخراج الـ refresh token
+    final refreshToken = map['refresh'] ?? '';
+
+    // حساب تاريخ انتهاء الصلاحية (افتراضياً ساعة واحدة من الآن)
+    final expiry = DateTime.now().add(const Duration(hours: 1));
+
+    log('🔍 AuthResponceModel - Raw map keys: ${map.keys.toList()}');
+    log('🔍 AuthResponceModel - Access token: $accessToken');
+    log('🔍 AuthResponceModel - Token field: $tokenField');
+    log('🔍 AuthResponceModel - Final token: $finalToken');
+    log('🔍 AuthResponceModel - Token length: ${finalToken.length}');
+    log('🔍 AuthResponceModel - Refresh token: $refreshToken');
+    log('🔍 AuthResponceModel - Expiry: $expiry');
+
+    
+    if (finalToken.isNotEmpty) {
+      TokenService.saveAllTokens(
+        accessToken: finalToken,
+        refreshToken: refreshToken.isNotEmpty ? refreshToken : finalToken,
+        expiry: expiry,
+      );
+      log('💾 AuthResponceModel - Tokens saved automatically');
+    }
+
+>>>>>>> zoz
     return AuthResponceModel(
       message: map['message'] ?? '',
       user: UserModel.fromJson(map['user'] ?? {}),

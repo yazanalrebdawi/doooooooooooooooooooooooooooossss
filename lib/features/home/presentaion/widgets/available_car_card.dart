@@ -19,12 +19,16 @@ class AvailableCarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return GestureDetector(
       onTap: onTap,
       child: Card(
         margin: EdgeInsets.zero,
+<<<<<<< HEAD
         shadowColor: isDark
             ? Colors.black.withOpacity(0.4)
             : AppColors.cardShadow,
@@ -33,11 +37,21 @@ class AvailableCarCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius:
               BorderRadius.circular(AppDimensions.defaultBorderRadius.r),
+=======
+        shadowColor: AppColors.cardShadow,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.defaultBorderRadius.r),
+>>>>>>> zoz
         ),
         child: Column(
           children: [
             _buildImage(),
+<<<<<<< HEAD
             _buildContent(context, isDark),
+=======
+            _buildContent(),
+>>>>>>> zoz
           ],
         ),
       ),
@@ -65,19 +79,33 @@ class AvailableCarCard extends StatelessWidget {
                 },
               )
             : Image(
+<<<<<<< HEAD
                 fit: BoxFit.cover,
                 image: AssetImage(AppAssets.bmwM3),
               ),
+=======
+          fit: BoxFit.cover,
+          image: AssetImage(AppAssets.bmwM3),
+        ),
+>>>>>>> zoz
       ),
     );
   }
 
+<<<<<<< HEAD
   Widget _buildContent(BuildContext context, bool isDark) {
+=======
+  Widget _buildContent() {
+>>>>>>> zoz
     return Container(
       width: AppDimensions.availableCardWidth.w,
       height: AppDimensions.availableCardContentHeight.h,
       padding: EdgeInsets.all(AppDimensions.defaultPadding.r),
+<<<<<<< HEAD
       color: isDark ? const Color(0xFF2A2A2A) : AppColors.cardBackground,
+=======
+      color: AppColors.cardBackground,
+>>>>>>> zoz
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -85,6 +113,7 @@ class AvailableCarCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+<<<<<<< HEAD
               _buildTitle(context, isDark),
               SizedBox(height: AppDimensions.smallPadding.h),
               _buildPrice(),
@@ -93,6 +122,16 @@ class AvailableCarCard extends StatelessWidget {
             ],
           ),
           _buildDetails(context, isDark),
+=======
+              _buildTitle(),
+              SizedBox(height: AppDimensions.smallPadding.h),
+              _buildPrice(),
+              SizedBox(height: AppDimensions.smallPadding.h),
+              _buildRating(),
+            ],
+          ),
+          _buildDetails(),
+>>>>>>> zoz
           SizedBox(height: AppDimensions.smallPadding.h),
           _buildViewDetailsButton(),
         ],
@@ -100,10 +139,17 @@ class AvailableCarCard extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildTitle(BuildContext context, bool isDark) {
     return Text(
       '${car.brand} ${car.name}',
       style: AppTextStyles.blackS14W500.withThemeColor(context),
+=======
+  Widget _buildTitle() {
+    return Text(
+      '${car.brand} ${car.name}',
+      style: AppTextStyles.blackS14W500,
+>>>>>>> zoz
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
@@ -116,33 +162,53 @@ class AvailableCarCard extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildRating(BuildContext context, bool isDark) {
+=======
+  Widget _buildRating() {
+>>>>>>> zoz
     return Row(
       children: [
         Icon(
           Icons.star,
           color: AppColors.ratingStarColor,
+<<<<<<< HEAD
           size: AppDimensions.smallIconSize.r,
+=======
+          size: AppDimensions.smallIconSize.r
+>>>>>>> zoz
         ),
         SizedBox(width: AppDimensions.tinyPadding.w),
         Text(
           '4.5', // Default rating
+<<<<<<< HEAD
           style: AppTextStyles.ratingS12W400.copyWith(
             color: isDark ? Colors.white70 : AppColors.gray,
           ),
+=======
+          style: AppTextStyles.ratingS12W400,
+>>>>>>> zoz
         ),
       ],
     );
   }
 
+<<<<<<< HEAD
   Widget _buildDetails(BuildContext context, bool isDark) {
+=======
+  Widget _buildDetails() {
+>>>>>>> zoz
     return Row(
       children: [
         Text(
           '${car.mileage} • ${car.transmission}',
+<<<<<<< HEAD
           style: AppTextStyles.ratingS12W400.copyWith(
             color: isDark ? Colors.white70 : AppColors.gray,
           ),
+=======
+          style: AppTextStyles.ratingS12W400,
+>>>>>>> zoz
         ),
       ],
     );
@@ -164,4 +230,8 @@ class AvailableCarCard extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+} 
+>>>>>>> zoz

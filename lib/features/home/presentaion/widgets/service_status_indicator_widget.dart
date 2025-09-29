@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 
+<<<<<<< HEAD
 /// A small indicator showing whether a service is open or closed
+=======
+>>>>>>> zoz
 class ServiceStatusIndicatorWidget extends StatelessWidget {
   final bool isOpen;
 
@@ -16,9 +19,13 @@ class ServiceStatusIndicatorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
+<<<<<<< HEAD
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Status dot
+=======
+      children: [
+>>>>>>> zoz
         Container(
           width: 8.w,
           height: 8.h,
@@ -28,7 +35,10 @@ class ServiceStatusIndicatorWidget extends StatelessWidget {
           ),
         ),
         SizedBox(width: 4.w),
+<<<<<<< HEAD
         // Status text
+=======
+>>>>>>> zoz
         Text(
           isOpen ? 'Open' : 'Closed',
           style: AppTextStyles.secondaryS12W400.copyWith(

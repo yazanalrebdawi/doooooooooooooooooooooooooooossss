@@ -34,7 +34,11 @@ class WebSocketService {
     _accessToken = accessToken;
     _isConnecting = true;
     
+<<<<<<< HEAD
     final wsUrl = 'ws://192.168.1.129:8020/ws/chats/$chatId/?token=$accessToken';
+=======
+    final wsUrl = '${ApiUrls.wsBaseUrl}/ws/chats/$chatId/?token=$accessToken';
+>>>>>>> zoz
     print('🔌 WebSocket: Connecting to $wsUrl');
     
     try {
@@ -87,6 +91,10 @@ class WebSocketService {
     }
 
     final message = {
+<<<<<<< HEAD
+=======
+      'action': 'send',
+>>>>>>> zoz
       'text': text,
     };
 
@@ -101,6 +109,7 @@ class WebSocketService {
     }
   }
 
+<<<<<<< HEAD
 void _handleMessage(dynamic message) {
   try {
     if (message is String) {
@@ -120,6 +129,23 @@ void _handleMessage(dynamic message) {
   }
 }
 
+=======
+  void _handleMessage(dynamic message) {
+    try {
+      if (message is String) {
+        final data = jsonDecode(message);
+        print('📨 WebSocket: Parsed message: $data');
+        onMessageReceived?.call(data.toString());
+      } else {
+        print('📨 WebSocket: Raw message: $message');
+        onMessageReceived?.call(message.toString());
+      }
+    } catch (e) {
+      print('❌ WebSocket: Error parsing message: $e');
+      onError?.call('Error parsing message: $e');
+    }
+  }
+>>>>>>> zoz
 
   void dispose() {
     disconnect();
@@ -156,6 +182,9 @@ void _handleMessage(dynamic message) {
       'hasAccessToken': _accessToken != null && _accessToken!.isNotEmpty,
     };
   }
+<<<<<<< HEAD
 // bool get isSocketActive => _channel != null;
 
+=======
+>>>>>>> zoz
 }

@@ -270,6 +270,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
                       final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -277,11 +278,24 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : AppColors.black, size: 24.sp),
+=======
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppColors.black, size: 24.sp),
+>>>>>>> zoz
           onPressed: () => context.pop(),
         ),
         title: Text(
           'المسار إلى ${widget.service.name}',
+<<<<<<< HEAD
           style: AppTextStyles.blackS18W700.withThemeColor(context),
+=======
+          style: AppTextStyles.blackS18W700,
+>>>>>>> zoz
         ),
         centerTitle: true,
         actions: [
@@ -311,7 +325,11 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(
+<<<<<<< HEAD
                         color: isDark?Colors.white : AppColors.gray.withOpacity(0.2),
+=======
+                        color: AppColors.gray.withOpacity(0.2),
+>>>>>>> zoz
                         width: 1,
                       ),
                     ),
@@ -353,7 +371,11 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
                   margin: EdgeInsets.all(16.w),
                   padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
+<<<<<<< HEAD
                     color:isDark ?  AppColors.white : Colors.black,
+=======
+                    color: AppColors.white,
+>>>>>>> zoz
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
                       color: AppColors.gray.withOpacity(0.2),

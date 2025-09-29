@@ -19,10 +19,13 @@ class DealerProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : AppColors.black;
     final secondaryTextColor = isDark ? Colors.grey[400]! : AppColors.gray;
 
+=======
+>>>>>>> zoz
     if (dealer == null) {
       return const SizedBox.shrink();
     }
@@ -51,7 +54,11 @@ class DealerProfileHeader extends StatelessWidget {
                             return Icon(
                               Icons.person,
                               size: 40.sp,
+<<<<<<< HEAD
                               color: secondaryTextColor,
+=======
+                              color: AppColors.gray,
+>>>>>>> zoz
                             );
                           },
                         ),
@@ -59,7 +66,11 @@ class DealerProfileHeader extends StatelessWidget {
                     : Icon(
                         Icons.person,
                         size: 40.sp,
+<<<<<<< HEAD
                         color: secondaryTextColor,
+=======
+                        color: AppColors.gray,
+>>>>>>> zoz
                       ),
               ),
               SizedBox(width: 16.w),
@@ -74,7 +85,11 @@ class DealerProfileHeader extends StatelessWidget {
                         Text(
                           dealer!.name,
                           style: AppTextStyles.s18w700.copyWith(
+<<<<<<< HEAD
                             color: textColor,
+=======
+                            color: AppColors.black,
+>>>>>>> zoz
                           ),
                         ),
                         if (dealer!.isVerified) ...[
@@ -92,7 +107,11 @@ class DealerProfileHeader extends StatelessWidget {
                     Text(
                       dealer!.handle,
                       style: AppTextStyles.s14w400.copyWith(
+<<<<<<< HEAD
                         color: secondaryTextColor,
+=======
+                        color: AppColors.gray,
+>>>>>>> zoz
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -101,7 +120,11 @@ class DealerProfileHeader extends StatelessWidget {
                       Text(
                         dealer!.description!,
                         style: AppTextStyles.s14w400.copyWith(
+<<<<<<< HEAD
                           color: textColor,
+=======
+                          color: AppColors.black,
+>>>>>>> zoz
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -117,6 +140,7 @@ class DealerProfileHeader extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16.h),
+<<<<<<< HEAD
           // Statistics Row
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -137,6 +161,28 @@ class DealerProfileHeader extends StatelessWidget {
               ),
             ],
           ),
+=======
+                     // Statistics Row
+           Row(
+             mainAxisAlignment: MainAxisAlignment.center,
+             children: [
+               StatItemWidget(
+                 label: 'Reels',
+                 value: dealer!.reelsCount.toString(),
+               ),
+               SizedBox(width: 40.w),
+               StatItemWidget(
+                 label: 'Followers',
+                 value: _formatNumber(dealer!.followersCount),
+               ),
+               SizedBox(width: 40.w),
+               StatItemWidget(
+                 label: 'Following',
+                 value: dealer!.followingCount.toString(),
+               ),
+             ],
+           ),
+>>>>>>> zoz
           SizedBox(height: 16.h),
           // Action Buttons Row
           Row(
@@ -148,17 +194,25 @@ class DealerProfileHeader extends StatelessWidget {
                   child: Container(
                     height: 40.h,
                     decoration: BoxDecoration(
+<<<<<<< HEAD
                       color: dealer!.isFollowing
                           ? AppColors.gray.withOpacity(0.2)
                           : AppColors.primary,
+=======
+                      color: dealer!.isFollowing ? AppColors.gray.withOpacity(0.2) : AppColors.primary,
+>>>>>>> zoz
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Center(
                       child: Text(
                         dealer!.isFollowing ? 'Following' : 'Follow',
                         style: AppTextStyles.s14w500.copyWith(
+<<<<<<< HEAD
                           color:
                               dealer!.isFollowing ? textColor : AppColors.white,
+=======
+                          color: dealer!.isFollowing ? AppColors.black : AppColors.white,
+>>>>>>> zoz
                         ),
                       ),
                     ),
@@ -178,7 +232,11 @@ class DealerProfileHeader extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.chat_bubble_outline,
+<<<<<<< HEAD
                     color: textColor,
+=======
+                    color: AppColors.black,
+>>>>>>> zoz
                     size: 20.sp,
                   ),
                 ),
@@ -190,6 +248,30 @@ class DealerProfileHeader extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
+=======
+  Widget _buildStatItem(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: AppTextStyles.s18w700.copyWith(
+            color: AppColors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 4.h),
+        Text(
+          label,
+          style: AppTextStyles.s14w400.copyWith(
+            color: AppColors.gray,
+          ),
+        ),
+      ],
+    );
+  }
+
+>>>>>>> zoz
   String _formatNumber(int number) {
     if (number >= 1000) {
       double k = number / 1000;

@@ -23,6 +23,7 @@ class LoginScreen2OptionsSection extends StatelessWidget {
                 context.read<AuthCubit>().toggleRememberMe();
               },
               activeColor: AppColors.primary,
+<<<<<<< HEAD
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4)),
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -33,12 +34,21 @@ class LoginScreen2OptionsSection extends StatelessWidget {
               style: AppTextStyles.descriptionS18W400
                   .copyWith(fontSize: 14)
                   .withThemeColor(context),
+=======
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            Text(
+              AppLocalizations.of(context)?.translate('rememberMe') ?? 'Remember Me',
+              style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14),
+>>>>>>> zoz
             ),
             const Spacer(),
             TextButton(
               onPressed: () {
                 context.go(RouteNames.forgetPasswordPage);
               },
+<<<<<<< HEAD
               style: TextButton.styleFrom(
                   padding: EdgeInsets.zero, minimumSize: Size(0, 0)),
               child: Text(
@@ -46,6 +56,12 @@ class LoginScreen2OptionsSection extends StatelessWidget {
                     'Forgot Password?',
                 style: AppTextStyles.descriptionS18W400
                     .copyWith(fontSize: 14, color: AppColors.primary),
+=======
+              style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(0, 0)),
+              child: Text(
+                AppLocalizations.of(context)?.translate('ForgotPassword') ?? 'Forgot Password?',
+                style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14, color: AppColors.primary),
+>>>>>>> zoz
               ),
             ),
           ],
@@ -53,4 +69,8 @@ class LoginScreen2OptionsSection extends StatelessWidget {
       },
     );
   }
+<<<<<<< HEAD
 }
+=======
+} 
+>>>>>>> zoz

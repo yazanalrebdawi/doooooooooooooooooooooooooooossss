@@ -15,12 +15,19 @@ class ProductDetailsBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.white,
+=======
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+>>>>>>> zoz
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -65,10 +72,15 @@ class ProductDetailsBottomBar extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onCallPressed,
               style: ElevatedButton.styleFrom(
+<<<<<<< HEAD
                 backgroundColor: isDark
                     ? AppColors.gray.withOpacity(0.2)
                     : AppColors.gray.withOpacity(0.1),
                 foregroundColor: isDark ? AppColors.white : AppColors.black,
+=======
+                backgroundColor: AppColors.gray.withOpacity(0.1),
+                foregroundColor: AppColors.black,
+>>>>>>> zoz
                 padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
@@ -76,7 +88,11 @@ class ProductDetailsBottomBar extends StatelessWidget {
               ),
               child: Icon(
                 Icons.phone,
+<<<<<<< HEAD
                 color: isDark ? AppColors.white : AppColors.black,
+=======
+                color: AppColors.black,
+>>>>>>> zoz
                 size: 24.sp,
               ),
             ),

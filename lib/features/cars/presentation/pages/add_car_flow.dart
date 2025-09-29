@@ -54,7 +54,13 @@ class _AddCarFlowState extends State<AddCarFlow> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         elevation: 0,
+<<<<<<< HEAD
       ),
+=======
+        backgroundColor: Colors.white,
+      ),
+      backgroundColor: Colors.white,
+>>>>>>> zoz
       body: Column(
         children: [
           Expanded(
@@ -101,15 +107,22 @@ class _AddCarBottomSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
               final isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       child: Row(
         children: [
           Text(
             '$currentPage/$totalPages',
+<<<<<<< HEAD
             style: TextStyle(fontSize: 16.sp, color:isDark ? Colors.white : Colors.grey[600], fontWeight: FontWeight.w500),
+=======
+            style: TextStyle(fontSize: 16.sp, color: Colors.grey[600], fontWeight: FontWeight.w500),
+>>>>>>> zoz
           ),
           const Spacer(),
           GestureDetector(

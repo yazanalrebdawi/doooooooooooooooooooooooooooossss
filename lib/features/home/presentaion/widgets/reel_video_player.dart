@@ -16,12 +16,19 @@ class ReelVideoPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: double.infinity,
       height: double.infinity,
       color: isDark ? AppColors.black : AppColors.white,
+=======
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: AppColors.black,
+>>>>>>> zoz
       child: isCurrentReel && reel.video.isNotEmpty
           ? NativeVideoWidget(
               videoUrl: reel.video,
@@ -30,11 +37,19 @@ class ReelVideoPlayer extends StatelessWidget {
               muted: false,
               loop: true,
             )
+<<<<<<< HEAD
           : _buildPlaceholder(isDark),
     );
   }
 
   Widget _buildPlaceholder(bool isDark) {
+=======
+          : _buildPlaceholder(),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+>>>>>>> zoz
     return Container(
       color: AppColors.gray.withOpacity(0.2),
       child: Center(
@@ -43,14 +58,22 @@ class ReelVideoPlayer extends StatelessWidget {
           children: [
             Icon(
               Icons.video_library,
+<<<<<<< HEAD
               color: isDark ? AppColors.white : AppColors.black,
+=======
+              color: AppColors.white,
+>>>>>>> zoz
               size: 64.sp,
             ),
             SizedBox(height: 16.h),
             Text(
               reel.title,
               style: TextStyle(
+<<<<<<< HEAD
                 color: isDark ? AppColors.white : AppColors.black,
+=======
+                color: AppColors.white,
+>>>>>>> zoz
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
               ),
@@ -61,4 +84,8 @@ class ReelVideoPlayer extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> zoz

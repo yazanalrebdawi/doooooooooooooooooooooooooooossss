@@ -15,6 +15,7 @@ class HomeBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -28,6 +29,17 @@ class HomeBottomNavigation extends StatelessWidget {
           ),
         ),
         color: isDark ? Colors.black : Colors.white,
+=======
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border(
+          top: BorderSide(
+            color: AppColors.gray.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+>>>>>>> zoz
       ),
       child: SafeArea(
         child: Padding(
@@ -35,11 +47,19 @@ class HomeBottomNavigation extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+<<<<<<< HEAD
               _buildNavItem(context, 0, Icons.home, 'Home'),
               _buildNavItem(context, 1, Icons.build, 'Services'),
               _buildNavItem(context, 2, Icons.play_circle_outline, 'Reels'),
               _buildNavItem(context, 3, Icons.chat_bubble_outline, 'Messages'),
               _buildNavItem(context, 4, Icons.person_outline, 'Account'),
+=======
+              _buildNavItem(0, Icons.home, 'Home'),
+              _buildNavItem(1, Icons.build, 'Services'),
+              _buildNavItem(2, Icons.play_circle_outline, 'Reels'),
+              _buildNavItem(3, Icons.chat_bubble_outline, 'Messages'),
+              _buildNavItem(4, Icons.person_outline, 'Account'),
+>>>>>>> zoz
             ],
           ),
         ),
@@ -47,6 +67,7 @@ class HomeBottomNavigation extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildNavItem(BuildContext context, int index, IconData icon, String label) {
     final isSelected = currentIndex == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -54,6 +75,12 @@ class HomeBottomNavigation extends StatelessWidget {
     final defaultColor = isDark ? Colors.white : AppColors.gray;
     final color = isSelected ? selectedColor : defaultColor;
 
+=======
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = currentIndex == index;
+    final color = isSelected ? AppColors.primary : AppColors.gray;
+    
+>>>>>>> zoz
     return GestureDetector(
       onTap: () => onTap(index),
       child: Column(
@@ -67,10 +94,20 @@ class HomeBottomNavigation extends StatelessWidget {
           SizedBox(height: 4.h),
           Text(
             label,
+<<<<<<< HEAD
             style: AppTextStyles.s12w400.copyWith(color: color),
+=======
+            style: AppTextStyles.s12w400.copyWith(
+              color: color,
+            ),
+>>>>>>> zoz
           ),
         ],
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+} 
+>>>>>>> zoz

@@ -4,12 +4,18 @@ import 'colors.dart';
 
 abstract class AppTextStyles {
   static const String _fontFamily = 'RobotoCondensedSemiBold';
+<<<<<<< HEAD
+=======
+  static const String fontPoppins = 'Poppins';
+
+>>>>>>> zoz
   // Base Styles
   static TextStyle _baseStyle({
     required double fontSize,
     required FontWeight fontWeight,
     required Color color,
     double? height,
+<<<<<<< HEAD
   }) =>
       TextStyle(
         fontSize: fontSize.sp,
@@ -142,6 +148,144 @@ abstract class AppTextStyles {
         fontWeight: FontWeight.w600,
         color: Colors.black,
       );
+=======
+  }) => TextStyle(
+    fontSize: fontSize.sp,
+    fontWeight: fontWeight,
+    color: color,
+    fontFamily: _fontFamily,
+    height: height,
+  );
+
+  // Regular Styles - Black
+  static TextStyle get s12w400 => _baseStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+  );
+  static TextStyle get s12w600 => _baseStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+
+  static TextStyle get s14w400 => _baseStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+  );
+
+  static TextStyle get s14w500 => _baseStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+  );
+  static TextStyle get s14w600 => _baseStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+
+  static TextStyle get s14w700 => _baseStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+  );
+
+  static TextStyle get s16w400 => _baseStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+  );
+
+  static TextStyle get s16w500 => _baseStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+  );
+
+  static TextStyle get s16w600 => _baseStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+
+  static TextStyle get s18w500 => _baseStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+  );
+  static TextStyle get s18w600 => _baseStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+
+  static TextStyle get s18w700 => _baseStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+  );
+
+  static TextStyle get s20w400 => _baseStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+  );
+  static TextStyle get s20w700 => _baseStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+  );
+
+  static TextStyle get s20w500 => _baseStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+  );
+
+  static TextStyle get s21w600 => _baseStyle(
+    fontSize: 21,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+
+  static TextStyle get s22w500 => _baseStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+  );
+
+  static TextStyle get s22w700 => _baseStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+  );
+
+  static TextStyle get s24w600 => _baseStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+
+  static TextStyle get s25w500 => _baseStyle(
+    fontSize: 25,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+  );
+
+  static TextStyle get s25w700 => _baseStyle(
+    fontSize: 25,
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+  );
+
+  static TextStyle get s30w600 => _baseStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
+>>>>>>> zoz
 
   // Primary Color Styles
   static TextStyle get primaryS14W700 =>
@@ -168,10 +312,17 @@ abstract class AppTextStyles {
   static TextStyle get whiteS14W600 => s14w600.copyWith(color: Colors.white);
   static TextStyle get whiteS14W400 => s14w400.copyWith(color: Colors.white);
   static TextStyle get whiteS32W700 => _baseStyle(
+<<<<<<< HEAD
         fontSize: 32,
         fontWeight: FontWeight.w700,
         color: Colors.white,
       );
+=======
+    fontSize: 32,
+    fontWeight: FontWeight.w700,
+    color: Colors.white,
+  );
+>>>>>>> zoz
 
   // Rating Styles
   static TextStyle get ratingS12W400 =>
@@ -251,6 +402,7 @@ abstract class AppTextStyles {
   static TextStyle get headLineBlackS30W600 =>
       s30w600.copyWith(color: Colors.black);
 }
+<<<<<<< HEAD
 
 extension AppTextStyleThemeX on TextStyle {
   /// Apply color from the current theme automatically
@@ -258,3 +410,5 @@ extension AppTextStyleThemeX on TextStyle {
     return copyWith(color: Theme.of(context).colorScheme.onBackground);
   }
 }
+=======
+>>>>>>> zoz

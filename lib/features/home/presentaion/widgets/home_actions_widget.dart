@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+<<<<<<< HEAD
+=======
+import 'package:go_router/go_router.dart';
+>>>>>>> zoz
 import '../../../../core/constants/colors.dart';
 
 class HomeActionsWidget extends StatelessWidget {
@@ -7,9 +11,12 @@ class HomeActionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final iconColor = isDark ? Colors.white : AppColors.gray;
 
+=======
+>>>>>>> zoz
     return Row(
       children: [
         // Notification Icon
@@ -17,7 +24,11 @@ class HomeActionsWidget extends StatelessWidget {
           children: [
             Icon(
               Icons.notifications,
+<<<<<<< HEAD
               color: iconColor,
+=======
+              color: AppColors.gray,
+>>>>>>> zoz
               size: 24.sp,
             ),
             Positioned(
@@ -38,7 +49,11 @@ class HomeActionsWidget extends StatelessWidget {
         // Search Icon
         Icon(
           Icons.search,
+<<<<<<< HEAD
           color: iconColor,
+=======
+          color: AppColors.gray,
+>>>>>>> zoz
           size: 24.sp,
         ),
       ],

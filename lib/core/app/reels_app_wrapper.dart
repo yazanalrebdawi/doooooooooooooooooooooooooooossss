@@ -1,3 +1,9 @@
+import 'package:dooss_business_app/core/services/image/image_services.dart';
+import 'package:dooss_business_app/core/services/storage/hivi/hive_service.dart';
+import 'package:dooss_business_app/core/services/storage/secure_storage/secure_storage_service.dart';
+import 'package:dooss_business_app/core/services/storage/shared_preferances/shared_preferences_service.dart';
+import 'package:dooss_business_app/core/services/translation/translation_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,11 +12,14 @@ import '../style/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/app_router.dart';
 import '../routes/route_names.dart';
-import '../localization/language_cubit.dart';
+
 import '../localization/app_localizations.dart';
 import '../observers/reels_lifecycle_manager.dart';
 import '../services/locator_service.dart' as di;
 import '../../features/home/presentaion/manager/reels_cubit.dart';
+
+import 'package:dooss_business_app/core/app/manager/app_manager_cubit.dart';
+import 'package:dooss_business_app/core/app/manager/app_manager_state.dart';
 
 /// App wrapper with integrated reels lifecycle management
 /// Keeps the horizontal card UI but manages playback lifecycle properly
@@ -28,13 +37,13 @@ class _ReelsAppWrapperState extends State<ReelsAppWrapper> {
   @override
   void initState() {
     super.initState();
-    
+
     // Get the singleton reels cubit
-    _reelsCubit = di.sl<ReelsCubit>();
-    
+    _reelsCubit = di.appLocator<ReelsCubit>();
+
     // Initialize lifecycle manager
     _lifecycleManager = ReelsLifecycleManager(reelsCubit: _reelsCubit);
-    
+
     print('🎬 ReelsAppWrapper: Initialized with lifecycle manager');
   }
 
@@ -54,10 +63,19 @@ class _ReelsAppWrapperState extends State<ReelsAppWrapper> {
       builder: (context, child) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider(create: (_) => LanguageCubit()),
-            BlocProvider.value(value: _reelsCubit), // Provide singleton instance
+            BlocProvider(
+              create: (_) => AppManagerCubit(
+                hive: di.appLocator<HiveService>(),
+                secureStorage: di.appLocator<SecureStorageService>(),
+                sharedPreference: di.appLocator<SharedPreferencesService>(),
+                imageServices: di.appLocator<ImageServices>(),
+                translationService: di.appLocator<TranslationService>(),
+              ),
+            ),
+            BlocProvider.value(
+                value: _reelsCubit), // Provide singleton instance
           ],
-          child: BlocBuilder<LanguageCubit, Locale>(
+          child: BlocBuilder<AppManagerCubit, AppManagerState>(
             buildWhen: (previous, current) => previous != current,
             builder: (context, locale) {
               return MaterialApp.router(
@@ -65,11 +83,8 @@ class _ReelsAppWrapperState extends State<ReelsAppWrapper> {
                 theme: AppThemes.lightTheme,
                 routerConfig: _createRouterWithObserver(),
                 debugShowCheckedModeBanner: false,
-                locale: locale,
-                supportedLocales: const [
-                  Locale('en'),
-                  Locale('ar'),
-                ],
+                locale: locale.locale,
+                supportedLocales: const [Locale('en'), Locale('ar')],
                 localizationsDelegates: const [
                   AppLocalizations.delegate,
                   GlobalMaterialLocalizations.delegate,

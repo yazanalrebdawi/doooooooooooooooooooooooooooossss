@@ -7,6 +7,10 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/app_config.dart';
 import '../../../../core/services/location_service.dart';
+<<<<<<< HEAD
+=======
+import '../../../../core/services/maps_service.dart';
+>>>>>>> zoz
 import '../../data/models/service_model.dart';
 
 class NearbyServicesMapWidget extends StatefulWidget {
@@ -18,8 +22,12 @@ class NearbyServicesMapWidget extends StatefulWidget {
   });
 
   @override
+<<<<<<< HEAD
   State<NearbyServicesMapWidget> createState() =>
       _NearbyServicesMapWidgetState();
+=======
+  State<NearbyServicesMapWidget> createState() => _NearbyServicesMapWidgetState();
+>>>>>>> zoz
 }
 
 class _NearbyServicesMapWidgetState extends State<NearbyServicesMapWidget> {
@@ -36,11 +44,20 @@ class _NearbyServicesMapWidgetState extends State<NearbyServicesMapWidget> {
 
   Future<void> _initializeMap() async {
     try {
+<<<<<<< HEAD
+=======
+      // Get user location
+>>>>>>> zoz
       final position = await LocationService.getLocationWithFallback();
       setState(() {
         _userLocation = position;
         _isLoading = false;
       });
+<<<<<<< HEAD
+=======
+
+      // Add markers
+>>>>>>> zoz
       _addMarkers();
     } catch (e) {
       print('❌ Error initializing map: $e');
@@ -53,14 +70,19 @@ class _NearbyServicesMapWidgetState extends State<NearbyServicesMapWidget> {
   void _addMarkers() {
     if (_userLocation == null) return;
 
+<<<<<<< HEAD
     _markers.clear();
 
     // User marker
+=======
+    // User location marker
+>>>>>>> zoz
     _markers.add(
       Marker(
         markerId: const MarkerId('user_location'),
         position: LatLng(_userLocation!.latitude, _userLocation!.longitude),
         infoWindow: const InfoWindow(
+<<<<<<< HEAD
           title: 'Your Location',
           snippet: 'Current device location',
         ),
@@ -76,6 +98,21 @@ class _NearbyServicesMapWidgetState extends State<NearbyServicesMapWidget> {
       final isMechanic = service.type.toLowerCase().contains('mechanic') ||
           service.name.toLowerCase().contains('garage') ||
           service.name.toLowerCase().contains('repair');
+=======
+          title: 'موقعك الحالي',
+          snippet: 'موقع الجهاز',
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      ),
+    );
+
+    // Service markers (limit to first 6 for better visibility)
+    for (int i = 0; i < widget.services.length && i < 6; i++) {
+      final service = widget.services[i];
+      final isMechanic = service.type.toLowerCase().contains('mechanic') ||
+                        service.name.toLowerCase().contains('garage') ||
+                        service.name.toLowerCase().contains('repair');
+>>>>>>> zoz
 
       _markers.add(
         Marker(
@@ -86,7 +123,11 @@ class _NearbyServicesMapWidgetState extends State<NearbyServicesMapWidget> {
             snippet: service.address,
           ),
           icon: BitmapDescriptor.defaultMarkerWithHue(
+<<<<<<< HEAD
             isMechanic ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen,
+=======
+            isMechanic ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen
+>>>>>>> zoz
           ),
         ),
       );
@@ -110,6 +151,7 @@ class _NearbyServicesMapWidgetState extends State<NearbyServicesMapWidget> {
         child: _isLoading
             ? Container(
                 color: AppColors.gray.withOpacity(0.1),
+<<<<<<< HEAD
                 child: Center(
                   child: CircularProgressIndicator(
                     color: AppColors.primary,
@@ -118,15 +160,27 @@ class _NearbyServicesMapWidgetState extends State<NearbyServicesMapWidget> {
               )
             : GoogleMap(
                 onMapCreated: (controller) {
+=======
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            : GoogleMap(
+                onMapCreated: (GoogleMapController controller) {
+>>>>>>> zoz
                   _mapController = controller;
                 },
                 initialCameraPosition: CameraPosition(
                   target: _userLocation != null
                       ? LatLng(_userLocation!.latitude, _userLocation!.longitude)
+<<<<<<< HEAD
                       : const LatLng(
                           AppConfig.defaultLatitude,
                           AppConfig.defaultLongitude,
                         ),
+=======
+                      : const LatLng(AppConfig.defaultLatitude, AppConfig.defaultLongitude),
+>>>>>>> zoz
                   zoom: AppConfig.defaultZoom,
                 ),
                 markers: _markers,
@@ -139,4 +193,140 @@ class _NearbyServicesMapWidgetState extends State<NearbyServicesMapWidget> {
       ),
     );
   }
+<<<<<<< HEAD
+=======
+
+  Widget _buildMapBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
+        child: CustomPaint(
+          painter: MapBackgroundPainter(),
+          size: Size.infinite,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserLocationMarker() {
+    return Positioned(
+      left: 0.5.sw - 8.w,
+      top: 0.5.sh - 8.h,
+      child: Column(
+        children: [
+          // Location dot
+          Container(
+            width: 16.w,
+            height: 16.h,   
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.white,
+                width: 2,
+              ),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          // "Your Location" text
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+            decoration: BoxDecoration(
+              color: AppColors.white.withOpacity(0.9),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Text(
+              'Your Location',
+              style: AppTextStyles.secondaryS12W400.copyWith(
+                color: AppColors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildServiceMarkers() {
+    List<Widget> markers = [];
+    
+    // Add service markers around user location
+    for (int i = 0; i < widget.services.length && i < 6; i++) {
+      final service = widget.services[i];
+      final isMechanic = service.type.toLowerCase().contains('mechanic') ||
+                        service.name.toLowerCase().contains('garage') ||
+                        service.name.toLowerCase().contains('repair');
+      
+      // Position markers around user location
+      double angle = (i * 60) * (3.14159 / 180); // Convert to radians
+      double distance = 60.w + (i * 10.w); // Vary distance
+      
+      double left = 0.5.sw + (distance * cos(angle)) - 12.w;
+      double top = 0.5.sh + (distance * sin(angle)) - 12.h;
+      
+      // Ensure markers stay within bounds
+      left = left.clamp(16.w, 1.sw - 40.w);
+      top = top.clamp(16.h, 200.h - 40.h);
+      
+      markers.add(
+        Positioned(
+          left: left,
+          top: top,
+          child: Container(
+            width: 24.w,
+            height: 24.h,
+            decoration: BoxDecoration(
+              color: isMechanic ? Colors.red : Colors.blue,
+              borderRadius: BorderRadius.circular(6.r),
+              border: Border.all(
+                color: AppColors.white,
+                width: 2,
+              ),
+            ),
+            child: Icon(
+              isMechanic ? Icons.build : Icons.local_gas_station,
+              color: AppColors.white,
+              size: 14.sp,
+            ),
+          ),
+        ),
+      );
+    }
+    
+    return markers;
+  }
+}
+
+class MapBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.gray.withOpacity(0.1)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+
+    // Draw grid lines
+    for (int i = 0; i < size.width; i += 30) {
+      canvas.drawLine(
+        Offset(i.toDouble(), 0),
+        Offset(i.toDouble(), size.height),
+        paint,
+      );
+    }
+    
+    for (int i = 0; i < size.height; i += 30) {
+      canvas.drawLine(
+        Offset(0, i.toDouble()),
+        Offset(size.width, i.toDouble()),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+>>>>>>> zoz
 }

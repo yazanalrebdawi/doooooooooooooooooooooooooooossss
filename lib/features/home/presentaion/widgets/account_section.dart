@@ -8,6 +8,7 @@ class AccountSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -35,6 +36,28 @@ class AccountSection extends StatelessWidget {
             ),
           ],
         ),
+=======
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.person,
+            size: 64.sp,
+            color: AppColors.gray,
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            'Account',
+            style: AppTextStyles.blackS18W700,
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Profile settings',
+            style: AppTextStyles.s16w400.copyWith(color: AppColors.gray),
+          ),
+        ],
+>>>>>>> zoz
       ),
     );
   }

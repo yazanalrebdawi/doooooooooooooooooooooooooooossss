@@ -20,8 +20,11 @@ class ReelControlsOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return BlocBuilder<ReelsPlaybackCubit, ReelsPlaybackState>(
       buildWhen: (previous, current) =>
           previous.playbackState != current.playbackState ||
@@ -34,6 +37,7 @@ class ReelControlsOverlay extends StatelessWidget {
         return Stack(
           children: [
             // Center play/pause button
+<<<<<<< HEAD
             _buildCenterPlayButton(context, state, isDark),
 
             // Bottom controls
@@ -41,14 +45,27 @@ class ReelControlsOverlay extends StatelessWidget {
 
             // Top right mute button
             _buildMuteButton(context, state, isDark),
+=======
+            _buildCenterPlayButton(context, state),
+            
+            // Bottom controls
+            _buildBottomControls(context, state),
+            
+            // Top right mute button
+            _buildMuteButton(context, state),
+>>>>>>> zoz
           ],
         );
       },
     );
   }
 
+<<<<<<< HEAD
   Widget _buildCenterPlayButton(
       BuildContext context, ReelsPlaybackState state, bool isDark) {
+=======
+  Widget _buildCenterPlayButton(BuildContext context, ReelsPlaybackState state) {
+>>>>>>> zoz
     if (state.playbackState == ReelPlaybackState.playing) {
       return const SizedBox.shrink(); // Hide when playing
     }
@@ -85,9 +102,13 @@ class ReelControlsOverlay extends StatelessWidget {
           width: 80.w,
           height: 80.h,
           decoration: BoxDecoration(
+<<<<<<< HEAD
             color: isDark
                 ? AppColors.darkCard.withOpacity(0.6)
                 : AppColors.black.withOpacity(0.6),
+=======
+            color: AppColors.black.withOpacity(0.6),
+>>>>>>> zoz
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -100,8 +121,12 @@ class ReelControlsOverlay extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildBottomControls(
       BuildContext context, ReelsPlaybackState state, bool isDark) {
+=======
+  Widget _buildBottomControls(BuildContext context, ReelsPlaybackState state) {
+>>>>>>> zoz
     if (state.duration == null || state.position == null) {
       return const SizedBox.shrink();
     }
@@ -113,9 +138,15 @@ class ReelControlsOverlay extends StatelessWidget {
       child: Column(
         children: [
           // Progress bar
+<<<<<<< HEAD
           _buildProgressBar(context, state, isDark),
           SizedBox(height: 8.h),
 
+=======
+          _buildProgressBar(context, state),
+          SizedBox(height: 8.h),
+          
+>>>>>>> zoz
           // Time display
           _buildTimeDisplay(state),
         ],
@@ -123,8 +154,12 @@ class ReelControlsOverlay extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildProgressBar(
       BuildContext context, ReelsPlaybackState state, bool isDark) {
+=======
+  Widget _buildProgressBar(BuildContext context, ReelsPlaybackState state) {
+>>>>>>> zoz
     final progress = state.duration!.inMilliseconds > 0
         ? state.position!.inMilliseconds / state.duration!.inMilliseconds
         : 0.0;
@@ -178,8 +213,12 @@ class ReelControlsOverlay extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildMuteButton(
       BuildContext context, ReelsPlaybackState state, bool isDark) {
+=======
+  Widget _buildMuteButton(BuildContext context, ReelsPlaybackState state) {
+>>>>>>> zoz
     return Positioned(
       top: 50.h,
       right: 16.w,
@@ -189,9 +228,13 @@ class ReelControlsOverlay extends StatelessWidget {
           width: 40.w,
           height: 40.h,
           decoration: BoxDecoration(
+<<<<<<< HEAD
             color: isDark
                 ? AppColors.darkCard.withOpacity(0.5)
                 : AppColors.black.withOpacity(0.5),
+=======
+            color: AppColors.black.withOpacity(0.5),
+>>>>>>> zoz
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -209,4 +252,8 @@ class ReelControlsOverlay extends StatelessWidget {
     final seconds = duration.inSeconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> zoz

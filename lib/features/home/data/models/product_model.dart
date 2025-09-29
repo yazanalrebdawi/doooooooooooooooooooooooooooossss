@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 class ProductModel {
   final int id;
   final String name;
@@ -25,6 +26,93 @@ class ProductModel {
   final String locationText;
   final Map<String, dynamic>? locationCoords;
   final String availabilityText;
+=======
+import 'package:hive/hive.dart';
+
+part 'product_model.g.dart';
+
+@HiveType(typeId: 2)
+class ProductModel {
+  @HiveField(0)
+  final int id;
+
+  @HiveField(1)
+  final String name;
+
+  @HiveField(2)
+  final double price;
+
+  @HiveField(3)
+  final String description;
+
+  @HiveField(4)
+  final String imageUrl;
+
+  @HiveField(5)
+  final List<String> images;
+
+  @HiveField(6)
+  final String category;
+
+  @HiveField(7)
+  final String location;
+
+  @HiveField(8)
+  final double rating;
+
+  @HiveField(9)
+  final List<String> reviews;
+
+  @HiveField(10)
+  final bool isFavorite;
+
+  @HiveField(11)
+  final int sellerId;
+
+  @HiveField(12)
+  final int stock;
+
+  @HiveField(13)
+  final double discount;
+
+  @HiveField(14)
+  final double finalPrice;
+
+  @HiveField(15)
+  final String condition;
+
+  @HiveField(16)
+  final String material;
+
+  @HiveField(17)
+  final String color;
+
+  @HiveField(18)
+  final String warranty;
+
+  @HiveField(19)
+  final String installationInfo;
+
+  @HiveField(20)
+  final String createdAt;
+
+  @HiveField(21)
+  final int dealer;
+
+  @HiveField(22)
+  final Map<String, dynamic> seller;
+
+  @HiveField(23)
+  final String locationText;
+
+  @HiveField(24)
+  final Map<String, dynamic>? locationCoords;
+
+  @HiveField(25)
+  final String availabilityText;
+
+  @HiveField(26)
+>>>>>>> zoz
   final bool isInStock;
 
   const ProductModel({
@@ -195,6 +283,7 @@ class ProductModel {
     // Extract image URLs from images array (if available)
     List<String> getImageUrls(dynamic images) {
       if (images is List) {
+<<<<<<< HEAD
         return images.map((img) {
           if (img is String) {
             return img;
@@ -203,6 +292,19 @@ class ProductModel {
           }
           return '';
         }).where((url) => url.isNotEmpty).toList();
+=======
+        return images
+            .map((img) {
+              if (img is String) {
+                return img;
+              } else if (img is Map && img['image'] != null) {
+                return img['image'].toString();
+              }
+              return '';
+            })
+            .where((url) => url.isNotEmpty)
+            .toList();
+>>>>>>> zoz
       }
       return [];
     }

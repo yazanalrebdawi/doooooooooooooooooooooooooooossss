@@ -7,12 +7,16 @@ class AllCarsHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return Container(
       margin: EdgeInsets.all(16.w),
       height: 180.h,
       decoration: BoxDecoration(
+<<<<<<< HEAD
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
@@ -20,6 +24,12 @@ class AllCarsHeaderWidget extends StatelessWidget {
             color: isDark
                 ? Colors.black.withOpacity(0.4)
                 : Colors.black.withOpacity(0.1),
+=======
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+>>>>>>> zoz
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -65,6 +75,10 @@ class AllCarsHeaderWidget extends StatelessWidget {
                     style: AppTextStyles.whiteS18W700,
                     textAlign: TextAlign.center,
                   ),
+<<<<<<< HEAD
+=======
+                 
+>>>>>>> zoz
                   SizedBox(height: 8.h),
                   Text(
                     'List it for sale with us easily and find the perfect match\n quickly!',

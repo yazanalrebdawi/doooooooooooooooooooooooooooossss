@@ -10,7 +10,11 @@ class HomeTabServiceProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ReelCubit>(
+<<<<<<< HEAD
       create: (context) => di.sl<ReelCubit>(),
+=======
+      create: (context) => di.appLocator<ReelCubit>(),
+>>>>>>> zoz
       child: const HomeTabReelProvider(),
     );
   }

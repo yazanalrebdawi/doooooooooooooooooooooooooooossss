@@ -15,13 +15,22 @@ class LoginScreenHeaderSection extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
+<<<<<<< HEAD
             AppLocalizations.of(context)?.translate('welcomeBackFull') ??
                 'Welcome Back\nReady to hit the road.',
             style: AppTextStyles.headLineBlackS30W600.withThemeColor(context),
+=======
+            AppLocalizations.of(context)?.translate('welcomeBackFull') ?? 'Welcome Back\nReady to hit the road.',
+            style: AppTextStyles.headLineBlackS30W600,
+>>>>>>> zoz
           ),
         ),
         SizedBox(height: 32.h),
       ],
     );
   }
+<<<<<<< HEAD
 }
+=======
+} 
+>>>>>>> zoz

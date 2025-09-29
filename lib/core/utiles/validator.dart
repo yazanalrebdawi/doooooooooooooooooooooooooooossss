@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 abstract class Validator {
   static String? phoneValidation(String? phone) {
     final phoneRegex = RegExp(r'^09[0-9]{8}$');
+=======
+import 'package:dooss_business_app/core/localization/app_localizations.dart';
+import 'package:flutter/widgets.dart';
+
+abstract class Validator {
+  static String? phoneValidation(String? phone) {
+    final phoneRegex = RegExp(r'^\+[0-9]{9,15}$');
+>>>>>>> zoz
     if (!phoneRegex.hasMatch(phone!)) return 'Phone is not valid';
     return null;
   }
@@ -32,9 +41,16 @@ abstract class Validator {
     }
   }
 
+<<<<<<< HEAD
   static String? validatePass(String? value) {
     if (value!.isEmpty) {
       return 'Please enter Password';
+=======
+  static String? validatePassword(String? value, BuildContext context) {
+    if (value!.isEmpty) {
+      return AppLocalizations.of(context)?.translate('Please enter Password') ??
+          'Please enter Password';
+>>>>>>> zoz
     } else if (value.length < 8 || value.length > 32) {
       return 'Password value range 8-32 char';
     } else {
@@ -43,11 +59,31 @@ abstract class Validator {
   }
 
   static String? validateDateOfBirth(String? value) {
+<<<<<<< HEAD
     RegExp regex =
         RegExp(r"^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$");
+=======
+    RegExp regex = RegExp(
+      r"^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$",
+    );
+>>>>>>> zoz
     if (!regex.hasMatch(value!)) {
       return 'Date of birth is not valid, please enter YYYY-MM-DD';
     }
     return null;
   }
+<<<<<<< HEAD
+=======
+
+  static String? validateName(String? value) {
+    {
+      if (value == null || value.isEmpty) {
+        return 'Name cannot be empty!';
+      } else if (value.length < 3) {
+        return 'Name must be at least 3 characters!';
+      }
+      return null;
+    }
+  }
+>>>>>>> zoz
 }

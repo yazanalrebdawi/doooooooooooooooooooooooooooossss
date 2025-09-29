@@ -2,7 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// High-performance base Cubit with optimizations
 abstract class OptimizedCubit<State> extends Cubit<State> {
+<<<<<<< HEAD
   OptimizedCubit(State initialState) : super(initialState);
+=======
+  OptimizedCubit(super.initialState);
+>>>>>>> zoz
 
   /// High-performance state emission with automatic comparison
   void emitOptimized(State newState) {

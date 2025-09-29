@@ -16,8 +16,11 @@ class RelatedProductsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (relatedProducts.isEmpty) return const SizedBox.shrink();
 
+<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
+=======
+>>>>>>> zoz
     return Container(
       padding: EdgeInsets.all(16.w),
       child: Column(
@@ -25,9 +28,13 @@ class RelatedProductsSection extends StatelessWidget {
         children: [
           Text(
             'Related Products',
+<<<<<<< HEAD
             style: AppTextStyles.s18w700.copyWith(
               color: isDark ? Colors.white : Colors.black,
             ),
+=======
+            style: AppTextStyles.s18w700,
+>>>>>>> zoz
           ),
           SizedBox(height: 16.h),
           
@@ -50,9 +57,13 @@ class RelatedProductsSection extends StatelessWidget {
                         child: Container(
                           width: 150.w,
                           height: 120.h,
+<<<<<<< HEAD
                           color: isDark
                               ? Colors.grey[800]
                               : AppColors.gray.withOpacity(0.1),
+=======
+                          color: AppColors.gray.withOpacity(0.1),
+>>>>>>> zoz
                           child: product.imageUrl.isNotEmpty
                               ? Image.network(
                                   product.imageUrl,
@@ -77,9 +88,13 @@ class RelatedProductsSection extends StatelessWidget {
                       // Product Name
                       Text(
                         product.name,
+<<<<<<< HEAD
                         style: AppTextStyles.s14w500.copyWith(
                           color: isDark ? Colors.white : Colors.black,
                         ),
+=======
+                        style: AppTextStyles.s14w500,
+>>>>>>> zoz
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -88,9 +103,13 @@ class RelatedProductsSection extends StatelessWidget {
                       // Product Price
                       Text(
                         '\$${product.price.toStringAsFixed(2)}',
+<<<<<<< HEAD
                         style: AppTextStyles.s14w500.copyWith(
                           color: AppColors.primary,
                         ),
+=======
+                        style: AppTextStyles.s14w500.copyWith(color: AppColors.primary),
+>>>>>>> zoz
                       ),
                     ],
                   ),
