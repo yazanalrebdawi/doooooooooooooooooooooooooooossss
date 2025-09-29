@@ -1,0 +1,87 @@
+name: dooss_business_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Icons
+  cupertino_icons: ^1.0.8
+
+  # Splash screen
+  flutter_native_splash: ^2.4.4
+
+  # State management & DI
+  flutter_bloc: ^9.1.1
+  get_it: ^8.0.3
+  dartz: ^0.10.1
+
+  # Navigation
+  go_router: ^15.1.1
+
+  # Networking
+  dio: ^5.8.0+1
+  pretty_dio_logger: ^1.4.0
+  http: ^1.2.1
+
+  # UI/UX
+  smooth_page_indicator: ^1.2.1
+  pinput: ^5.0.1
+  flutter_screenutil: ^5.9.3
+  gradient_borders: ^1.0.1
+  video_player: ^2.10.0
+
+  # User input
+  intl_phone_field: ^3.2.0 # kept this, removed intl_phone_number_input
+
+  # Storage
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.2.4
+
+  # Device APIs
+  image_picker: ^1.1.2
+  geolocator: ^11.0.0
+  permission_handler: ^11.3.1
+  url_launcher: ^6.2.5
+  google_maps_flutter: ^2.8.0
+
+  # Realtime
+  web_socket_channel: ^2.4.0
+
+  # Localization
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0
+  equatable: ^2.0.7
+  toastification: ^3.0.3
+  connectivity_plus: ^7.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - lib/core/localization/
+
+
+  fonts:
+    - family: SFProDisplay
+      fonts:
+        - asset: assets/fonts/SF-Pro-Display-Medium.otf
+          weight: 500
+
+    - family: RobotoCondensedSemiBold
+      fonts:
+        - asset: assets/fonts/Roboto_Condensed-SemiBold.ttf
+          weight: 600

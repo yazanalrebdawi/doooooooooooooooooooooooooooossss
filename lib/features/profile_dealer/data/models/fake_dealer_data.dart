@@ -1,0 +1,187 @@
+import 'package:dooss_business_app/features/profile_dealer/data/models/dealer_model.dart';
+
+import '../../../home/data/models/car_model.dart';
+import 'reel_model.dart';
+import 'service_model.dart';
+
+class FakeDealerData {
+  static DealerModel getFakeDealer() {
+    return DealerModel(
+      id: '123',
+      name: 'Ahmed Auto Services',
+      handle: '@ahmed_auto',
+      profileImage: 'https://picsum.photos/200',
+      description: 'Professional car services and sales. We provide the best quality cars and maintenance services.',
+      reelsCount: 15,
+      followersCount: 1250,
+      followingCount: 89,
+      isVerified: true,
+      isFollowing: false,
+    );
+  }
+
+  static List<ReelModel> getFakeReels() {
+    return [
+      ReelModel(
+        id: '1',
+        title: 'New Car Arrival',
+        description: 'Check out our latest BMW model',
+        thumbnailUrl: 'https://picsum.photos/300/400',
+        videoUrl: 'https://example.com/video1.mp4',
+        viewsCount: 1250,
+        likesCount: 89,
+        dealerId: '123',
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      ),
+      ReelModel(
+        id: '2',
+        title: 'Car Maintenance Tips',
+        description: 'How to maintain your car engine',
+        thumbnailUrl: 'https://picsum.photos/300/400',
+        videoUrl: 'https://example.com/video2.mp4',
+        viewsCount: 890,
+        likesCount: 45,
+        dealerId: '123',
+        createdAt: DateTime.now().subtract(const Duration(days: 5)),
+      ),
+      ReelModel(
+        id: '3',
+        title: 'Showroom Tour',
+        description: 'Take a tour of our showroom',
+        thumbnailUrl: 'https://picsum.photos/300/400',
+        videoUrl: 'https://example.com/video3.mp4',
+        viewsCount: 2100,
+        likesCount: 156,
+        dealerId: '123',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      ),
+    ];
+  }
+
+  static List<CarModel> getFakeCars() {
+    return [
+      CarModel( 
+        id: 1,
+        name: 'BMW X5 2023',
+        brand: 'BMW',
+        // model: 'X5',
+        year: 2023,
+        price: 250000,
+        imageUrl: 'https://picsum.photos/400/300',
+        mileage: '15,000 km',
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        color: 'Black',
+        // description: 'Luxury SUV with premium features',
+        location: 'Dubai',
+        // isAvailable: true,
+        isNew: true,
+        engine: '2.0L',
+        doors: 4,
+        sellerNotes: 'New car, no accidents',
+        sellerName: 'John Doe',
+        sellerType: 'Dealer',
+        sellerImage: 'https://picsum.photos/200/300',
+        dealerId: 123,
+      ),
+      CarModel(
+        id: 2,
+        name: 'Mercedes C-Class 2022',
+        brand: 'Mercedes',
+        // model: 'C-Class',
+        year: 2022,
+        price: 180000,
+        imageUrl: 'https://picsum.photos/400/300',
+        mileage: '25,000 km',
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        color: 'White',
+        // description: 'Elegant sedan with modern technology',
+        location: 'Dubai',
+        // isAvailable: true,
+        isNew: true,
+        engine: '2.0L',
+        doors: 4,
+        sellerNotes: 'New car, no accidents',
+        sellerName: 'John Doe',
+        sellerType: 'Dealer',
+        sellerImage: 'https://picsum.photos/200/300',
+        dealerId: 123,
+      ),
+      CarModel( 
+        id: 3,  
+        name: 'Audi A4 2023',
+        brand: 'Audi',
+        // model: 'A4',
+        year: 2023,
+        price: 160000,
+        imageUrl: 'https://picsum.photos/400/300',
+        mileage: '10,000 km',
+        fuelType: 'Petrol',
+        transmission: 'Automatic',
+        color: 'Silver',
+        // description: 'Sporty sedan with quattro system',
+        location: 'Dubai',
+        // isAvailable: true,
+        isNew: true,
+        engine: '2.0L',
+        doors: 4,
+        sellerNotes: 'New car, no accidents',
+        sellerName: 'John Doe',
+        sellerType: 'Dealer',
+        sellerImage: 'https://picsum.photos/200/300',
+        dealerId: 123,
+        ),
+    ];
+  }
+
+  static List<ServiceModel> getFakeServices() {
+    return [
+      ServiceModel(
+        id: '1',
+        name: 'Engine Maintenance',
+        description: 'Complete engine check and maintenance service',
+        location: 'Dubai, Sheikh Zayed Road',
+        status: 'Open Now',
+        closingTime: '10:00 PM',
+        rating: 4.8,
+        category: 'Mechanic',
+        categoryColor: '#4CAF50',
+        iconColor: '#4CAF50',
+        dealerId: '123',
+        phoneNumber: '+971501234567',
+        whatsappNumber: '+971501234567',
+      ),
+      ServiceModel(
+        id: '2',
+        name: 'Car Wash & Detailing',
+        description: 'Professional car wash and interior detailing',
+        location: 'Dubai, Al Barsha',
+        status: 'Open 24/7',
+        closingTime: null,
+        rating: 4.5,
+        category: 'Car Care',
+        categoryColor: '#2196F3',
+        iconColor: '#2196F3',
+        dealerId: '123',
+        phoneNumber: '+971501234568',
+        whatsappNumber: '+971501234568',
+      ),
+      ServiceModel(
+        id: '3',
+        name: 'Fuel Station',
+        description: 'Premium fuel station with convenience store',
+        location: 'Dubai, Jumeirah',
+        status: 'Open Now',
+        closingTime: '11:00 PM',
+        rating: 4.2,
+        category: 'Fuel',
+        categoryColor: '#FF9800',
+        iconColor: '#FF9800',
+        dealerId: '123',
+        phoneNumber: '+971501234569',
+        whatsappNumber: '+971501234569',
+      ),
+    ];
+  }
+}
