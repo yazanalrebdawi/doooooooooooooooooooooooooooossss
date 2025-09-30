@@ -14,24 +14,17 @@ class CarImageSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Container(
       width: double.infinity,
       height: 300.h,
       decoration: BoxDecoration(
-<<<<<<< HEAD
         color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF5F5F5),
-=======
-        color: const Color(0xFFF5F5F5), // Light grey background
->>>>>>> zoz
       ),
       child: Stack(
         children: [
-          // Car Image - Full width and height
+          // Car Image
           imageUrl.isNotEmpty
               ? Image.network(
                   imageUrl,
@@ -39,19 +32,11 @@ class CarImageSection extends StatelessWidget {
                   height: 300.h,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-<<<<<<< HEAD
                     return _buildPlaceholderImage(isDark);
                   },
                 )
               : _buildPlaceholderImage(isDark),
-
-=======
-                    return _buildPlaceholderImage();
-                  },
-                )
-              : _buildPlaceholderImage(),
           
->>>>>>> zoz
           // Car Name Overlay
           Positioned(
             bottom: 20.h,
@@ -77,20 +62,12 @@ class CarImageSection extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
   Widget _buildPlaceholderImage(bool isDark) {
-=======
-  Widget _buildPlaceholderImage() {
->>>>>>> zoz
     return Container(
       width: double.infinity,
       height: 300.h,
       decoration: BoxDecoration(
-<<<<<<< HEAD
         color: isDark ? Colors.white12 : AppColors.gray.withOpacity(0.1),
-=======
-        color: AppColors.gray.withOpacity(0.1),
->>>>>>> zoz
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -106,11 +83,7 @@ class CarImageSection extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
-<<<<<<< HEAD
               color: isDark ? Colors.white70 : AppColors.gray,
-=======
-              color: AppColors.gray,
->>>>>>> zoz
             ),
             textAlign: TextAlign.center,
           ),

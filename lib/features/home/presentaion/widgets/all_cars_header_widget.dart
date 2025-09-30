@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 
 class AllCarsHeaderWidget extends StatelessWidget {
@@ -7,29 +8,17 @@ class AllCarsHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Container(
       margin: EdgeInsets.all(16.w),
       height: 180.h,
       decoration: BoxDecoration(
-<<<<<<< HEAD
-        color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+        color: isDark ? const Color(0xFF2A2A2A) : AppColors.white,
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.4)
-                : Colors.black.withOpacity(0.1),
-=======
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
->>>>>>> zoz
+            color: Colors.black.withOpacity(isDark ? 0.4 : 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -64,7 +53,7 @@ class AllCarsHeaderWidget extends StatelessWidget {
             // Text Content
             Positioned(
               left: 18.w,
-              top: -45.h,
+              top: 20.h,
               bottom: 0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -73,15 +62,11 @@ class AllCarsHeaderWidget extends StatelessWidget {
                   Text(
                     'Get the best\nvalue for your car',
                     style: AppTextStyles.whiteS18W700,
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.start,
                   ),
-<<<<<<< HEAD
-=======
-                 
->>>>>>> zoz
                   SizedBox(height: 8.h),
                   Text(
-                    'List it for sale with us easily and find the perfect match\n quickly!',
+                    'List it for sale with us easily and find the perfect match\nquickly!',
                     style: AppTextStyles.whiteS16W400.copyWith(
                       fontSize: 14.sp,
                     ),

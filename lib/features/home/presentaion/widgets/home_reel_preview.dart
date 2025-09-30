@@ -24,11 +24,6 @@ class HomeReelPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-=======
->>>>>>> zoz
     return BlocBuilder<ReelsPlaybackCubit, ReelsPlaybackState>(
       buildWhen: (previous, current) =>
           previous.currentReel != current.currentReel ||
@@ -37,16 +32,6 @@ class HomeReelPreview extends StatelessWidget {
           previous.error != current.error,
       builder: (context, state) {
         if (state.isLoading && state.reels.isEmpty) {
-<<<<<<< HEAD
-          return _buildLoadingPreview(isDark);
-        }
-
-        if (state.reels.isEmpty) {
-          return _buildEmptyPreview(isDark);
-        }
-
-        return _buildReelPreview(context, state, isDark);
-=======
           return _buildLoadingPreview();
         }
 
@@ -55,16 +40,11 @@ class HomeReelPreview extends StatelessWidget {
         }
 
         return _buildReelPreview(context, state);
->>>>>>> zoz
       },
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildReelPreview(BuildContext context, ReelsPlaybackState state, bool isDark) {
-=======
   Widget _buildReelPreview(BuildContext context, ReelsPlaybackState state) {
->>>>>>> zoz
     return Container(
       height: height.h,
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -79,18 +59,14 @@ class HomeReelPreview extends StatelessWidget {
             // Video player
             ReelGestureDetector(
               onTap: () => _onReelTap(context),
-              enableSwipeGestures: false, // Disable swipe on home preview
+              enableSwipeGestures: false,
               child: PerfectVideoPlayer(
                 isCurrentVideo: true,
                 onTap: () => _onReelTap(context),
               ),
             ),
 
-<<<<<<< HEAD
-            // Gradient overlay
-=======
             // Gradient overlay for better text visibility
->>>>>>> zoz
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -110,8 +86,7 @@ class HomeReelPreview extends StatelessWidget {
             ),
 
             // Reel info overlay
-            if (state.currentReel != null)
-              ReelInfoOverlay(reel: state.currentReel!),
+            if (state.currentReel != null) ReelInfoOverlay(reel: state.currentReel!),
 
             // Tap to view all indicator
             Positioned(
@@ -126,11 +101,7 @@ class HomeReelPreview extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.fullscreen,
-                      color: AppColors.white,
-                      size: 16.sp,
-                    ),
+                    Icon(Icons.fullscreen, color: AppColors.white, size: 16.sp),
                     SizedBox(width: 4.w),
                     Text(
                       'Tap to view all',
@@ -155,11 +126,7 @@ class HomeReelPreview extends StatelessWidget {
                     color: AppColors.black.withOpacity(0.6),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.play_arrow,
-                    color: AppColors.white,
-                    size: 30.sp,
-                  ),
+                  child: Icon(Icons.play_arrow, color: AppColors.white, size: 30.sp),
                 ),
               ),
           ],
@@ -168,70 +135,37 @@ class HomeReelPreview extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildLoadingPreview(bool isDark) {
-=======
   Widget _buildLoadingPreview() {
->>>>>>> zoz
     return Container(
       height: height.h,
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
-<<<<<<< HEAD
-        color: isDark ? Colors.black : AppColors.gray.withOpacity(0.1),
-=======
         color: AppColors.gray.withOpacity(0.1),
->>>>>>> zoz
       ),
       child: const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primary,
-        ),
+        child: CircularProgressIndicator(color: AppColors.primary),
       ),
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildEmptyPreview(bool isDark) {
-=======
   Widget _buildEmptyPreview() {
->>>>>>> zoz
     return Container(
       height: height.h,
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
-<<<<<<< HEAD
-        color: isDark ? Colors.black : AppColors.gray.withOpacity(0.1),
-=======
         color: AppColors.gray.withOpacity(0.1),
->>>>>>> zoz
       ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.video_library_outlined,
-<<<<<<< HEAD
-              color: isDark ? Colors.white70 : AppColors.gray,
-=======
-              color: AppColors.gray,
->>>>>>> zoz
-              size: 48.sp,
-            ),
+            Icon(Icons.video_library_outlined, color: AppColors.gray, size: 48.sp),
             SizedBox(height: 8.h),
             Text(
               'No reels available',
-              style: TextStyle(
-<<<<<<< HEAD
-                color: isDark ? Colors.white70 : AppColors.gray,
-=======
-                color: AppColors.gray,
->>>>>>> zoz
-                fontSize: 14.sp,
-              ),
+              style: TextStyle(color: AppColors.gray, fontSize: 14.sp),
             ),
           ],
         ),
@@ -241,7 +175,6 @@ class HomeReelPreview extends StatelessWidget {
 
   void _onReelTap(BuildContext context) {
     print('🎬 HomeReelPreview: Reel tapped - launching full-screen viewer');
-<<<<<<< HEAD
 
     // Enter full-screen mode in cubit
     context.read<ReelsPlaybackCubit>().enterFullScreen();
@@ -250,13 +183,3 @@ class HomeReelPreview extends StatelessWidget {
     context.push(RouteNames.reelsScreen);
   }
 }
-=======
-    
-    // Enter full-screen mode in cubit
-    context.read<ReelsPlaybackCubit>().enterFullScreen();
-    
-    // Navigate to full-screen reels viewer
-    context.push(RouteNames.reelsScreen);
-  }
-}
->>>>>>> zoz

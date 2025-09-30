@@ -21,17 +21,11 @@ class CarOverviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: EdgeInsets.all(20.w),
       color: isDark ? const Color(0xFF2A2A2A) : AppColors.white,
-=======
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      color: AppColors.white,
->>>>>>> zoz
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -39,19 +33,11 @@ class CarOverviewSection extends StatelessWidget {
           Text(
             carName,
             style: AppTextStyles.s18w700.copyWith(
-<<<<<<< HEAD
               color: isDark ? Colors.white : AppColors.black,
             ),
           ),
           SizedBox(height: 8.h),
 
-=======
-              color: AppColors.black,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          
->>>>>>> zoz
           // Price
           Text(
             '${price.toStringAsFixed(0)} USD',
@@ -60,11 +46,7 @@ class CarOverviewSection extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-<<<<<<< HEAD
 
-=======
-          
->>>>>>> zoz
           // Key Attributes
           Row(
             children: [
@@ -74,42 +56,26 @@ class CarOverviewSection extends StatelessWidget {
                   icon: Icons.star,
                   text: 'New',
                   iconColor: AppColors.primary,
-<<<<<<< HEAD
                   isDark: isDark,
                 ),
                 SizedBox(width: 16.w),
               ],
 
-=======
-                ),
-                SizedBox(width: 16.w),
-              ],
-              
->>>>>>> zoz
               // Location
               _buildAttributeItem(
                 icon: Icons.location_on,
                 text: location,
                 iconColor: AppColors.gray,
-<<<<<<< HEAD
                 isDark: isDark,
               ),
               SizedBox(width: 16.w),
 
-=======
-              ),
-              SizedBox(width: 16.w),
-              
->>>>>>> zoz
               // Mileage
               _buildAttributeItem(
                 icon: Icons.directions_car,
                 text: mileage,
                 iconColor: AppColors.gray,
-<<<<<<< HEAD
                 isDark: isDark,
-=======
->>>>>>> zoz
               ),
             ],
           ),
@@ -122,10 +88,7 @@ class CarOverviewSection extends StatelessWidget {
     required IconData icon,
     required String text,
     required Color iconColor,
-<<<<<<< HEAD
     required bool isDark,
-=======
->>>>>>> zoz
   }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -139,11 +102,7 @@ class CarOverviewSection extends StatelessWidget {
         Text(
           text,
           style: AppTextStyles.s12w400.copyWith(
-<<<<<<< HEAD
             color: isDark ? Colors.white70 : AppColors.gray,
-=======
-            color: AppColors.gray,
->>>>>>> zoz
           ),
         ),
       ],

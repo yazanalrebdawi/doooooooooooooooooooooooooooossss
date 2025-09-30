@@ -24,10 +24,8 @@ class HomeScreenInitializer extends StatelessWidget {
   Widget build(BuildContext context) {
     final uri = Uri.parse(GoRouterState.of(context).uri.toString());
     final tabParam = uri.queryParameters['tab'];
-<<<<<<< HEAD
 
-=======
->>>>>>> zoz
+    // لتحديث الـ tab عند وجود query parameter
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (tabParam == 'messages') {
         context.read<HomeCubit>().updateCurrentIndex(3);
@@ -43,24 +41,16 @@ class HomeScreenLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return Scaffold(
-      // backgroundColor: AppColors.background,
-      appBar: const HomeAppBar(),
-      body: const HomeScreenBody(),
-=======
     return BlocSelector<HomeCubit, HomeState, int>(
-      selector: (state) {
-        return state.currentIndex;
-      },
-      builder: (context, state) {
+      selector: (state) => state.currentIndex,
+      builder: (context, currentIndex) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          appBar: state == 2 ? null : const HomeAppBar(),
+          // إخفاء الـ AppBar عند tab معين (مثلاً index 2)
+          appBar: currentIndex == 2 ? null : const HomeAppBar(),
           body: const HomeScreenBody(),
         );
       },
->>>>>>> zoz
     );
   }
 }
@@ -85,29 +75,16 @@ class HomeBottomNavigationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
-<<<<<<< HEAD
-      buildWhen: (previous, current) =>
-          previous.currentIndex != current.currentIndex,
+      buildWhen: (previous, current) => previous.currentIndex != current.currentIndex,
       builder: (context, homeState) {
+        // إخفاء الـ BottomNavigation عند tab محدد (مثلاً index 2)
+        if (homeState.currentIndex == 2) {
+          return const SizedBox.shrink();
+        }
         return HomeBottomNavigation(
           currentIndex: homeState.currentIndex,
-          onTap: (index) {
-            context.read<HomeCubit>().updateCurrentIndex(index);
-          },
+          onTap: (index) => context.read<HomeCubit>().updateCurrentIndex(index),
         );
-=======
-      buildWhen:
-          (previous, current) => previous.currentIndex != current.currentIndex,
-      builder: (context, homeState) {
-        return homeState.currentIndex == 2
-            ? const SizedBox.shrink()
-            : HomeBottomNavigation(
-              currentIndex: homeState.currentIndex,
-              onTap: (index) {
-                context.read<HomeCubit>().updateCurrentIndex(index);
-              },
-            );
->>>>>>> zoz
       },
     );
   }

@@ -15,11 +15,8 @@ class BrowseByTypeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -28,11 +25,9 @@ class BrowseByTypeSection extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
             'Browse by Type',
-<<<<<<< HEAD
-            style: AppTextStyles.blackS18W700.withThemeColor(context),
-=======
-            style: AppTextStyles.blackS18W700,
->>>>>>> zoz
+            style: AppTextStyles.blackS18W700.copyWith(
+              color: isDark ? Colors.white : AppColors.black,
+            ),
           ),
         ),
         SizedBox(height: 16.h),
@@ -41,25 +36,11 @@ class BrowseByTypeSection extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Row(
             children: [
-<<<<<<< HEAD
-              Expanded(
-                  child: _buildTypeButton(
-                      context, 'Cars', Icons.directions_car, 0, isDark)),
+              Expanded(child: _buildTypeButton(context, 'Cars', Icons.directions_car, 0, isDark)),
               SizedBox(width: 12.w),
-              Expanded(
-                  child: _buildTypeButton(
-                      context, 'Products', Icons.shopping_bag, 1, isDark)),
+              Expanded(child: _buildTypeButton(context, 'Products', Icons.shopping_bag, 1, isDark)),
               SizedBox(width: 12.w),
-              Expanded(
-                  child: _buildTypeButton(
-                      context, 'Services', Icons.build, 2, isDark)),
-=======
-              Expanded(child: _buildTypeButton('Cars', Icons.directions_car, 0)),
-              SizedBox(width: 12.w),
-              Expanded(child: _buildTypeButton('Products', Icons.shopping_bag, 1)),
-              SizedBox(width: 12.w),
-              Expanded(child: _buildTypeButton('Services', Icons.build, 2)),
->>>>>>> zoz
+              Expanded(child: _buildTypeButton(context, 'Services', Icons.build, 2, isDark)),
             ],
           ),
         ),
@@ -67,31 +48,18 @@ class BrowseByTypeSection extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildTypeButton(BuildContext context, String title, IconData icon,
-      int index, bool isDark) {
+  Widget _buildTypeButton(BuildContext context, String title, IconData icon, int index, bool isDark) {
     final isSelected = selectedIndex == index;
 
-=======
-  Widget _buildTypeButton(String title, IconData icon, int index) {
-    final isSelected = selectedIndex == index;
-    
->>>>>>> zoz
     return GestureDetector(
       onTap: () => onTap(index),
       child: Container(
         height: 84.h,
         width: 100.w,
         decoration: BoxDecoration(
-<<<<<<< HEAD
           color: isSelected
               ? AppColors.primary.withOpacity(0.2)
-              : (isDark
-                  ? const Color(0xFF2A2A2A)
-                  : AppColors.primary.withOpacity(0.1)),
-=======
-          color: AppColors.primary.withOpacity(0.1),
->>>>>>> zoz
+              : (isDark ? const Color(0xFF2A2A2A) : AppColors.primary.withOpacity(0.1)),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isSelected ? AppColors.primary : Colors.transparent,
@@ -103,26 +71,18 @@ class BrowseByTypeSection extends StatelessWidget {
           children: [
             Icon(
               icon,
-<<<<<<< HEAD
               color: isSelected
                   ? AppColors.primary
                   : (isDark ? Colors.white70 : AppColors.primary),
-=======
-              color: AppColors.primary,
->>>>>>> zoz
               size: 24.sp,
             ),
             SizedBox(height: 8.h),
             Text(
               title,
               style: AppTextStyles.s14w700.copyWith(
-<<<<<<< HEAD
                 color: isSelected
                     ? AppColors.primary
                     : (isDark ? Colors.white70 : AppColors.primary),
-=======
-                color: AppColors.primary,
->>>>>>> zoz
               ),
               textAlign: TextAlign.center,
             ),
@@ -131,8 +91,4 @@ class BrowseByTypeSection extends StatelessWidget {
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-} 
->>>>>>> zoz

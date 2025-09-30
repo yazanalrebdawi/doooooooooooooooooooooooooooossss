@@ -1,40 +1,32 @@
-<<<<<<< HEAD
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-=======
-
->>>>>>> zoz
-
 class AppDimensions {
   // Card Dimensions
-  static final double availableCardWidth = 330.0;
-  static final double availableCardHeight = 330.0;
-  static final double availableCardImageHeight = 192.0;
-  static final double availableCardContentHeight = 138.0; // 330 - 192 = 138
+  static const double availableCardWidth = 330.0;
+  static const double availableCardHeight = 330.0;
+  static const double availableCardImageHeight = 192.0;
+  static const double availableCardContentHeight = 138.0; // 330 - 192 = 138
 
+  static const double productCardWidth = 330.0;
+  static const double productCardHeight = 358.0;
+  static const double productCardImageHeight = 160.0;
+  static const double productCardContentHeight = 168.0;
 
- static final double productCardContentHeight = 168.0;
- static final double productCardImageHeight = 160.0;
- static final double productCardWidth = 330.0;
-  static final double productCardHeight = 358.0;
+  static const double featuredCardWidth = 280.0;
+  static const double featuredCardHeight = 320.0;
+  static const double featuredCardImageHeight = 160.0;
 
-
-  static final double featuredCardWidth = 280.0;
-  static final double featuredCardHeight = 320.0;
-  static final double featuredCardImageHeight = 160.0;
-  
   // Spacing
-  static final double defaultPadding = 16.0;
-  static final double defaultPadding2 = 12.0;
-  static final double smallPadding = 8.0;
-  static final double tinyPadding = 4.0;
-  static final double cardSpacing = 16.0;
-  
+  static const double defaultPadding = 16.0;
+  static const double defaultPadding2 = 12.0;
+  static const double smallPadding = 8.0;
+  static const double tinyPadding = 4.0;
+  static const double cardSpacing = 16.0;
+
   // Border Radius
-  static final double defaultBorderRadius = 12.0;
-  static final double smallBorderRadius = 8.0;
-  
+  static const double defaultBorderRadius = 12.0;
+  static const double smallBorderRadius = 8.0;
+
   // Icon Sizes
-  static final double smallIconSize = 12.0;
-  static final double mediumIconSize = 16.0;
-  static final double largeIconSize = 20.0;
-} 
+  static const double smallIconSize = 12.0;
+  static const double mediumIconSize = 16.0;
+  static const double largeIconSize = 20.0;
+}
