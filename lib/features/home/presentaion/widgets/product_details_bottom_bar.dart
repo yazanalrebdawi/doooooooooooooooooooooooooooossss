@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/text_styles.dart';
 
 class ProductDetailsBottomBar extends StatelessWidget {
   final VoidCallback onChatPressed;
@@ -14,12 +15,10 @@ class ProductDetailsBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : AppColors.white,
+        color: AppColors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -64,20 +63,14 @@ class ProductDetailsBottomBar extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onCallPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark
-                    ? AppColors.gray.withOpacity(0.2)
-                    : AppColors.gray.withOpacity(0.1),
-                foregroundColor: isDark ? AppColors.white : AppColors.black,
+                backgroundColor: AppColors.gray.withOpacity(0.1),
+                foregroundColor: AppColors.black,
                 padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
                 ),
               ),
-              child: Icon(
-                Icons.phone,
-                color: isDark ? AppColors.white : AppColors.black,
-                size: 24.sp,
-              ),
+              child: Icon(Icons.phone, color: AppColors.black, size: 24.sp),
             ),
           ),
         ],

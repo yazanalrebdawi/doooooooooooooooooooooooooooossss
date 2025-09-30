@@ -1,5 +1,4 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import '../../../../core/cubits/optimized_cubit.dart';
 import '../../../../core/services/location_service.dart';
 import '../../../../core/services/maps_service.dart';

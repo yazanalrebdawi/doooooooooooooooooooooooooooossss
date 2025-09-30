@@ -64,7 +64,7 @@ import 'package:get_it/get_it.dart';
 final appLocator = GetIt.instance;
 final connectivity = Connectivity();
 
-void init() async {
+Future<void> init() async {
   log('🔧 DI: Starting bulletproof dependency injection...');
 
   //? ------------------- Services -------------------

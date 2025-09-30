@@ -216,7 +216,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocProvider(
-      create: (_) => di.appLocator<CarCubit>()..loadCarDetails(widget.carId),
+      create: (_) => di.appLocator<CarCubit>()..loadCarDetails( widget.carId ),
       child: Scaffold(
         backgroundColor: AppColors.white,
         body: BlocBuilder<CarCubit, CarState>(

@@ -144,12 +144,14 @@ class AppRouter {
       builder: (context, state) {
         final chatId = int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
         final productId = state.extra as int?;
+        final productId = state.extra as int?;
         return BlocProvider(
           create: (_) => di.appLocator<ChatCubit>(),
           child: ChatConversationScreen(
             chatId: chatId,
             participantName: 'Chat $chatId',
             productId: productId,
+            dealerName: ,
           ),
         );
       },

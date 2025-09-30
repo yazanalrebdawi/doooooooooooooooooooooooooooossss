@@ -58,7 +58,9 @@ Future<void> main() async {
   final isLight =
       await appLocator<SharedPreferencesService>().getThemeModeFromCache();
   final initialTheme =
-      isLight == null ? AppThemeEnum.light : (isLight ? AppThemeEnum.light : AppThemeEnum.dark);
+      isLight == null
+          ? AppThemeEnum.light
+          : (isLight ? AppThemeEnum.light : AppThemeEnum.dark);
   runApp(
     ScreenUtilInit(
       designSize: const Size(375, 812),
@@ -94,9 +96,10 @@ class SimpleReelsApp extends StatelessWidget {
         builder: (context, state) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            theme: state.themeMode == AppThemeEnum.light
-                ? AppThemes.lightTheme
-                : AppThemes.darkTheme,
+            theme:
+                state.themeMode == AppThemeEnum.light
+                    ? AppThemes.lightTheme
+                    : AppThemes.darkTheme,
             routerConfig: AppRouter.router,
             locale: state.locale,
             supportedLocales: const [Locale('en'), Locale('ar')],
