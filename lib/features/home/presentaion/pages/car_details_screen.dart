@@ -22,9 +22,8 @@ import '../widgets/seller_notes_section.dart';
 import '../widgets/seller_info_section.dart';
 
 class CarDetailsScreen extends StatefulWidget {
-  final int carId;
-
   const CarDetailsScreen({super.key, required this.carId});
+  final int carId;
 
   @override
   State<CarDetailsScreen> createState() => _CarDetailsScreenState();

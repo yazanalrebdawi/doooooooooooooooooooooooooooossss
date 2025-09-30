@@ -5,7 +5,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/utiles/validator.dart';
 
-// Country model
+// ###################### Country Model ######################
 class Country {
   final String name;
   final String flagEmoji;
@@ -20,6 +20,7 @@ class Country {
   });
 }
 
+// ###################### Phone Number Field ######################
 class PhoneNumberField extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
@@ -37,44 +38,18 @@ class PhoneNumberField extends StatefulWidget {
 }
 
 class _PhoneNumberFieldState extends State<PhoneNumberField> {
-  // Country selection
+  // ###################### Selected Country ######################
   Country _selectedCountry = Country(
     name: 'Syria',
     flagEmoji: '🇸🇾',
     phoneCode: '963',
     isoCode: 'SY',
   );
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> zoz
-  // Store phone number without country code
   String _phoneNumberWithoutCode = '';
 
-  // List of available countries
   final List<Country> _countries = [
     Country(name: 'Syria', flagEmoji: '🇸🇾', phoneCode: '963', isoCode: 'SY'),
-<<<<<<< HEAD
-    Country(
-        name: 'Saudi Arabia',
-        flagEmoji: '🇸🇦',
-        phoneCode: '966',
-        isoCode: 'SA'),
-    Country(
-        name: 'United Arab Emirates',
-        flagEmoji: '🇦🇪',
-        phoneCode: '971',
-        isoCode: 'AE'),
-    Country(name: 'Kuwait', flagEmoji: '🇰🇼', phoneCode: '965', isoCode: 'KW'),
-    Country(name: 'Qatar', flagEmoji: '🇶🇦', phoneCode: '974', isoCode: 'QA'),
-    Country(
-        name: 'Bahrain', flagEmoji: '🇧🇭', phoneCode: '973', isoCode: 'BH'),
-    Country(name: 'Oman', flagEmoji: '🇴🇲', phoneCode: '968', isoCode: 'OM'),
-    Country(name: 'Jordan', flagEmoji: '🇯🇴', phoneCode: '962', isoCode: 'JO'),
-    Country(
-        name: 'Lebanon', flagEmoji: '🇱🇧', phoneCode: '961', isoCode: 'LB'),
-=======
     Country(name: 'Saudi Arabia', flagEmoji: '🇸🇦', phoneCode: '966', isoCode: 'SA'),
     Country(name: 'United Arab Emirates', flagEmoji: '🇦🇪', phoneCode: '971', isoCode: 'AE'),
     Country(name: 'Kuwait', flagEmoji: '🇰🇼', phoneCode: '965', isoCode: 'KW'),
@@ -83,12 +58,12 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
     Country(name: 'Oman', flagEmoji: '🇴🇲', phoneCode: '968', isoCode: 'OM'),
     Country(name: 'Jordan', flagEmoji: '🇯🇴', phoneCode: '962', isoCode: 'JO'),
     Country(name: 'Lebanon', flagEmoji: '🇱🇧', phoneCode: '961', isoCode: 'LB'),
->>>>>>> zoz
     Country(name: 'Iraq', flagEmoji: '🇮🇶', phoneCode: '964', isoCode: 'IQ'),
     Country(name: 'Egypt', flagEmoji: '🇪🇬', phoneCode: '20', isoCode: 'EG'),
     Country(name: 'Turkey', flagEmoji: '🇹🇷', phoneCode: '90', isoCode: 'TR'),
   ];
 
+  // ###################### Show Country Picker ######################
   void _showCountryPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -100,11 +75,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
             children: [
               Text(
                 'Select Country',
-<<<<<<< HEAD
-                style: AppTextStyles.s16w600.withThemeColor(context),
-=======
                 style: AppTextStyles.s16w600,
->>>>>>> zoz
               ),
               SizedBox(height: 16.h),
               Expanded(
@@ -115,17 +86,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                     return ListTile(
                       leading: Text(
                         country.flagEmoji,
-<<<<<<< HEAD
-                        style: AppTextStyles.s20w400.withThemeColor(context),
-                      ),
-                      title: Text(
-                        country.name,
-                        style: AppTextStyles.s14w400.withThemeColor(context),
-                      ),
-                      subtitle: Text(
-                        '+${country.phoneCode}',
-                        style: AppTextStyles.s12w400.withThemeColor(context),
-=======
                         style: AppTextStyles.s20w400,
                       ),
                       title: Text(
@@ -135,23 +95,13 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                       subtitle: Text(
                         '+${country.phoneCode}',
                         style: AppTextStyles.s12w400,
->>>>>>> zoz
                       ),
                       onTap: () {
-                        setState(() {
-                          _selectedCountry = country;
-                        });
+                        setState(() => _selectedCountry = country);
                         Navigator.pop(context);
-<<<<<<< HEAD
 
                         // Update full phone number
-                        String fullPhoneNumber =
-                            '+${country.phoneCode}$_phoneNumberWithoutCode';
-=======
-                        
-                        // Update full phone number
                         String fullPhoneNumber = '+${country.phoneCode}$_phoneNumberWithoutCode';
->>>>>>> zoz
                         widget.onPhoneChanged(fullPhoneNumber);
                       },
                     );
@@ -165,16 +115,14 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
     );
   }
 
+  // ###################### Build ######################
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(
-          color: AppColors.gray,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.gray, width: 1),
       ),
       child: Row(
         children: [
@@ -186,61 +134,21 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    _selectedCountry.flagEmoji,
-                    style: AppTextStyles.s20w400,
-                  ),
+                  Text(_selectedCountry.flagEmoji, style: AppTextStyles.s20w400),
                   SizedBox(width: 8.w),
-                  Text(
-                    '+${_selectedCountry.phoneCode}',
-                    style: AppTextStyles.s16w400,
-                  ),
+                  Text('+${_selectedCountry.phoneCode}', style: AppTextStyles.s16w400),
                   SizedBox(width: 8.w),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    color: AppColors.primary,
-                    size: 20.sp,
-                  ),
+                  Icon(Icons.keyboard_arrow_down, color: AppColors.primary, size: 20.sp),
                 ],
               ),
             ),
           ),
-<<<<<<< HEAD
-
-=======
-          
->>>>>>> zoz
           // Divider
-          Container(
-            height: 40.h,
-            width: 1,
-            color: AppColors.gray,
-          ),
-<<<<<<< HEAD
-
-=======
-          
->>>>>>> zoz
+          Container(height: 40.h, width: 1, color: AppColors.gray),
           // Phone Number Input
           Expanded(
             child: TextFormField(
               controller: widget.controller,
-<<<<<<< HEAD
-              validator: widget.validator ??
-                  (value) => Validator.notNullValidation(value),
-              keyboardType: TextInputType.phone,
-              style: AppTextStyles.s16w400,
-              decoration: InputDecoration(
-                fillColor: Colors.white,
-                filled: true,
-                hintText:
-                    AppLocalizations.of(context)?.translate('phoneNumber') ??
-                        'Phone Number',
-                hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
-                border: InputBorder.none,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
-=======
               validator: widget.validator ?? (value) => Validator.notNullValidation(value),
               keyboardType: TextInputType.phone,
               style: AppTextStyles.s16w400,
@@ -249,14 +157,10 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                 hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
->>>>>>> zoz
               ),
               onChanged: (value) {
-                print('📱 Phone field changed: $value');
                 _phoneNumberWithoutCode = value;
                 String fullPhoneNumber = '+${_selectedCountry.phoneCode}$value';
-                print('📱 Full phone number: $fullPhoneNumber');
-                print('📱 Calling onPhoneChanged callback');
                 widget.onPhoneChanged(fullPhoneNumber);
               },
             ),
@@ -265,8 +169,4 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-} 
->>>>>>> zoz

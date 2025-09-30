@@ -6,20 +6,14 @@ import '../../data/models/message_model.dart';
 
 class MessageBubble extends StatelessWidget {
   final MessageModel message;
-<<<<<<< HEAD
   final bool isMine;
   final VoidCallback? onRetry; // Callback for retrying pending messages
-=======
->>>>>>> zoz
 
   const MessageBubble({
     super.key,
     required this.message,
-<<<<<<< HEAD
     required this.isMine,
     this.onRetry,
-=======
->>>>>>> zoz
   });
 
   @override
@@ -27,22 +21,12 @@ class MessageBubble extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       child: Row(
-<<<<<<< HEAD
         mainAxisAlignment:
             isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           // Avatar for received messages
           if (!isMine) ...[
-=======
-        mainAxisAlignment: message.isFromMe 
-            ? MainAxisAlignment.end 
-            : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // Avatar for received messages (left side)
-          if (!message.isFromMe) ...[
->>>>>>> zoz
             Container(
               width: 32.w,
               height: 32.w,
@@ -58,13 +42,8 @@ class MessageBubble extends StatelessWidget {
             ),
             SizedBox(width: 8.w),
           ],
-<<<<<<< HEAD
 
-          // Message bubble
-=======
-          
           // Message Content
->>>>>>> zoz
           Flexible(
             child: Container(
               constraints: BoxConstraints(
@@ -72,23 +51,12 @@ class MessageBubble extends StatelessWidget {
               ),
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               decoration: BoxDecoration(
-<<<<<<< HEAD
                 color: isMine
                     ? AppColors.primary
                     : AppColors.gray.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20.r).copyWith(
-                  bottomLeft:
-                      isMine ? Radius.circular(20.r) : Radius.circular(4.r),
-                  bottomRight:
-                      isMine ? Radius.circular(4.r) : Radius.circular(20.r),
-=======
-                color: message.isFromMe 
-                    ? AppColors.primary 
-                    : AppColors.gray.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20.r).copyWith(
-                  bottomLeft: message.isFromMe ? Radius.circular(20.r) : Radius.circular(4.r),
-                  bottomRight: message.isFromMe ? Radius.circular(4.r) : Radius.circular(20.r),
->>>>>>> zoz
+                  bottomLeft: isMine ? Radius.circular(20.r) : Radius.circular(4.r),
+                  bottomRight: isMine ? Radius.circular(4.r) : Radius.circular(20.r),
                 ),
               ),
               child: Column(
@@ -96,16 +64,10 @@ class MessageBubble extends StatelessWidget {
                 children: [
                   Text(
                     message.text,
-<<<<<<< HEAD
-                    style: AppTextStyles.s14w400
-                        .copyWith(height: 1.4)
-                        .withThemeColor(context),
-=======
                     style: AppTextStyles.s14w400.copyWith(
-                      color: message.isFromMe ? AppColors.white : AppColors.black,
+                      color: isMine ? AppColors.white : AppColors.black,
                       height: 1.4,
                     ),
->>>>>>> zoz
                   ),
                   SizedBox(height: 4.h),
                   Row(
@@ -114,7 +76,6 @@ class MessageBubble extends StatelessWidget {
                       Text(
                         _formatTimestamp(message.timestamp),
                         style: AppTextStyles.s12w400.copyWith(
-<<<<<<< HEAD
                           color: isMine
                               ? AppColors.white.withOpacity(0.7)
                               : AppColors.gray,
@@ -122,11 +83,10 @@ class MessageBubble extends StatelessWidget {
                       ),
                       if (isMine) ...[
                         SizedBox(width: 4.w),
-                        // Show IconButton if pending, otherwise normal Icon
                         message.status.toLowerCase() == 'pending'
                             ? IconButton(
                                 icon: Icon(
-                                  Icons.refresh, // reload icon
+                                  Icons.refresh,
                                   size: 14.sp,
                                   color: AppColors.white.withOpacity(0.7),
                                 ),
@@ -139,20 +99,6 @@ class MessageBubble extends StatelessWidget {
                                 size: 14.sp,
                                 color: AppColors.white.withOpacity(0.7),
                               ),
-=======
-                          color: message.isFromMe 
-                              ? AppColors.white.withOpacity(0.7) 
-                              : AppColors.gray,
-                        ),
-                      ),
-                      if (message.isFromMe) ...[
-                        SizedBox(width: 4.w),
-                        Icon(
-                          _getStatusIcon(message.status),
-                          size: 14.sp,
-                          color: AppColors.white.withOpacity(0.7),
-                        ),
->>>>>>> zoz
                       ],
                     ],
                   ),
@@ -160,15 +106,9 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           ),
-<<<<<<< HEAD
 
           // Avatar for sent messages
           if (isMine) ...[
-=======
-          
-          // Avatar for sent messages (right side)
-          if (message.isFromMe) ...[
->>>>>>> zoz
             SizedBox(width: 8.w),
             Container(
               width: 32.w,
@@ -197,13 +137,10 @@ class MessageBubble extends StatelessWidget {
 
       if (difference.inDays > 0) {
         return '${date.day}/${date.month} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-<<<<<<< HEAD
-=======
       } else if (difference.inHours > 0) {
         return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
       } else if (difference.inMinutes > 0) {
         return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
->>>>>>> zoz
       } else {
         return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
       }

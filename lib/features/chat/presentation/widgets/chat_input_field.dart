@@ -15,19 +15,12 @@ class ChatInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: isDark ? Color(0xFF2A2A2A) : AppColors.white,
-=======
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppColors.white,
->>>>>>> zoz
         border: Border(
           top: BorderSide(
             color: AppColors.gray.withOpacity(0.1),
@@ -39,31 +32,19 @@ class ChatInputField extends StatelessWidget {
         child: Row(
           children: [
             // Attachment Button
-<<<<<<< HEAD
-            // IconButton(
-            //   onPressed: () {
-            //     // TODO: Implement attachment functionality
-            //   },
-            //   icon: Icon(
-            //     Icons.attach_file,
-            //     color: isDark ? Colors.white : AppColors.gray,
-            //     size: 24.sp,
-            //   ),
-            // ),
-
-=======
             IconButton(
               onPressed: () {
                 // TODO: Implement attachment functionality
               },
               icon: Icon(
                 Icons.attach_file,
-                color: AppColors.gray,
+                color: isDark ? Colors.white : AppColors.gray,
                 size: 24.sp,
               ),
             ),
-            
->>>>>>> zoz
+
+            SizedBox(width: 8.w),
+
             // Text Field
             Expanded(
               child: Container(
@@ -74,16 +55,9 @@ class ChatInputField extends StatelessWidget {
                 child: TextField(
                   controller: controller,
                   decoration: InputDecoration(
-<<<<<<< HEAD
-                    fillColor: Colors.transparent,
                     hintText: 'Type a message...',
                     hintStyle: AppTextStyles.s14w400.copyWith(
                       color: isDark ? Colors.white : AppColors.gray,
-=======
-                    hintText: 'Type a message...',
-                    hintStyle: AppTextStyles.s14w400.copyWith(
-                      color: AppColors.gray,
->>>>>>> zoz
                     ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(
@@ -102,28 +76,9 @@ class ChatInputField extends StatelessWidget {
                 ),
               ),
             ),
-<<<<<<< HEAD
-
-            // SizedBox(width: 8.w),
-
-            // // Voice Button
-            // IconButton(
-            //   onPressed: () {
-            //     // TODO: Implement voice message functionality
-            //   },
-            //   icon: Icon(
-            //     Icons.mic,
-            //     color: isDark ? Colors.white : AppColors.gray,
-            //     size: 24.sp,
-            //   ),
-            // ),
 
             SizedBox(width: 8.w),
 
-=======
-            
-            SizedBox(width: 8.w),
-            
             // Voice Button
             IconButton(
               onPressed: () {
@@ -131,14 +86,13 @@ class ChatInputField extends StatelessWidget {
               },
               icon: Icon(
                 Icons.mic,
-                color: AppColors.gray,
+                color: isDark ? Colors.white : AppColors.gray,
                 size: 24.sp,
               ),
             ),
-            
+
             SizedBox(width: 8.w),
-            
->>>>>>> zoz
+
             // Send Button
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: controller,
@@ -148,22 +102,16 @@ class ChatInputField extends StatelessWidget {
                   width: 40.w,
                   height: 40.w,
                   decoration: BoxDecoration(
-<<<<<<< HEAD
                     color: hasText
                         ? AppColors.primary
                         : AppColors.gray.withOpacity(0.3),
-=======
-                    color: hasText ? AppColors.primary : AppColors.gray.withOpacity(0.3),
->>>>>>> zoz
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
                     onPressed: hasText
                         ? () {
-                            if (controller.text.trim().isNotEmpty) {
-                              onSendMessage(controller.text.trim());
-                              controller.clear();
-                            }
+                            onSendMessage(controller.text.trim());
+                            controller.clear();
                           }
                         : null,
                     icon: Icon(

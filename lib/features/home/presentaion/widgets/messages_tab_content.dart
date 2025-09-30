@@ -21,6 +21,7 @@ class MessagesTabDataLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Load chats once the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ChatCubit>().loadChats();
     });

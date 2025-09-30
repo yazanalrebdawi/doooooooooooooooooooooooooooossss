@@ -16,22 +16,15 @@ class ChatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
         margin: EdgeInsets.only(bottom: 1.h),
         decoration: BoxDecoration(
-<<<<<<< HEAD
-          color: isDark ? Color(0xFF2A2A2A) : Colors.white,
-=======
-          color: AppColors.white,
->>>>>>> zoz
+          color: isDark ? Color(0xFF2A2A2A) : AppColors.white,
           border: Border(
             bottom: BorderSide(
               color: AppColors.gray.withOpacity(0.1),
@@ -76,15 +69,9 @@ class ChatListItem extends StatelessWidget {
                 ),
               ],
             ),
-<<<<<<< HEAD
 
             SizedBox(width: 12.w),
 
-=======
-            
-            SizedBox(width: 12.w),
-            
->>>>>>> zoz
             // Chat Info
             Expanded(
               child: Column(
@@ -94,15 +81,9 @@ class ChatListItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-<<<<<<< HEAD
-                          (chat.dealer ?? '').isNotEmpty
-                              ? (chat.dealer ?? '')
-                              : 'Unknown',
-=======
-                          (chat.dealer ?? '').isNotEmpty ? (chat.dealer ?? '') : 'Unknown',
->>>>>>> zoz
+                          (chat.dealer ?? '').isNotEmpty ? chat.dealer! : 'Unknown',
                           style: AppTextStyles.s16w600.copyWith(
-                            color: AppColors.black,
+                            color: isDark ? Colors.white : AppColors.black,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -134,12 +115,7 @@ class ChatListItem extends StatelessWidget {
                       // Unread message indicator
                       if (chat.userUnreadCount > 0) ...[
                         Container(
-<<<<<<< HEAD
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 6.w, vertical: 2.h),
-=======
                           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
->>>>>>> zoz
                           decoration: BoxDecoration(
                             color: AppColors.primary,
                             shape: BoxShape.circle,

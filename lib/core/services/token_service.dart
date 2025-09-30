@@ -4,11 +4,32 @@ import 'package:dooss_business_app/core/services/locator_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class TokenService {
-  static final FlutterSecureStorage _storage = appLocator<FlutterSecureStorage>();
+  static final FlutterSecureStorage _storage =
+      appLocator<FlutterSecureStorage>();
 
   /// حفظ الـ token
   static Future<void> saveToken(String token) async {
     await _storage.write(key: CacheKeys.tokenKey, value: token);
+  }
+
+  /// حفظ userId
+  static Future<void> saveUserId(String userId) async {
+    await _storage.write(key: CacheKeys.userIdKey, value: userId);
+  }
+
+  /// استرجاع userId
+  static Future<String?> getUserId() async {
+    try {
+      return await _storage.read(key: CacheKeys.userIdKey);
+    } catch (e) {
+      log('Error getting userId: $e');
+      return null;
+    }
+  }
+
+  /// حذف userId
+  static Future<void> deleteUserId() async {
+    await _storage.delete(key: CacheKeys.userIdKey);
   }
 
   /// حفظ الـ refresh token
