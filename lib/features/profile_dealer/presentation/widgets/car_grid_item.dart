@@ -44,7 +44,7 @@ class CarGridItem extends StatelessWidget {
           children: [
             // Car Image
             Container(
-              height: 120.h,
+              height: 110.h,
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(

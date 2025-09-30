@@ -15,7 +15,7 @@ class ReelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PageController pageController = PageController();
-
+    
     return BlocProvider(
       create: (_) => di.appLocator<ReelCubit>()..loadReels(),
       child: WillPopScope(

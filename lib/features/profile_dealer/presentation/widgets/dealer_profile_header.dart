@@ -42,25 +42,26 @@ class DealerProfileHeader extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: AppColors.gray.withOpacity(0.1),
                 ),
-                child: dealer?.profileImage != null
-                    ? ClipOval(
-                        child: Image.network(
-                          dealer!.profileImage!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.person,
-                              size: 40.sp,
-                              color: secondaryTextColor,
-                            );
-                          },
+                child:
+                    dealer?.profileImage != null
+                        ? ClipOval(
+                          child: Image.network(
+                            dealer!.profileImage!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.person,
+                                size: 40.sp,
+                                color: secondaryTextColor,
+                              );
+                            },
+                          ),
+                        )
+                        : Icon(
+                          Icons.person,
+                          size: 40.sp,
+                          color: secondaryTextColor,
                         ),
-                      )
-                    : Icon(
-                        Icons.person,
-                        size: 40.sp,
-                        color: secondaryTextColor,
-                      ),
               ),
               SizedBox(width: 16.w),
               // Profile Details
@@ -100,17 +101,12 @@ class DealerProfileHeader extends StatelessWidget {
                     if (dealer!.description != null) ...[
                       Text(
                         dealer!.description!,
-                        style: AppTextStyles.s14w400.copyWith(
-                          color: textColor,
-                        ),
+                        style: AppTextStyles.s14w400.copyWith(color: textColor),
                       ),
                       SizedBox(height: 4.h),
                     ],
                     // Car Emoji
-                    Text(
-                      '🚗',
-                      style: TextStyle(fontSize: 16.sp),
-                    ),
+                    Text('🚗', style: TextStyle(fontSize: 16.sp)),
                   ],
                 ),
               ),
@@ -148,16 +144,20 @@ class DealerProfileHeader extends StatelessWidget {
                   child: Container(
                     height: 40.h,
                     decoration: BoxDecoration(
-                      color: dealer!.isFollowing
-                          ? AppColors.gray.withOpacity(0.2)
-                          : AppColors.primary,
+                      color:
+                          dealer!.isFollowing
+                              ? AppColors.gray.withOpacity(0.2)
+                              : AppColors.primary,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Center(
                       child: Text(
                         dealer!.isFollowing ? 'Following' : 'Follow',
                         style: AppTextStyles.s14w500.copyWith(
-                          color: dealer!.isFollowing ? AppColors.black : AppColors.white,
+                          color:
+                              dealer!.isFollowing
+                                  ? AppColors.black
+                                  : AppColors.white,
                         ),
                       ),
                     ),
