@@ -1,5 +1,3 @@
-import 'dart:ui_web';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
@@ -29,14 +27,19 @@ class ReelActionsOverlay extends StatelessWidget {
       bottom: 100.h,
       child: Column(
         children: [
-          _buildActionButton(isDark: isDark,
+          _buildActionButton(
+            isDark: isDark,
             icon: reel.liked ? Icons.favorite : Icons.favorite_border,
             label: _formatCount(reel.likesCount),
             onTap: onLike,
-            iconColor: reel.liked ? Colors.red : (isDark ? AppColors.white : AppColors.black),
+            iconColor:
+                reel.liked
+                    ? Colors.red
+                    : (isDark ? AppColors.white : AppColors.black),
           ),
           SizedBox(height: 24.h),
-          _buildActionButton(isDark: isDark,
+          _buildActionButton(
+            isDark: isDark,
             icon: Icons.comment,
             label: _formatCount(reel.likesCount),
             onTap: onComment,
@@ -44,7 +47,8 @@ class ReelActionsOverlay extends StatelessWidget {
           ),
           SizedBox(height: 24.h),
           _buildActionButton(
-            icon: Icons.share,isDark: isDark,
+            icon: Icons.share,
+            isDark: isDark,
             label: 'Share',
             onTap: onShare,
             iconColor: isDark ? AppColors.white : AppColors.black,
@@ -58,7 +62,8 @@ class ReelActionsOverlay extends StatelessWidget {
     required IconData icon,
     required String label,
     VoidCallback? onTap,
-    Color iconColor = Colors.white,required bool isDark
+    Color iconColor = Colors.white,
+    required bool isDark,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -71,16 +76,15 @@ class ReelActionsOverlay extends StatelessWidget {
               color: AppColors.black.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: 24.sp,
-            ),
+            child: Icon(icon, color: iconColor, size: 24.sp),
           ),
           SizedBox(height: 4.h),
           Text(
             label,
-            style: isDark ? AppTextStyles.whiteS12W400 : AppTextStyles.blackS12W400,
+            style:
+                isDark
+                    ? AppTextStyles.whiteS12W400
+                    : AppTextStyles.blackS12W400,
             textAlign: TextAlign.center,
           ),
         ],
