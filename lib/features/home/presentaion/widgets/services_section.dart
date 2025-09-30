@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dooss_business_app/core/constants/text_styles.dart';
 import 'package:dooss_business_app/features/home/presentaion/widgets/empty_section.dart';
 import 'package:dooss_business_app/features/home/data/models/service_model.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 class ServicesSection extends StatelessWidget {
   final List<ServiceModel> services;
 
@@ -57,15 +57,15 @@ class ServicesSection extends StatelessWidget {
                     onMaps: () async {
                       // Launch maps
                       final url = service.mapsUrl;
-                      if (await canLaunch(Uri.parse(url))) {
-                        await launch(Uri.parse(url));
+                      if (await canLaunch(url)) {
+                        await launch(url);
                       }
                     },
                     onCall: () async {
                       // Launch phone call
                       final url = service.callUrl;
-                      if (await canLaunch(Uri.parse(url))) {
-                        await launch(Uri.parse(url));
+                      if (await canLaunch(url)) {
+                        await launch(url);
                       }
                     },
                   ),

@@ -4,8 +4,9 @@ import '../../data/models/message_model.dart';
 class ChatState {
   final List<ChatModel> chats;
   final List<MessageModel> messages;
-  final List<MessageModel> pendingMessages; // unsent messages
   final bool isLoading;
+    final List<MessageModel> pendingMessages; // unsent messages
+
   final bool isLoadingMessages;
   final String? error;
   final int? selectedChatId;
@@ -13,9 +14,8 @@ class ChatState {
   final bool isCreatingChat;
 
   const ChatState({
-    this.chats = const [],
+    this.chats = const [],this.pendingMessages = const  [] ,
     this.messages = const [],
-    this.pendingMessages = const [],
     this.isLoading = false,
     this.isLoadingMessages = false,
     this.error,
@@ -27,7 +27,7 @@ class ChatState {
   ChatState copyWith({
     List<ChatModel>? chats,
     List<MessageModel>? messages,
-    List<MessageModel>? pendingMessages,
+    List<MessageModel>? pendingMessages ,
     bool? isLoading,
     bool? isLoadingMessages,
     String? error,

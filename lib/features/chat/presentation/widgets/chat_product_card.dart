@@ -18,7 +18,7 @@ class ChatProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+              final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocProvider(
       create: (context) => di.appLocator<ProductCubit>()..loadProductDetails(productId),
@@ -59,7 +59,7 @@ class ChatProductCard extends StatelessWidget {
                     child: Text(
                       'Loading product details...',
                       style: AppTextStyles.s14w500.copyWith(
-                        color: isDark ? Colors.white : AppColors.gray,
+                          color:isDark ?Colors.white : AppColors.gray,
                       ),
                     ),
                   ),
@@ -121,9 +121,7 @@ class ChatProductCard extends StatelessWidget {
                     children: [
                       Text(
                         product.name,
-                        style: AppTextStyles.s14w500.copyWith(
-                          color: isDark ? Colors.white : AppColors.black,
-                        ),
+                        style: AppTextStyles.s14w500.withThemeColor(context),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -138,7 +136,7 @@ class ChatProductCard extends StatelessWidget {
                       Text(
                         'Location: ${product.locationText.isNotEmpty ? product.locationText : 'Unknown'}',
                         style: AppTextStyles.s12w400.copyWith(
-                          color: isDark ? Colors.white : AppColors.gray,
+                          color:isDark ?Colors.white : AppColors.gray,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -151,10 +149,12 @@ class ChatProductCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
+                        // Navigate to product details
                         context.push('/product-details/${product.id}');
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.w, vertical: 6.h),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(16.r),
@@ -174,7 +174,7 @@ class ChatProductCard extends StatelessWidget {
                       },
                       icon: Icon(
                         Icons.close,
-                        color: isDark ? Colors.white : AppColors.gray,
+                          color:isDark ?Colors.white : AppColors.gray,
                         size: 16.sp,
                       ),
                       padding: EdgeInsets.zero,

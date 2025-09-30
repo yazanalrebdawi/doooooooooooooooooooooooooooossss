@@ -123,6 +123,7 @@ class AppRouter {
       builder: (context, state) {
         final chat = state.extra as ChatModel;
         return ChatConversationScreen(
+          dealerName: "",
           chatId: chat.id,
           participantName: chat.dealer,
         );

@@ -10,6 +10,7 @@ import '../widgets/cars_category_tabs.dart';
 import '../widgets/cars_brand_list.dart';
 import '../widgets/cars_grid.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class CarsScreen extends StatelessWidget {
   const CarsScreen({super.key});

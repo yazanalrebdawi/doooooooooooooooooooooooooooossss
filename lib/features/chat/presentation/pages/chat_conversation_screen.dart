@@ -1,3 +1,4 @@
+import 'package:dooss_business_app/core/services/token_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,19 +13,16 @@ import '../manager/chat_state.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/chat_input_field.dart';
 import '../widgets/chat_product_card.dart';
-import '../../../../core/services/token_service.dart';
 
 class ChatConversationScreen extends StatefulWidget {
   final int chatId;
   final String participantName;
-  final int? productId; 
-  final String dealerName;
-
+  final int? productId; // Add product ID for displaying product details
+final String dealerName ;
   const ChatConversationScreen({
     super.key,
-    required this.chatId,
+    required this.chatId,required this.dealerName ,
     required this.participantName,
-    required this.dealerName,
     this.productId,
   });
 
@@ -33,18 +31,17 @@ class ChatConversationScreen extends StatefulWidget {
 }
 
 class _ChatConversationScreenState extends State<ChatConversationScreen> {
-  String? userId;
+  String? id;
   final ScrollController _scrollController = ScrollController();
 
-  void _getUserId() async {
-    userId = await TokenService.getUserId();
-    setState(() {}); // لتحديث الـ UI بعد جلب الـ userId
+  void getUserId() async {
+    id = await TokenService.getUserId();
   }
 
   @override
   void initState() {
+    getUserId();
     super.initState();
-    _getUserId();
   }
 
   void _scrollToBottom() {
@@ -84,22 +81,25 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
             style: AppTextStyles.blackS18W700.withThemeColor(context),
           ),
           centerTitle: true,
+          // actions: [
+          //   IconButton(
+          //     icon: Icon(Icons.more_vert,
+          //         color: isDark ? Colors.white : AppColors.black, size: 24.sp),
+          //     onPressed: () {},
+          //   ),
+          // ],
         ),
         body: Column(
           children: [
-            // Product Card
+            // Product Card (if productId is provided)
             if (widget.productId != null)
               ChatProductCard(productId: widget.productId!),
 
             // Messages List
             Expanded(
               child: BlocBuilder<ChatCubit, ChatState>(
-                buildWhen: (previous, current) =>
-                    previous.messages != current.messages ||
-                    previous.isLoadingMessages != current.isLoadingMessages ||
-                    previous.error != current.error,
                 builder: (context, state) {
-                  if (state.isLoadingMessages) {
+                  if (state.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
@@ -108,20 +108,23 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.error_outline,
-                              size: 64.sp, color: AppColors.gray),
+                          Icon(
+                            Icons.error_outline,
+                            size: 64.sp,
+                            color: isDark ? Colors.white : AppColors.gray,
+                          ),
                           SizedBox(height: 16.h),
                           Text(
                             'Error loading messages',
                             style: AppTextStyles.s16w500.copyWith(
-                              color: AppColors.gray,
+                              color: isDark ? Colors.white : AppColors.gray,
                             ),
                           ),
                           SizedBox(height: 8.h),
                           Text(
                             state.error!,
                             style: AppTextStyles.s14w400.copyWith(
-                              color: AppColors.gray,
+                              color: isDark ? Colors.white : AppColors.gray,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -141,14 +144,14 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                           Text(
                             'No messages yet',
                             style: AppTextStyles.s16w500.copyWith(
-                              color: AppColors.gray,
+                              color: isDark ? Colors.white : AppColors.gray,
                             ),
                           ),
                           SizedBox(height: 8.h),
                           Text(
                             'Start a conversation with ${widget.participantName}',
                             style: AppTextStyles.s14w400.copyWith(
-                              color: AppColors.gray,
+                              color: isDark ? Colors.white : AppColors.gray,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -156,24 +159,26 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                       ),
                     );
                   }
-
                   WidgetsBinding.instance
                       .addPostFrameCallback((_) => _scrollToBottom());
 
                   return ListView.builder(
-                    controller: _scrollController,
+                    controller: _scrollController, // attach scroll controller
+
                     padding: EdgeInsets.all(16.w),
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
                       final message = state.messages[index];
+                      print(message.senderId);
                       return MessageBubble(
                         message: message,
-                        isMine:
-                            message.senderId == int.tryParse(userId ?? '0'),
+                        isMine: message.senderId == int.tryParse(id ?? '0'),
                         onRetry: message.status.toLowerCase() == 'pending'
-                            ? () => context
-                                .read<ChatCubit>()
-                                .connectWebSocket(widget.chatId)
+                            ? () {
+                                context
+                                    .read<ChatCubit>()
+                                    .connectWebSocket(widget.chatId);
+                              }
                             : null,
                       );
                     },
@@ -184,19 +189,13 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
 
             // Chat Input
             BlocBuilder<ChatCubit, ChatState>(
-              buildWhen: (previous, current) =>
-                  previous.isWebSocketConnected != current.isWebSocketConnected,
               builder: (context, chatState) {
                 return ChatInputField(
                   controller: TextEditingController(),
                   onSendMessage: (message) {
-                    if (message.trim().isEmpty) return;
+                    if (message.trim().isNotEmpty) {
+                      // Use WebSocket if connected, otherwise fallback to API
 
-                    if (chatState.isWebSocketConnected) {
-                      context
-                          .read<ChatCubit>()
-                          .sendMessageViaWebSocket(message.trim());
-                    } else {
                       context
                           .read<ChatCubit>()
                           .sendMessageOfflineSafe(message.trim());

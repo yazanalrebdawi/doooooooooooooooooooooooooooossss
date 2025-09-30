@@ -52,6 +52,8 @@ import 'package:dooss_business_app/features/profile_dealer/data/data_source/deal
 import 'package:dooss_business_app/features/profile_dealer/presentation/manager/dealer_profile_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dooss_business_app/features/auth/data/source/remote/auth_remote_data_source.dart';
+import 'package:dooss_business_app/features/auth/data/source/remote/auth_remote_data_source_imp.dart';
 
 // Core Network
 import 'package:dooss_business_app/core/network/api.dart';
@@ -229,5 +231,5 @@ Future<void> init() async {
   log('🎯 DI: BULLETPROOF DEPENDENCY INJECTION COMPLETE!');
 
   // toast notifications bar (من نسخة HEAD)
-  appLocator.registerFactory<ToastNotification>(() => ToastNotificationImp());
+  appLocator.registerFactory<ToastNotification>(() => ToastNotificationImpl());
 }

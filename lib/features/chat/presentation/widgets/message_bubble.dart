@@ -43,7 +43,7 @@ class MessageBubble extends StatelessWidget {
             SizedBox(width: 8.w),
           ],
 
-          // Message Content
+          // Message bubble
           Flexible(
             child: Container(
               constraints: BoxConstraints(
@@ -55,8 +55,10 @@ class MessageBubble extends StatelessWidget {
                     ? AppColors.primary
                     : AppColors.gray.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20.r).copyWith(
-                  bottomLeft: isMine ? Radius.circular(20.r) : Radius.circular(4.r),
-                  bottomRight: isMine ? Radius.circular(4.r) : Radius.circular(20.r),
+                  bottomLeft:
+                      isMine ? Radius.circular(20.r) : Radius.circular(4.r),
+                  bottomRight:
+                      isMine ? Radius.circular(4.r) : Radius.circular(20.r),
                 ),
               ),
               child: Column(
@@ -64,10 +66,9 @@ class MessageBubble extends StatelessWidget {
                 children: [
                   Text(
                     message.text,
-                    style: AppTextStyles.s14w400.copyWith(
-                      color: isMine ? AppColors.white : AppColors.black,
-                      height: 1.4,
-                    ),
+                    style: AppTextStyles.s14w400
+                        .copyWith(height: 1.4)
+                        .withThemeColor(context),
                   ),
                   SizedBox(height: 4.h),
                   Row(
@@ -83,10 +84,11 @@ class MessageBubble extends StatelessWidget {
                       ),
                       if (isMine) ...[
                         SizedBox(width: 4.w),
+                        // Show IconButton if pending, otherwise normal Icon
                         message.status.toLowerCase() == 'pending'
                             ? IconButton(
                                 icon: Icon(
-                                  Icons.refresh,
+                                  Icons.refresh, // reload icon
                                   size: 14.sp,
                                   color: AppColors.white.withOpacity(0.7),
                                 ),
@@ -137,10 +139,6 @@ class MessageBubble extends StatelessWidget {
 
       if (difference.inDays > 0) {
         return '${date.day}/${date.month} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-      } else if (difference.inHours > 0) {
-        return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-      } else if (difference.inMinutes > 0) {
-        return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
       } else {
         return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
       }

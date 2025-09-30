@@ -37,9 +37,7 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : AppColors.white,
       appBar: AppBar(
-        backgroundColor: isDark ? Colors.black : AppColors.white,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
@@ -51,17 +49,13 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
         ),
         title: Text(
           'Chat System Test',
-          style: AppTextStyles.blackS18W700.copyWith(
-            color: isDark ? Colors.white : AppColors.black,
-          ),
+          style: AppTextStyles.blackS18W700.withThemeColor(context),
         ),
         centerTitle: true,
       ),
       body: BlocProvider(
         create: (_) => di.appLocator<ChatCubit>(),
         child: BlocConsumer<ChatCubit, ChatState>(
-          listenWhen: (previous, current) =>
-              previous.error != current.error && current.error != null,
           listener: (context, state) {
             if (state.error != null) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -72,11 +66,6 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
               );
             }
           },
-          buildWhen: (previous, current) =>
-              previous.chats != current.chats ||
-              previous.isLoading != current.isLoading ||
-              previous.isCreatingChat != current.isCreatingChat ||
-              previous.isWebSocketConnected != current.isWebSocketConnected,
           builder: (context, state) {
             return Padding(
               padding: EdgeInsets.all(16.w),
@@ -106,9 +95,10 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
                               width: 12.w,
                               height: 12.w,
                               decoration: BoxDecoration(
-                                color: state.isWebSocketConnected
-                                    ? Colors.green
-                                    : Colors.red,
+                                color:
+                                    state.isWebSocketConnected
+                                        ? Colors.green
+                                        : Colors.red,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -116,9 +106,10 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
                             Text(
                               'WebSocket: ${state.isWebSocketConnected ? 'Connected' : 'Disconnected'}',
                               style: AppTextStyles.s14w400.copyWith(
-                                color: state.isWebSocketConnected
-                                    ? Colors.green
-                                    : Colors.red,
+                                color:
+                                    state.isWebSocketConnected
+                                        ? Colors.green
+                                        : Colors.red,
                               ),
                             ),
                           ],
@@ -167,18 +158,19 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
                       ),
                       SizedBox(width: 12.w),
                       ElevatedButton(
-                        onPressed: state.isCreatingChat
-                            ? null
-                            : () {
-                                final dealerId = int.tryParse(
-                                  _dealerIdController.text,
-                                );
-                                if (dealerId != null) {
-                                  context.read<ChatCubit>().createChat(
-                                        dealerId,
-                                      );
-                                }
-                              },
+                        onPressed:
+                            state.isCreatingChat
+                                ? null
+                                : () {
+                                  final dealerId = int.tryParse(
+                                    _dealerIdController.text,
+                                  );
+                                  if (dealerId != null) {
+                                    context.read<ChatCubit>().createChat(
+                                      dealerId,
+                                    );
+                                  }
+                                },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           padding: EdgeInsets.symmetric(
@@ -186,21 +178,22 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
                             vertical: 12.h,
                           ),
                         ),
-                        child: state.isCreatingChat
-                            ? SizedBox(
-                                width: 16.w,
-                                height: 16.w,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.white,
+                        child:
+                            state.isCreatingChat
+                                ? SizedBox(
+                                  width: 16.w,
+                                  height: 16.w,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.white,
+                                  ),
+                                )
+                                : Text(
+                                  'Create Chat',
+                                  style: AppTextStyles.s16w600.copyWith(
+                                    color: AppColors.white,
+                                  ),
                                 ),
-                              )
-                            : Text(
-                                'Create Chat',
-                                style: AppTextStyles.s16w600.copyWith(
-                                  color: AppColors.white,
-                                ),
-                              ),
                       ),
                     ],
                   ),
@@ -231,16 +224,17 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
                         ),
                         SizedBox(width: 12.w),
                         ElevatedButton(
-                          onPressed: _messageController.text.trim().isEmpty
-                              ? null
-                              : () {
-                                  context
-                                      .read<ChatCubit>()
-                                      .sendMessageViaWebSocket(
-                                        _messageController.text.trim(),
-                                      );
-                                  _messageController.clear();
-                                },
+                          onPressed:
+                              _messageController.text.trim().isEmpty
+                                  ? null
+                                  : () {
+                                    context
+                                        .read<ChatCubit>()
+                                        .sendMessageViaWebSocket(
+                                          _messageController.text.trim(),
+                                        );
+                                    _messageController.clear();
+                                  },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             padding: EdgeInsets.symmetric(
@@ -270,43 +264,45 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
                   ),
                   SizedBox(height: 12.h),
                   Expanded(
-                    child: state.isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primary,
-                            ),
-                          )
-                        : state.chats.isEmpty
+                    child:
+                        state.isLoading
                             ? Center(
-                                child: Text(
-                                  'No chats yet. Create a chat to get started.',
-                                  style: AppTextStyles.s14w400.copyWith(
-                                    color: isDark ? Colors.white : AppColors.gray,
-                                  ),
-                                  textAlign: TextAlign.center,
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                              ),
+                            )
+                            : state.chats.isEmpty
+                            ? Center(
+                              child: Text(
+                                'No chats yet. Create a chat to get started.',
+                                style: AppTextStyles.s14w400.copyWith(
+                                  color: isDark ? Colors.white : AppColors.gray,
                                 ),
-                              )
+                              ),
+                            )
                             : ListView.builder(
-                                itemCount: state.chats.length,
-                                itemBuilder: (context, index) {
-                                  final chat = state.chats[index];
-                                  return Card(
-                                    margin: EdgeInsets.only(bottom: 8.h),
-                                    child: ListTile(
-                                      title: Text(
-                                        chat.dealer,
-                                        style: AppTextStyles.s16w600,
+                              itemCount: state.chats.length,
+                              itemBuilder: (context, index) {
+                                final chat = state.chats[index];
+                                return Card(
+                                  margin: EdgeInsets.only(bottom: 8.h),
+                                  child: ListTile(
+                                    title: Text(
+                                      chat.dealer,
+                                      style: AppTextStyles.s16w600,
+                                    ),
+                                    subtitle: Text(
+                                      chat.lastMessage?.text ?? 'No messages',
+                                      style: AppTextStyles.s12w400.copyWith(
+                                        color:
+                                            isDark
+                                                ? Colors.white
+                                                : AppColors.gray,
                                       ),
-                                      subtitle: Text(
-                                        chat.lastMessage?.text ?? 'No messages',
-                                        style: AppTextStyles.s12w400.copyWith(
-                                          color: isDark
-                                              ? Colors.white
-                                              : AppColors.gray,
-                                        ),
-                                      ),
-                                      trailing: chat.userUnreadCount > 0
-                                          ? Container(
+                                    ),
+                                    trailing:
+                                        chat.userUnreadCount > 0
+                                            ? Container(
                                               padding: EdgeInsets.symmetric(
                                                 horizontal: 6.w,
                                                 vertical: 2.h,
@@ -319,23 +315,23 @@ class _ChatTestScreenState extends State<ChatTestScreen> {
                                                 '${chat.userUnreadCount}',
                                                 style: AppTextStyles.s12w400
                                                     .copyWith(
-                                                  color: AppColors.white,
-                                                ),
+                                                      color: AppColors.white,
+                                                    ),
                                               ),
                                             )
-                                          : null,
-                                      onTap: () {
-                                        context
-                                            .read<ChatCubit>()
-                                            .loadMessages(chat.id);
-                                        context.go(
-                                          '/chat-conversation/${chat.id}',
-                                        );
-                                      },
-                                    ),
-                                  );
-                                },
-                              ),
+                                            : null,
+                                    onTap: () {
+                                      context.read<ChatCubit>().loadMessages(
+                                        chat.id,
+                                      );
+                                      context.go(
+                                        '/chat-conversation/${chat.id}',
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                   ),
                 ],
               ),

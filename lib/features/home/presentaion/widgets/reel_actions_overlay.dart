@@ -1,3 +1,5 @@
+import 'dart:ui_web';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
@@ -27,14 +29,14 @@ class ReelActionsOverlay extends StatelessWidget {
       bottom: 100.h,
       child: Column(
         children: [
-          _buildActionButton(
+          _buildActionButton(isDark: isDark,
             icon: reel.liked ? Icons.favorite : Icons.favorite_border,
             label: _formatCount(reel.likesCount),
             onTap: onLike,
             iconColor: reel.liked ? Colors.red : (isDark ? AppColors.white : AppColors.black),
           ),
           SizedBox(height: 24.h),
-          _buildActionButton(
+          _buildActionButton(isDark: isDark,
             icon: Icons.comment,
             label: _formatCount(reel.likesCount),
             onTap: onComment,
@@ -42,7 +44,7 @@ class ReelActionsOverlay extends StatelessWidget {
           ),
           SizedBox(height: 24.h),
           _buildActionButton(
-            icon: Icons.share,
+            icon: Icons.share,isDark: isDark,
             label: 'Share',
             onTap: onShare,
             iconColor: isDark ? AppColors.white : AppColors.black,
@@ -56,7 +58,7 @@ class ReelActionsOverlay extends StatelessWidget {
     required IconData icon,
     required String label,
     VoidCallback? onTap,
-    Color iconColor = Colors.white,
+    Color iconColor = Colors.white,required bool isDark
   }) {
     return GestureDetector(
       onTap: onTap,
