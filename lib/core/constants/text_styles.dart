@@ -58,6 +58,12 @@ abstract class AppTextStyles {
     fontSize: 20,
     fontWeight: FontWeight.w400,
   );
+
+   static const TextStyle hintTextStyleWhiteS16W400 = TextStyle(
+    color: AppColors.white,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+  );
   // White Styles
   static TextStyle get whiteS12W400 => s12w400.copyWith(color: Colors.white);
   static TextStyle get whiteS12W600 => s12w600.copyWith(color: Colors.white);

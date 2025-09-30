@@ -68,7 +68,7 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocProvider(
-      create: (context) => di.sl<ChatCubit>()
+      create: (context) => di.appLocator<ChatCubit>()
         ..loadMessages(widget.chatId)
         ..connectWebSocket(widget.chatId),
       child: Scaffold(
