@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import 'package:dooss_business_app/core/constants/text_styles.dart';
-=======
->>>>>>> zoz
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/localization/app_localizations.dart';
@@ -13,6 +9,8 @@ class AddCarStep2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       child: Column(
@@ -20,54 +18,96 @@ class AddCarStep2 extends StatelessWidget {
         children: [
           SizedBox(height: 8.h),
           Text(
-            AppLocalizations.of(context)?.translate('carDetails') ?? 'Car Details',
-<<<<<<< HEAD
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.sp).withThemeColor(context),
+            AppLocalizations.of(context)?.translate('carDetails') ??
+                'Car Details',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 22.sp,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
           SizedBox(height: 32.h),
-          Text(AppLocalizations.of(context)?.translate('carBrand') ?? 'Car Brand', style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500).withThemeColor(context)),
-=======
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.sp),
+
+          // Car Brand
+          Text(
+            AppLocalizations.of(context)?.translate('carBrand') ?? 'Car Brand',
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
           ),
-          SizedBox(height: 32.h),
-          Text(AppLocalizations.of(context)?.translate('carBrand') ?? 'Car Brand', style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500)),
->>>>>>> zoz
           SizedBox(height: 8.h),
           TextFormField(
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)?.translate('carBrand') ?? 'Car Brand',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
-              contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
+              hintText:
+                  AppLocalizations.of(context)?.translate('carBrand') ??
+                  'Car Brand',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 14.h,
+                horizontal: 12.w,
+              ),
             ),
           ),
           SizedBox(height: 18.h),
-<<<<<<< HEAD
-          Text(AppLocalizations.of(context)?.translate('carModel') ?? 'Car Model', style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500).withThemeColor(context)),
-=======
-          Text(AppLocalizations.of(context)?.translate('carModel') ?? 'Car Model', style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500)),
->>>>>>> zoz
+
+          // Car Model
+          Text(
+            AppLocalizations.of(context)?.translate('carModel') ?? 'Car Model',
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+          ),
           SizedBox(height: 8.h),
           TextFormField(
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)?.translate('carModel') ?? 'Car Model',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
-              contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
+              hintText:
+                  AppLocalizations.of(context)?.translate('carModel') ??
+                  'Car Model',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 14.h,
+                horizontal: 12.w,
+              ),
             ),
           ),
           SizedBox(height: 18.h),
-          Text(AppLocalizations.of(context)?.translate('year') ?? 'Year', style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500)),
+
+          // Year
+          Text(
+            AppLocalizations.of(context)?.translate('year') ?? 'Year',
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+          ),
           SizedBox(height: 8.h),
           TextFormField(
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)?.translate('year') ?? 'Year',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
-              contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
+              hintText:
+                  AppLocalizations.of(context)?.translate('year') ?? 'Year',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 14.h,
+                horizontal: 12.w,
+              ),
             ),
             keyboardType: TextInputType.number,
           ),
+
           const Spacer(),
         ],
       ),
     );
   }
-} 
+}
