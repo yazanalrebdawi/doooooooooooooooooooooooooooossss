@@ -11,27 +11,15 @@ class RegisterScreenHeaderSection extends StatelessWidget {
     return Column(
       children: [
         SizedBox(height: 40.h),
-<<<<<<< HEAD
-=======
-      
->>>>>>> zoz
         Align(
           alignment: Alignment.center,
           child: Text(
             AppLocalizations.of(context)?.translate('Sign Up') ?? 'Sign Up',
-<<<<<<< HEAD
-            style: AppTextStyles.headLineBlackS30W600.withThemeColor(context),
-=======
             style: AppTextStyles.headLineBlackS30W600,
->>>>>>> zoz
           ),
         ),
         SizedBox(height: 32.h),
       ],
     );
   }
-<<<<<<< HEAD
 }
-=======
-} 
->>>>>>> zoz

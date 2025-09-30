@@ -10,11 +10,7 @@ class MessagesTabContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ChatCubit>(
-<<<<<<< HEAD
-      create: (context) => di.sl<ChatCubit>(),
-=======
       create: (context) => di.appLocator<ChatCubit>(),
->>>>>>> zoz
       child: const MessagesTabDataLoader(),
     );
   }
@@ -25,6 +21,7 @@ class MessagesTabDataLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Load chats once the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ChatCubit>().loadChats();
     });

@@ -12,48 +12,27 @@ import 'auth_button.dart';
 class RegisterScreenButtonsSection extends StatelessWidget {
   final CreateAccountParams params;
 
-<<<<<<< HEAD
-  const RegisterScreenButtonsSection({
-    super.key,
-    required this.params,
-  });
-=======
   const RegisterScreenButtonsSection({super.key, required this.params});
->>>>>>> zoz
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SizedBox(height: 18.h),
+
         // Sign Up Button
         BlocBuilder<AuthCubit, AuthState>(
-<<<<<<< HEAD
+          buildWhen: (previous, current) =>
+              previous.isLoading != current.isLoading ||
+              previous.checkAuthState != current.checkAuthState ||
+              previous.error != current.error ||
+              previous.success != current.success,
           builder: (context, state) {
-            
             print('🔍 RegisterScreenButtonsSection - isLoading: ${state.isLoading}');
             print('🔍 RegisterScreenButtonsSection - checkAuthState: ${state.checkAuthState}');
-            
-            return AuthButton(
-              onTap:  () {
-=======
-          buildWhen:
-              (previous, current) =>
-                  previous.isLoading != current.isLoading ||
-                  previous.checkAuthState != current.checkAuthState ||
-                  previous.error != current.error ||
-                  previous.success != current.success,
-          builder: (context, state) {
-            print(
-              '🔍 RegisterScreenButtonsSection - isLoading: ${state.isLoading}',
-            );
-            print(
-              '🔍 RegisterScreenButtonsSection - checkAuthState: ${state.checkAuthState}',
-            );
 
             return AuthButton(
               onTap: () {
->>>>>>> zoz
                 print('🔘 Register Button Pressed');
                 if (params.formState.currentState!.validate()) {
                   print('✅ Form validation passed, calling register');
@@ -62,18 +41,14 @@ class RegisterScreenButtonsSection extends StatelessWidget {
                   print('❌ Form validation failed');
                 }
               },
-<<<<<<< HEAD
               buttonText: AppLocalizations.of(context)?.translate('signUp') ?? 'Sign Up',
-=======
-              buttonText:
-                  AppLocalizations.of(context)?.translate('signUp') ??
-                  'Sign Up',
->>>>>>> zoz
               isLoading: state.isLoading,
             );
           },
         ),
+
         SizedBox(height: 40.h),
+
         // Or Continue With
         Row(
           children: [
@@ -82,27 +57,18 @@ class RegisterScreenButtonsSection extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Text(
                 AppLocalizations.of(context)?.translate('OR') ?? 'OR',
-<<<<<<< HEAD
-                style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14).withThemeColor(context),
-=======
                 style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14),
->>>>>>> zoz
               ),
             ),
             Expanded(child: Divider(thickness: 1, color: Colors.grey.shade300)),
           ],
         ),
+
         SizedBox(height: 40.h),
-<<<<<<< HEAD
-        AlreadyHaveAccount()
-      ],
-    );
-  }
-} 
-=======
+
+        // Already have account
         AlreadyHaveAccount(),
       ],
     );
   }
 }
->>>>>>> zoz

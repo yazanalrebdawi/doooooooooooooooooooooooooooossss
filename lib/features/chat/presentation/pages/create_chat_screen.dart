@@ -42,43 +42,33 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-              final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? Color(0xFF2A2A2A) : AppColors.white,
       appBar: AppBar(
+        backgroundColor: isDark ? Color(0xFF2A2A2A) : AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white :AppColors.black, size: 24.sp),
-=======
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.black, size: 24.sp),
->>>>>>> zoz
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Colors.white : AppColors.black,
+            size: 24.sp,
+          ),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'Chat with ${widget.dealerName}',
-<<<<<<< HEAD
-          style: AppTextStyles.blackS18W700.withThemeColor(context),
-=======
-          style: AppTextStyles.blackS18W700,
->>>>>>> zoz
+          style: AppTextStyles.blackS18W700.copyWith(
+            color: isDark ? Colors.white : AppColors.black,
+          ),
         ),
         centerTitle: true,
       ),
       body: BlocConsumer<ChatCubit, ChatState>(
-<<<<<<< HEAD
-=======
-        listenWhen: (previous, current) {
-          return previous.error != current.error ||
-              previous.selectedChatId != current.selectedChatId;
-        },
->>>>>>> zoz
+        listenWhen: (previous, current) =>
+            previous.error != current.error ||
+            previous.selectedChatId != current.selectedChatId,
         listener: (context, state) {
           if (state.error != null) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -88,23 +78,15 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
               ),
             );
           }
-<<<<<<< HEAD
-          
-=======
 
->>>>>>> zoz
           // Navigate to chat conversation when chat is created
           if (state.selectedChatId != null && state.isWebSocketConnected) {
             context.go('/chat-conversation/${state.selectedChatId}');
           }
         },
-<<<<<<< HEAD
-=======
-        buildWhen: (previous, current) {
-          return previous.isCreatingChat != current.isCreatingChat ||
-              previous.isWebSocketConnected != current.isWebSocketConnected;
-        },
->>>>>>> zoz
+        buildWhen: (previous, current) =>
+            previous.isCreatingChat != current.isCreatingChat ||
+            previous.isWebSocketConnected != current.isWebSocketConnected,
         builder: (context, state) {
           if (state.isCreatingChat) {
             return Center(
@@ -115,13 +97,9 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                   SizedBox(height: 16.h),
                   Text(
                     'Creating chat...',
-<<<<<<< HEAD
-                    style: AppTextStyles.s16w500.copyWith(color: isDark?Colors.white: AppColors.gray),
-=======
                     style: AppTextStyles.s16w500.copyWith(
-                      color: AppColors.gray,
+                      color: isDark ? Colors.white : AppColors.gray,
                     ),
->>>>>>> zoz
                   ),
                 ],
               ),
@@ -141,30 +119,24 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                 SizedBox(height: 16.h),
                 Text(
                   'Starting conversation with',
-<<<<<<< HEAD
-                  style: AppTextStyles.s16w500.copyWith(color:isDark ? Colors.white: AppColors.gray),
-=======
-                  style: AppTextStyles.s16w500.copyWith(color: AppColors.gray),
->>>>>>> zoz
+                  style: AppTextStyles.s16w500.copyWith(
+                    color: isDark ? Colors.white : AppColors.gray,
+                  ),
                 ),
                 SizedBox(height: 8.h),
                 Text(
                   widget.dealerName,
-<<<<<<< HEAD
-                  style: AppTextStyles.blackS18W700.withThemeColor(context),
-=======
-                  style: AppTextStyles.blackS18W700,
->>>>>>> zoz
+                  style: AppTextStyles.blackS18W700.copyWith(
+                    color: isDark ? Colors.white : AppColors.black,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 32.h),
                 Text(
                   'Type your first message:',
-<<<<<<< HEAD
-                  style: AppTextStyles.s14w400.copyWith(color: isDark ? Colors.white: AppColors.gray),
-=======
-                  style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
->>>>>>> zoz
+                  style: AppTextStyles.s14w400.copyWith(
+                    color: isDark ? Colors.white : AppColors.gray,
+                  ),
                 ),
                 SizedBox(height: 16.h),
                 TextField(
@@ -185,25 +157,15 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-<<<<<<< HEAD
-                    onPressed: state.isWebSocketConnected && _messageController.text.trim().isNotEmpty
+                    onPressed: state.isWebSocketConnected &&
+                            _messageController.text.trim().isNotEmpty
                         ? () {
-                            context.read<ChatCubit>().sendMessageViaWebSocket(_messageController.text.trim());
+                            context.read<ChatCubit>().sendMessageViaWebSocket(
+                                  _messageController.text.trim(),
+                                );
                             _messageController.clear();
                           }
                         : null,
-=======
-                    onPressed:
-                        state.isWebSocketConnected &&
-                                _messageController.text.trim().isNotEmpty
-                            ? () {
-                              context.read<ChatCubit>().sendMessageViaWebSocket(
-                                _messageController.text.trim(),
-                              );
-                              _messageController.clear();
-                            }
-                            : null,
->>>>>>> zoz
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -213,13 +175,9 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                     ),
                     child: Text(
                       'Send Message',
-<<<<<<< HEAD
-                      style: AppTextStyles.s16w600.copyWith(color: AppColors.white),
-=======
                       style: AppTextStyles.s16w600.copyWith(
                         color: AppColors.white,
                       ),
->>>>>>> zoz
                     ),
                   ),
                 ),

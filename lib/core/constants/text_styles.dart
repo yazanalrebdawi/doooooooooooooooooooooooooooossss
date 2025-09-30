@@ -53,6 +53,11 @@ abstract class AppTextStyles {
   static TextStyle get primaryS16W600 => s16w600.copyWith(color: AppColors.primary);
   static TextStyle get primaryS16W700 => s16w600.copyWith(color: AppColors.primary);
 
+  static const TextStyle hintTextStyleWhiteS20W400 = TextStyle(
+    color: Colors.white,
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+  );
   // White Styles
   static TextStyle get whiteS12W400 => s12w400.copyWith(color: Colors.white);
   static TextStyle get whiteS12W600 => s12w600.copyWith(color: Colors.white);

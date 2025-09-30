@@ -1,21 +1,22 @@
-<<<<<<< HEAD
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
+import 'package:dooss_business_app/core/constants/colors.dart';
+import '../../../../core/constants/text_styles.dart';
 
-
-
+/// Abstract interface for toast notifications
 abstract class ToastNotification {
   void showErrorMessage(BuildContext context, String message);
   void showSuccessMessage(BuildContext context, String message);
 }
 
-class ToastNotificationImp implements ToastNotification {
+/// Implementation using Toastification package
+class ToastNotificationImpl implements ToastNotification {
   @override
   void showErrorMessage(BuildContext context, String message) {
     toastification.show(
       style: ToastificationStyle.flatColored,
       type: ToastificationType.error,
-      context: context, // optional if you use ToastificationWrapper
+      context: context,
       title: Text(message),
       autoCloseDuration: const Duration(seconds: 5),
     );
@@ -26,18 +27,14 @@ class ToastNotificationImp implements ToastNotification {
     toastification.show(
       style: ToastificationStyle.flatColored,
       type: ToastificationType.success,
-      context: context, // optional if you use ToastificationWrapper
+      context: context,
       title: Text(message),
       autoCloseDuration: const Duration(seconds: 5),
     );
   }
-=======
+}
 
-import 'package:dooss_business_app/core/constants/colors.dart';
-import 'package:flutter/material.dart';
-
-import '../../../../core/constants/text_styles.dart';
-
+/// Custom SnackBar implementation
 SnackBar customAppSnackBar(String message, BuildContext context) {
   return SnackBar(
     elevation: 0,
@@ -47,9 +44,7 @@ SnackBar customAppSnackBar(String message, BuildContext context) {
     content: Container(
       decoration: BoxDecoration(
         color: AppColors.primary,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(12),
-        ),
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -61,5 +56,4 @@ SnackBar customAppSnackBar(String message, BuildContext context) {
       ),
     ),
   );
->>>>>>> zoz
 }

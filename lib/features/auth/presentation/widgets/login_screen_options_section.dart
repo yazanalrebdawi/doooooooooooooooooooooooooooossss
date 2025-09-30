@@ -17,51 +17,38 @@ class LoginScreen2OptionsSection extends StatelessWidget {
       builder: (context, state) {
         return Row(
           children: [
+            // ###################### Remember Me Checkbox ######################
             Checkbox(
               value: state.isRememberMe ?? false,
-              onChanged: (v) {
+              onChanged: (value) {
                 context.read<AuthCubit>().toggleRememberMe();
               },
               activeColor: AppColors.primary,
-<<<<<<< HEAD
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4)),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            Text(
-              AppLocalizations.of(context)?.translate('rememberMe') ??
-                  'Remember Me',
-              style: AppTextStyles.descriptionS18W400
-                  .copyWith(fontSize: 14)
-                  .withThemeColor(context),
-=======
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                borderRadius: BorderRadius.circular(4),
+              ),
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             Text(
               AppLocalizations.of(context)?.translate('rememberMe') ?? 'Remember Me',
               style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14),
->>>>>>> zoz
             ),
             const Spacer(),
+            // ###################### Forgot Password Button ######################
             TextButton(
               onPressed: () {
                 context.go(RouteNames.forgetPasswordPage);
               },
-<<<<<<< HEAD
               style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero, minimumSize: Size(0, 0)),
-              child: Text(
-                AppLocalizations.of(context)?.translate('ForgotPassword') ??
-                    'Forgot Password?',
-                style: AppTextStyles.descriptionS18W400
-                    .copyWith(fontSize: 14, color: AppColors.primary),
-=======
-              style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(0, 0)),
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(0, 0),
+              ),
               child: Text(
                 AppLocalizations.of(context)?.translate('ForgotPassword') ?? 'Forgot Password?',
-                style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14, color: AppColors.primary),
->>>>>>> zoz
+                style: AppTextStyles.descriptionS18W400.copyWith(
+                  fontSize: 14,
+                  color: AppColors.primary,
+                ),
               ),
             ),
           ],
@@ -69,8 +56,4 @@ class LoginScreen2OptionsSection extends StatelessWidget {
       },
     );
   }
-<<<<<<< HEAD
 }
-=======
-} 
->>>>>>> zoz

@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/services/locator_service.dart';
-import '../../../../core/constants/text_styles.dart';
-import '../../../../core/localization/language_cubit.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../manager/auth_cubit.dart';
 import '../manager/auth_state.dart';
@@ -35,77 +33,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-<<<<<<< HEAD
-      create: (context) => sl<AuthCubit>(),
-=======
       create: (context) => appLocator<AuthCubit>(),
->>>>>>> zoz
       child: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           print('🔍 Register Screen - Auth State: ${state.checkAuthState}');
           print('🔍 Register Screen - Loading: ${state.isLoading}');
           print('🔍 Register Screen - Error: ${state.error}');
           print('🔍 Register Screen - Success: ${state.success}');
-<<<<<<< HEAD
 
           if (state.checkAuthState == CheckAuthState.success) {
             print('✅ Register Success - Navigating to OTP page');
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                customAppSnackBar(
+                  AppLocalizations.of(context)?.translate('accountCreated') ??
+                      "Account created successfully!",
+                  context,
+                ),
+              );
 
-            sl<ToastNotification>().showSuccessMessage(
-              context,
-              AppLocalizations.of(context)?.translate('accountCreated') ??
-                  "Account created successfully!",
-            );
-
-=======
-          
-          if (state.checkAuthState == CheckAuthState.success) {
-            print('✅ Register Success - Navigating to OTP page');
-            ScaffoldMessenger.of(context).showSnackBar(customAppSnackBar(
-              AppLocalizations.of(context)?.translate('accountCreated') ?? "Account created successfully!", 
-              context
-            ));
-            
->>>>>>> zoz
-            // تأخير قصير ثم الانتقال
-            Future.delayed(const Duration(milliseconds: 500), () {
-              // إرسال رقم الهاتف كما هو بدون تحويل
-              print('📱 Phone Number: ${_params.fullPhoneNumber}');
-              print('🚀 Navigating to: ${RouteNames.verifyRegisterOtpPage}');
-<<<<<<< HEAD
-
-              context.go(RouteNames.verifyRegisterOtpPage,
-                  extra: _params.fullPhoneNumber);
-=======
-              
-              context.go(RouteNames.verifyRegisterOtpPage, extra: _params.fullPhoneNumber);
->>>>>>> zoz
-            });
+              Future.delayed(const Duration(milliseconds: 500), () {
+                print('📱 Phone Number: ${_params.fullPhoneNumber}');
+                print('🚀 Navigating to: ${RouteNames.verifyRegisterOtpPage}');
+                context.go(
+                  RouteNames.verifyRegisterOtpPage,
+                  extra: _params.fullPhoneNumber,
+                );
+              });
+            }
           }
+
           if (state.checkAuthState == CheckAuthState.error) {
             print('❌ Register Error: ${state.error}');
-<<<<<<< HEAD
-
-            sl<ToastNotification>().showErrorMessage(
-              context,
-              state.error ??
-                  AppLocalizations.of(context)?.translate('operationFailed') ??
-                  "Operation failed",
-            );
-=======
-            ScaffoldMessenger.of(context).showSnackBar(customAppSnackBar(
-              state.error ?? AppLocalizations.of(context)?.translate('operationFailed') ?? "Operation failed", 
-              context,
-            ));
->>>>>>> zoz
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                customAppSnackBar(
+                  state.error ??
+                      AppLocalizations.of(context)?.translate('operationFailed') ??
+                      "Operation failed",
+                  context,
+                ),
+              );
+            }
           }
         },
         builder: (context, state) {
           return Scaffold(
-<<<<<<< HEAD
-=======
             backgroundColor: AppColors.background,
->>>>>>> zoz
             body: SafeArea(
               child: SingleChildScrollView(
                 child: Padding(
@@ -118,37 +92,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const RegisterScreenHeaderSection(),
                         RegisterScreenFormFields(
                           params: _params,
-<<<<<<< HEAD
                           onFullNameChanged: (username) {},
                           onPhoneChanged: (phone) {
                             print(
                                 '📞 Register Screen - Full phone number: $phone');
-                            // تخزين الرقم الكامل في CreateAccountParams
                             _params.fullPhoneNumber = phone;
                           },
                           onPasswordChanged: (password) {},
                           onConfirmPasswordChanged: (confirmPassword) {},
-=======
-                          onFullNameChanged: (username) {
-                            
-                          },
-                          onPhoneChanged: (phone) {
-                            print('📞 Register Screen - Full phone number: $phone');
-                            // تخزين الرقم الكامل في CreateAccountParams
-                            _params.fullPhoneNumber = phone;
-                          },
-                          onPasswordChanged: (password) {
-                            
-                          },
-                          onConfirmPasswordChanged: (confirmPassword) {
-                            
-                          },
->>>>>>> zoz
                         ),
                         SizedBox(height: 18.h),
-                        RegisterScreenButtonsSection(
-                          params: _params,
-                        ),
+                        RegisterScreenButtonsSection(params: _params),
                       ],
                     ),
                   ),

@@ -12,4 +12,6 @@ class CacheKeys {
   static const String sensitiveData = 'SENSITIVE_DATA';
   static const String appThemeMode = 'THEME_MODE';
   static const String favoritesList = 'FAVORITES_List';
+  static const String userIdKey = 'USER_ID_KEY';
+
 }

@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import 'package:dooss_business_app/core/services/token_service.dart';
-=======
->>>>>>> zoz
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,34 +33,14 @@ class _LogInBodySectionState extends State<LogInBodySection> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-<<<<<<< HEAD
-      create: (context) => sl<AuthCubit>(),
-      child: BlocConsumer<AuthCubit, AuthState>(
-=======
       create: (context) => appLocator<AuthCubit>(),
       child: BlocConsumer<AuthCubit, AuthState>(
-        listenWhen:
-            (previous, current) =>
-                previous.checkAuthState != current.checkAuthState ||
-                previous.error != current.error ||
-                previous.success != current.success,
->>>>>>> zoz
+        listenWhen: (previous, current) =>
+            previous.checkAuthState != current.checkAuthState ||
+            previous.error != current.error ||
+            previous.success != current.success,
         listener: (context, state) {
-          print('🔍 Login - Auth State: ${state.checkAuthState}');
-          print('🔍 Login - Loading: ${state.isLoading}');
-          print('🔍 Login - Error: ${state.error}');
-          print('🔍 Login - Success: ${state.success}');
-
           if (state.checkAuthState == CheckAuthState.signinSuccess) {
-            print('✅ Login Success - Navigating to Home');
-<<<<<<< HEAD
-
-            sl<ToastNotification>().showSuccessMessage(
-              context,
-              AppLocalizations.of(context)?.translate('loginSuccess') ??
-                  "Login successful!",
-            );
-=======
             ScaffoldMessenger.of(context).showSnackBar(
               customAppSnackBar(
                 AppLocalizations.of(context)?.translate('loginSuccess') ??
@@ -72,45 +48,27 @@ class _LogInBodySectionState extends State<LogInBodySection> {
                 context,
               ),
             );
-
->>>>>>> zoz
-            // تأخير قصير ثم الانتقال إلى Home
             Future.delayed(const Duration(milliseconds: 500), () {
               context.go(RouteNames.homeScreen);
             });
           }
           if (state.checkAuthState == CheckAuthState.error) {
-            print('❌ Login Error: ${state.error}');
-<<<<<<< HEAD
-
-            sl<ToastNotification>().showSuccessMessage(
-              context,
-              state.error ??
-                  AppLocalizations.of(context)?.translate('operationFailed') ??
-                  "Operation failed",
-            );
-          }
-        },
-=======
             ScaffoldMessenger.of(context).showSnackBar(
               customAppSnackBar(
                 state.error ??
-                    AppLocalizations.of(
-                      context,
-                    )?.translate('operationFailed') ??
+                    AppLocalizations.of(context)
+                            ?.translate('operationFailed') ??
                     "Operation failed",
                 context,
               ),
             );
           }
         },
-        buildWhen:
-            (previous, current) =>
-                previous.isLoading != current.isLoading ||
-                previous.checkAuthState != current.checkAuthState ||
-                previous.error != current.error ||
-                previous.success != current.success,
->>>>>>> zoz
+        buildWhen: (previous, current) =>
+            previous.isLoading != current.isLoading ||
+            previous.checkAuthState != current.checkAuthState ||
+            previous.error != current.error ||
+            previous.success != current.success,
         builder: (context, state) {
           return Form(
             key: _params.formState,
@@ -118,16 +76,12 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Email Field
                   _buildEmailField(),
                   SizedBox(height: 20.h),
-                  // Password Field
                   _buildPasswordField(),
                   SizedBox(height: 20.h),
-                  // Login Button
                   _buildLoginButton(context, state),
                   SizedBox(height: 15.h),
-                  // Remember Me & Forgot Password
                   _buildBottomSection(context, state),
                 ],
               ),
@@ -154,13 +108,9 @@ class _LogInBodySectionState extends State<LogInBodySection> {
           style: AppTextStyles.s16w400,
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.email_outlined, color: AppColors.primary),
-<<<<<<< HEAD
-            hintText: AppLocalizations.of(context)?.translate('enterEmail') ??
-=======
             hintText:
                 AppLocalizations.of(context)?.translate('enterEmail') ??
->>>>>>> zoz
-                "Enter your email",
+                    "Enter your email",
             hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
@@ -178,15 +128,11 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               borderSide: const BorderSide(color: Colors.red, width: 1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 18.h,
-            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
             fillColor: AppColors.white,
           ),
           validator: (value) => Validator.emailValidation(value),
-          onChanged: (value) {},
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_params.passwordNode);
           },
@@ -224,11 +170,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             ),
             hintText:
                 AppLocalizations.of(context)?.translate('enterPassword') ??
-<<<<<<< HEAD
                     "Enter your password",
-=======
-                "Enter your password",
->>>>>>> zoz
             hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
@@ -246,15 +188,11 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               borderSide: const BorderSide(color: Colors.red, width: 1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 18.h,
-            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
             fillColor: AppColors.white,
           ),
           validator: (value) => Validator.notNullValidation(value),
-          onChanged: (value) {},
         ),
       ],
     );
@@ -265,38 +203,13 @@ class _LogInBodySectionState extends State<LogInBodySection> {
       width: double.infinity,
       height: 54.h,
       child: ElevatedButton(
-<<<<<<< HEAD
         onPressed: state.isLoading
             ? null
             : () {
-                print('🔘 Login Button Pressed');
-                print('📧 Email: ${_params.email.text}');
-                print('🔑 Password: ${_params.password.text}');
-
                 if (_params.formState.currentState!.validate()) {
-                  print('✅ Form validation passed, calling signIn');
                   context.read<AuthCubit>().signIn(_params);
-                } else {
-                  print('❌ Form validation failed');
                 }
               },
-=======
-        onPressed:
-            state.isLoading
-                ? null
-                : () {
-                  print('🔘 Login Button Pressed');
-                  print('📧 Email: ${_params.email.text}');
-                  print('🔑 Password: ${_params.password.text}');
-
-                  if (_params.formState.currentState!.validate()) {
-                    print('✅ Form validation passed, calling signIn');
-                    context.read<AuthCubit>().signIn(_params);
-                  } else {
-                    print('❌ Form validation failed');
-                  }
-                },
->>>>>>> zoz
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           shape: RoundedRectangleBorder(
@@ -306,7 +219,6 @@ class _LogInBodySectionState extends State<LogInBodySection> {
           padding: EdgeInsets.zero,
         ),
         child: Center(
-<<<<<<< HEAD
           child: state.isLoading
               ? SizedBox(
                   width: 24.w,
@@ -320,23 +232,6 @@ class _LogInBodySectionState extends State<LogInBodySection> {
                   AppLocalizations.of(context)?.translate('login') ?? 'Sign In',
                   style: AppTextStyles.buttonTextStyleWhiteS22W700,
                 ),
-=======
-          child:
-              state.isLoading
-                  ? SizedBox(
-                    width: 24.w,
-                    height: 24.h,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2.w,
-                    ),
-                  )
-                  : Text(
-                    AppLocalizations.of(context)?.translate('login') ??
-                        'Sign In',
-                    style: AppTextStyles.buttonTextStyleWhiteS22W700,
-                  ),
->>>>>>> zoz
         ),
       ),
     );
@@ -356,8 +251,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               activeColor: AppColors.primary,
             ),
             Text(
-              AppLocalizations.of(context)?.translate('rememberMe') ??
-                  'Remember me',
+              AppLocalizations.of(context)?.translate('rememberMe') ?? 'Remember me',
               style: AppTextStyles.descriptionS18W400,
             ),
           ],
@@ -367,8 +261,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             context.go(RouteNames.forgetPasswordPage);
           },
           child: Text(
-            AppLocalizations.of(context)?.translate('forgetPassword') ??
-                'Forgot password?',
+            AppLocalizations.of(context)?.translate('forgetPassword') ?? 'Forgot password?',
             style: AppTextStyles.descriptionS18W400,
           ),
         ),
