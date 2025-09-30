@@ -105,7 +105,7 @@ class TokenService {
   // Methods for Access Token (Chat System)
   static Future<String?> getAccessToken() async {
     try {
-      return await _storage.read(key: CacheKeys.accessTokenKey);
+      return await _storage.read(key: CacheKeys.tokenKey);
     } catch (e) {
       log('Error getting access token: $e');
       return null;

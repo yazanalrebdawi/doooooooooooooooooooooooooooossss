@@ -81,6 +81,7 @@ class AuthCubit extends OptimizedCubit<AuthState> {
         // الـ token يتم حفظه تلقائياً في AuthResponceModel.fromJson
         if (authResponse.token.isNotEmpty) {
           log("✅ AuthCubit - Token saved automatically in AuthResponceModel");
+          TokenService.saveToken(authResponse.token);
 
           // اختبار التحقق من الـ authentication
           final hasToken = await TokenService.hasToken();
@@ -166,8 +167,8 @@ class AuthCubit extends OptimizedCubit<AuthState> {
     log("🚀 AuthCubit - Starting reset password process for: $phoneNumber");
     safeEmit(state.copyWith(isLoading: true));
 
-    final Either<Failure, Map<String, dynamic>> result = await remote
-        .resetPassword(phoneNumber);
+    final Either<Failure, Map<String, dynamic>> result =
+        await remote.resetPassword(phoneNumber);
 
     result.fold(
       (failure) {
@@ -236,8 +237,8 @@ class AuthCubit extends OptimizedCubit<AuthState> {
     );
     safeEmit(state.copyWith(isLoading: true));
 
-    final Either<Failure, String> result = await remote
-        .verifyOtpForResetPassword(params);
+    final Either<Failure, String> result =
+        await remote.verifyOtpForResetPassword(params);
 
     result.fold(
       (failure) {
