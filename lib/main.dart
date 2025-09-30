@@ -72,6 +72,7 @@ Future<void> main() async {
   );
 }
 
+
 class SimpleReelsApp extends StatelessWidget {
   final AppThemeEnum initialTheme;
   const SimpleReelsApp({super.key, required this.initialTheme});
@@ -95,7 +96,12 @@ class SimpleReelsApp extends StatelessWidget {
         builder: (context, state) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            theme: ThemeData.dark(),
+            theme: AppThemes.lightTheme,
+            darkTheme: AppThemes.darkTheme,
+            themeMode:
+                state.themeMode == AppThemeEnum.light
+                    ? ThemeMode.light
+                    : ThemeMode.dark,
             routerConfig: AppRouter.router,
             locale: state.locale,
             supportedLocales: const [Locale('en'), Locale('ar')],

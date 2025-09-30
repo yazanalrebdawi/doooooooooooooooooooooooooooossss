@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dooss_business_app/core/constants/colors.dart';
 import 'package:dooss_business_app/core/constants/text_styles.dart';
+import 'package:dooss_business_app/core/routes/route_names.dart';
 import 'package:dooss_business_app/core/services/native_video_service.dart';
 import 'package:dooss_business_app/features/home/data/models/reel_model.dart';
 import 'package:dooss_business_app/features/home/presentaion/manager/home_cubit.dart';
@@ -30,11 +31,12 @@ class ReelsScreenContent extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocBuilder<ReelCubit, ReelState>(
-      buildWhen: (previous, current) =>
-          previous.reels != current.reels ||
-          previous.isLoading != current.isLoading ||
-          previous.error != current.error ||
-          previous.currentReelIndex != current.currentReelIndex,
+      buildWhen:
+          (previous, current) =>
+              previous.reels != current.reels ||
+              previous.isLoading != current.isLoading ||
+              previous.error != current.error ||
+              previous.currentReelIndex != current.currentReelIndex,
       builder: (context, state) {
         if (state.isLoading && state.reels.isEmpty) {
           return _buildLoadingState(isDark);
@@ -67,9 +69,7 @@ class ReelsScreenContent extends StatelessWidget {
     return Container(
       color: isDark ? AppColors.black : AppColors.white,
       child: const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primary,
-        ),
+        child: CircularProgressIndicator(color: AppColors.primary),
       ),
     );
   }
@@ -97,8 +97,9 @@ class ReelsScreenContent extends StatelessWidget {
             Text(
               error,
               style: AppTextStyles.whiteS14W400.copyWith(
-                color:
-                    (isDark ? AppColors.white : AppColors.black).withOpacity(0.7),
+                color: (isDark ? AppColors.white : AppColors.black).withOpacity(
+                  0.7,
+                ),
               ),
             ),
             SizedBox(height: 24.h),
@@ -139,7 +140,9 @@ class ReelsScreenContent extends StatelessWidget {
             Text(
               'Check back later for new content',
               style: AppTextStyles.whiteS14W400.copyWith(
-                color: (isDark ? AppColors.white : AppColors.black).withOpacity(0.7),
+                color: (isDark ? AppColors.white : AppColors.black).withOpacity(
+                  0.7,
+                ),
               ),
             ),
           ],
@@ -160,7 +163,14 @@ class ReelsScreenContent extends StatelessWidget {
       itemBuilder: (context, index) {
         final reel = state.reels[index];
         final isCurrentReel = index == state.currentReelIndex;
-        return _buildReelItem(context, reel, isCurrentReel, index, state, isDark);
+        return _buildReelItem(
+          context,
+          reel,
+          isCurrentReel,
+          index,
+          state,
+          isDark,
+        );
       },
     );
   }
@@ -203,8 +213,9 @@ class ReelsScreenContent extends StatelessWidget {
           left: 16.w,
           child: GestureDetector(
             onTap: () {
-              // Navigate back to home screen and update home cubit index
-              context.go('/home'); // or RouteNames.homeScreen if defined
+              context.go(RouteNames.homeScreen);
+
+              // 2️⃣ بعدها تغيّر التاب المطلوب
               context.read<HomeCubit>().updateCurrentIndex(0);
               log("🔥🔥🔥");
             },
@@ -212,7 +223,9 @@ class ReelsScreenContent extends StatelessWidget {
               width: 40.w,
               height: 40.h,
               decoration: BoxDecoration(
-                color: (isDark ? AppColors.black : AppColors.white).withOpacity(0.5),
+                color: (isDark ? AppColors.black : AppColors.white).withOpacity(
+                  0.5,
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -236,14 +249,18 @@ class ReelsScreenContent extends StatelessWidget {
         ),
 
         // Loading more indicator
-        if (index == state.reels.length - 3 && state.hasNextPage && !state.isLoading)
+        if (index == state.reels.length - 3 &&
+            state.hasNextPage &&
+            !state.isLoading)
           Positioned(
             bottom: 16.h,
             left: 16.w,
             child: Container(
               padding: EdgeInsets.all(8.r),
               decoration: BoxDecoration(
-                color: (isDark ? AppColors.black : AppColors.white).withOpacity(0.5),
+                color: (isDark ? AppColors.black : AppColors.white).withOpacity(
+                  0.5,
+                ),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Row(
