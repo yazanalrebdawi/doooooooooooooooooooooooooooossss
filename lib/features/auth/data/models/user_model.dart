@@ -1,48 +1,3 @@
-<<<<<<< HEAD
-class UserModel {
-    final int id;
-    final String name;
-    final String phone;
-    final String role;
-    final bool verified;
-    final dynamic latitude;
-    final dynamic longitude;
-    final DateTime createdAt;
-
-
-    UserModel({
-        required this.id,
-        required this.name,
-        required this.phone,
-        required this.role,
-        required this.verified,
-        required this.latitude,
-        required this.longitude,
-        required this.createdAt,
-    });
-
-    UserModel copyWith({
-        int? id,
-        String? name,
-        String? phone,
-        String? role,
-        bool? verified,
-        dynamic latitude,
-        dynamic longitude,
-        DateTime? createdAt,
-    }) => 
-        UserModel(
-            id: id ?? this.id,
-            name: name ?? this.name,
-            phone: phone ?? this.phone,
-            role: role ?? this.role,
-            verified: verified ?? this.verified,
-            latitude: latitude ?? this.latitude,
-            longitude: longitude ?? this.longitude,
-            createdAt: createdAt ?? this.createdAt,
-        );
-
-=======
 import 'dart:io';
 
 class UserModel {
@@ -89,7 +44,6 @@ class UserModel {
     createdAt: createdAt ?? this.createdAt,
     avatar: avatar ?? this.avatar,
   );
->>>>>>> zoz
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -100,12 +54,8 @@ class UserModel {
       'verified': verified,
       'latitude': latitude,
       'longitude': longitude,
-<<<<<<< HEAD
-      'created_at': createdAt,
-=======
       'created_at': createdAt.toIso8601String(),
       'avatar': avatar?.path,
->>>>>>> zoz
     };
   }
 
@@ -119,13 +69,7 @@ class UserModel {
       latitude: map['latitude'],
       longitude: map['longitude'],
       createdAt: DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now(),
-<<<<<<< HEAD
-    );
-  }
-  }
-=======
       avatar: map['avatar'] != null ? File(map['avatar']) : null,
     );
   }
 }
->>>>>>> zoz

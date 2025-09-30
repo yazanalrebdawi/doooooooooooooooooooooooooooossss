@@ -1,102 +1,76 @@
 class ApiUrls {
   ApiUrls._();
-<<<<<<< HEAD
-  static const String _baseURl = 'http://192.168.1.129:8010/api';
 
-=======
-  // static const String _baseURl = 'http://192.168.145.185:8010/api';
-  // static const String _baseURl = 'http://192.168.1.22:8010/api';
-  // IP الكمبيوتر على Wi-Fi
-
-  //192.168.1.105
+  // 🟢 Base URLs
   static const String _baseURl = 'http://192.168.1.105:8010/api';
   static const String _baseMediaUrl =
-      'http://192.168.1.105:8010'; //! للصور و الفيديو
-  // 🟢 Getter عام للصور
-  static String media(String path) => '$_baseMediaUrl$path';
->>>>>>> zoz
-  // POSTS
-  static final String rigester = '$_baseURl/users/register/';
-  static final String login = "$_baseURl/users/login/";
-  static final String logout = "$_baseURl/users/logout/";
-<<<<<<< HEAD
-=======
+      'http://192.168.1.105:8010'; // للصور والفيديو
+  static String media(String path) => '$_baseMediaUrl$path'; // Getter للصور
 
->>>>>>> zoz
-  static final String profile = "$_baseURl/users/profile/";
-  static final String requestOtp = "$_baseURl/users/request-otp/";
+  // 🟢 Auth
+  static const String rigester = '$_baseURl/users/register/';
+  static const String login = '$_baseURl/users/login/';
+  static const String logout = '$_baseURl/users/logout/';
+  static const String profile = '$_baseURl/users/profile/';
+  static const String requestOtp = '$_baseURl/users/request-otp/';
+  static const String refreshToken = '$_baseURl/users/refresh/';
+  static const String verifyOtp = '$_baseURl/users/verify/';
+  static const String verifyForgetPasswordOtp =
+      '$_baseURl/users/reset-password/';
+  static const String resendOtp = '$_baseURl/users/request-otp/';
+  static const String forgetPassword = '$_baseURl/users/forgot-password/';
+  static const String resetPassword = '$_baseURl/users/reset-password/';
+  static const String setNewPassword = '$_baseURl/users/set-new-password/';
+  static const String changePassword = '$_baseURl/users/change-password/';
+  static const String updateProfile = '$_baseURl/users/update-profile/';
+  static const String updatePassword = '$_baseURl/users/update-password/';
 
-  // Token refresh
-  static final String refreshToken = "$_baseURl/users/refresh/";
+  // 🟢 Home
+  static const String statuseWork = '$_baseURl/';
+  static const String homeData = '$_baseURl/';
 
-  // Verify URLs
-  static final String verifyOtp = "$_baseURl/users/verify/";
-  static final String verifyForgetPasswordOtp =
-      "$_baseURl/users/reset-password/";
+  // 🟢 Cars
+  static const String cars = '$_baseURl/cars/';
 
-  static final String resendOtp = "$_baseURl/users/request-otp/";
-  static final String forgetPassword = "$_baseURl/users/forgot-password/";
-  static final String resetPassword = "$_baseURl/users/reset-password/";
-  static final String setNewPassword = "$_baseURl/users/set-new-password/";
+  // 🟢 Products
+  static const String products = '$_baseURl/products/';
 
-  // Chat URLs
-  static final String chats = "$_baseURl/chats/";
-  static final String wsBaseUrl = "ws://192.168.1.219:8020";
-  static final String changePassword = "$_baseURl/users/change-password/";
-  static final String updateProfile = "$_baseURl/users/update-profile/";
-  static final String updatePassword = "$_baseURl/users/update-password/";
+  // 🟢 Services
+  static const String servicesNearby = '$_baseURl/nearby/';
+  static const String serviceDetails = '$_baseURl/services/';
 
-  // Home
-  static final String statuseWork = "$_baseURl/";
-  static final String homeData = "$_baseURl/";
+  // 🟢 Reels
+  static const String reels = '$_baseURl/reels/public/';
 
-  //  cars
-  static final String cars = "$_baseURl/cars/";
+  // 🟢 Dealers
+  static const String dealerProfile = '$_baseURl/dealers/';
+  static const String dealerProfileWithId = '$_baseURl/dealers/{id}/profile/';
+  static const String dealerReels = '$_baseURl/dealers/{id}/reels/';
+  static const String dealerCars = '$_baseURl/dealers/{id}/cars/';
+  static const String dealerServices = '$_baseURl/dealers/{id}/services/';
+  static const String dealerFollow = '$_baseURl/dealers/{id}/follow/';
 
-  //  products
-  static final String products = "$_baseURl/products/";
+  // 🟢 Categories & Branches
+  static const String categories = '$_baseURl/';
+  static const String branches = '$_baseURl/';
 
-  //  services
-  static final String servicesNearby =
-      "$_baseURl/nearby/"; // Using nearby endpoint for services
+  // 🟢 Edit Profile
+  static const String getInfoProfile = '$_baseURl/users/profile/';
+  static const String editInfoProfile = '$_baseURl/users/profile/update/';
+  static const String changePasswordInProfile =
+      '$_baseURl/users/set-new-password/';
 
-  static final String serviceDetails =
-      "$_baseURl/services/"; // For individual service details
+  // 🟢 Favorites
+  static const String getFavorites = '$_baseURl/favorites/';
+  static const String removeItemOfFavorites = '$_baseURl/favorites/';
 
-  //  reels
-  static final String reels = "$_baseURl/reels/public/";
-
-  //  dealer profile
-  static final String dealerProfile =
-      "$_baseURl/dealers/"; // Base URL for dealer endpoints
-  static final String dealerProfileWithId = "$_baseURl/dealers/{id}/profile/";
-  static final String dealerReels = "$_baseURl/dealers/{id}/reels/";
-  static final String dealerCars = "$_baseURl/dealers/{id}/cars/";
-  static final String dealerServices = "$_baseURl/dealers/{id}/services/";
-  static final String dealerFollow = "$_baseURl/dealers/{id}/follow/";
-
-  //  category
-  static final String categories = "$_baseURl/";
-
-  //  branches
-  static final String branches = "$_baseURl/";
-<<<<<<< HEAD
-=======
-
-  //* Edit Profile
-  static final String getInfoProfile = "$_baseURl/users/profile/";
-  static final String editInfoProfile = "$_baseURl/users/profile/update/";
-  static final String changePasswordInProfile =
-      "$_baseURl/users/set-new-password/";
-
-  //* Favorites
-  static final String getFavorites = "$_baseURl/favorites/";
-  static final String removeIttemOfFavorites = "$_baseURl/favorites/";
-
-  //* Change Phone Number
-  static final String cancelUpdatePhoneOtp =
+  // 🟢 Change Phone Number
+  static const String cancelUpdatePhoneOtp =
       '$_baseURl/users/profile/phone/cancel/';
-  static final String confirmUpdatePhone =
+  static const String confirmUpdatePhone =
       '$_baseURl/users/profile/phone/confirm/';
->>>>>>> zoz
+
+  // 🟢 Chat
+  static const String chats = '$_baseURl/chats/';
+  static const String wsBaseUrl = 'ws://192.168.1.219:8020';
 }
