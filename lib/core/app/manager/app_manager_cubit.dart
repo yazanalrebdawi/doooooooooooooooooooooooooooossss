@@ -107,7 +107,10 @@ class AppManagerCubit extends Cubit<AppManagerState> {
     final newTheme =
         state.themeMode == AppThemeEnum.light
             ? AppThemeEnum.dark
-            : AppThemeEnum.light;
+            : AppThemeEnum.light
+            
+            
+            ;
 
     sharedPreference.saveThemeModeInCache(newTheme == AppThemeEnum.light);
 

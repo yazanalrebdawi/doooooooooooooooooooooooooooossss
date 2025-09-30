@@ -9,10 +9,7 @@ import 'car_grid_item.dart';
 class CarGridItem extends StatelessWidget {
   final CarModel car;
 
-  const CarGridItem({
-    super.key,
-    required this.car,
-  });
+  const CarGridItem({super.key, required this.car});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +17,8 @@ class CarGridItem extends StatelessWidget {
 
     // Dynamic colors
     final backgroundColor = isDark ? Colors.grey[900] : Colors.white;
-    final cardShadowColor = isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05);
+    final cardShadowColor =
+        isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05);
     final textColor = isDark ? Colors.white : Colors.black;
     final secondaryTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
     final priceColor = Colors.blueAccent; // can replace with primary
@@ -45,19 +43,19 @@ class CarGridItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Car Image
-            Expanded(
-              flex: 3,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12.r),
-                    topRight: Radius.circular(12.r),
-                  ),
-                  color: isDark ? Colors.grey[800] : Colors.grey.withOpacity(0.1),
+            Container(
+              height: 120.h,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12.r),
+                  topRight: Radius.circular(12.r),
                 ),
-                child: car.imageUrl.isNotEmpty
-                    ? ClipRRect(
+                color: isDark ? Colors.grey[800] : Colors.grey.withOpacity(0.1),
+              ),
+              child:
+                  car.imageUrl.isNotEmpty
+                      ? ClipRRect(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12.r),
                           topRight: Radius.circular(12.r),
@@ -69,17 +67,16 @@ class CarGridItem extends StatelessWidget {
                             return Icon(
                               Icons.directions_car,
                               size: 48.sp,
-                              color: secondaryTextColor,
+                              color: AppColors.gray,
                             );
                           },
                         ),
                       )
-                    : Icon(
+                      : Icon(
                         Icons.directions_car,
                         size: 48.sp,
-                        color: secondaryTextColor,
+                        color: AppColors.gray,
                       ),
-              ),
             ),
             // Car Details
             Expanded(
@@ -92,31 +89,29 @@ class CarGridItem extends StatelessWidget {
                     // Car Name
                     Text(
                       car.name,
-                      style: AppTextStyles.s14w500.copyWith(
-                        color: textColor,
-                      ),
+                      style: AppTextStyles.s14w500.copyWith(color: textColor),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 8.h),
+                    // SizedBox(height: 8.h),
                     // Price and Availability Row
                     Row(
                       children: [
                         // Price
                         Text(
                           'AED ${car.price.toStringAsFixed(0)}',
-                          style: AppTextStyles.s16w600.copyWith(
+                          style: AppTextStyles.s14w600.copyWith(
                             color: priceColor,
                           ),
                         ),
-                        const Spacer(),
+                        // const Spacer(),
                         // Available Checkmark
                         Row(
                           children: [
                             Icon(
                               Icons.check_circle,
                               size: 16.sp,
-                              color: priceColor,
+                              color: AppColors.primary,
                             ),
                             SizedBox(width: 4.w),
                             Text(
@@ -129,14 +124,14 @@ class CarGridItem extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Spacer(),
+                    // const Spacer(),
                     // Rating
                     Row(
                       children: [
                         Text(
                           '4.5',
                           style: AppTextStyles.s12w400.copyWith(
-                            color: textColor,
+                            color: secondaryTextColor,
                           ),
                         ),
                         SizedBox(width: 4.w),
