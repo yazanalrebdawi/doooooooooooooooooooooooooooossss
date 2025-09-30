@@ -15,28 +15,19 @@ class ReelGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgGray = isDark ? Colors.grey[800]! : AppColors.gray.withOpacity(0.1);
     final iconGray = isDark ? Colors.white70 : AppColors.gray;
 
     return GestureDetector(
       onTap: () {
-=======
-    return GestureDetector(
-      onTap: () {
         // الانتقال للريلز مع تحديد الريل المحدد
->>>>>>> zoz
         context.go('${RouteNames.reelsWithId.replaceAll(':id', reel.id.toString())}');
       },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.r),
-<<<<<<< HEAD
           color: bgGray,
-=======
-          color: AppColors.gray.withOpacity(0.1),
->>>>>>> zoz
         ),
         child: Stack(
           children: [
@@ -51,37 +42,21 @@ class ReelGridItem extends StatelessWidget {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-<<<<<<< HEAD
                           color: bgGray,
                           child: Icon(
                             Icons.play_circle_outline,
                             size: 32.sp,
                             color: iconGray,
-=======
-                          color: AppColors.gray.withOpacity(0.1),
-                          child: Icon(
-                            Icons.play_circle_outline,
-                            size: 32.sp,
-                            color: AppColors.gray,
->>>>>>> zoz
                           ),
                         );
                       },
                     )
                   : Container(
-<<<<<<< HEAD
                       color: bgGray,
                       child: Icon(
                         Icons.play_circle_outline,
                         size: 32.sp,
                         color: iconGray,
-=======
-                      color: AppColors.gray.withOpacity(0.1),
-                      child: Icon(
-                        Icons.play_circle_outline,
-                        size: 32.sp,
-                        color: AppColors.gray,
->>>>>>> zoz
                       ),
                     ),
             ),

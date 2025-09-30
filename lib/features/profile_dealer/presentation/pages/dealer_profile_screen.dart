@@ -11,10 +11,6 @@ import '../widgets/dealer_profile_app_bar.dart';
 import '../widgets/dealer_profile_header.dart';
 import '../widgets/dealer_profile_tabs.dart';
 import '../widgets/dealer_content_grid.dart';
-<<<<<<< HEAD
-import '../widgets/tab_content_loader_widget.dart';
-=======
->>>>>>> zoz
 import '../../data/models/content_type.dart';
 
 class DealerProfileScreen extends StatefulWidget {
@@ -46,14 +42,10 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
       });
     });
 
-    // Load dealer profile data
+    // Load dealer profile data and reels on initialization
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<DealerProfileCubit>().loadDealerProfile(widget.dealerId);
-<<<<<<< HEAD
-=======
-        // تحميل الريلز تلقائياً عند بداية التطبيق
->>>>>>> zoz
         context.read<DealerProfileCubit>().loadReels(widget.dealerId);
       }
     });
@@ -68,19 +60,12 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
-=======
       backgroundColor: AppColors.white,
->>>>>>> zoz
-      appBar: DealerProfileAppBar(
-        dealerHandle: widget.dealerHandle,
-      ),
+      appBar: DealerProfileAppBar(dealerHandle: widget.dealerHandle),
       body: BlocBuilder<DealerProfileCubit, DealerProfileState>(
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state.error != null) {
@@ -94,10 +79,8 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                     color: AppColors.gray,
                   ),
                   SizedBox(height: 16.h),
-                  Text(
-                    'Error loading profile',
-                    style: AppTextStyles.s16w500.copyWith(color: AppColors.gray),
-                  ),
+                  Text('Error loading profile',
+                      style: AppTextStyles.s16w500.copyWith(color: AppColors.gray)),
                   SizedBox(height: 8.h),
                   Text(
                     state.error!,
@@ -105,7 +88,6 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 16.h),
-                  
                   if (state.error!.contains('تسجيل الدخول')) ...[
                     ElevatedButton(
                       onPressed: () {
@@ -115,14 +97,7 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.white,
                       ),
-<<<<<<< HEAD
-                      child: Text(
-                        'تسجيل الدخول',
-                        style: AppTextStyles.s14w500.copyWith(color: AppColors.white),
-                      ),
-=======
                       child: const Text('تسجيل الدخول'),
->>>>>>> zoz
                     ),
                   ],
                 ],
@@ -132,72 +107,52 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
 
           return Column(
             children: [
-              // Profile Header Section
+              // Profile Header
               DealerProfileHeader(
                 dealer: state.dealer,
                 onFollowPressed: () {
                   context.read<DealerProfileCubit>().toggleFollow();
                 },
                 onMessagePressed: () {
-<<<<<<< HEAD
-=======
-                  // Navigate to chat
->>>>>>> zoz
+                  // Navigate to chat conversation
                   context.push('/chat-conversation/${state.dealer?.id}');
                 },
               ),
-
-              // Tabs Section
+              // Tabs
               DealerProfileTabs(
                 tabController: _tabController,
                 currentIndex: _currentTabIndex,
                 onTabChanged: (index) {
                   _tabController.animateTo(index);
-<<<<<<< HEAD
-=======
-                  // تحميل البيانات الحقيقية حسب التاب المحدد
->>>>>>> zoz
+                  // Load data for selected tab
                   switch (index) {
-                    case 0: // Reels
+                    case 0:
                       context.read<DealerProfileCubit>().loadReels(widget.dealerId);
                       break;
-                    case 1: // Cars
+                    case 1:
                       context.read<DealerProfileCubit>().loadCars(widget.dealerId);
                       break;
-                    case 2: // Services
+                    case 2:
                       context.read<DealerProfileCubit>().loadServices(widget.dealerId);
                       break;
                   }
                 },
               ),
-
-              // Content Section
+              // Content area
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-<<<<<<< HEAD
-=======
-                    // Reels Tab
->>>>>>> zoz
                     DealerContentGrid(
                       contentType: ContentType.reels,
                       content: state.reels,
                       isLoading: state.isLoadingReels,
                     ),
-<<<<<<< HEAD
-=======
-                    // Cars Tab
->>>>>>> zoz
                     DealerContentGrid(
                       contentType: ContentType.cars,
                       content: state.cars,
                       isLoading: state.isLoadingCars,
                     ),
-<<<<<<< HEAD
-=======
-                    // Services Tab
->>>>>>> zoz
                     DealerContentGrid(
                       contentType: ContentType.services,
                       content: state.services,
@@ -212,9 +167,4 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
       ),
     );
   }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> zoz
 }
