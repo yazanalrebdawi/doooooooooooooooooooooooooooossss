@@ -8,7 +8,8 @@ import '../../../../core/routes/route_names.dart';
 import '../manager/dealer_profile_cubit.dart';
 import '../manager/dealer_profile_state.dart';
 
-class DealerProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
+class DealerProfileAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   final String dealerHandle;
 
   const DealerProfileAppBar({
@@ -42,7 +43,8 @@ class DealerProfileAppBar extends StatelessWidget implements PreferredSizeWidget
             ),
             onPressed: () {
               // Navigate to reels screen instead of pop
-              context.go(RouteNames.reelsScreen);
+              // context.go(RouteNames.reelsScreen);
+              Navigator.pop(context);
             },
           ),
           actions: const [],

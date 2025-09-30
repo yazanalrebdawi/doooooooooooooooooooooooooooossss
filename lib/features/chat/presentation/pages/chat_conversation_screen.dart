@@ -18,10 +18,11 @@ class ChatConversationScreen extends StatefulWidget {
   final int chatId;
   final String participantName;
   final int? productId; // Add product ID for displaying product details
-final String dealerName ;
+  final String dealerName;
   const ChatConversationScreen({
     super.key,
-    required this.chatId,required this.dealerName ,
+    required this.chatId,
+    required this.dealerName,
     required this.participantName,
     this.productId,
   });

@@ -22,7 +22,7 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
   @override
   void initState() {
     super.initState();
-    
+
     // Load reels when widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReelCubit>().loadReels();
@@ -43,7 +43,7 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
           ),
         ),
         SizedBox(height: 16.h),
-        
+
         // Horizontal reels list
         SizedBox(
           height: 200.h, // 156h for card + 44h for title and spacing
@@ -80,7 +80,7 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
       itemCount: reels.length,
       itemBuilder: (context, index) {
         final reel = reels[index];
-        
+
         return Container(
           margin: EdgeInsets.only(right: 16.w),
           child: Column(
@@ -94,9 +94,9 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
                   thumbnailUrl: reel.thumbnail,
                 ),
               ),
-              
+
               SizedBox(height: 8.h),
-              
+
               // Reel title (under the card)
               SizedBox(
                 width: 120.w,
@@ -146,11 +146,11 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
             style: AppTextStyles.grayS16W600,
           ),
           SizedBox(height: 8.h),
-          Text(
-            error,
-            style: AppTextStyles.grayS12W400,
-            textAlign: TextAlign.center,
-          ),
+          // Text(
+          //   error,
+          //   style: AppTextStyles.grayS12W400,
+          //   textAlign: TextAlign.center,
+          // ),
           SizedBox(height: 16.h),
           ElevatedButton(
             onPressed: () => context.read<ReelCubit>().loadReels(),
@@ -191,8 +191,9 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
   }
 
   void _onReelTap(BuildContext context, List<ReelModel> reels, int index) {
-    print('🎬 SimpleReelsSection: Tapped reel ${reels[index].title} at index $index');
-    
+    print(
+        '🎬 SimpleReelsSection: Tapped reel ${reels[index].title} at index $index');
+
     // Navigate to full-screen reels viewer, passing the entire list and index
     Navigator.of(context).push(
       MaterialPageRoute(

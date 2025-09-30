@@ -79,11 +79,13 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                   ),
                   SizedBox(height: 16.h),
                   Text('Error loading profile',
-                      style: AppTextStyles.s16w500.copyWith(color: AppColors.gray)),
+                      style: AppTextStyles.s16w500
+                          .copyWith(color: AppColors.gray)),
                   SizedBox(height: 8.h),
                   Text(
                     state.error!,
-                    style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
+                    style:
+                        AppTextStyles.s14w400.copyWith(color: AppColors.gray),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 16.h),
@@ -114,7 +116,10 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                 },
                 onMessagePressed: () {
                   // Navigate to chat conversation
-                  context.push('/chat-conversation/${state.dealer?.id}');
+                  context.push('/create-chat', extra: {
+                    'dealerId': state.dealer?.id,
+                    'dealerName': state.dealer?.name,
+                  });
                 },
               ),
               // Tabs
@@ -126,13 +131,19 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                   // Load data for selected tab
                   switch (index) {
                     case 0:
-                      context.read<DealerProfileCubit>().loadReels(widget.dealerId);
+                      context
+                          .read<DealerProfileCubit>()
+                          .loadReels(widget.dealerId);
                       break;
                     case 1:
-                      context.read<DealerProfileCubit>().loadCars(widget.dealerId);
+                      context
+                          .read<DealerProfileCubit>()
+                          .loadCars(widget.dealerId);
                       break;
                     case 2:
-                      context.read<DealerProfileCubit>().loadServices(widget.dealerId);
+                      context
+                          .read<DealerProfileCubit>()
+                          .loadServices(widget.dealerId);
                       break;
                   }
                 },

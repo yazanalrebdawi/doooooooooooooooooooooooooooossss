@@ -64,14 +64,24 @@ class ContentSection extends StatelessWidget {
 
   Widget _buildCarsSection(BuildContext context) {
     return BlocBuilder<CarCubit, CarState>(
+      buildWhen: (previous, current) =>
+          previous.isLoading != current.isLoading ||
+          previous.error != current.error ||
+          previous != current,
       builder: (context, state) {
-        if (state.isLoading) return const LoadingSection(title: 'Cars Available Now');
-        if (state.error != null) return ErrorSection(title: 'Cars Available Now', message: state.error!);
+        if (state.isLoading) {
+          return const LoadingSection(title: 'Cars Available Now');
+        }
+        if (state.error != null) {
+          return ErrorSection(
+              title: 'Cars Available Now', message: state.error!);
+        }
         if (state.cars.isNotEmpty) {
           return CarsAvailableSection(
             cars: state.cars,
             onViewAllPressed: () => context.push(RouteNames.allCarsScreen),
-            onCarPressed: () => context.push('/car-details/${state.cars.first.id}'),
+            // onCarPressed: () =>
+            //     context.push('/car-details/${state.}'), // Example navigation
           );
         }
         return const LoadingSection(title: 'Cars Available Now');
@@ -81,10 +91,18 @@ class ContentSection extends StatelessWidget {
 
   Widget _buildProductsSection(BuildContext context) {
     return BlocBuilder<ProductCubit, ProductState>(
+      buildWhen: (previous, current) =>
+          previous.isLoading != current.isLoading ||
+          previous.error != current.error ||
+          previous != current,
       builder: (context, state) {
         if (state.isLoading) return const LoadingSection(title: 'Car Products');
-        if (state.error != null) return ErrorSection(title: 'Car Products', message: state.error!);
-        if (state.products.isNotEmpty) return ProductsSection(products: state.products);
+        if (state.error != null) {
+          return ErrorSection(title: 'Car Products', message: state.error!);
+        }
+        if (state.products.isNotEmpty) {
+          return ProductsSection(products: state.products);
+        }
         return const LoadingSection(title: 'Car Products');
       },
     );
@@ -92,10 +110,21 @@ class ContentSection extends StatelessWidget {
 
   Widget _buildServicesSection(BuildContext context) {
     return BlocBuilder<ServiceCubit, ServiceState>(
+      buildWhen: (previous, current) =>
+          previous.isLoading != current.isLoading ||
+          previous.error != current.error ||
+          previous != current,
       builder: (context, state) {
-        if (state.isLoading) return const LoadingSection(title: 'Nearby Car Services');
-        if (state.error != null) return ErrorSection(title: 'Nearby Car Services', message: state.error!);
-        if (state.services.isNotEmpty) return ServicesSection(services: state.services);
+        if (state.isLoading) {
+          return const LoadingSection(title: 'Nearby Car Services');
+        }
+        if (state.error != null) {
+          return ErrorSection(
+              title: 'Nearby Car Services', message: state.error!);
+        }
+        if (state.services.isNotEmpty) {
+          return ServicesSection(services: state.services);
+        }
         return const LoadingSection(title: 'Nearby Car Services');
       },
     );
@@ -105,7 +134,8 @@ class ContentSection extends StatelessWidget {
     return BlocBuilder<ReelCubit, ReelState>(
       builder: (context, state) {
         if (state.isLoading) return const LoadingSection(title: 'Market Reels');
-        if (state.error != null) return ErrorSection(title: 'Market Reels', message: state.error!);
+        if (state.error != null)
+          return ErrorSection(title: 'Market Reels', message: state.error!);
         if (state.reels.isNotEmpty) return ReelsSection(reels: state.reels);
         return const LoadingSection(title: 'Market Reels');
       },

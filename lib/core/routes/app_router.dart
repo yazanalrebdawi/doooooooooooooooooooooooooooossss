@@ -190,30 +190,46 @@ class AppRouter {
       path: '${RouteNames.chatConversationScreen}/:id',
       builder: (context, state) {
         final chatId = int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
-        final productId = state.extra as dynamic ;
+
+        final productId = (state.extra is int)
+            ? state.extra as int
+            : (state.extra is String
+                ? int.tryParse(state.extra as String)
+                : null);
+
         return BlocProvider(
           create: (_) => di.appLocator<ChatCubit>(),
           child: ChatConversationScreen(
             chatId: chatId,
             participantName: 'Chat $chatId',
-            productId: int.tryParse(productId),
+            productId: productId,
             dealerName: "",
           ),
         );
       },
     ),
+
     GoRoute(
       path: '/create-chat',
       builder: (context, state) {
         final args = state.extra as Map<String, dynamic>?;
-        final dealerId = args?['dealerId'] as int? ?? 0;
+
+        final dealerId = args?['dealerId'] is String
+            ? int.tryParse(args?['dealerId'])
+            : args?['dealerId'] as int? ?? 0;
+
         final dealerName = args?['dealerName'] as String? ?? 'Dealer';
+
         return BlocProvider(
           create: (_) => di.appLocator<ChatCubit>(),
-          child: CreateChatScreen(dealerId: dealerId, dealerName: dealerName),
+          child: CreateChatScreen(
+            dealerId: dealerId ?? 0,
+            dealerName: dealerName,
+          ),
         );
       },
     ),
+
     GoRoute(
       path: '/chat-test',
       builder: (context, state) => const ChatTestScreen(),
@@ -242,11 +258,10 @@ class AppRouter {
     ),
     GoRoute(
       path: RouteNames.nearbyServicesScreen,
-      builder:
-          (context, state) => BlocProvider(
-            create: (context) => di.appLocator<ServiceCubit>(),
-            child: const NearbyServicesScreen(),
-          ),
+      builder: (context, state) => BlocProvider(
+        create: (context) => di.appLocator<ServiceCubit>(),
+        child: const NearbyServicesScreen(),
+      ),
     ),
     GoRoute(
       path: '/service-map',
@@ -379,20 +394,18 @@ class AppRouter {
 
     GoRoute(
       path: RouteNames.changePasswordScreen,
-      builder:
-          (context, state) => BlocProvider.value(
-            value: BlocProvider.of<MyProfileCubit>(context),
-            child: ChangePasswordScreen(),
-          ),
+      builder: (context, state) => BlocProvider.value(
+        value: BlocProvider.of<MyProfileCubit>(context),
+        child: ChangePasswordScreen(),
+      ),
     ),
 
     GoRoute(
       path: RouteNames.editProfileScreen,
-      builder:
-          (context, state) => BlocProvider.value(
-            value: BlocProvider.of<MyProfileCubit>(context),
-            child: EditProfileScreen(),
-          ),
+      builder: (context, state) => BlocProvider.value(
+        value: BlocProvider.of<MyProfileCubit>(context),
+        child: EditProfileScreen(),
+      ),
     ),
 
     GoRoute(
@@ -402,11 +415,10 @@ class AppRouter {
 
     GoRoute(
       path: RouteNames.savedItemsScreen,
-      builder:
-          (context, state) => BlocProvider.value(
-            value: BlocProvider.of<MyProfileCubit>(context),
-            child: SavedItemsScreen(),
-          ),
+      builder: (context, state) => BlocProvider.value(
+        value: BlocProvider.of<MyProfileCubit>(context),
+        child: SavedItemsScreen(),
+      ),
     ),
 
     GoRoute(

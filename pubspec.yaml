@@ -57,7 +57,7 @@ dependencies:
   # Localization
   flutter_localizations:
     sdk: flutter
-  intl: ^0.19.0
+  intl: ^0.20.2
   equatable: ^2.0.7
   toastification: ^3.0.3
   connectivity_plus: ^7.0.0
@@ -77,7 +77,6 @@ flutter:
   assets:
     - assets/images/
     - lib/core/localization/
-
 
   fonts:
     - family: SFProDisplay

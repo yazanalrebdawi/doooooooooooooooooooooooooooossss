@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../home/data/models/car_model.dart';
 import 'car_grid_item.dart';
@@ -18,7 +17,8 @@ class CarsGridWidget extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final backgroundColor = isDark ? Colors.grey[900] : Colors.white;
-    final borderColor = isDark ? Colors.grey[700]! : Colors.grey.withOpacity(0.2);
+    final borderColor =
+        isDark ? Colors.grey[700]! : Colors.grey.withOpacity(0.2);
     final textColor = isDark ? Colors.white : Colors.black;
     final iconColor = isDark ? Colors.grey[400] : Colors.grey;
 
@@ -42,7 +42,8 @@ class CarsGridWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[800] : Colors.grey.withOpacity(0.1),
+                  color:
+                      isDark ? Colors.grey[800] : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Row(
