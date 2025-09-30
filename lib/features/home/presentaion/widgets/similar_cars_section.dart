@@ -29,16 +29,12 @@ class SimilarCarsSection extends StatelessWidget {
           // Section Title
           Text(
             'Similar Cars You Might Like',
-<<<<<<< HEAD
-            style: AppTextStyles.s18w700.copyWith(color: AppColors.black),
-=======
             style: AppTextStyles.s18w700.copyWith(
               color: AppColors.black,
             ),
->>>>>>> zoz
           ),
           SizedBox(height: 16.h),
-          
+
           // Similar Cars List
           SizedBox(
             height: 200.h,
@@ -63,14 +59,10 @@ class SimilarCarsSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12.r),
-<<<<<<< HEAD
-        border: Border.all(color: AppColors.gray.withOpacity(0.2), width: 1),
-=======
         border: Border.all(
           color: AppColors.gray.withOpacity(0.2),
           width: 1,
         ),
->>>>>>> zoz
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -81,10 +73,7 @@ class SimilarCarsSection extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-<<<<<<< HEAD
-=======
           // Navigate to car details
->>>>>>> zoz
           context.push('/car-details/${car.id}');
         },
         borderRadius: BorderRadius.circular(12.r),
@@ -118,42 +107,30 @@ class SimilarCarsSection extends StatelessWidget {
                     : _buildPlaceholderImage(),
               ),
             ),
-            
+
             // Car Details
             Padding(
               padding: EdgeInsets.all(12.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-<<<<<<< HEAD
-                  Text(
-                    car.name,
-                    style: AppTextStyles.s14w500.copyWith(color: AppColors.black),
-=======
                   // Car Name
                   Text(
                     car.name,
                     style: AppTextStyles.s14w500.copyWith(
                       color: AppColors.black,
                     ),
->>>>>>> zoz
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4.h),
-<<<<<<< HEAD
-                  Text(
-                    '${car.price.toStringAsFixed(0)} USD',
-                    style: AppTextStyles.s16w600.copyWith(color: AppColors.primary),
-=======
-                  
+
                   // Price
                   Text(
                     '${car.price.toStringAsFixed(0)} USD',
                     style: AppTextStyles.s16w600.copyWith(
                       color: AppColors.primary,
                     ),
->>>>>>> zoz
                   ),
                 ],
               ),

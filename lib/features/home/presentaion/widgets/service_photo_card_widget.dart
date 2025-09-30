@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 
+/// A card widget representing a photo with a title, used as a placeholder or preview
 class ServicePhotoCardWidget extends StatelessWidget {
   final String title;
 
@@ -23,17 +24,13 @@ class ServicePhotoCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-<<<<<<< HEAD
-          // Image Placeholder
-=======
->>>>>>> zoz
+          // Image Placeholder section
           Expanded(
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
                 color: AppColors.gray.withOpacity(0.2),
               ),
-<<<<<<< HEAD
               child: Center(
                 child: Icon(
                   Icons.image,
@@ -43,24 +40,15 @@ class ServicePhotoCardWidget extends StatelessWidget {
               ),
             ),
           ),
-          // Title
-=======
-              child: Center(child: Icon(Icons.image, color: AppColors.gray, size: 32.sp)),
-            ),
-          ),
->>>>>>> zoz
+          // Title text section
           Padding(
             padding: EdgeInsets.all(8.w),
             child: Text(
               title,
-<<<<<<< HEAD
               style: AppTextStyles.secondaryS12W400.copyWith(
                 color: AppColors.black,
                 fontWeight: FontWeight.w500,
               ),
-=======
-              style: AppTextStyles.secondaryS12W400.copyWith(color: AppColors.black, fontWeight: FontWeight.w500),
->>>>>>> zoz
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

@@ -9,29 +9,22 @@ class ReelCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const ReelCard({
-    Key? key, 
+    Key? key,
     required this.reel,
     this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 200.w,
         margin: EdgeInsets.only(right: 16.w),
         decoration: BoxDecoration(
-<<<<<<< HEAD
           color: isDark ? AppColors.darkCard : Colors.white,
-=======
-          color: Colors.white,
->>>>>>> zoz
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
@@ -77,6 +70,7 @@ class ReelCard extends StatelessWidget {
                       ),
               ),
             ),
+
             // Reel Details
             Padding(
               padding: EdgeInsets.all(12.r),
@@ -85,13 +79,9 @@ class ReelCard extends StatelessWidget {
                 children: [
                   Text(
                     reel.title,
-<<<<<<< HEAD
-                    style: isDark 
-                        ? AppTextStyles.whiteS16W600 
+                    style: isDark
+                        ? AppTextStyles.whiteS16W600
                         : AppTextStyles.blackS16W600,
-=======
-                    style: AppTextStyles.blackS16W600,
->>>>>>> zoz
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -136,8 +126,4 @@ class ReelCard extends StatelessWidget {
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-} 
->>>>>>> zoz

@@ -19,11 +19,8 @@ class ReelsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -34,41 +31,38 @@ class ReelsSection extends StatelessWidget {
             children: [
               Text(
                 'Market Reels',
-<<<<<<< HEAD
                 style: AppTextStyles.blackS18W700.copyWith(
                   color: isDark ? Colors.white : Colors.black,
                 ),
-=======
-                style: AppTextStyles.blackS18W700,
->>>>>>> zoz
               ),
               GestureDetector(
                 onTap: onViewAllPressed,
                 child: Text(
                   'View All',
-<<<<<<< HEAD
                   style: AppTextStyles.primaryS16W600.copyWith(
                     color: isDark ? Colors.blueAccent : Colors.blue,
                   ),
-=======
-                  style: AppTextStyles.primaryS16W600,
->>>>>>> zoz
                 ),
               ),
             ],
           ),
           SizedBox(height: 16.h),
+
           // Reels List
           if (reels.isEmpty)
-            EmptySection(message: 'No reels available')
+            const EmptySection(message: 'No reels available')
           else
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: reels.map((reel) => ReelCard(
-                  reel: reel,
-                  onTap: onReelPressed,
-                )).toList(),
+                children: reels
+                    .map(
+                      (reel) => ReelCard(
+                        reel: reel,
+                        onTap: onReelPressed,
+                      ),
+                    )
+                    .toList(),
               ),
             ),
         ],

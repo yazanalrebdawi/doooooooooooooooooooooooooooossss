@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 
-<<<<<<< HEAD
 /// Placeholder widget for services without an image
-=======
->>>>>>> zoz
 class ServicePlaceholderImageWidget extends StatelessWidget {
   const ServicePlaceholderImageWidget({super.key});
 
@@ -15,19 +12,12 @@ class ServicePlaceholderImageWidget extends StatelessWidget {
       width: double.infinity,
       height: 200.h,
       color: AppColors.gray.withOpacity(0.2),
-<<<<<<< HEAD
-      child: Center(
+      child: const Center(
         child: Icon(
           Icons.local_gas_station,
           color: AppColors.gray,
-          size: 48.sp,
+          size: 48,
         ),
-=======
-      child: Icon(
-        Icons.local_gas_station,
-        color: AppColors.gray,
-        size: 48.sp,
->>>>>>> zoz
       ),
     );
   }

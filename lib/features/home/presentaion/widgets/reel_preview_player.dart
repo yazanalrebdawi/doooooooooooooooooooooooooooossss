@@ -36,11 +36,11 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
     try {
       _controller = VideoPlayerController.networkUrl(Uri.parse(widget.reelUrl));
       await _controller!.initialize();
-      
+
       // Set volume to 0 and pause - this is just a preview
       await _controller!.setVolume(0.0);
       await _controller!.pause();
-      
+
       if (mounted) {
         setState(() {
           _isInitialized = true;
@@ -66,50 +66,29 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Container(
       width: 120.w,
       height: 156.h,
       decoration: BoxDecoration(
-<<<<<<< HEAD
         color: isDark ? AppColors.black : AppColors.white,
-=======
-        color: AppColors.black,
->>>>>>> zoz
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
-<<<<<<< HEAD
         child: _buildPreviewContent(isDark),
-=======
-        child: _buildPreviewContent(),
->>>>>>> zoz
       ),
     );
   }
 
-<<<<<<< HEAD
   Widget _buildPreviewContent(bool isDark) {
-    if (_hasError) {
-      return _buildErrorState(isDark);
-    }
-
-    if (!_isInitialized || _controller == null) {
-      return _buildLoadingOrThumbnail(isDark);
-=======
-  Widget _buildPreviewContent() {
     if (_hasError) {
       return _buildErrorState();
     }
 
     if (!_isInitialized || _controller == null) {
-      return _buildLoadingOrThumbnail();
->>>>>>> zoz
+      return _buildLoadingOrThumbnail(isDark);
     }
 
     return Stack(
@@ -125,18 +104,14 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
             ),
           ),
         ),
-        
+
         // Play icon overlay to indicate it's tappable
         Center(
           child: Container(
             width: 40.w,
             height: 40.h,
             decoration: BoxDecoration(
-<<<<<<< HEAD
               color: (isDark ? AppColors.black : AppColors.white).withOpacity(0.6),
-=======
-              color: AppColors.black.withOpacity(0.6),
->>>>>>> zoz
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -146,7 +121,7 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
             ),
           ),
         ),
-        
+
         // Gradient overlay for better contrast
         Positioned.fill(
           child: Container(
@@ -157,11 +132,7 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
                 colors: [
                   Colors.transparent,
                   Colors.transparent,
-<<<<<<< HEAD
                   (isDark ? AppColors.black : AppColors.white).withOpacity(0.3),
-=======
-                  AppColors.black.withOpacity(0.3),
->>>>>>> zoz
                 ],
                 stops: const [0.0, 0.7, 1.0],
               ),
@@ -172,11 +143,7 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
     );
   }
 
-<<<<<<< HEAD
   Widget _buildLoadingOrThumbnail(bool isDark) {
-=======
-  Widget _buildLoadingOrThumbnail() {
->>>>>>> zoz
     // If we have a thumbnail, show it while loading
     if (widget.thumbnailUrl?.isNotEmpty == true) {
       return Stack(
@@ -185,11 +152,7 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
             child: Image.network(
               widget.thumbnailUrl!,
               fit: BoxFit.cover,
-<<<<<<< HEAD
               errorBuilder: (context, error, stackTrace) => _buildPlaceholder(isDark),
-=======
-              errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
->>>>>>> zoz
             ),
           ),
           Center(
@@ -197,11 +160,7 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
               width: 40.w,
               height: 40.h,
               decoration: BoxDecoration(
-<<<<<<< HEAD
                 color: (isDark ? AppColors.black : AppColors.white).withOpacity(0.6),
-=======
-                color: AppColors.black.withOpacity(0.6),
->>>>>>> zoz
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -216,17 +175,10 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
     }
 
     // Otherwise show loading or placeholder
-<<<<<<< HEAD
     return _buildPlaceholder(isDark);
   }
 
   Widget _buildPlaceholder(bool isDark) {
-=======
-    return _buildPlaceholder();
-  }
-
-  Widget _buildPlaceholder() {
->>>>>>> zoz
     return Container(
       color: AppColors.gray.withOpacity(0.2),
       child: Center(
@@ -254,11 +206,7 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildErrorState(bool isDark) {
-=======
   Widget _buildErrorState() {
->>>>>>> zoz
     return Container(
       color: AppColors.gray.withOpacity(0.2),
       child: Center(
@@ -271,11 +219,11 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
               size: 24.sp,
             ),
             SizedBox(height: 4.h),
-            Text(
+            const Text(
               'Preview Error',
               style: TextStyle(
                 color: AppColors.gray,
-                fontSize: 10.sp,
+                fontSize: 10,
               ),
             ),
           ],

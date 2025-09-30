@@ -46,7 +46,7 @@ class PromotionalBanner extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Text Content
           Padding(
             padding: EdgeInsets.all(20.w),
