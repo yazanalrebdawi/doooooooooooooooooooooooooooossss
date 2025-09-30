@@ -29,14 +29,13 @@ class AuthCubit extends OptimizedCubit<AuthState> {
     required this.secureStorage,
     required this.sharedPreference,
   }) : super(AuthState());
-
   //?--------------------------------------------------------------------------------
-  /// حفظ بيانات المستخدم مؤقتاً
   saveAuthRespnseModel(AuthResponceModel user) {
     safeEmit(state.copyWith(user: user));
   }
 
   //?--------------------------------------------------------------------------------
+  //! Done ✅
   /// تبديل إظهار/إخفاء كلمة المرور
   void togglePasswordVisibility() {
     emitOptimized(
@@ -44,12 +43,12 @@ class AuthCubit extends OptimizedCubit<AuthState> {
     );
   }
 
-  /// تبديل حالة "تذكرني"
   void toggleRememberMe() {
     emitOptimized(state.copyWith(isRememberMe: !(state.isRememberMe ?? false)));
   }
-
   //?--------------------------------------------------------------------------------
+
+  //! Done ✅
   /// تسجيل الدخول
   Future<void> signIn(SigninParams params) async {
     log("🚀 AuthCubit - Starting sign in process");
@@ -72,9 +71,22 @@ class AuthCubit extends OptimizedCubit<AuthState> {
       },
       (authResponse) async {
         log("✅ AuthCubit - Sign in successful");
+        log("🔍 AuthCubit - AuthResponse details:");
+        log("🔍 AuthCubit - Message: ${authResponse.message}");
         log("🔍 AuthCubit - Token: ${authResponse.token}");
+        log("🔍 AuthCubit - Token length: ${authResponse.token.length}");
+        log("🔍 AuthCubit - Token is empty: ${authResponse.token.isEmpty}");
+        log("🔍 AuthCubit - User: ${authResponse.user.name}");
 
+        // الـ token يتم حفظه تلقائياً في AuthResponceModel.fromJson
         if (authResponse.token.isNotEmpty) {
+          log("✅ AuthCubit - Token saved automatically in AuthResponceModel");
+
+          // اختبار التحقق من الـ authentication
+          final hasToken = await TokenService.hasToken();
+          log("🔍 AuthCubit - Has token: $hasToken");
+          //? -------------------------------------------------------------------
+
           final cachedToken = await TokenService.getToken();
 
           if (cachedToken != null && cachedToken.isNotEmpty) {
@@ -84,16 +96,21 @@ class AuthCubit extends OptimizedCubit<AuthState> {
               log("Token added to Dio header");
             }
           }
-
           saveAuthRespnseModel(authResponse);
+          //? -------------------------------------------------------------------
+
+          // اختبار AuthService
           final isAuthenticated = await AuthService.isAuthenticated();
           log("🔍 AuthCubit - Is authenticated: $isAuthenticated");
         } else {
           log("⚠️ AuthCubit - Token is empty");
+          log(
+            "⚠️ AuthCubit - This might be the issue - API is not returning token",
+          );
         }
-
         if (authResponse.user != null) {
           await secureStorage.saveAuthModel(authResponse);
+          log("💾 AuthCubit - User data saving temporarily disabled");
         }
 
         safeEmit(
@@ -106,8 +123,9 @@ class AuthCubit extends OptimizedCubit<AuthState> {
       },
     );
   }
-
   //?--------------------------------------------------------------------------------
+  //! Done ✅
+
   /// إنشاء حساب جديد
   Future<void> register(CreateAccountParams params) async {
     log("🚀 AuthCubit - Starting register process");
@@ -127,7 +145,8 @@ class AuthCubit extends OptimizedCubit<AuthState> {
         );
       },
       (userModel) async {
-        log("✅ AuthCubit - Register successful");
+        log("✅ AuthCubit - Register successful, emitting success state");
+        // في حالة التسجيل، لا نحفظ token لأن المستخدم يحتاج للتحقق من OTP أولاً
         safeEmit(
           state.copyWith(
             isLoading: false,
@@ -139,9 +158,10 @@ class AuthCubit extends OptimizedCubit<AuthState> {
       },
     );
   }
-
   //?--------------------------------------------------------------------------------
-  /// طلب كود التحقق (OTP)
+  //! Done ✅
+
+  /// طلب كود التحقق (OTP) لرقم الهاتف
   Future<void> resetPassword(String phoneNumber) async {
     log("🚀 AuthCubit - Starting reset password process for: $phoneNumber");
     safeEmit(state.copyWith(isLoading: true));
@@ -174,6 +194,7 @@ class AuthCubit extends OptimizedCubit<AuthState> {
   }
 
   //?--------------------------------------------------------------------------------
+  //! Done ✅
   /// التحقق من كود OTP
   Future<void> verifyOtp(VerifycodeParams params) async {
     log("🚀 AuthCubit - Starting OTP verification for: ${params.phoneNumber}");
@@ -194,6 +215,8 @@ class AuthCubit extends OptimizedCubit<AuthState> {
       },
       (successMessage) async {
         log("✅ AuthCubit - OTP verification successful");
+        // بعد التحقق من OTP، نحفظ الـ token إذا كان موجوداً في الـ response
+        // يمكن تعديل هذا حسب هيكل الـ API response
         safeEmit(
           state.copyWith(
             isLoading: false,
@@ -204,9 +227,9 @@ class AuthCubit extends OptimizedCubit<AuthState> {
       },
     );
   }
-
   //?--------------------------------------------------------------------------------
-  /// التحقق من كود OTP مع إعادة تعيين كلمة المرور
+
+  /// التحقق من كود OTP مع إعادة تعيين كلمة المرور (لـ forget password flow)
   Future<void> verifyOtpForResetPassword(ResetPasswordParams params) async {
     log(
       "🚀 AuthCubit - Starting OTP verification for reset password: ${params.phoneNumber}",
@@ -241,11 +264,13 @@ class AuthCubit extends OptimizedCubit<AuthState> {
       },
     );
   }
-
   //?--------------------------------------------------------------------------------
+  //! Done ✅
+
   /// إنشاء كلمة مرور جديدة
   Future<void> createNewPassword(ResetPasswordParams params) async {
     log("🚀 AuthCubit - Starting new password creation");
+
     safeEmit(state.copyWith(isLoading: true));
 
     final Either<Failure, String> result = await remote.newPassword(params);
@@ -275,6 +300,7 @@ class AuthCubit extends OptimizedCubit<AuthState> {
   }
 
   //?--------------------------------------------------------------------------------
+  //! Done ✅
   /// إعادة إرسال كود OTP
   Future<void> resendOtp(String phoneNumber) async {
     log("🚀 AuthCubit - Starting resend OTP for: $phoneNumber");
@@ -305,18 +331,20 @@ class AuthCubit extends OptimizedCubit<AuthState> {
       },
     );
   }
-
   //?--------------------------------------------------------------------------------
+
   /// تسجيل الخروج
   Future<void> logout() async {
     log("🚀 AuthCubit - Starting logout process");
     safeEmit(state.copyWith(logOutStatus: ResponseStatusEnum.loading));
 
     try {
+      // الحصول على الـ refresh token
       final refreshToken = await TokenService.getRefreshToken();
       log("🔍 AuthCubit - Refresh token: $refreshToken");
 
       if (refreshToken != null && refreshToken.isNotEmpty) {
+        // إرسال طلب تسجيل الخروج للـ API
         final Either<Failure, String> result = await remote.logout(
           refreshToken,
         );
@@ -324,22 +352,33 @@ class AuthCubit extends OptimizedCubit<AuthState> {
         result.fold(
           (failure) {
             log("❌ AuthCubit - API logout failed: ${failure.message}");
+            // حتى لو فشل الـ API call، نقوم بحذف البيانات محلياً
             _clearLocalData();
             emit(
               state.copyWith(
                 logOutStatus: ResponseStatusEnum.failure,
                 errorLogOut: failure.message,
+                // checkAuthState: CheckAuthState.error,
               ),
             );
           },
           (successMessage) {
             log("✅ AuthCubit - API logout successful");
+            // حذف البيانات محلياً بعد نجاح الـ API call
             _clearLocalData();
-            emit(state.copyWith(logOutStatus: ResponseStatusEnum.success));
+            emit(
+              state.copyWith(
+                logOutStatus: ResponseStatusEnum.success,
+
+                // checkAuthState: CheckAuthState.logoutSuccess,
+                // success: successMessage,
+              ),
+            );
           },
         );
       } else {
         log("⚠️ AuthCubit - No refresh token found, clearing local data only");
+        // إذا لم يكن هناك refresh token، نقوم بحذف البيانات محلياً فقط
         await _clearLocalData();
         safeEmit(
           state.copyWith(
@@ -351,6 +390,7 @@ class AuthCubit extends OptimizedCubit<AuthState> {
       }
     } catch (e) {
       log("❌ AuthCubit - Logout failed: $e");
+      // في حالة الخطأ، نقوم بحذف البيانات محلياً على أي حال
       await _clearLocalData();
       emit(
         state.copyWith(
@@ -363,29 +403,34 @@ class AuthCubit extends OptimizedCubit<AuthState> {
   }
 
   //?--------------------------------------------------------------------------------
+
   /// حذف البيانات المحلية
   Future<void> _clearLocalData() async {
     try {
+      // حذف جميع الـ tokens من الـ storage
       await TokenService.clearToken();
       log("✅ AuthCubit - All tokens cleared successfully");
 
+      // حذف بيانات المستخدم من الـ storage
       await UserPreferencesService.clearAuthData();
       log("✅ AuthCubit - User data cleared successfully");
     } catch (e) {
       log("❌ AuthCubit - Error clearing local data: $e");
     }
   }
-
   //?--------------------------------------------------------------------------------
+
   /// إعادة تعيين الحالة إلى الحالة الأولية
   void resetState() {
     emitOptimized(AuthState());
   }
-
   //?--------------------------------------------------------------------------------
+
   @override
   Future<void> close() {
     log("🔒 AuthCubit - Closing");
     return super.close();
   }
+
+  //?--------------------------------------------------------------------------------
 }
