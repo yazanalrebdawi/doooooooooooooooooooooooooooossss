@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../../core/network/failure.dart';
 import '../../../presentation/pages/verify_otp_page.dart';
 import '../../models/auth_response_model.dart';

@@ -21,8 +21,6 @@ import 'package:dooss_business_app/core/services/translation/translation_service
 import 'package:dooss_business_app/core/services/translation/translation_service_impl.dart';
 import 'package:dooss_business_app/features/auth/data/source/repo/auth_repository.dart';
 import 'package:dooss_business_app/features/auth/data/source/repo/auth_repository_impl.dart';
-import 'package:dooss_business_app/features/auth/data/data_source/auth_remote_data_source_imp.dart';
-import 'package:dooss_business_app/features/auth/data/data_source/auth_remote_data_source.dart';
 import 'package:dooss_business_app/features/auth/presentation/manager/auth_cubit.dart';
 import 'package:dooss_business_app/features/auth/presentation/widgets/custom_app_snack_bar.dart';
 import 'package:dooss_business_app/features/my_profile/data/source/local/my_profile_local_data_source.dart';
