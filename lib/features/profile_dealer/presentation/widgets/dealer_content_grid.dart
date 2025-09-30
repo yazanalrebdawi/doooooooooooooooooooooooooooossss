@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-<<<<<<< HEAD
-import '../../../../core/constants/colors.dart';
-=======
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
->>>>>>> zoz
 import '../../data/models/reel_model.dart';
 import '../../data/models/service_model.dart';
 import '../../data/models/content_type.dart';
@@ -33,7 +29,6 @@ class DealerContentGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (isLoading) {
@@ -41,41 +36,15 @@ class DealerContentGrid extends StatelessWidget {
         child: CircularProgressIndicator(
           color: isDark ? Colors.white : AppColors.primary,
         ),
-=======
-    if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
->>>>>>> zoz
       );
     }
 
     if (content.isEmpty) {
-<<<<<<< HEAD
-      return EmptyContentWidget(
-        contentType: contentType,
-      );
-=======
       return EmptyContentWidget(contentType: contentType);
->>>>>>> zoz
     }
 
     switch (contentType) {
       case ContentType.reels:
-<<<<<<< HEAD
-        return ReelsGridWidget(
-          reels: content.cast<ReelModel>(),
-        );
-      case ContentType.cars:
-        return CarsGridWidget(
-          cars: content.cast<CarModel>(),
-        ); // CarsGridWidget already handles dark mode internally
-      case ContentType.services:
-        return ServicesListWidget(
-          services: content.cast<ServiceModel>(),
-        );
-    }
-  }
-=======
         return ReelsGridWidget(reels: content.cast<ReelModel>());
       case ContentType.cars:
         return CarsGridWidget(cars: content.cast<CarModel>());
@@ -83,7 +52,4 @@ class DealerContentGrid extends StatelessWidget {
         return ServicesListWidget(services: content.cast<ServiceModel>());
     }
   }
-
-
->>>>>>> zoz
 }

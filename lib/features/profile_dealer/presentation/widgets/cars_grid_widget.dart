@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-<<<<<<< HEAD
-import '../../../home/data/models/car_model.dart';
-import 'car_grid_item.dart';
-import '../../../../core/constants/text_styles.dart';
-=======
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../home/data/models/car_model.dart';
 import 'car_grid_item.dart';
->>>>>>> zoz
 
 class CarsGridWidget extends StatelessWidget {
   final List<CarModel> cars;
@@ -21,7 +15,6 @@ class CarsGridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final backgroundColor = isDark ? Colors.grey[900] : Colors.white;
@@ -29,24 +22,16 @@ class CarsGridWidget extends StatelessWidget {
     final textColor = isDark ? Colors.white : Colors.black;
     final iconColor = isDark ? Colors.grey[400] : Colors.grey;
 
-=======
->>>>>>> zoz
     return Column(
       children: [
         // Filter Bar
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
-<<<<<<< HEAD
             color: backgroundColor,
             border: Border(
               bottom: BorderSide(
                 color: borderColor,
-=======
-            border: Border(
-              bottom: BorderSide(
-                color: AppColors.gray.withOpacity(0.2),
->>>>>>> zoz
                 width: 1,
               ),
             ),
@@ -57,11 +42,7 @@ class CarsGridWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-<<<<<<< HEAD
                   color: isDark ? Colors.grey[800] : Colors.grey.withOpacity(0.1),
-=======
-                  color: AppColors.gray.withOpacity(0.1),
->>>>>>> zoz
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Row(
@@ -70,22 +51,14 @@ class CarsGridWidget extends StatelessWidget {
                     Text(
                       'All Categories',
                       style: AppTextStyles.s14w400.copyWith(
-<<<<<<< HEAD
                         color: textColor,
-=======
-                        color: AppColors.black,
->>>>>>> zoz
                       ),
                     ),
                     SizedBox(width: 8.w),
                     Icon(
                       Icons.keyboard_arrow_down,
                       size: 16.sp,
-<<<<<<< HEAD
                       color: iconColor,
-=======
-                      color: AppColors.gray,
->>>>>>> zoz
                     ),
                   ],
                 ),
@@ -95,11 +68,7 @@ class CarsGridWidget extends StatelessWidget {
               Icon(
                 Icons.filter_list,
                 size: 24.sp,
-<<<<<<< HEAD
                 color: iconColor,
-=======
-                color: AppColors.gray,
->>>>>>> zoz
               ),
             ],
           ),

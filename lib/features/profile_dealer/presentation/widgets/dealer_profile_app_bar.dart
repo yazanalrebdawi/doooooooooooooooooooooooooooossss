@@ -18,7 +18,6 @@ class DealerProfileAppBar extends StatelessWidget implements PreferredSizeWidget
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocBuilder<DealerProfileCubit, DealerProfileState>(
@@ -27,38 +26,22 @@ class DealerProfileAppBar extends StatelessWidget implements PreferredSizeWidget
 
         return AppBar(
           backgroundColor: isDark ? Colors.black : AppColors.white,
-=======
-    return BlocBuilder<DealerProfileCubit, DealerProfileState>(
-      builder: (context, state) {
-        final dealerName = state.dealer?.name ?? dealerHandle;
-        
-        return AppBar(
-          backgroundColor: AppColors.white,
->>>>>>> zoz
           elevation: 0,
           title: Text(
             dealerName,
             style: AppTextStyles.s16w600.copyWith(
-<<<<<<< HEAD
               color: isDark ? Colors.white : AppColors.black,
-=======
-              color: AppColors.black,
->>>>>>> zoz
             ),
           ),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-<<<<<<< HEAD
               color: isDark ? Colors.white : AppColors.primary,
-=======
-              color: AppColors.primary,
->>>>>>> zoz
               size: 24.sp,
             ),
             onPressed: () {
-              // العودة للريلز بدلاً من pop العادي
+              // Navigate to reels screen instead of pop
               context.go(RouteNames.reelsScreen);
             },
           ),
