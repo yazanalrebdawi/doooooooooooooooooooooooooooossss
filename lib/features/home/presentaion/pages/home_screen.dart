@@ -10,11 +10,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<HomeCubit>(
-<<<<<<< HEAD
-      create: (context) => di.sl<HomeCubit>(),
-=======
-      create: (context) => di.appLocator<HomeCubit>(),
->>>>>>> zoz
+      create: (context) => di.appLocator<HomeCubit>(), // استخدم instance جاهز من locator
       child: const HomeScreenContent(),
     );
   }

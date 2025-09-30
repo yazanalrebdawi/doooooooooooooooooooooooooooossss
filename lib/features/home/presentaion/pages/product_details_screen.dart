@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/routes/route_names.dart';
@@ -25,14 +26,7 @@ import '../../data/models/product_model.dart';
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
 
-<<<<<<< HEAD
-  const ProductDetailsScreen({
-    super.key,
-    required this.productId,
-  });
-=======
   const ProductDetailsScreen({super.key, required this.productId});
->>>>>>> zoz
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -51,274 +45,123 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Future<void> _initializeMap() async {
-    print('🗺️ ProductDetails: Initializing map...');
     final userLocation = await LocationService.getCurrentLocation();
     if (userLocation != null) {
-<<<<<<< HEAD
-      print('✅ ProductDetails: User location obtained: ${userLocation.latitude}, ${userLocation.longitude}');
-=======
-      print(
-        '✅ ProductDetails: User location obtained: ${userLocation.latitude}, ${userLocation.longitude}',
-      );
->>>>>>> zoz
       setState(() {
         _userLocation = userLocation;
       });
+      print('✅ User location: ${userLocation.latitude}, ${userLocation.longitude}');
     } else {
-      print('❌ ProductDetails: Failed to get user location');
+      print('❌ Failed to get user location');
     }
   }
 
-<<<<<<< HEAD
-  
   LatLng _getProductCoordinates(ProductModel product) {
     if (product.locationCoords != null) {
       final lat = product.locationCoords!['lat'] ?? product.locationCoords!['latitude'];
       final lng = product.locationCoords!['lng'] ?? product.locationCoords!['longitude'];
-      
-      if (lat != null && lng != null) {
-        final latDouble = lat is String ? double.tryParse(lat) : lat.toDouble();
-        final lngDouble = lng is String ? double.tryParse(lng) : lng.toDouble();
-        
-        if (latDouble != null && lngDouble != null) {
-          print('✅ ProductDetails: Using real coordinates: $latDouble, $lngDouble');
-=======
-  LatLng _getProductCoordinates(ProductModel product) {
-    if (product.locationCoords != null) {
-      final lat =
-          product.locationCoords!['lat'] ?? product.locationCoords!['latitude'];
-      final lng =
-          product.locationCoords!['lng'] ??
-          product.locationCoords!['longitude'];
 
       if (lat != null && lng != null) {
         final latDouble = lat is String ? double.tryParse(lat) : lat.toDouble();
         final lngDouble = lng is String ? double.tryParse(lng) : lng.toDouble();
-
         if (latDouble != null && lngDouble != null) {
-          print(
-            '✅ ProductDetails: Using real coordinates: $latDouble, $lngDouble',
-          );
->>>>>>> zoz
           return LatLng(latDouble, lngDouble);
         }
       }
     }
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> zoz
-    // Fallback to Dubai coordinates if no real coordinates available
-    print('⚠️ ProductDetails: No real coordinates, using Dubai fallback');
+    // Fallback coordinates (Dubai)
     return const LatLng(25.2048, 55.2708);
   }
 
   Future<void> _loadRoute(double productLat, double productLon) async {
-    if (_userLocation == null) {
-      print('❌ ProductDetails: Cannot load route - user location is null');
-      return;
-    }
+    if (_userLocation == null) return;
 
-    print('🔄 ProductDetails: Loading route...');
-    setState(() {
-      _isLoadingRoute = true;
-    });
+    setState(() => _isLoadingRoute = true);
 
     try {
-      // Create markers
       final markers = <Marker>{
-        // User location marker
         Marker(
           markerId: const MarkerId('user_location'),
           position: LatLng(_userLocation!.latitude, _userLocation!.longitude),
           infoWindow: const InfoWindow(title: 'Your Location'),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
         ),
-        // Product location marker
         Marker(
           markerId: const MarkerId('product_location'),
           position: LatLng(productLat, productLon),
           infoWindow: const InfoWindow(title: 'Product Location'),
-<<<<<<< HEAD
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-=======
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueGreen,
-          ),
->>>>>>> zoz
         ),
       };
 
-      print('✅ ProductDetails: Markers created');
-
-      // Get route polyline
-      print('🔄 ProductDetails: Getting route polyline...');
       final polyline = await _getRoutePolyline(productLat, productLon);
-<<<<<<< HEAD
-      
-=======
 
->>>>>>> zoz
       setState(() {
         _markers = markers;
-        if (polyline != null) {
-          _polylines = {polyline};
-          print('✅ ProductDetails: Polyline added to map');
-        } else {
-          print('⚠️ ProductDetails: No polyline received, adding fallback');
-          // Add fallback straight line
-          _polylines = {
-            Polyline(
-              polylineId: const PolylineId('route'),
-              points: [
-                LatLng(_userLocation!.latitude, _userLocation!.longitude),
-                LatLng(productLat, productLon),
-              ],
-              color: Colors.blue,
-              width: 4,
-              geodesic: true,
-            ),
-          };
-        }
+        _polylines = polyline != null
+            ? {polyline}
+            : {
+                Polyline(
+                  polylineId: const PolylineId('route'),
+                  points: [
+                    LatLng(_userLocation!.latitude, _userLocation!.longitude),
+                    LatLng(productLat, productLon),
+                  ],
+                  color: Colors.blue,
+                  width: 4,
+                  geodesic: true,
+                ),
+              };
         _isLoadingRoute = false;
       });
     } catch (e) {
-      print('❌ ProductDetails: Error loading route: $e');
-      setState(() {
-        _isLoadingRoute = false;
-      });
+      print('❌ Error loading route: $e');
+      setState(() => _isLoadingRoute = false);
     }
   }
 
-<<<<<<< HEAD
   Future<Polyline?> _getRoutePolyline(double productLat, double productLon) async {
-=======
-  Future<Polyline?> _getRoutePolyline(
-    double productLat,
-    double productLon,
-  ) async {
->>>>>>> zoz
-    if (_userLocation == null) {
-      print('❌ ProductDetails: Cannot get polyline - user location is null');
-      return null;
-    }
+    if (_userLocation == null) return null;
 
     try {
-      const apiKey = 'AIzaSyCvFo9bVexv1f4O4lzdYqjPH7b-yf62k_c';
-<<<<<<< HEAD
-      final url = 'https://maps.googleapis.com/maps/api/directions/json?'
-=======
+      const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
       final url =
-          'https://maps.googleapis.com/maps/api/directions/json?'
->>>>>>> zoz
-          'origin=${_userLocation!.latitude},${_userLocation!.longitude}&'
-          'destination=$productLat,$productLon&'
-          'mode=driving&'
-          'key=$apiKey';
+          'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=$productLat,$productLon&mode=driving&key=$apiKey';
 
-<<<<<<< HEAD
-      print('🌐 ProductDetails: Requesting route from Google Directions API...');
-      print('📍 ProductDetails: Origin: ${_userLocation!.latitude},${_userLocation!.longitude}');
-      print('📍 ProductDetails: Destination: $productLat,$productLon');
-      print('🌐 ProductDetails: URL: $url');
-      
       final response = await http.get(Uri.parse(url));
-      
-      print('📊 ProductDetails: API Response status: ${response.statusCode}');
-      print('📊 ProductDetails: API Response body: ${response.body}');
-      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print('📊 ProductDetails: API Response status: ${data['status']}');
-        
         if (data['status'] == 'OK' && data['routes'] != null && data['routes'].isNotEmpty) {
-          final route = data['routes'][0];
-          final polylineEncoded = route['overview_polyline']['points'];
-          
-          print('✅ ProductDetails: Route found, decoding polyline...');
-          final points = _decodePolyline(polylineEncoded);
-          print('✅ ProductDetails: Polyline decoded with ${points.length} points');
-          
-=======
-      print(
-        '🌐 ProductDetails: Requesting route from Google Directions API...',
-      );
-      print(
-        '📍 ProductDetails: Origin: ${_userLocation!.latitude},${_userLocation!.longitude}',
-      );
-      print('📍 ProductDetails: Destination: $productLat,$productLon');
-      print('🌐 ProductDetails: URL: $url');
-
-      final response = await http.get(Uri.parse(url));
-
-      print('📊 ProductDetails: API Response status: ${response.statusCode}');
-      print('📊 ProductDetails: API Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        print('📊 ProductDetails: API Response status: ${data['status']}');
-
-        if (data['status'] == 'OK' &&
-            data['routes'] != null &&
-            data['routes'].isNotEmpty) {
-          final route = data['routes'][0];
-          final polylineEncoded = route['overview_polyline']['points'];
-
-          print('✅ ProductDetails: Route found, decoding polyline...');
-          final points = _decodePolyline(polylineEncoded);
-          print(
-            '✅ ProductDetails: Polyline decoded with ${points.length} points',
-          );
-
->>>>>>> zoz
+          final points = _decodePolyline(data['routes'][0]['overview_polyline']['points']);
           if (points.isNotEmpty) {
             return Polyline(
               polylineId: const PolylineId('route'),
               points: points,
               color: Colors.blue,
-              width: 8, // Increased width for better visibility
+              width: 8,
               geodesic: true,
-              patterns: [PatternItem.dot, PatternItem.gap(10)],
-              visible: true, // Ensure visibility
             );
-          } else {
-            print('⚠️ ProductDetails: No points in polyline');
-          }
-        } else {
-          print('⚠️ ProductDetails: API Response error: ${data['status']}');
-          if (data['error_message'] != null) {
-            print('💬 ProductDetails: Error message: ${data['error_message']}');
           }
         }
-      } else {
-        print('❌ ProductDetails: HTTP error: ${response.statusCode}');
-        print('💬 ProductDetails: Response body: ${response.body}');
       }
     } catch (e) {
-      print('❌ ProductDetails: Error getting route polyline: $e');
+      print('❌ Error getting route polyline: $e');
     }
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> zoz
     return null;
   }
 
   List<LatLng> _decodePolyline(String encoded) {
     List<LatLng> poly = [];
-    int index = 0, len = encoded.length;
-    int lat = 0, lng = 0;
+    int index = 0, lat = 0, lng = 0;
 
-    while (index < len) {
+    while (index < encoded.length) {
       int b, shift = 0, result = 0;
       do {
         b = encoded.codeUnitAt(index++) - 63;
         result |= (b & 0x1f) << shift;
         shift += 5;
       } while (b >= 0x20);
-      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      int dlat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
       lat += dlat;
 
       shift = 0;
@@ -328,205 +171,31 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         result |= (b & 0x1f) << shift;
         shift += 5;
       } while (b >= 0x20);
-      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      int dlng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
       lng += dlng;
 
-      final p = LatLng((lat / 1E5).toDouble(), (lng / 1E5).toDouble());
-      poly.add(p);
+      poly.add(LatLng(lat / 1E5, lng / 1E5));
     }
+
     return poly;
   }
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-                      final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currentProductId = widget.productId;
 
-    final currentProductId = widget.productId;
     return BlocProvider(
-      create: (_) => di.sl<ProductCubit>()..loadProductDetails(widget.productId),
-      child: Scaffold(
-=======
-    final currentProductId = widget.productId;
-    return BlocProvider(
-      create:
-          (_) =>
-              di.appLocator<ProductCubit>()
-                ..loadProductDetails(widget.productId),
+      create: (_) => di.appLocator<ProductCubit>()..loadProductDetails(widget.productId),
       child: Scaffold(
         backgroundColor: AppColors.white,
->>>>>>> zoz
         appBar: null,
         body: Stack(
           children: [
             BlocBuilder<ProductCubit, ProductState>(
-<<<<<<< HEAD
-          builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            if (state.error != null) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64.sp,
-                      color: isDark ?  AppColors.gray : Colors.black,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      'Error loading product details',
-                      style: AppTextStyles.s16w500.copyWith(                      color: isDark ?  AppColors.gray : Colors.black,
-),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      state.error!,
-                      style: AppTextStyles.s14w400.copyWith(                      color: isDark ?  AppColors.gray : Colors.black,
-),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            if (state.selectedProduct == null) {
-              return const Center(
-                child: Text('Product not found'),
-              );
-            }
-
-            final product = state.selectedProduct!;
-
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Product Image Gallery
-                  ProductImageGallery(
-                    images: product.images,
-                    mainImage: product.imageUrl,
-                  ),
-                  
-                  // Product Info Section
-                  ProductInfoSection(product: product),
-                  
-                  // Description Section
-                  ProductDescriptionSection(description: product.description),
-                  
-                  // Specifications Section
-                  ProductSpecificationsSection(product: product),
-                  
-                                     // Location Section - Removed to avoid duplication with map section
-                  
-                  // Seller Information
-                  SellerInfoSection(
-                    sellerName: 'AutoParts Store',
-                    sellerType: 'Store',
-                    sellerImage: 'assets/images/seller_avatar.png',
-                    onCallPressed: () {
-                      // Handle call action
-                      print('Call seller');
-                    },
-                    onMessagePressed: () {
-                      // Navigate to chat with seller
-                      final dealerId = product.dealer;
-                      context.go('${RouteNames.chatConversationScreen}/$dealerId', extra: currentProductId);
-                    },
-                  ),
-                  
-                  // Map Section
-                  Container(
-                    padding: EdgeInsets.all(16.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.location_on,                       color: isDark ?  AppColors.gray : Colors.black,
- size: 20.sp),
-                            SizedBox(width: 8.w),
-                            Text('Product Location', style: AppTextStyles.blackS16W600),
-                            const Spacer(),
-                            if (_isLoadingRoute)
-                              SizedBox(
-                                width: 16.w,
-                                height: 16.w,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                            GestureDetector(
-                              onTap: () {
-                                // Load route when map is tapped
-                                final coords = _getProductCoordinates(product);
-                                _loadRoute(coords.latitude, coords.longitude);
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 1),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.map, color: AppColors.primary, size: 16.sp),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      'View Route',
-                                      style: AppTextStyles.s12w400.copyWith(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12.h),
-                        Container(
-                          height: 200.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                                                    color: isDark ?  AppColors.gray.withOpacity(0.2) : Colors.black,
-
-                              width: 1,
-                            ),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.r),
-                            child: GoogleMap(
-                              initialCameraPosition: CameraPosition(
-                                target: _getProductCoordinates(product),
-                                zoom: 15.0,
-                              ),
-                              markers: _markers,
-                              polylines: _polylines,
-                              myLocationEnabled: true,
-                              myLocationButtonEnabled: false,
-                              zoomControlsEnabled: false,
-                              mapToolbarEnabled: false,
-                              compassEnabled: true,
-                              onMapCreated: (GoogleMapController controller) {
-                                print('🗺️ ProductDetails: Map controller created');
-                              },
-                            ),
-=======
-              buildWhen:
-                  (previous, current) =>
-                      previous.isLoading != current.isLoading ||
-                      previous.selectedProduct != current.selectedProduct ||
-                      previous.error != current.error,
-
+              buildWhen: (previous, current) =>
+                  previous.isLoading != current.isLoading ||
+                  previous.selectedProduct != current.selectedProduct ||
+                  previous.error != current.error,
               builder: (context, state) {
                 if (state.isLoading) {
                   return const Center(child: CircularProgressIndicator());
@@ -537,78 +206,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 64.sp,
-                          color: AppColors.gray,
-                        ),
+                        Icon(Icons.error_outline, size: 64.sp, color: AppColors.gray),
                         SizedBox(height: 16.h),
-                        Text(
-                          'Error loading product details',
-                          style: AppTextStyles.s16w500.copyWith(
-                            color: AppColors.gray,
->>>>>>> zoz
-                          ),
-                        ),
+                        Text('Error loading product details',
+                            style: AppTextStyles.s16w500.copyWith(color: AppColors.gray)),
                         SizedBox(height: 8.h),
-                        Text(
-<<<<<<< HEAD
-                          product.location.isNotEmpty ? product.location : 'Dubai, UAE',
-                          style: AppTextStyles.s14w400.copyWith(                      color: isDark ?  AppColors.gray : Colors.black,
-),
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  // Reviews Section - Temporarily removed until API is ready
-                  // ReviewsSection(
-                  //   rating: 4.5,
-                  //   reviewsCount: 68,
-                  //   reviews: state.productReviews,
-                  // ),
-                  
-                  // Related Products - Temporarily removed until API is ready
-                  // RelatedProductsSection(
-                  //   relatedProducts: state.relatedProducts,
-                  // ),
-                  
-                  SizedBox(height: 100.h), // Space for bottom bar
-                ],
-              ),
-            );
-          },
-        ),
-        
-        // Custom Back Button
-        Positioned(
-          top: MediaQuery.of(context).padding.top + 8.h,
-          left: 16.w,
-          child: Container(
-            margin: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE0E0E0), // Light grey circle
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: AppColors.black,
-                size: 20.sp,
-              ),
-              onPressed: () => context.pop(),
-            ),
-          ),
-        ),
-      ],
-    ),
-=======
-                          state.error!,
-                          style: AppTextStyles.s14w400.copyWith(
-                            color: AppColors.gray,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        Text(state.error!,
+                            style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
+                            textAlign: TextAlign.center),
                       ],
                     ),
                   );
@@ -624,45 +229,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Product Image Gallery
-                      ProductImageGallery(
-                        images: product.images,
-                        mainImage: product.imageUrl,
-                      ),
-
-                      // Product Info Section
+                      ProductImageGallery(images: product.images, mainImage: product.imageUrl),
                       ProductInfoSection(product: product),
-
-                      // Description Section
-                      ProductDescriptionSection(
-                        description: product.description,
-                      ),
-
-                      // Specifications Section
+                      ProductDescriptionSection(description: product.description),
                       ProductSpecificationsSection(product: product),
-
-                      // Location Section - Removed to avoid duplication with map section
-
-                      // Seller Information
                       SellerInfoSection(
                         sellerName: 'AutoParts Store',
                         sellerType: 'Store',
                         sellerImage: 'assets/images/seller_avatar.png',
-                        onCallPressed: () {
-                          // Handle call action
-                          print('Call seller');
-                        },
+                        onCallPressed: () => print('Call seller'),
                         onMessagePressed: () {
-                          // Navigate to chat with seller
                           final dealerId = product.dealer;
-                          context.go(
-                            '${RouteNames.chatConversationScreen}/$dealerId',
-                            extra: currentProductId,
-                          );
+                          context.go('${RouteNames.chatConversationScreen}/$dealerId',
+                              extra: currentProductId);
                         },
                       ),
-
-                      // Map Section
                       Container(
                         padding: EdgeInsets.all(16.w),
                         child: Column(
@@ -670,67 +251,37 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             Row(
                               children: [
-                                Icon(
-                                  Icons.location_on,
-                                  color: AppColors.gray,
-                                  size: 20.sp,
-                                ),
+                                Icon(Icons.location_on, color: AppColors.gray, size: 20.sp),
                                 SizedBox(width: 8.w),
-                                Text(
-                                  'Product Location',
-                                  style: AppTextStyles.blackS16W600,
-                                ),
+                                Text('Product Location', style: AppTextStyles.blackS16W600),
                                 const Spacer(),
                                 if (_isLoadingRoute)
                                   SizedBox(
-                                    width: 16.w,
-                                    height: 16.w,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
+                                      width: 16.w,
+                                      height: 16.w,
+                                      child: CircularProgressIndicator(strokeWidth: 2)),
                                 GestureDetector(
                                   onTap: () {
-                                    // Load route when map is tapped
-                                    final coords = _getProductCoordinates(
-                                      product,
-                                    );
-                                    _loadRoute(
-                                      coords.latitude,
-                                      coords.longitude,
-                                    );
+                                    final coords = _getProductCoordinates(product);
+                                    _loadRoute(coords.latitude, coords.longitude);
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12.w,
-                                      vertical: 6.h,
-                                    ),
+                                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                                     decoration: BoxDecoration(
                                       color: AppColors.primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(16.r),
                                       border: Border.all(
-                                        color: AppColors.primary.withOpacity(
-                                          0.3,
-                                        ),
-                                        width: 1,
-                                      ),
+                                          color: AppColors.primary.withOpacity(0.3), width: 1),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(
-                                          Icons.map,
-                                          color: AppColors.primary,
-                                          size: 16.sp,
-                                        ),
+                                        Icon(Icons.map, color: AppColors.primary, size: 16.sp),
                                         SizedBox(width: 4.w),
-                                        Text(
-                                          'View Route',
-                                          style: AppTextStyles.s12w400.copyWith(
-                                            color: AppColors.primary,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
+                                        Text('View Route',
+                                            style: AppTextStyles.s12w400.copyWith(
+                                                color: AppColors.primary,
+                                                fontWeight: FontWeight.w500)),
                                       ],
                                     ),
                                   ),
@@ -741,18 +292,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             Container(
                               height: 200.h,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(
-                                  color: AppColors.gray.withOpacity(0.2),
-                                  width: 1,
-                                ),
-                              ),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(color: AppColors.gray.withOpacity(0.2), width: 1)),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12.r),
                                 child: GoogleMap(
                                   initialCameraPosition: CameraPosition(
                                     target: _getProductCoordinates(product),
-                                    zoom: 15.0,
+                                    zoom: 15,
                                   ),
                                   markers: _markers,
                                   polylines: _polylines,
@@ -761,95 +308,48 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   zoomControlsEnabled: false,
                                   mapToolbarEnabled: false,
                                   compassEnabled: true,
-                                  onMapCreated: (
-                                    GoogleMapController controller,
-                                  ) {
-                                    print(
-                                      '🗺️ ProductDetails: Map controller created',
-                                    );
-                                  },
                                 ),
                               ),
                             ),
                             SizedBox(height: 8.h),
                             Text(
-                              product.location.isNotEmpty
-                                  ? product.location
-                                  : 'Dubai, UAE',
-                              style: AppTextStyles.s14w400.copyWith(
-                                color: AppColors.gray,
-                              ),
+                              product.location.isNotEmpty ? product.location : 'Dubai, UAE',
+                              style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
                             ),
                           ],
                         ),
                       ),
-
-                      // Reviews Section - Temporarily removed until API is ready
-                      // ReviewsSection(
-                      //   rating: 4.5,
-                      //   reviewsCount: 68,
-                      //   reviews: state.productReviews,
-                      // ),
-
-                      // Related Products - Temporarily removed until API is ready
-                      // RelatedProductsSection(
-                      //   relatedProducts: state.relatedProducts,
-                      // ),
                       SizedBox(height: 100.h), // Space for bottom bar
                     ],
                   ),
                 );
               },
             ),
-
             // Custom Back Button
             Positioned(
               top: MediaQuery.of(context).padding.top + 8.h,
               left: 16.w,
               child: Container(
                 margin: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE0E0E0), // Light grey circle
-                  shape: BoxShape.circle,
-                ),
+                decoration: const BoxDecoration(color: Color(0xFFE0E0E0), shape: BoxShape.circle),
                 child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.black,
-                    size: 20.sp,
-                  ),
+                  icon: Icon(Icons.arrow_back, color: AppColors.black, size: 20.sp),
                   onPressed: () => context.pop(),
                 ),
               ),
             ),
           ],
         ),
->>>>>>> zoz
         bottomNavigationBar: Builder(
-          builder: (context) {
-            return BlocBuilder<ProductCubit, ProductState>(
-              builder: (context, state) {
-                return ProductDetailsBottomBar(
-                  onChatPressed: () {
-                    // Navigate to chat using dealer ID and pass product ID
-                    final dealerId = state.selectedProduct?.dealer ?? 1;
-<<<<<<< HEAD
-                    context.go('${RouteNames.chatConversationScreen}/$dealerId', extra: currentProductId);
-=======
-                    context.go(
-                      '${RouteNames.chatConversationScreen}/$dealerId',
-                      extra: currentProductId,
-                    );
->>>>>>> zoz
-                  },
-                  onCallPressed: () {
-                    // Handle call action
-                    print('Call seller');
-                  },
-                );
+          builder: (context) => BlocBuilder<ProductCubit, ProductState>(
+            builder: (context, state) => ProductDetailsBottomBar(
+              onChatPressed: () {
+                final dealerId = state.selectedProduct?.dealer ?? 1;
+                context.go('${RouteNames.chatConversationScreen}/$dealerId', extra: currentProductId);
               },
-            );
-          },
+              onCallPressed: () => print('Call seller'),
+            ),
+          ),
         ),
       ),
     );
