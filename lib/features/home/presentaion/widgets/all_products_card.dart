@@ -11,30 +11,17 @@ class AllProductsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Container(
       width: 173.w,
       height: 240.h,
       decoration: BoxDecoration(
-<<<<<<< HEAD
-        color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+        color: isDark ? const Color(0xFF2A2A2A) : AppColors.white,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.4)
-                : Colors.black.withOpacity(0.1),
-=======
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
->>>>>>> zoz
+            color: Colors.black.withOpacity(isDark ? 0.4 : 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -43,41 +30,25 @@ class AllProductsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-<<<<<<< HEAD
           _buildImage(isDark),
-          _buildContent(context, isDark),
-=======
-          _buildImage(),
-          _buildContent(),
->>>>>>> zoz
+          _buildContent(isDark),
         ],
       ),
     );
   }
 
-<<<<<<< HEAD
   Widget _buildImage(bool isDark) {
-=======
-  Widget _buildImage() {
->>>>>>> zoz
     return ClipRRect(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(12.r),
         topRight: Radius.circular(12.r),
       ),
-<<<<<<< HEAD
       child: Container(
         width: 173.w,
         height: 128.h,
         color: isDark
             ? Colors.white.withOpacity(0.08)
             : AppColors.gray.withOpacity(0.2),
-=======
-             child: Container(
-         width: 173.w,
-         height: 128.h,
-        color: AppColors.gray.withOpacity(0.2),
->>>>>>> zoz
         child: product.imageUrl.isNotEmpty
             ? Image.network(
                 product.imageUrl,
@@ -85,86 +56,52 @@ class AllProductsCard extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(
                     Icons.image,
-<<<<<<< HEAD
                     color: isDark ? Colors.white70 : AppColors.gray,
-=======
-                    color: AppColors.gray,
->>>>>>> zoz
                     size: 48.sp,
                   );
                 },
               )
             : Icon(
                 Icons.image,
-<<<<<<< HEAD
                 color: isDark ? Colors.white70 : AppColors.gray,
-=======
-                color: AppColors.gray,
->>>>>>> zoz
                 size: 48.sp,
               ),
       ),
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildContent(BuildContext context, bool isDark) {
+  Widget _buildContent(bool isDark) {
     return Container(
       width: 173.w,
       height: 112.h, // 240 - 128 = 112
-=======
-  Widget _buildContent() {
-         return Container(
-       width: 173.w,
-       height: 112.h, // 240 - 128 = 112
->>>>>>> zoz
       padding: EdgeInsets.all(12.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-<<<<<<< HEAD
-          _buildTitle(context, isDark),
-=======
-          _buildTitle(),
->>>>>>> zoz
+          _buildTitle(isDark),
           _buildPrice(),
         ],
       ),
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildTitle(BuildContext context, bool isDark) {
-=======
-  Widget _buildTitle() {
->>>>>>> zoz
+  Widget _buildTitle(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           product.name,
-<<<<<<< HEAD
-          style: AppTextStyles.blackS16W600.withThemeColor(context),
-=======
           style: AppTextStyles.blackS16W600,
->>>>>>> zoz
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: 4.h),
         Text(
-<<<<<<< HEAD
-          product.description.isNotEmpty
-              ? product.description
-              : 'Premium Quality',
+          product.description.isNotEmpty ? product.description : 'Premium Quality',
           style: AppTextStyles.s14w400.copyWith(
             color: isDark ? Colors.white70 : AppColors.gray,
           ),
-=======
-          product.description.isNotEmpty ? product.description : 'Premium Quality',
-          style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
->>>>>>> zoz
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

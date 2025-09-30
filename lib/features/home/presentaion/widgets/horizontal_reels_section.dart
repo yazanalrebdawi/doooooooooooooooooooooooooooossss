@@ -5,22 +5,16 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../manager/reel_cubit.dart';
 import '../manager/reel_state.dart';
+import '../manager/reels_cubit.dart';
 import '../../data/models/reel_model.dart';
 import 'reel_card_player.dart';
-import '../manager/reels_cubit.dart';
-<<<<<<< HEAD
 
-=======
->>>>>>> zoz
 /// Horizontal reels section for home screen
-/// Keeps the card-like UI but uses ReelCardPlayer internally
+/// Displays reels in a horizontal list with card-like UI
 class HorizontalReelsSection extends StatefulWidget {
   final VoidCallback? onViewAllPressed;
 
-  const HorizontalReelsSection({
-    super.key,
-    this.onViewAllPressed,
-  });
+  const HorizontalReelsSection({super.key, this.onViewAllPressed});
 
   @override
   State<HorizontalReelsSection> createState() => _HorizontalReelsSectionState();
@@ -34,11 +28,7 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> zoz
     // Load reels when widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReelCubit>().loadReels();
@@ -46,28 +36,14 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
   }
 
   void _onScroll() {
-<<<<<<< HEAD
     final itemWidth = 216.w; // Card width + margin
     final scrollOffset = _scrollController.offset;
     final newVisibleIndex = (scrollOffset / itemWidth).round();
 
-=======
-    // Determine which reel is currently in viewport
-    final itemWidth = 216.w; // Card width + margin
-    final scrollOffset = _scrollController.offset;
-    final newVisibleIndex = (scrollOffset / itemWidth).round();
-    
->>>>>>> zoz
     if (newVisibleIndex != _currentVisibleIndex && newVisibleIndex >= 0) {
       setState(() {
         _currentVisibleIndex = newVisibleIndex;
       });
-<<<<<<< HEAD
-
-=======
-      
->>>>>>> zoz
-      // Update focused reel in cubit
       context.read<ReelsCubit>().setFocusedReel(newVisibleIndex);
     }
   }
@@ -90,27 +66,17 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Market Reels',
-                style: AppTextStyles.blackS18W700,
-              ),
+              Text('Market Reels', style: AppTextStyles.blackS18W700),
               if (widget.onViewAllPressed != null)
                 GestureDetector(
                   onTap: widget.onViewAllPressed,
-                  child: Text(
-                    'View All',
-                    style: AppTextStyles.primaryS16W600,
-                  ),
+                  child: Text('View All', style: AppTextStyles.primaryS16W600),
                 ),
             ],
           ),
         ),
         SizedBox(height: 16.h),
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> zoz
         // Horizontal reels list
         SizedBox(
           height: 300.h,
@@ -120,18 +86,9 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
                 previous.isLoading != current.isLoading ||
                 previous.error != current.error,
             builder: (context, state) {
-              if (state.isLoading && state.reels.isEmpty) {
-                return _buildLoadingState();
-              }
-
-              if (state.error != null && state.reels.isEmpty) {
-                return _buildErrorState(state.error!);
-              }
-
-              if (state.reels.isEmpty) {
-                return _buildEmptyState();
-              }
-
+              if (state.isLoading && state.reels.isEmpty) return _buildLoadingState();
+              if (state.error != null && state.reels.isEmpty) return _buildErrorState(state.error!);
+              if (state.reels.isEmpty) return _buildEmptyState();
               return _buildReelsList(state.reels);
             },
           ),
@@ -149,11 +106,7 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
       itemBuilder: (context, index) {
         final reel = reels[index];
         final isInViewport = index == _currentVisibleIndex;
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> zoz
         return Container(
           margin: EdgeInsets.only(right: 16.w),
           child: Column(
@@ -167,15 +120,8 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
                 isInViewport: isInViewport,
                 onTap: () => _onReelTap(context, reel, index),
               ),
-<<<<<<< HEAD
-
               SizedBox(height: 8.h),
 
-=======
-              
-              SizedBox(height: 8.h),
-              
->>>>>>> zoz
               // Reel info
               SizedBox(
                 width: 200.w,
@@ -191,11 +137,7 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
                     SizedBox(height: 4.h),
                     Row(
                       children: [
-                        Icon(
-                          Icons.person,
-                          color: AppColors.gray,
-                          size: 14.sp,
-                        ),
+                        Icon(Icons.person, color: AppColors.gray, size: 14.sp),
                         SizedBox(width: 4.w),
                         Expanded(
                           child: Text(
@@ -217,81 +159,50 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
     );
   }
 
-  Widget _buildLoadingState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(color: AppColors.primary),
-          SizedBox(height: 16.h),
-          Text(
-            'Loading reels...',
-            style: AppTextStyles.grayS14W400,
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildLoadingState() => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: AppColors.primary),
+            SizedBox(height: 16.h),
+            Text('Loading reels...', style: AppTextStyles.grayS14W400),
+          ],
+        ),
+      );
 
-  Widget _buildErrorState(String error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            color: AppColors.gray,
-            size: 48.sp,
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            'Failed to load reels',
-            style: AppTextStyles.grayS16W600,
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            error,
-            style: AppTextStyles.grayS12W400,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16.h),
-          ElevatedButton(
-            onPressed: () => context.read<ReelCubit>().loadReels(),
-            child: Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildErrorState(String error) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, color: AppColors.gray, size: 48.sp),
+            SizedBox(height: 16.h),
+            Text('Failed to load reels', style: AppTextStyles.grayS16W600),
+            SizedBox(height: 8.h),
+            Text(error, style: AppTextStyles.grayS12W400, textAlign: TextAlign.center),
+            SizedBox(height: 16.h),
+            ElevatedButton(
+              onPressed: () => context.read<ReelCubit>().loadReels(),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.video_library_outlined,
-            color: AppColors.gray,
-            size: 48.sp,
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            'No reels available',
-            style: AppTextStyles.grayS16W600,
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Check back later for new content',
-            style: AppTextStyles.grayS12W400,
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildEmptyState() => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.video_library_outlined, color: AppColors.gray, size: 48.sp),
+            SizedBox(height: 16.h),
+            Text('No reels available', style: AppTextStyles.grayS16W600),
+            SizedBox(height: 8.h),
+            Text('Check back later for new content', style: AppTextStyles.grayS12W400),
+          ],
+        ),
+      );
 
   void _onReelTap(BuildContext context, ReelModel reel, int index) {
     print('🎬 HorizontalReelsSection: Reel tapped - ${reel.title}');
-<<<<<<< HEAD
 
     // Update focused reel
     context.read<ReelsCubit>().setFocusedReel(reel.id);
@@ -303,16 +214,3 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
     // context.push('/reels/${reel.id}');
   }
 }
-=======
-    
-    // Update focused reel
-    context.read<ReelsCubit>().setFocusedReel(reel.id);
-    
-    // Enable auto-play for this reel
-    context.read<ReelsCubit>().enableAutoPlay();
-    
-    // TODO: Navigate to full-screen viewer if needed
-    // context.push('/reels/${reel.id}');
-  }
-}
->>>>>>> zoz

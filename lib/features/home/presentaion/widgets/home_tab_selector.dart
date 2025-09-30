@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import 'package:dooss_business_app/core/constants/text_styles.dart';
-=======
-import 'package:dooss_business_app/features/my_profile/presentation/pages/profile_screen.dart';
->>>>>>> zoz
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dooss_business_app/features/home/presentaion/manager/home_cubit.dart';
@@ -11,10 +6,7 @@ import 'package:dooss_business_app/features/home/presentaion/widgets/home_tab_co
 import 'package:dooss_business_app/features/home/presentaion/widgets/services_tab_content.dart';
 import 'package:dooss_business_app/features/home/presentaion/widgets/reels_tab_content.dart';
 import 'package:dooss_business_app/features/home/presentaion/widgets/messages_tab_content.dart';
-<<<<<<< HEAD
-import 'package:dooss_business_app/features/home/presentaion/pages/account_screen.dart';
-=======
->>>>>>> zoz
+import 'package:dooss_business_app/features/my_profile/presentation/pages/profile_screen.dart';
 
 class HomeTabSelector extends StatelessWidget {
   const HomeTabSelector({super.key});
@@ -33,11 +25,7 @@ class HomeTabSelector extends StatelessWidget {
           case 3:
             return const MessagesTabContent();
           case 4:
-<<<<<<< HEAD
-            return const AccountScreen();
-=======
             return const ProfileScreen();
->>>>>>> zoz
           default:
             return const UnknownTabContent();
         }
@@ -51,15 +39,6 @@ class UnknownTabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return  Center(
-      child: Text('Unknown tab' ,  style: AppTextStyles.s18w700.withThemeColor(context),
-),
-    );
-  }
-}
-=======
     return const Center(child: Text('Unknown tab'));
   }
 }
->>>>>>> zoz

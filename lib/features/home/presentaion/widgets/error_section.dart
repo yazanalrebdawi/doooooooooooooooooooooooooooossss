@@ -17,26 +17,14 @@ class ErrorSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-=======
->>>>>>> zoz
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-<<<<<<< HEAD
-          // Title with theme toggle
-          Text(
-            title,
-            style: AppTextStyles.blackS18W700.withThemeColor(context),
-=======
           Text(
             title,
             style: AppTextStyles.blackS18W700,
->>>>>>> zoz
           ),
           SizedBox(height: 16.h),
           Container(
@@ -88,8 +76,4 @@ class ErrorSection extends StatelessWidget {
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-} 
->>>>>>> zoz

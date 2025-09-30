@@ -12,40 +12,23 @@ import '../widgets/brand_selector.dart';
 import '../widgets/promotional_banner.dart';
 import '../widgets/search_app_bar.dart';
 import '../widgets/all_cars_header_widget.dart';
-import '../manager/car_cubit.dart';
-import '../manager/car_state.dart';
-import '../widgets/see_all_cars_card.dart';
-import '../widgets/brand_selector.dart';
-import '../widgets/promotional_banner.dart';
-import '../widgets/search_app_bar.dart';
-import '../widgets/all_cars_header_widget.dart';
 
 class AllCarsScreen extends StatelessWidget {
   const AllCarsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return BlocProvider(
-      create: (_) => di.sl<CarCubit>()..loadAllCars(),
-      child: Scaffold(
-=======
     return BlocProvider(
       create: (_) => di.appLocator<CarCubit>()..loadAllCars(),
       child: Scaffold(
         backgroundColor: AppColors.white,
->>>>>>> zoz
         appBar: const SearchAppBar(
           title: 'All Cars',
         ),
         body: BlocBuilder<CarCubit, CarState>(
-<<<<<<< HEAD
           buildWhen: (previous, current) =>
-=======
-          buildWhen: (previous, current) => 
->>>>>>> zoz
               previous.cars != current.cars ||
               previous.allCars != current.allCars ||
               previous.selectedBrand != current.selectedBrand ||
@@ -53,12 +36,7 @@ class AllCarsScreen extends StatelessWidget {
               previous.hasMoreCars != current.hasMoreCars ||
               previous.isLoadingMore != current.isLoadingMore ||
               previous.isLoading != current.isLoading ||
-              previous.error != current.error ||
-<<<<<<< HEAD
-              previous.hasMoreCars != current.hasMoreCars,
-=======
-              previous.hasMoreCars != current.hasMoreCars ,
->>>>>>> zoz
+              previous.error != current.error,
           builder: (context, state) {
             if (state.isLoading) {
               return const Center(
@@ -74,31 +52,19 @@ class AllCarsScreen extends StatelessWidget {
                     Icon(
                       Icons.error_outline,
                       size: 64.sp,
-<<<<<<< HEAD
                       color: isDark ? Colors.white : AppColors.gray,
-=======
-                      color: AppColors.gray,
->>>>>>> zoz
                     ),
                     SizedBox(height: 16.h),
                     Text(
                       'Error loading cars',
-<<<<<<< HEAD
                       style: AppTextStyles.s16w500.copyWith(
                           color: isDark ? Colors.white : AppColors.gray),
-=======
-                      style: AppTextStyles.s16w500.copyWith(color: AppColors.gray),
->>>>>>> zoz
                     ),
                     SizedBox(height: 8.h),
                     Text(
                       state.error!,
-<<<<<<< HEAD
                       style: AppTextStyles.s14w400.copyWith(
                           color: isDark ? Colors.white : AppColors.gray),
-=======
-                      style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
->>>>>>> zoz
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -112,11 +78,7 @@ class AllCarsScreen extends StatelessWidget {
                 children: [
                   // Header Section
                   const AllCarsHeaderWidget(),
-<<<<<<< HEAD
 
-=======
-                  
->>>>>>> zoz
                   // Brand Selector
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -127,15 +89,9 @@ class AllCarsScreen extends StatelessWidget {
                       },
                     ),
                   ),
-<<<<<<< HEAD
 
                   SizedBox(height: 16.h),
 
-=======
-                  
-                  SizedBox(height: 16.h),
-                  
->>>>>>> zoz
                   // Cars List
                   ListView.builder(
                     shrinkWrap: true,
@@ -148,12 +104,9 @@ class AllCarsScreen extends StatelessWidget {
                           padding: EdgeInsets.all(16.w),
                           child: Center(
                             child: state.isLoadingMore
-<<<<<<< HEAD
                                 ? CircularProgressIndicator(
-                                    color: AppColors.primary)
-=======
-                                ? CircularProgressIndicator(color: AppColors.primary)
->>>>>>> zoz
+                                    color: AppColors.primary,
+                                  )
                                 : ElevatedButton(
                                     onPressed: () {
                                       context.read<CarCubit>().loadMoreCars();
@@ -162,43 +115,27 @@ class AllCarsScreen extends StatelessWidget {
                                       backgroundColor: AppColors.primary,
                                       foregroundColor: AppColors.white,
                                     ),
-                                    child: Text('Load More Cars'),
+                                    child: const Text('Load More Cars'),
                                   ),
                           ),
                         );
                       }
-<<<<<<< HEAD
 
                       // Car Item
                       return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 8.h),
-=======
-                      
-                      // Car Item
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
->>>>>>> zoz
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                         child: SeeAllCarsCard(
                           car: state.cars[index],
                           onTap: () {
                             // Navigate to car details
-<<<<<<< HEAD
-                            context
-                                .push('/car-details/${state.cars[index].id}');
-=======
                             context.push('/car-details/${state.cars[index].id}');
->>>>>>> zoz
                           },
                         ),
                       );
                     },
                   ),
-<<<<<<< HEAD
 
-=======
-                  
->>>>>>> zoz
                   SizedBox(height: 20.h),
                 ],
               ),

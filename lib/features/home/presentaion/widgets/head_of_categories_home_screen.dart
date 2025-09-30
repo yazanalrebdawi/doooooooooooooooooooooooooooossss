@@ -10,7 +10,7 @@ class HeadOfCategoriesHomeScreen extends StatelessWidget {
     super.key,
     required this.topicText,
     required this.actionText,
-    required this.onPressedActionText
+    required this.onPressedActionText,
   });
 
   @override
@@ -18,16 +18,17 @@ class HeadOfCategoriesHomeScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(topicText, style: AppTextStyles.blackS20W500),
+        Text(
+          topicText,
+          style: AppTextStyles.blackS20W500,
+        ),
         TextButton(
-          onPressed:onPressedActionText,
+          onPressed: onPressedActionText,
           child: Text(
             actionText,
-<<<<<<< HEAD
-            style: AppTextStyles.headCategoriesTextStyleS16W500.withThemeColor(context),
-=======
             style: AppTextStyles.headCategoriesTextStyleS16W500,
->>>>>>> zoz
+            // إذا أحببت دعم الثيم:
+            // style: AppTextStyles.headCategoriesTextStyleS16W500.withThemeColor(context),
           ),
         ),
       ],

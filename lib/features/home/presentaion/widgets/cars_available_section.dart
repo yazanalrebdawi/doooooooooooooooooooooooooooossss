@@ -20,11 +20,8 @@ class CarsAvailableSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -36,25 +33,19 @@ class CarsAvailableSection extends StatelessWidget {
             children: [
               Text(
                 'Cars Available Now',
-<<<<<<< HEAD
                 style: AppTextStyles.blackS18W700.copyWith(
                   color: isDark ? Colors.white : AppColors.black,
                 ),
-=======
-                style: AppTextStyles.blackS18W700,
->>>>>>> zoz
               ),
               GestureDetector(
                 onTap: onViewAllPressed,
                 child: Text(
                   'View All',
-<<<<<<< HEAD
                   style: AppTextStyles.primaryS16W600.copyWith(
-                    color: isDark ? AppColors.primary.withOpacity(0.8) : AppColors.primary,
+                    color: isDark
+                        ? AppColors.primary.withOpacity(0.8)
+                        : AppColors.primary,
                   ),
-=======
-                  style: AppTextStyles.primaryS16W600,
->>>>>>> zoz
                 ),
               ),
             ],
@@ -63,24 +54,19 @@ class CarsAvailableSection extends StatelessWidget {
         SizedBox(height: 16.h),
         // Cars List
         cars.isEmpty 
-          ? const EmptyCarsSectionWidget()
-          : ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: cars.length,
-              separatorBuilder: (context, index) => SizedBox(height: 12.h),
-              itemBuilder: (context, index) => CarCardWidget(
-                car: cars[index],
-                onTap: onCarPressed,
+            ? const EmptyCarsSectionWidget()
+            : ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: cars.length,
+                separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                itemBuilder: (context, index) => CarCardWidget(
+                  car: cars[index],
+                  onTap: onCarPressed,
+                ),
               ),
-            ),
       ],
     );
   }
-<<<<<<< HEAD
 }
-=======
-
-} 
->>>>>>> zoz
