@@ -9,7 +9,7 @@ class WebSocketService {
   int? _chatId;
   bool _isConnected = false;
   bool _isConnecting = false;
-  
+
   // Callbacks
   Function(String)? onMessageReceived;
   Function(String)? onError;
@@ -24,26 +24,22 @@ class WebSocketService {
       print('⚠️ WebSocket: Already connecting, skipping...');
       return;
     }
-    
+
     if (_isConnected) {
       print('⚠️ WebSocket: Already connected, disconnecting first...');
       disconnect();
     }
-    
+
     _chatId = chatId;
     _accessToken = accessToken;
     _isConnecting = true;
-    
-<<<<<<< HEAD
-    final wsUrl = 'ws://192.168.1.129:8020/ws/chats/$chatId/?token=$accessToken';
-=======
+
     final wsUrl = '${ApiUrls.wsBaseUrl}/ws/chats/$chatId/?token=$accessToken';
->>>>>>> zoz
     print('🔌 WebSocket: Connecting to $wsUrl');
-    
+
     try {
       _socket = await WebSocket.connect(wsUrl);
-      
+
       _socket!.listen(
         (message) {
           print('📨 WebSocket: Message received: $message');
@@ -62,7 +58,7 @@ class WebSocketService {
           onDisconnected?.call();
         },
       );
-      
+
       _isConnected = true;
       _isConnecting = false;
       onConnected?.call();
@@ -91,16 +87,13 @@ class WebSocketService {
     }
 
     final message = {
-<<<<<<< HEAD
-=======
       'action': 'send',
->>>>>>> zoz
       'text': text,
     };
 
     final jsonMessage = jsonEncode(message);
     print('📤 WebSocket: Sending message: $jsonMessage');
-    
+
     try {
       _socket!.add(jsonMessage);
     } catch (e) {
@@ -109,27 +102,6 @@ class WebSocketService {
     }
   }
 
-<<<<<<< HEAD
-void _handleMessage(dynamic message) {
-  try {
-    if (message is String) {
-      // ✅ Forward raw JSON to cubit
-      onMessageReceived?.call(message);
-
-      // Optional: keep parsed logging
-      final data = jsonDecode(message);
-      print('📨 WebSocket: Parsed message: $data');
-    } else {
-      // handle non-string
-      onMessageReceived?.call(jsonEncode(message));
-    }
-  } catch (e) {
-    print('❌ WebSocket: Error parsing message: $e');
-    onError?.call('Error parsing message: $e');
-  }
-}
-
-=======
   void _handleMessage(dynamic message) {
     try {
       if (message is String) {
@@ -145,25 +117,23 @@ void _handleMessage(dynamic message) {
       onError?.call('Error parsing message: $e');
     }
   }
->>>>>>> zoz
 
   void dispose() {
     disconnect();
   }
 
-  // Test connection method
   Future<bool> testConnection() async {
     if (!_isConnected) {
       print('❌ WebSocket: Not connected for testing');
       return false;
     }
-    
+
     try {
       final testMessage = {
         'action': 'ping',
         'timestamp': DateTime.now().millisecondsSinceEpoch,
       };
-      
+
       _socket!.add(jsonEncode(testMessage));
       print('✅ WebSocket: Test message sent');
       return true;
@@ -173,7 +143,6 @@ void _handleMessage(dynamic message) {
     }
   }
 
-  // Get connection status
   Map<String, dynamic> getConnectionStatus() {
     return {
       'isConnected': _isConnected,
@@ -182,9 +151,4 @@ void _handleMessage(dynamic message) {
       'hasAccessToken': _accessToken != null && _accessToken!.isNotEmpty,
     };
   }
-<<<<<<< HEAD
-// bool get isSocketActive => _channel != null;
-
-=======
->>>>>>> zoz
 }
