@@ -60,7 +60,6 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
       appBar: DealerProfileAppBar(dealerHandle: widget.dealerHandle),
       body: BlocBuilder<DealerProfileCubit, DealerProfileState>(
         builder: (context, state) {

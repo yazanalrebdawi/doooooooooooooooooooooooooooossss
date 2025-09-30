@@ -56,10 +56,9 @@ Future<void> main() async {
 
   final isLight =
       await appLocator<SharedPreferencesService>().getThemeModeFromCache();
-  final initialTheme =
-      isLight == null
-          ? AppThemeEnum.light
-          : (isLight ? AppThemeEnum.light : AppThemeEnum.dark);
+  final initialTheme = isLight == null
+      ? AppThemeEnum.light
+      : (isLight ? AppThemeEnum.light : AppThemeEnum.dark);
   runApp(
     ScreenUtilInit(
       designSize: const Size(375, 812),

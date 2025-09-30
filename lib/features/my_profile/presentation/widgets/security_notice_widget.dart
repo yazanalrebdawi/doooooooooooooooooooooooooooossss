@@ -24,7 +24,7 @@ class SecurityNoticeWidget extends StatelessWidget {
             spacing: 10.w,
             children: [
               Align(
-                alignment: AlignmentGeometry.topCenter,
+                alignment: Alignment.topCenter,
                 child: SplitShieldIconWidget(size: 25.w),
               ),
               Text(

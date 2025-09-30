@@ -45,7 +45,6 @@ class HomeScreenLayout extends StatelessWidget {
       selector: (state) => state.currentIndex,
       builder: (context, currentIndex) {
         return Scaffold(
-          backgroundColor: AppColors.background,
           // إخفاء الـ AppBar عند tab معين (مثلاً index 2)
           appBar: currentIndex == 2 ? null : const HomeAppBar(),
           body: const HomeScreenBody(),

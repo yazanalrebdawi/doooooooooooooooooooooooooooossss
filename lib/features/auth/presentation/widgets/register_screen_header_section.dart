@@ -15,7 +15,7 @@ class RegisterScreenHeaderSection extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             AppLocalizations.of(context)?.translate('Sign Up') ?? 'Sign Up',
-            style: AppTextStyles.headLineBlackS30W600,
+            style: AppTextStyles.headLineBlackS30W600.withThemeColor(context),
           ),
         ),
         SizedBox(height: 32.h),

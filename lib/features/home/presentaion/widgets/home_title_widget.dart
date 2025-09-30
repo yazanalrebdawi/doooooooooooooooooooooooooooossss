@@ -8,6 +8,8 @@ class HomeTitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = Theme.of(context).colorScheme.onBackground;
+
     return Row(
       children: [
         Container(
@@ -26,7 +28,7 @@ class HomeTitleWidget extends StatelessWidget {
         Text(
           'Dooss',
           style: AppTextStyles.s16w600.copyWith(
-            color: AppColors.black,
+            color: textColor,
             fontWeight: FontWeight.bold,
           ),
         ),

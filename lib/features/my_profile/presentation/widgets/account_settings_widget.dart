@@ -12,6 +12,8 @@ class AccountSettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return CardSettingsWidget(
       height: 179,
       text: "Account Settings",
@@ -19,50 +21,45 @@ class AccountSettingsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SettingsRowWidget(
-            iconBackgroundColor: Color(0xffDBEAFE),
-            iconColor: Color(0xff2563EB),
+            iconBackgroundColor: isDark ? Color(0xff1E40AF) : Color(0xffDBEAFE),
+            iconColor: isDark ? Color(0xff60A5FA) : Color(0xff2563EB),
             iconData: Icons.person,
             text: "Edit Profile",
             trailing: Icon(
               Icons.arrow_forward_ios,
               size: 16.r,
-              color: Color(0xff9CA3AF),
+              color: isDark ? Colors.grey[400] : Color(0xff9CA3AF),
             ),
-
             onTap: () {
-              // context.push(RouteNames.editProfileScreen);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (_) => BlocProvider.value(
-                        value: BlocProvider.of<MyProfileCubit>(context),
-                        child: EditProfileScreen(),
-                      ),
+                  builder: (_) => BlocProvider.value(
+                    value: BlocProvider.of<MyProfileCubit>(context),
+                    child: EditProfileScreen(),
+                  ),
                 ),
               );
             },
           ),
           SettingsRowWidget(
-            iconBackgroundColor: Color(0xffFEE2E2),
-            iconColor: Color(0xffDC2626),
+            iconBackgroundColor: isDark ? Color(0xff991B1B) : Color(0xffFEE2E2),
+            iconColor: isDark ? Color(0xffFCA5A5) : Color(0xffDC2626),
             iconData: Icons.lock,
             text: "Change Password",
             trailing: Icon(
               Icons.arrow_forward_ios,
               size: 16.r,
-              color: Color(0xff9CA3AF),
+              color: isDark ? Colors.grey[400] : Color(0xff9CA3AF),
             ),
             onTap: () {
-              // context.push(RouteNames.changePasswordScreen);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (_) => BlocProvider.value(
-                        value: BlocProvider.of<MyProfileCubit>(context),
-                        child: ChangePasswordScreen(),
-                      ),
+                  builder: (_) => BlocProvider.value(
+                    value: BlocProvider.of<MyProfileCubit>(context),
+                    child: ChangePasswordScreen(),
+                  ),
                 ),
               );
             },

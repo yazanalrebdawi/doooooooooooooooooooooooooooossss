@@ -11,7 +11,6 @@ class SavedItemsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: CustomAppBarProfileWidget(title: "Saved Items"),
       body: RefreshIndicator(
         color: AppColors.primary,

@@ -84,7 +84,7 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
             previous.success != current.success,
         builder: (context, state) {
           return Scaffold(
-            backgroundColor: AppColors.background,
+           
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,

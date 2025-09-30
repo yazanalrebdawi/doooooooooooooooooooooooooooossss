@@ -82,12 +82,12 @@ class _ResendTimerWidgetState extends State<ResendTimerWidget> {
           child: RichText(
             text: TextSpan(
               text: "Didn’t receive the OTP?",
-              style: AppTextStyles.descriptionS14W400,
+              style: AppTextStyles.descriptionS14W400.withThemeColor(context),
               children: <TextSpan>[
                 TextSpan(
                   recognizer: TapGestureRecognizer()..onTap=(){},
                   text: "Resend",
-                  style: AppTextStyles.primaryS14W400,
+                  style: AppTextStyles.primaryS14W400.withThemeColor(context),
                 ),
               ],
             ),

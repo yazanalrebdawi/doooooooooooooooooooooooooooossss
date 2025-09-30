@@ -19,13 +19,12 @@ class CustomAppBarProfileWidget extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColors.background,
 
       title: Text(
         AppLocalizations.of(context)?.translate(title) ?? title,
         style: AppTextStyles.blackS18W500.copyWith(
           fontFamily: AppTextStyles.fontPoppins,
-        ),
+        ).withThemeColor(context),
       ),
       centerTitle: true,
       elevation: 1,

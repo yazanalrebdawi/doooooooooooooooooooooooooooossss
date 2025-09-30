@@ -3,6 +3,7 @@ class ApiUrls {
 
   // 🟢 Base URLs
   static const String _baseURl = 'http://192.168.100.113:8010/api';
+
   static const String _baseMediaUrl =
       'http://192.168.100.113:8010'; // للصور والفيديو
   static String media(String path) => '$_baseMediaUrl$path'; // Getter للصور

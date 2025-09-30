@@ -31,7 +31,7 @@ class LoginScreen2OptionsSection extends StatelessWidget {
             ),
             Text(
               AppLocalizations.of(context)?.translate('rememberMe') ?? 'Remember Me',
-              style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14),
+              style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14).withThemeColor(context),
             ),
             const Spacer(),
             // ###################### Forgot Password Button ######################

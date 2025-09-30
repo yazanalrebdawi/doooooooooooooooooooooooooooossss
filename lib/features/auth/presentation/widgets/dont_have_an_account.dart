@@ -20,7 +20,7 @@ class DontHaveAnAccount extends StatelessWidget {
             Text(
               AppLocalizations.of(context)?.translate('dontHaveAccount') ??
                   "Don't have an account?",
-              style: AppTextStyles.descriptionS14W400,
+              style: AppTextStyles.descriptionS14W400.withThemeColor(context),
             ),
             const SizedBox(width: 3),
             InkWell(
@@ -28,7 +28,8 @@ class DontHaveAnAccount extends StatelessWidget {
                 context.go(RouteNames.rigesterScreen);
               },
               child: Text(
-                AppLocalizations.of(context)?.translate('register') ?? 'Sign Up',
+                AppLocalizations.of(context)?.translate('register') ??
+                    'Sign Up',
                 style: AppTextStyles.primaryS14W400,
               ),
             ),

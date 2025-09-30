@@ -19,7 +19,7 @@ class _SecondRegisterBodySectionState extends State<SecondRegisterBodySection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Country", style: AppTextStyles.headLineBoardingBlackS25W700),
+          Text("Country", style: AppTextStyles.headLineBoardingBlackS25W700.withThemeColor(context)),
           SizedBox(height: 9.h),
           const DropDownField(
             hintText: 'Your Country',
@@ -41,7 +41,7 @@ class _SecondRegisterBodySectionState extends State<SecondRegisterBodySection> {
               'option 4',
             ],),
           SizedBox(height: 15.h),
-          Text("Area", style: AppTextStyles.headLineBoardingBlackS25W700),
+          Text("Area", style: AppTextStyles.headLineBoardingBlackS25W700.withThemeColor(context)),
           SizedBox(height: 5.h),
           const DropDownField(
             hintText: 'Your Area',
@@ -74,7 +74,7 @@ class _SecondRegisterBodySectionState extends State<SecondRegisterBodySection> {
             ],
           ),
           SizedBox(height: 25.h),
-          Text("Field", style: AppTextStyles.headLineBoardingBlackS25W700),
+          Text("Field", style: AppTextStyles.headLineBoardingBlackS25W700.withThemeColor(context)),
           SizedBox(height: 9.h),
           const DropDownField(
             hintText: 'Fields',

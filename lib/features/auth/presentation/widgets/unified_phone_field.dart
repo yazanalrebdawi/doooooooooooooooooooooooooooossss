@@ -21,13 +21,20 @@ class UnifiedPhoneField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final backgroundColor = isDark ? AppColors.darkCard : AppColors.white;
+    final borderColor = isDark ? AppColors.darkCard : AppColors.gray;
+    final textColor = isDark ? AppColors.white : AppColors.black;
+    final hintColor = isDark ? AppColors.gray : AppColors.gray;
+
     return Container(
       height: 60.h,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
-          color: AppColors.gray,
+          color: borderColor,
           width: 1,
         ),
       ),
@@ -38,12 +45,12 @@ class UnifiedPhoneField extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Row(
               children: [
-                // Flag
+                // Flag placeholder
                 Container(
                   width: 24.w,
                   height: 24.h,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: AppColors.primary,
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: const Icon(
@@ -56,7 +63,7 @@ class UnifiedPhoneField extends StatelessWidget {
                 // Country Code
                 Text(
                   '+963',
-                  style: AppTextStyles.s16w400,
+                  style: AppTextStyles.s16w400.copyWith(color: textColor),
                 ),
                 SizedBox(width: 8.w),
                 Icon(
@@ -74,10 +81,10 @@ class UnifiedPhoneField extends StatelessWidget {
               validator: validator ?? (value) => Validator.notNullValidation(value),
               onChanged: onChanged,
               keyboardType: TextInputType.phone,
-              style: AppTextStyles.s16w400,
+              style: AppTextStyles.s16w400.copyWith(color: textColor),
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context)?.translate('phoneNumber') ?? 'Phone Number',
-                hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
+                hintStyle: AppTextStyles.s16w400.copyWith(color: hintColor),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
               ),
@@ -87,4 +94,4 @@ class UnifiedPhoneField extends StatelessWidget {
       ),
     );
   }
-} 
+}

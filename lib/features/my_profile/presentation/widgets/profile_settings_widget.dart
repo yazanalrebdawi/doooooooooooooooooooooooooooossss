@@ -36,12 +36,14 @@ class _ProfileSettingsWidgetState extends State<ProfileSettingsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: EdgeInsets.only(top: 20.h),
       width: 358.w,
       height: 272.h,
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: isDark ? AppColors.darkCard : AppColors.background,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -79,13 +81,14 @@ class _ProfileSettingsWidgetState extends State<ProfileSettingsWidget> {
                     user?.name ?? "",
                     style: AppTextStyles.blackS20W500.copyWith(
                       fontFamily: AppTextStyles.fontPoppins,
+                      color: isDark ? AppColors.white : AppColors.black,
                     ),
                   ),
                   Text(
                     user?.phone ?? "",
                     style: AppTextStyles.hintS16W400.copyWith(
                       fontFamily: AppTextStyles.fontPoppins,
-                      color: const Color(0xff6B7280),
+                      color: isDark ? AppColors.gray : const Color(0xff6B7280),
                     ),
                   ),
                 ],
@@ -99,7 +102,7 @@ class _ProfileSettingsWidgetState extends State<ProfileSettingsWidget> {
             onPressed: () {
               final appmanagerUser = context.read<AppManagerCubit>().state.user;
               if (appmanagerUser != null) {
-                log("🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠");
+                log("🫠 User info:");
                 log(appmanagerUser.name);
                 log(appmanagerUser.phone);
                 log(appmanagerUser.role);
@@ -111,11 +114,10 @@ class _ProfileSettingsWidgetState extends State<ProfileSettingsWidget> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (_) => BlocProvider.value(
-                        value: BlocProvider.of<MyProfileCubit>(context),
-                        child: EditProfileScreen(),
-                      ),
+                  builder: (_) => BlocProvider.value(
+                    value: BlocProvider.of<MyProfileCubit>(context),
+                    child: EditProfileScreen(),
+                  ),
                 ),
               );
             },

@@ -79,7 +79,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         },
         builder: (context, state) {
           return Scaffold(
-            backgroundColor: AppColors.background,
             body: SafeArea(
               child: SingleChildScrollView(
                 child: Padding(

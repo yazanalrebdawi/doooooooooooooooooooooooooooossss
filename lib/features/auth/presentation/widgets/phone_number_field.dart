@@ -75,7 +75,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
             children: [
               Text(
                 'Select Country',
-                style: AppTextStyles.s16w600,
+                style: AppTextStyles.s16w600.withThemeColor(context),
               ),
               SizedBox(height: 16.h),
               Expanded(
@@ -86,22 +86,23 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                     return ListTile(
                       leading: Text(
                         country.flagEmoji,
-                        style: AppTextStyles.s20w400,
+                        style: AppTextStyles.s20w400.withThemeColor(context),
                       ),
                       title: Text(
                         country.name,
-                        style: AppTextStyles.s14w400,
+                        style: AppTextStyles.s14w400.withThemeColor(context),
                       ),
                       subtitle: Text(
                         '+${country.phoneCode}',
-                        style: AppTextStyles.s12w400,
+                        style: AppTextStyles.s12w400.withThemeColor(context),
                       ),
                       onTap: () {
                         setState(() => _selectedCountry = country);
                         Navigator.pop(context);
 
                         // Update full phone number
-                        String fullPhoneNumber = '+${country.phoneCode}$_phoneNumberWithoutCode';
+                        String fullPhoneNumber =
+                            '+${country.phoneCode}$_phoneNumberWithoutCode';
                         widget.onPhoneChanged(fullPhoneNumber);
                       },
                     );
@@ -120,7 +121,9 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkCard
+            : AppColors.white,
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: AppColors.gray, width: 1),
       ),
@@ -134,11 +137,14 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(_selectedCountry.flagEmoji, style: AppTextStyles.s20w400),
+                  Text(_selectedCountry.flagEmoji,
+                      style: AppTextStyles.s20w400.withThemeColor(context)),
                   SizedBox(width: 8.w),
-                  Text('+${_selectedCountry.phoneCode}', style: AppTextStyles.s16w400),
+                  Text('+${_selectedCountry.phoneCode}',
+                      style: AppTextStyles.s16w400.withThemeColor(context)),
                   SizedBox(width: 8.w),
-                  Icon(Icons.keyboard_arrow_down, color: AppColors.primary, size: 20.sp),
+                  Icon(Icons.keyboard_arrow_down,
+                      color: AppColors.primary, size: 20.sp),
                 ],
               ),
             ),
@@ -149,18 +155,24 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           Expanded(
             child: TextFormField(
               controller: widget.controller,
-              validator: widget.validator ?? (value) => Validator.notNullValidation(value),
+              validator: widget.validator ??
+                  (value) => Validator.notNullValidation(value),
               keyboardType: TextInputType.phone,
-              style: AppTextStyles.s16w400,
+              style: AppTextStyles.s16w400.withThemeColor(context),
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)?.translate('phoneNumber') ?? 'Phone Number',
-                hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
+                hintText: AppLocalizations.of(context)
+                        ?.translate('phoneNumber') ??
+                    'Phone Number',
+                hintStyle: AppTextStyles.hintTextStyleWhiteS20W400
+                    .withThemeColor(context),
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
               ),
               onChanged: (value) {
                 _phoneNumberWithoutCode = value;
-                String fullPhoneNumber = '+${_selectedCountry.phoneCode}$value';
+                String fullPhoneNumber =
+                    '+${_selectedCountry.phoneCode}$value';
                 widget.onPhoneChanged(fullPhoneNumber);
               },
             ),

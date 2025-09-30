@@ -15,14 +15,16 @@ class ChangePasswordScreen extends StatelessWidget {
   ChangePasswordScreen({super.key});
 
   final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confiermNewPasswordController =
+  final TextEditingController confirmNewPasswordController =
       TextEditingController();
   final GlobalKey<FormState> formState = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    // DARK MODE FLAG
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: CustomAppBarProfileWidget(title: 'Change Password'),
       body: SingleChildScrollView(
         child: Padding(
@@ -30,48 +32,70 @@ class ChangePasswordScreen extends StatelessWidget {
           child: Form(
             key: formState,
             child: Column(
-              spacing: 5.h,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SecurityNoticeWidget(),
                 SizedBox(height: 10.h),
-                NewPasswordFieldWidget(controller: newPasswordController),
-                InputLabelWidget(label: "Confirm New Password"),
-                InputPassowrdWidget(
-                  controller: confiermNewPasswordController,
-                  hintText: "Confirm new password",
-                ),
-                ButtonUpdatePasswordWidget(
-                  newPasswordController: newPasswordController,
-                  confirmPasswordController: confiermNewPasswordController,
-                  formState: formState,
+                
+                // New Password Field
+                NewPasswordFieldWidget(
+                  controller: newPasswordController,
+    
                 ),
                 SizedBox(height: 10.h),
-                Column(
+
+                // Confirm New Password Label
+                InputLabelWidget(
+                  label: "Confirm New Password",
+               
+                ),
+                SizedBox(height: 5.h),
+
+                // Confirm Password Field
+                InputPassowrdWidget(
+                  controller: confirmNewPasswordController,
+                  hintText: "Confirm new password",
+        
+                ),
+                SizedBox(height: 15.h),
+
+                // Update Button
+                ButtonUpdatePasswordWidget(
+                  newPasswordController: newPasswordController,
+                  confirmPasswordController: confirmNewPasswordController,
+                  formState: formState,
+                  
+                ),
+                SizedBox(height: 20.h),
+
+                // Password Tips
+                Row(
                   children: [
-                    Row(
-                      spacing: 5.w,
-                      children: [
-                        Icon(Icons.lightbulb, color: Color(0xffEAB308)),
-                        Text(
-                          AppLocalizations.of(
-                                context,
-                              )?.translate("Password Tips") ??
-                              "Password Tips",
-                          style: AppTextStyles.s16w500.copyWith(
-                            color: Color(0xff111827),
-                          ),
-                        ),
-                      ],
-                    ),
-                    RowTipsPasswordWidget(title: "At least 8 characters"),
-                    RowTipsPasswordWidget(
-                      title: "Mix uppercase, lowercase, numbers and symbols",
-                    ),
-                    RowTipsPasswordWidget(
-                      title: "Avoid personal information like names or dates",
+                    Icon(Icons.lightbulb, color: Color(0xffEAB308)),
+                    SizedBox(width: 5.w),
+                    Text(
+                      AppLocalizations.of(context)?.translate("Password Tips") ??
+                          "Password Tips",
+                      style: AppTextStyles.s16w500.copyWith(
+                        color: isDark ? AppColors.white : AppColors.black,
+                      ),
                     ),
                   ],
+                ),
+                SizedBox(height: 10.h),
+
+                // Tips List
+                RowTipsPasswordWidget(
+                  title: "At least 8 characters",
+                  
+                ),
+                RowTipsPasswordWidget(
+                  title: "Mix uppercase, lowercase, numbers and symbols",
+                  
+                ),
+                RowTipsPasswordWidget(
+                  title: "Avoid personal information like names or dates",
+                  
                 ),
               ],
             ),

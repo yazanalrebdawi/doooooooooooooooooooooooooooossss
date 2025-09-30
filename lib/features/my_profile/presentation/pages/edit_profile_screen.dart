@@ -48,7 +48,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBarProfileWidget(title: 'Edit Profile'),
-      backgroundColor: AppColors.background,
       body: BlocConsumer<MyProfileCubit, MyProfileState>(
         listener: (context, state) async {
           if (state.statusInfoUser == ResponseStatusEnum.success) {

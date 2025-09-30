@@ -47,7 +47,7 @@ class _TimerWidgetState extends State<TimerWidget> {
     return Center(
       child: Text(
         "00:${seconds.toString().padLeft(2, '0')}",
-        style: AppTextStyles.descriptionS18W500,
+        style: AppTextStyles.descriptionS18W500.withThemeColor(context),
       ),
     );
   }

@@ -12,7 +12,6 @@ class SettingsNotificationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: CustomAppBarProfileWidget(title: "Notification Settings"),
       body: Column(
         mainAxisSize: MainAxisSize.min,

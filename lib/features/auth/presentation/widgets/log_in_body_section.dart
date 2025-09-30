@@ -12,6 +12,7 @@ import '../../data/models/create_account_params_model.dart';
 import '../manager/auth_cubit.dart';
 import '../manager/auth_state.dart';
 import 'custom_app_snack_bar.dart';
+import '../../../../core/style/app_theme.dart';
 
 class LogInBodySection extends StatefulWidget {
   const LogInBodySection({super.key});
@@ -32,6 +33,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BlocProvider(
       create: (context) => appLocator<AuthCubit>(),
       child: BlocConsumer<AuthCubit, AuthState>(
@@ -76,9 +79,9 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildEmailField(),
+                  _buildEmailField(isDark),
                   SizedBox(height: 20.h),
-                  _buildPasswordField(),
+                  _buildPasswordField(isDark),
                   SizedBox(height: 20.h),
                   _buildLoginButton(context, state),
                   SizedBox(height: 15.h),
@@ -92,26 +95,26 @@ class _LogInBodySectionState extends State<LogInBodySection> {
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           AppLocalizations.of(context)?.translate('email') ?? 'Email',
-          style: AppTextStyles.lableTextStyleBlackS22W500,
+          style: AppTextStyles.lableTextStyleBlackS22W500.withThemeColor(context),
         ),
         SizedBox(height: 8.h),
         TextFormField(
           controller: _params.email,
           focusNode: _params.emailNode,
           keyboardType: TextInputType.emailAddress,
-          style: AppTextStyles.s16w400,
+          style: AppTextStyles.s16w400.withThemeColor(context),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.email_outlined, color: AppColors.primary),
             hintText:
                 AppLocalizations.of(context)?.translate('enterEmail') ??
                     "Enter your email",
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
+            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400.withThemeColor(context),
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.circular(10.r),
@@ -130,7 +133,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
-            fillColor: AppColors.white,
+            fillColor: isDark ? AppColors.darkCard : AppColors.white,
           ),
           validator: (value) => Validator.emailValidation(value),
           onFieldSubmitted: (value) {
@@ -141,20 +144,20 @@ class _LogInBodySectionState extends State<LogInBodySection> {
     );
   }
 
-  Widget _buildPasswordField() {
+  Widget _buildPasswordField(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           AppLocalizations.of(context)?.translate('password') ?? 'Password',
-          style: AppTextStyles.lableTextStyleBlackS22W500,
+          style: AppTextStyles.lableTextStyleBlackS22W500.withThemeColor(context),
         ),
         SizedBox(height: 8.h),
         TextFormField(
           controller: _params.password,
           focusNode: _params.passwordNode,
           obscureText: !_isPasswordVisible,
-          style: AppTextStyles.s16w400,
+          style: AppTextStyles.s16w400.withThemeColor(context),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
@@ -171,7 +174,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             hintText:
                 AppLocalizations.of(context)?.translate('enterPassword') ??
                     "Enter your password",
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
+            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400.withThemeColor(context),
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.circular(10.r),
@@ -190,7 +193,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
-            fillColor: AppColors.white,
+            fillColor: isDark ? AppColors.darkCard : AppColors.white,
           ),
           validator: (value) => Validator.notNullValidation(value),
         ),
@@ -252,7 +255,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             ),
             Text(
               AppLocalizations.of(context)?.translate('rememberMe') ?? 'Remember me',
-              style: AppTextStyles.descriptionS18W400,
+              style: AppTextStyles.descriptionS18W400.withThemeColor(context),
             ),
           ],
         ),
@@ -262,7 +265,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
           },
           child: Text(
             AppLocalizations.of(context)?.translate('forgetPassword') ?? 'Forgot password?',
-            style: AppTextStyles.descriptionS18W400,
+            style: AppTextStyles.descriptionS18W400.withThemeColor(context),
           ),
         ),
       ],

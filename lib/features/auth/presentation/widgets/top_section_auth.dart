@@ -14,7 +14,7 @@ class TopSectionAuth extends StatelessWidget {
       child: Column(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(headline,style:AppTextStyles.headLineBlackS30W600 ,),
+          Text(headline,style:AppTextStyles.headLineBlackS30W600.withThemeColor(context) ,),
           SizedBox(height: 5.h),
           Text(
             description,
