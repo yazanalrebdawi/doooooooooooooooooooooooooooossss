@@ -9,28 +9,18 @@ import 'maps_state.dart';
 class MapsCubit extends OptimizedCubit<MapsState> {
   MapsCubit() : super(MapsState.initial());
 
+  /// تهيئة الخريطة مع الخدمات وإضافة العلامات
   void initializeMap(List<ServiceModel> services) async {
     safeEmit(state.copyWith(isLoading: true, services: services));
-<<<<<<< HEAD
-    
-    try {
-      // Get user location
-      final position = await LocationService.getLocationWithFallback();
-      
-      // Create markers
-      final markers = <Marker>{};
-      
-=======
 
     try {
-      // Get user location
+      // الحصول على موقع المستخدم
       final position = await LocationService.getLocationWithFallback();
 
-      // Create markers
+      // إنشاء العلامات
       final markers = <Marker>{};
 
->>>>>>> zoz
-      // User location marker
+      // علامة موقع المستخدم
       markers.add(
         Marker(
           markerId: const MarkerId('user_location'),
@@ -43,19 +33,13 @@ class MapsCubit extends OptimizedCubit<MapsState> {
         ),
       );
 
-      // Service markers (limit to first 6 for better visibility)
+      // علامات الخدمات (محددة لأول 6 خدمات لسهولة العرض)
       for (int i = 0; i < services.length && i < 6; i++) {
         final service = services[i];
-<<<<<<< HEAD
-        final isMechanic = service.type.toLowerCase().contains('mechanic') ||
-                          service.name.toLowerCase().contains('garage') ||
-                          service.name.toLowerCase().contains('repair');
-=======
         final isMechanic =
             service.type.toLowerCase().contains('mechanic') ||
             service.name.toLowerCase().contains('garage') ||
             service.name.toLowerCase().contains('repair');
->>>>>>> zoz
 
         markers.add(
           Marker(
@@ -63,42 +47,17 @@ class MapsCubit extends OptimizedCubit<MapsState> {
             position: LatLng(service.lat, service.lon),
             infoWindow: InfoWindow(
               title: service.name,
-<<<<<<< HEAD
-              snippet: '${service.address}\n${MapsService.formatDistance(service.distance ?? 0)}',
-            ),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-              isMechanic ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen
-=======
               snippet:
                   '${service.address}\n${MapsService.formatDistance(service.distance ?? 0)}',
             ),
             icon: BitmapDescriptor.defaultMarkerWithHue(
               isMechanic ? BitmapDescriptor.hueRed : BitmapDescriptor.hueGreen,
->>>>>>> zoz
             ),
           ),
         );
       }
-<<<<<<< HEAD
-      
-      safeEmit(state.copyWith(
-        userLocation: position,
-        markers: markers,
-        isLoading: false,
-        error: null,
-      ));
-      
-      print('✅ MapsCubit: Map initialized with ${markers.length} markers');
-    } catch (e) {
-      print('❌ MapsCubit: Error initializing map: $e');
-      safeEmit(state.copyWith(
-        isLoading: false,
-        error: 'Failed to load map: $e',
-      ));
-    }
-  }
-=======
 
+      // تحديث الحالة بعد التهيئة
       safeEmit(
         state.copyWith(
           userLocation: position,
@@ -116,28 +75,21 @@ class MapsCubit extends OptimizedCubit<MapsState> {
       );
     }
   }
-  //! Done
->>>>>>> zoz
 
+  /// تعيين متحكم خريطة جوجل
   void setMapController(GoogleMapController controller) {
     safeEmit(state.copyWith(mapController: controller));
   }
 
+  /// مسح الأخطاء الحالية
   void clearError() {
     safeEmit(state.copyWith(error: null));
   }
-<<<<<<< HEAD
-=======
-  //! Done
->>>>>>> zoz
 
+  /// إعادة تحميل الخريطة بنفس الخدمات
   void refreshMap() {
     if (state.services.isNotEmpty) {
       initializeMap(state.services);
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> zoz

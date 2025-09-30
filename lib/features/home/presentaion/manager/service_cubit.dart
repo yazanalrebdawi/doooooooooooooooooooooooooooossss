@@ -7,37 +7,14 @@ import 'package:geolocator/geolocator.dart';
 
 class ServiceCubit extends OptimizedCubit<ServiceState> {
   final ServiceRemoteDataSource dataSource;
-<<<<<<< HEAD
-  
-  ServiceCubit(this.dataSource) : super(const ServiceState());
-
-=======
 
   ServiceCubit(this.dataSource) : super(const ServiceState());
 
   //! Done ✅
->>>>>>> zoz
   void loadServices({int limit = 5}) async {
     safeEmit(state.copyWith(isLoading: true, error: null));
     try {
       print('🔍 ServiceCubit: Starting to load services (limit: $limit)...');
-<<<<<<< HEAD
-      
-      // Check location permission first
-      bool hasPermission = await _checkLocationPermission();
-      if (!hasPermission) {
-                 safeEmit(state.copyWith(
-           error: 'location_permission_required',
-           isLoading: false,
-         ));
-        return;
-      }
-      
-      // Get location with fallback
-      final position = await LocationService.getLocationWithFallback();
-      print('📍 Location for services: lat=${position.latitude}, lon=${position.longitude}');
-      
-=======
 
       // Check location permission first
       bool hasPermission = await _checkLocationPermission();
@@ -57,7 +34,6 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
         '📍 Location for services: lat=${position.latitude}, lon=${position.longitude}',
       );
 
->>>>>>> zoz
       // Load nearby services based on location with pagination
       final services = await dataSource.fetchNearbyServices(
         lat: position.latitude,
@@ -66,35 +42,22 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
         limit: limit,
         offset: 0,
       );
-<<<<<<< HEAD
-      print('✅ Services loaded successfully: ${services.length} services found');
-      
-      // Use real API data only - no fake data
-      safeEmit(state.copyWith(services: services, isLoading: false));
-      
-=======
       print(
         '✅ Services loaded successfully: ${services.length} services found',
       );
 
-      // Use real API data only - no fake data
       safeEmit(state.copyWith(services: services, isLoading: false));
 
->>>>>>> zoz
       // Calculate distances for all services
       await calculateServiceDistances();
     } catch (e) {
       print('❌ ServiceCubit error: $e');
-<<<<<<< HEAD
-      safeEmit(state.copyWith(error: 'Failed to load services: ${e.toString()}', isLoading: false));
-=======
       safeEmit(
         state.copyWith(
           error: 'Failed to load services: ${e.toString()}',
           isLoading: false,
         ),
       );
->>>>>>> zoz
     }
   }
 
@@ -116,16 +79,6 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
         type: type,
         radius: radius,
       );
-<<<<<<< HEAD
-      safeEmit(state.copyWith(
-        services: services,
-        isLoading: false,
-        selectedFilter: 'All',
-      ));
-    } catch (e) {
-      print('ServiceCubit loadNearbyServices error: $e');
-      safeEmit(state.copyWith(error: 'Failed to load nearby services', isLoading: false));
-=======
       safeEmit(
         state.copyWith(
           services: services,
@@ -141,7 +94,6 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
           isLoading: false,
         ),
       );
->>>>>>> zoz
     }
   }
 
@@ -149,15 +101,6 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
     emit(state.copyWith(isLoadingDetails: true, error: null));
     try {
       final service = await dataSource.fetchServiceDetails(serviceId);
-<<<<<<< HEAD
-      safeEmit(state.copyWith(
-        selectedService: service,
-        isLoadingDetails: false,
-      ));
-    } catch (e) {
-      print('ServiceCubit loadServiceDetails error: $e');
-      safeEmit(state.copyWith(error: 'Failed to load service details', isLoadingDetails: false));
-=======
       safeEmit(
         state.copyWith(selectedService: service, isLoadingDetails: false),
       );
@@ -169,20 +112,15 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
           isLoadingDetails: false,
         ),
       );
->>>>>>> zoz
     }
   }
 
-  // Calculate distances for all services
+  /// حساب المسافات لكل الخدمات
   Future<void> calculateServiceDistances() async {
     try {
       final position = await LocationService.getLocationWithFallback();
       final servicesWithDistance = <ServiceModel>[];
-<<<<<<< HEAD
-      
-=======
 
->>>>>>> zoz
       for (final service in state.services) {
         final distance = await LocationService.calculateDistance(
           startLatitude: position.latitude,
@@ -190,48 +128,25 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
           endLatitude: service.lat,
           endLongitude: service.lon,
         );
-<<<<<<< HEAD
-        
-        // Create a copy of service with distance
-        final serviceWithDistance = service.copyWith(
-          distance: distance,
-        );
-        servicesWithDistance.add(serviceWithDistance);
-      }
-      
-=======
 
-        // Create a copy of service with distance
         final serviceWithDistance = service.copyWith(distance: distance);
         servicesWithDistance.add(serviceWithDistance);
       }
 
->>>>>>> zoz
       safeEmit(state.copyWith(services: servicesWithDistance));
     } catch (e) {
       print('❌ Error calculating distances: $e');
     }
   }
 
-<<<<<<< HEAD
-  void filterServices(String filter, {int limit = 10}) async {
-    emit(state.copyWith(selectedFilter: filter, isLoading: true));
-    
-    try {
-      // Get current location
-      final position = await LocationService.getLocationWithFallback();
-      
-=======
   //! Done ✅
   void filterServices(String filter, {int limit = 10}) async {
     emit(state.copyWith(selectedFilter: filter, isLoading: true));
 
     try {
-      // Get current location
       final position = await LocationService.getLocationWithFallback();
 
->>>>>>> zoz
-      if (filter == 'all' || filter == 'All') {
+      if (filter.toLowerCase() == 'all') {
         final services = await dataSource.fetchNearbyServices(
           lat: position.latitude,
           lon: position.longitude,
@@ -240,11 +155,7 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
           offset: 0,
         );
         safeEmit(state.copyWith(services: services, isLoading: false));
-<<<<<<< HEAD
-             } else if (filter == 'mechanics' || filter == 'Mechanics') {
-=======
-      } else if (filter == 'mechanics' || filter == 'Mechanics') {
->>>>>>> zoz
+      } else if (filter.toLowerCase() == 'mechanics') {
         final services = await dataSource.fetchNearbyServices(
           lat: position.latitude,
           lon: position.longitude,
@@ -254,11 +165,7 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
           offset: 0,
         );
         safeEmit(state.copyWith(services: services, isLoading: false));
-<<<<<<< HEAD
-             } else if (filter == 'petrol' || filter == 'Petrol') {
-=======
-      } else if (filter == 'petrol' || filter == 'Petrol') {
->>>>>>> zoz
+      } else if (filter.toLowerCase() == 'petrol') {
         final services = await dataSource.fetchNearbyServices(
           lat: position.latitude,
           lon: position.longitude,
@@ -268,12 +175,8 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
           offset: 0,
         );
         safeEmit(state.copyWith(services: services, isLoading: false));
-<<<<<<< HEAD
-             } else if (filter == 'openNow' || filter == 'Open Now') {
-=======
-      } else if (filter == 'openNow' || filter == 'Open Now') {
->>>>>>> zoz
-        // For "Open Now", load all services and filter locally
+      } else if (filter.toLowerCase() == 'opennow' ||
+          filter.toLowerCase() == 'open now') {
         final services = await dataSource.fetchNearbyServices(
           lat: position.latitude,
           lon: position.longitude,
@@ -281,29 +184,22 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
           limit: limit,
           offset: 0,
         );
-<<<<<<< HEAD
-        final openServices = services.where((service) => service.openNow).toList();
-=======
         final openServices =
             services.where((service) => service.openNow).toList();
->>>>>>> zoz
         safeEmit(state.copyWith(services: openServices, isLoading: false));
       }
     } catch (e) {
       print('❌ ServiceCubit filterServices error: $e');
-<<<<<<< HEAD
-      safeEmit(state.copyWith(error: 'Failed to filter services', isLoading: false));
-=======
       safeEmit(
         state.copyWith(error: 'Failed to filter services', isLoading: false),
       );
->>>>>>> zoz
     }
   }
 
+  /// تبديل حالة المفضلة
   void toggleServiceFavorite(int serviceId) {
-    // Here you would typically update the favorite status in the backend
-    // For now, we'll just emit the same state
+    // هنا عادةً يتم تحديث الحالة في الـ backend
+    // مؤقتًا سنقوم فقط بإعادة إرسال الحالة نفسها
     emit(state.copyWith());
   }
 }

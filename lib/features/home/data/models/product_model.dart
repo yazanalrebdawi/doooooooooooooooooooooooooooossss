@@ -1,118 +1,61 @@
-<<<<<<< HEAD
-class ProductModel {
-  final int id;
-  final String name;
-  final double price;
-  final String description;
-  final String imageUrl;
-  final List<String> images;
-  final String category;
-  final String location;
-  final double rating;
-  final List<String> reviews;
-  final bool isFavorite;
-  final int sellerId;
-  final int stock;
-  final double discount;
-  final double finalPrice;
-  final String condition;
-  final String material;
-  final String color;
-  final String warranty;
-  final String installationInfo;
-  final String createdAt;
-  final int dealer;
-  final Map<String, dynamic> seller;
-  final String locationText;
-  final Map<String, dynamic>? locationCoords;
-  final String availabilityText;
-=======
 import 'package:hive/hive.dart';
-
 part 'product_model.g.dart';
 
 @HiveType(typeId: 2)
 class ProductModel {
   @HiveField(0)
   final int id;
-
   @HiveField(1)
   final String name;
-
   @HiveField(2)
   final double price;
-
   @HiveField(3)
   final String description;
-
   @HiveField(4)
   final String imageUrl;
-
   @HiveField(5)
   final List<String> images;
-
   @HiveField(6)
   final String category;
-
   @HiveField(7)
   final String location;
-
   @HiveField(8)
   final double rating;
-
   @HiveField(9)
   final List<String> reviews;
-
   @HiveField(10)
   final bool isFavorite;
-
   @HiveField(11)
   final int sellerId;
-
   @HiveField(12)
   final int stock;
-
   @HiveField(13)
   final double discount;
-
   @HiveField(14)
   final double finalPrice;
-
   @HiveField(15)
   final String condition;
-
   @HiveField(16)
   final String material;
-
   @HiveField(17)
   final String color;
-
   @HiveField(18)
   final String warranty;
-
   @HiveField(19)
   final String installationInfo;
-
   @HiveField(20)
   final String createdAt;
-
   @HiveField(21)
   final int dealer;
-
   @HiveField(22)
   final Map<String, dynamic> seller;
-
   @HiveField(23)
   final String locationText;
-
   @HiveField(24)
   final Map<String, dynamic>? locationCoords;
-
   @HiveField(25)
   final String availabilityText;
-
   @HiveField(26)
->>>>>>> zoz
   final bool isInStock;
 
   const ProductModel({
@@ -205,6 +148,65 @@ class ProductModel {
     );
   }
 
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    double parseDouble(dynamic value) {
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      if (value is num) return value.toDouble();
+      return 0.0;
+    }
+
+    String getImageUrl(dynamic mainImage) {
+      if (mainImage is String && mainImage.isNotEmpty) {
+        return mainImage.startsWith('/') ? 'http://192.168.138.185:8010$mainImage' : mainImage;
+      }
+      return '';
+    }
+
+    List<String> getImageUrls(dynamic images) {
+      if (images is List) {
+        return images
+            .map((img) {
+              if (img is String) return img;
+              if (img is Map && img['image'] != null) return img['image'].toString();
+              return '';
+            })
+            .where((url) => url.isNotEmpty)
+            .toList();
+      }
+      return [];
+    }
+
+    return ProductModel(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      price: parseDouble(json['price']),
+      description: json['description'] ?? '',
+      imageUrl: getImageUrl(json['main_image']),
+      images: getImageUrls(json['images']),
+      category: json['category'] ?? '',
+      location: json['location'] ?? '',
+      rating: parseDouble(json['rating'] ?? 0.0),
+      reviews: List<String>.from(json['reviews'] ?? []),
+      isFavorite: json['isFavorite'] ?? false,
+      sellerId: json['dealer'] ?? 1,
+      stock: json['stock'] ?? 0,
+      discount: parseDouble(json['discount']),
+      finalPrice: parseDouble(json['final_price']),
+      condition: json['condition'] ?? '',
+      material: json['material'] ?? '',
+      color: json['color'] ?? '',
+      warranty: json['warranty'] ?? '',
+      installationInfo: json['installation_info'] ?? '',
+      createdAt: json['created_at'] ?? '',
+      dealer: json['dealer'] ?? 1,
+      seller: json['seller'] ?? {},
+      locationText: json['location_text'] ?? '',
+      locationCoords: json['location_coords'],
+      availabilityText: json['availability_text'] ?? '',
+      isInStock: json['is_in_stock'] ?? false,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -235,108 +237,5 @@ class ProductModel {
       'availability_text': availabilityText,
       'is_in_stock': isInStock,
     };
-  }
-
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
-    // Handle price as string from API
-    double parsePrice(dynamic price) {
-      if (price is String) {
-        return double.tryParse(price) ?? 0.0;
-      } else if (price is num) {
-        return price.toDouble();
-      }
-      return 0.0;
-    }
-
-    // Handle discount as string from API
-    double parseDiscount(dynamic discount) {
-      if (discount is String) {
-        return double.tryParse(discount) ?? 0.0;
-      } else if (discount is num) {
-        return discount.toDouble();
-      }
-      return 0.0;
-    }
-
-    // Handle final_price as string from API
-    double parseFinalPrice(dynamic finalPrice) {
-      if (finalPrice is String) {
-        return double.tryParse(finalPrice) ?? 0.0;
-      } else if (finalPrice is num) {
-        return finalPrice.toDouble();
-      }
-      return 0.0;
-    }
-
-    // Get image URL from main_image field
-    String getImageUrl(dynamic mainImage) {
-      if (mainImage is String && mainImage.isNotEmpty) {
-        // Add base URL if the image path starts with /
-        if (mainImage.startsWith('/')) {
-          return 'http://192.168.138.185:8010$mainImage';
-        }
-        return mainImage;
-      }
-      return '';
-    }
-
-    // Extract image URLs from images array (if available)
-    List<String> getImageUrls(dynamic images) {
-      if (images is List) {
-<<<<<<< HEAD
-        return images.map((img) {
-          if (img is String) {
-            return img;
-          } else if (img is Map && img['image'] != null) {
-            return img['image'].toString();
-          }
-          return '';
-        }).where((url) => url.isNotEmpty).toList();
-=======
-        return images
-            .map((img) {
-              if (img is String) {
-                return img;
-              } else if (img is Map && img['image'] != null) {
-                return img['image'].toString();
-              }
-              return '';
-            })
-            .where((url) => url.isNotEmpty)
-            .toList();
->>>>>>> zoz
-      }
-      return [];
-    }
-
-    return ProductModel(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      price: parsePrice(json['price']),
-      description: json['description'] ?? '',
-      imageUrl: getImageUrl(json['main_image']), // API uses 'main_image' field
-      images: getImageUrls(json['images']),
-      category: json['category'] ?? '',
-      location: json['location'] ?? '',
-      rating: (json['rating'] ?? 0.0).toDouble(),
-      reviews: List<String>.from(json['reviews'] ?? []),
-      isFavorite: json['isFavorite'] ?? false,
-      sellerId: json['dealer'] ?? 1, // Use dealer as sellerId
-      stock: json['stock'] ?? 0,
-      discount: parseDiscount(json['discount']),
-      finalPrice: parseFinalPrice(json['final_price']),
-      condition: json['condition'] ?? '',
-      material: json['material'] ?? '',
-      color: json['color'] ?? '',
-      warranty: json['warranty'] ?? '',
-      installationInfo: json['installation_info'] ?? '',
-      createdAt: json['created_at'] ?? '',
-      dealer: json['dealer'] ?? 1,
-      seller: json['seller'] ?? {},
-      locationText: json['location_text'] ?? '',
-      locationCoords: json['location_coords'],
-      availabilityText: json['availability_text'] ?? '',
-      isInStock: json['is_in_stock'] ?? false,
-    );
   }
 }

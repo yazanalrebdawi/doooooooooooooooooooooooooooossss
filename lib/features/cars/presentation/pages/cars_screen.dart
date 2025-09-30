@@ -1,19 +1,9 @@
-<<<<<<< HEAD
-import 'package:dooss_business_app/core/constants/text_styles.dart';
-=======
 import 'package:dooss_business_app/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/core/app/manager/app_manager_state.dart';
->>>>>>> zoz
 import 'package:dooss_business_app/core/routes/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dooss_business_app/core/localization/app_localizations.dart';
-<<<<<<< HEAD
-import 'package:dooss_business_app/core/localization/language_cubit.dart';
-=======
-
->>>>>>> zoz
-import 'package:go_router/go_router.dart';
 import '../manager/cubits/cars_cubit.dart';
 import '../widgets/cars_banner.dart';
 import '../widgets/cars_category_tabs.dart';
@@ -28,21 +18,10 @@ class CarsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => CarsCubit(),
-<<<<<<< HEAD
-      child: BlocBuilder<LanguageCubit, Locale>(
-        builder: (context, locale) {
-          return Scaffold(
-            appBar: AppBar(
-        
-              centerTitle: true,
-              actions: [
-                IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-                IconButton(icon: const Icon(Icons.add_outlined), onPressed: () {context.go(RouteNames.addCarFlow);}),
-              ],
-              leading: IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
-=======
       child: BlocBuilder<AppManagerCubit, AppManagerState>(
-        builder: (context, locale) {
+        builder: (context, state) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
@@ -59,7 +38,6 @@ class CarsScreen extends StatelessWidget {
                 icon: const Icon(Icons.menu),
                 onPressed: () {},
               ),
->>>>>>> zoz
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -70,56 +48,37 @@ class CarsScreen extends StatelessWidget {
                     const CarsBanner(),
                     SizedBox(height: 16.h),
                     Text(
-<<<<<<< HEAD
-                      AppLocalizations.of(context)?.translate('Category') ?? 'Category',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18).withThemeColor(context),
-=======
                       AppLocalizations.of(context)?.translate('Category') ??
                           'Category',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 18.sp,
+                        color: isDark ? Colors.white : Colors.black,
                       ),
->>>>>>> zoz
                     ),
                     SizedBox(height: 8.h),
                     const CarsCategoryTabs(),
                     SizedBox(height: 16.h),
                     Text(
-<<<<<<< HEAD
-                      AppLocalizations.of(context)?.translate('TopBrands') ?? 'Top Brands',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18).withThemeColor(context),
-                    ),
-                    SizedBox(height: 8.h),
-                    const CarsBrandList(),  
-=======
                       AppLocalizations.of(context)?.translate('TopBrands') ??
                           'Top Brands',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 18.sp,
+                        color: isDark ? Colors.white : Colors.black,
                       ),
                     ),
                     SizedBox(height: 8.h),
                     const CarsBrandList(),
->>>>>>> zoz
                     SizedBox(height: 16.h),
                     const CarsGrid(),
                   ],
                 ),
               ),
             ),
-<<<<<<< HEAD
-        
-=======
->>>>>>> zoz
           );
         },
       ),
     );
   }
-<<<<<<< HEAD
-} 
-=======
 }
->>>>>>> zoz

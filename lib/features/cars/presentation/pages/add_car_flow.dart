@@ -17,7 +17,6 @@ class _AddCarFlowState extends State<AddCarFlow> {
   final PageController _pageController = PageController();
   int currentPage = 1;
   final int totalPages = 4;
-  bool isLast = false;
 
   @override
   void dispose() {
@@ -32,35 +31,33 @@ class _AddCarFlowState extends State<AddCarFlow> {
         curve: Curves.fastEaseInToSlowEaseOut,
       );
     } else {
-      // Submit the car data
       _submitCar();
     }
   }
 
   void _submitCar() {
-    
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)?.translate('success') ?? 'Success')),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context)?.translate('success') ?? 'Success',
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.of(context).pop(),
         ),
         elevation: 0,
-<<<<<<< HEAD
       ),
-=======
-        backgroundColor: Colors.white,
-      ),
-      backgroundColor: Colors.white,
->>>>>>> zoz
       body: Column(
         children: [
           Expanded(
@@ -69,7 +66,6 @@ class _AddCarFlowState extends State<AddCarFlow> {
               onPageChanged: (index) {
                 setState(() {
                   currentPage = index + 1;
-                  isLast = currentPage == totalPages;
                 });
               },
               children: [
@@ -84,7 +80,6 @@ class _AddCarFlowState extends State<AddCarFlow> {
             currentPage: currentPage,
             totalPages: totalPages,
             onNext: _nextPage,
-            isLast: isLast,
           ),
         ],
       ),
@@ -96,33 +91,29 @@ class _AddCarBottomSection extends StatelessWidget {
   final int currentPage;
   final int totalPages;
   final VoidCallback onNext;
-  final bool isLast;
 
   const _AddCarBottomSection({
     required this.currentPage,
     required this.totalPages,
     required this.onNext,
-    required this.isLast,
   });
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-              final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isLast = currentPage == totalPages;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       child: Row(
         children: [
           Text(
             '$currentPage/$totalPages',
-<<<<<<< HEAD
-            style: TextStyle(fontSize: 16.sp, color:isDark ? Colors.white : Colors.grey[600], fontWeight: FontWeight.w500),
-=======
-            style: TextStyle(fontSize: 16.sp, color: Colors.grey[600], fontWeight: FontWeight.w500),
->>>>>>> zoz
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: isDark ? Colors.white : Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const Spacer(),
           GestureDetector(
@@ -134,11 +125,14 @@ class _AddCarBottomSection extends StatelessWidget {
                 color: isLast ? Colors.green : const Color(0xFF7B4B2A),
                 shape: BoxShape.circle,
               ),
-              child: Icon(isLast ? Icons.check : Icons.arrow_forward, color: Colors.white),
+              child: Icon(
+                isLast ? Icons.check : Icons.arrow_forward,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
       ),
     );
   }
-} 
+}

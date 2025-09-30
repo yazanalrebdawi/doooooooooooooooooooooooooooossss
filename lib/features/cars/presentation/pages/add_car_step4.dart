@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import 'package:dooss_business_app/core/constants/text_styles.dart';
-=======
->>>>>>> zoz
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/localization/app_localizations.dart';
@@ -13,11 +9,8 @@ class AddCarStep4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       child: Column(
@@ -25,38 +18,70 @@ class AddCarStep4 extends StatelessWidget {
         children: [
           SizedBox(height: 8.h),
           Text(
-            AppLocalizations.of(context)?.translate('reviewSubmit') ?? 'Review & Submit',
-<<<<<<< HEAD
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.sp).withThemeColor(context),
+            AppLocalizations.of(context)?.translate('reviewSubmit') ??
+                'Review & Submit',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 22.sp,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
           SizedBox(height: 32.h),
-          Text(AppLocalizations.of(context)?.translate('pleaseReviewCarDetails') ?? 'Please review your car details before submitting.', style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500).withThemeColor(context)),
-=======
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.sp),
+          Text(
+            AppLocalizations.of(context)?.translate('pleaseReviewCarDetails') ??
+                'Please review your car details before submitting.',
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
           ),
-          SizedBox(height: 32.h),
-          Text(AppLocalizations.of(context)?.translate('pleaseReviewCarDetails') ?? 'Please review your car details before submitting.', style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500)),
->>>>>>> zoz
           SizedBox(height: 18.h),
-          // هنا يمكن عرض ملخص البيانات المدخلة
+
+          // Car summary container
           Expanded(
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-<<<<<<< HEAD
-                color:  isDark ? Colors.white :Colors.grey[100],
-=======
-                color: Colors.grey[100],
->>>>>>> zoz
+                color: isDark ? Colors.grey[800] : Colors.grey[100],
                 borderRadius: BorderRadius.circular(8.r),
               ),
-              child: Text(AppLocalizations.of(context)?.translate('carSummaryGoesHere') ?? 'Car summary goes here...'),
+              child: Text(
+                AppLocalizations.of(context)?.translate('carSummaryGoesHere') ??
+                    'Car summary goes here...',
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
             ),
           ),
           SizedBox(height: 18.h),
+
+          // Submit button
+          SizedBox(
+            width: double.infinity,
+            height: 48.h,
+            child: ElevatedButton(
+              onPressed: onSubmit,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context)?.translate('submit') ?? 'Submit',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
-} 
+}

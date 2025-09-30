@@ -1,96 +1,49 @@
-<<<<<<< HEAD
-class CarModel {
-  final int id;
-  final String name;
-  final String imageUrl;
-  final double price;
-  final bool isNew;
-  final String location;
-  final String mileage;
-  final int year;
-  final String transmission;
-  final String engine;
-  final String fuelType;
-  final String color;
-  final int doors;
-  final String sellerNotes;
-  final String sellerName;
-  final String sellerType;
-  final String sellerImage;
-  final int dealerId;
-  
-  // Additional fields for listing
-  final String brand;
-  final bool isFavorite;
-
-=======
 import 'package:hive/hive.dart';
-part 'car_model.g.dart'; 
+part 'car_model.g.dart';
 
 @HiveType(typeId: 0)
 class CarModel {
   @HiveField(0)
   final int id;
-
   @HiveField(1)
   final String name;
-
   @HiveField(2)
   final String imageUrl;
-
   @HiveField(3)
   final double price;
-
   @HiveField(4)
   final bool isNew;
-
   @HiveField(5)
   final String location;
-
   @HiveField(6)
   final String mileage;
-
   @HiveField(7)
   final int year;
-
   @HiveField(8)
   final String transmission;
-
   @HiveField(9)
   final String engine;
-
   @HiveField(10)
   final String fuelType;
-
   @HiveField(11)
   final String color;
-
   @HiveField(12)
   final int doors;
-
   @HiveField(13)
   final String sellerNotes;
-
   @HiveField(14)
   final String sellerName;
-
   @HiveField(15)
   final String sellerType;
-
   @HiveField(16)
   final String sellerImage;
-
   @HiveField(17)
   final int dealerId;
-
   @HiveField(18)
   final String brand;
-
   @HiveField(19)
   final bool isFavorite;
 
-
->>>>>>> zoz
   const CarModel({
     required this.id,
     required this.name,
@@ -115,33 +68,25 @@ class CarModel {
   });
 
   factory CarModel.fromJson(Map<String, dynamic> json) {
-    // Handle price as string from API
     double parsePrice(dynamic price) {
-      if (price is String) {
-        return double.tryParse(price) ?? 0.0;
-      } else if (price is num) {
-        return price.toDouble();
-      }
+      if (price is String) return double.tryParse(price) ?? 0.0;
+      if (price is num) return price.toDouble();
       return 0.0;
     }
 
-    // Get first image from images array or use empty string
     String getImageUrl(dynamic images) {
       if (images is List && images.isNotEmpty) {
         final firstImage = images.first;
-        if (firstImage is String) {
-          return firstImage;
-        } else if (firstImage is Map && firstImage['image'] != null) {
+        if (firstImage is String) return firstImage;
+        if (firstImage is Map && firstImage['image'] != null) {
           return firstImage['image'].toString();
         }
       }
       return '';
     }
 
-    // Parse location from SRID format
     String parseLocation(dynamic location) {
       if (location is String && location.startsWith('SRID=4326;POINT')) {
-        // Extract coordinates from SRID format
         final coordsMatch = RegExp(r'POINT \(([^)]+)\)').firstMatch(location);
         if (coordsMatch != null) {
           final coords = coordsMatch.group(1)?.split(' ') ?? [];
@@ -158,9 +103,9 @@ class CarModel {
     return CarModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
-      imageUrl: getImageUrl(json['images']), // API uses 'images' array
+      imageUrl: getImageUrl(json['images']),
       price: parsePrice(json['price']),
-      isNew: json['status'] == 'new' || json['status'] == 'Zero', // Map status to isNew
+      isNew: json['status'] == 'new' || json['status'] == 'Zero',
       location: parseLocation(json['location']),
       mileage: json['kilometers']?.toString() ?? '',
       year: json['year'] ?? 0,
@@ -170,9 +115,9 @@ class CarModel {
       color: json['color'] ?? '',
       doors: json['doors_count'] ?? 0,
       sellerNotes: json['license_status'] ?? '',
-      sellerName: '', // Not provided in API
-      sellerType: '', // Not provided in API
-      sellerImage: '', // Not provided in API
+      sellerName: '',
+      sellerType: '',
+      sellerImage: '',
       dealerId: json['dealer'] ?? 0,
       brand: json['brand'] ?? '',
       isFavorite: json['isFavorite'] ?? false,
@@ -249,5 +194,4 @@ class CarModel {
       isFavorite: isFavorite ?? this.isFavorite,
     );
   }
-
 }
