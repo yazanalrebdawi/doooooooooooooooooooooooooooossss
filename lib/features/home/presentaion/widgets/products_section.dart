@@ -19,11 +19,8 @@ class ProductsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -35,13 +32,9 @@ class ProductsSection extends StatelessWidget {
             children: [
               Text(
                 'Car Products',
-<<<<<<< HEAD
                 style: AppTextStyles.blackS18W700.copyWith(
                   color: isDark ? AppColors.white : AppColors.black,
                 ),
-=======
-                style: AppTextStyles.blackS18W700,
->>>>>>> zoz
               ),
               GestureDetector(
                 onTap: () {
@@ -49,13 +42,9 @@ class ProductsSection extends StatelessWidget {
                 },
                 child: Text(
                   'View All',
-<<<<<<< HEAD
                   style: AppTextStyles.primaryS16W600.copyWith(
                     color: isDark ? AppColors.primary : AppColors.primary,
                   ),
-=======
-                  style: AppTextStyles.primaryS16W600,
->>>>>>> zoz
                 ),
               ),
             ],
@@ -80,63 +69,43 @@ class ProductsSection extends StatelessWidget {
         ),
         SizedBox(height: 16.h),
         // Products List
-        products.isEmpty 
-<<<<<<< HEAD
-          ? _buildEmptySection(isDark)
-=======
-          ? _buildEmptySection()
->>>>>>> zoz
-          : ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: products.length,
-              separatorBuilder: (context, index) => SizedBox(height: 12.h),
-              itemBuilder: (context, index) => ProductCard(product: products[index]),
-            ),
+        products.isEmpty
+            ? _buildEmptySection(isDark)
+            : ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: products.length,
+                separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                itemBuilder: (context, index) => ProductCard(product: products[index]),
+              ),
       ],
     );
   }
 
-<<<<<<< HEAD
   Widget _buildEmptySection(bool isDark) {
-=======
-  Widget _buildEmptySection() {
->>>>>>> zoz
     return Center(
       child: Column(
         children: [
           SizedBox(height: 40.h),
           Icon(
             Icons.inventory_2_outlined,
-<<<<<<< HEAD
             color: isDark ? AppColors.gray.withOpacity(0.7) : AppColors.gray,
-=======
-            color: AppColors.gray,
->>>>>>> zoz
             size: 64.sp,
           ),
           SizedBox(height: 16.h),
           Text(
             'No products available',
-<<<<<<< HEAD
             style: AppTextStyles.blackS16W600.copyWith(
               color: isDark ? AppColors.white : AppColors.black,
             ),
-=======
-            style: AppTextStyles.blackS16W600,
->>>>>>> zoz
           ),
           SizedBox(height: 8.h),
           Text(
             'Check back later for new products',
-<<<<<<< HEAD
             style: AppTextStyles.secondaryS14W400.copyWith(
               color: isDark ? AppColors.gray.withOpacity(0.7) : AppColors.gray,
             ),
-=======
-            style: AppTextStyles.secondaryS14W400,
->>>>>>> zoz
             textAlign: TextAlign.center,
           ),
         ],

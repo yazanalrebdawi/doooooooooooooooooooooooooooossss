@@ -13,11 +13,8 @@ class ProductDescriptionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-=======
->>>>>>> zoz
     return Container(
       padding: EdgeInsets.all(16.w),
       child: Column(
@@ -25,7 +22,6 @@ class ProductDescriptionSection extends StatelessWidget {
         children: [
           Text(
             'Description',
-<<<<<<< HEAD
             style: AppTextStyles.s18w700.copyWith(
               color: isDark ? AppColors.white : AppColors.black,
             ),
@@ -47,31 +43,11 @@ class ProductDescriptionSection extends StatelessWidget {
             style: AppTextStyles.s16w600.copyWith(
               color: isDark ? AppColors.white : AppColors.black,
             ),
-=======
-            style: AppTextStyles.s18w700,
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            description.isNotEmpty 
-                ? description 
-                : 'High-quality LED rear lights specifically designed for Nissan Sunny 2015 models. These lights provide enhanced visibility and safety while driving.',
-            style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
-          ),
-          SizedBox(height: 16.h),
-          
-          // What makes it special
-          Text(
-            'What makes it special:',
-            style: AppTextStyles.s16w600,
->>>>>>> zoz
           ),
           SizedBox(height: 8.h),
           Text(
             'Bright LED technology, waterproof design, and easy installation process.',
-<<<<<<< HEAD
-            style: AppTextStyles.s14w400.copyWith(
-              color: AppColors.gray,
-            ),
+            style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
           ),
           SizedBox(height: 16.h),
 
@@ -81,24 +57,11 @@ class ProductDescriptionSection extends StatelessWidget {
             style: AppTextStyles.s16w600.copyWith(
               color: isDark ? AppColors.white : AppColors.black,
             ),
-=======
-            style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
-          ),
-          SizedBox(height: 16.h),
-          
-          // Installation
-          Text(
-            'Installation:',
-            style: AppTextStyles.s16w600,
->>>>>>> zoz
           ),
           SizedBox(height: 8.h),
           Text(
             'Direct replacement for original lights. No wiring modifications required.',
-<<<<<<< HEAD
-            style: AppTextStyles.s14w400.copyWith(
-              color: AppColors.gray,
-            ),
+            style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
           ),
           SizedBox(height: 16.h),
 
@@ -108,27 +71,11 @@ class ProductDescriptionSection extends StatelessWidget {
             style: AppTextStyles.s16w600.copyWith(
               color: isDark ? AppColors.white : AppColors.black,
             ),
-=======
-            style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
-          ),
-          SizedBox(height: 16.h),
-          
-          // Warranty
-          Text(
-            'Warranty:',
-            style: AppTextStyles.s16w600,
->>>>>>> zoz
           ),
           SizedBox(height: 8.h),
           Text(
             '12 months manufacturer warranty included.',
-<<<<<<< HEAD
-            style: AppTextStyles.s14w400.copyWith(
-              color: AppColors.gray,
-            ),
-=======
             style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
->>>>>>> zoz
           ),
         ],
       ),

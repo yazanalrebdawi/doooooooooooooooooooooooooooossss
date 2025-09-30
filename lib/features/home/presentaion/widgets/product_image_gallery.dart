@@ -21,25 +21,15 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-=======
->>>>>>> zoz
     final allImages = [widget.mainImage, ...widget.images];
-    
+
     return Column(
       children: [
         // Main Image
         Container(
           width: double.infinity,
           height: 300.h,
-<<<<<<< HEAD
-          color: isDark
-              ? AppColors.darkCard.withOpacity(0.2)
-              : AppColors.gray.withOpacity(0.1),
-=======
           color: AppColors.gray.withOpacity(0.1),
->>>>>>> zoz
           child: allImages.isNotEmpty
               ? Image.network(
                   allImages[selectedImageIndex],
@@ -58,7 +48,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                   size: 64.sp,
                 ),
         ),
-        
+
         // Thumbnail Images
         if (allImages.length > 1)
           Container(
@@ -94,13 +84,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
-<<<<<<< HEAD
-                            color: isDark
-                                ? AppColors.darkCard.withOpacity(0.2)
-                                : AppColors.gray.withOpacity(0.2),
-=======
                             color: AppColors.gray.withOpacity(0.2),
->>>>>>> zoz
                             child: Icon(
                               Icons.image,
                               color: AppColors.gray,

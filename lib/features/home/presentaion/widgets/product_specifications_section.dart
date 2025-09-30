@@ -14,52 +14,32 @@ class ProductSpecificationsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: EdgeInsets.all(16.w),
       color: isDark ? AppColors.darkCard : Colors.transparent,
-=======
-    return Container(
-      padding: EdgeInsets.all(16.w),
->>>>>>> zoz
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Specifications',
-<<<<<<< HEAD
             style: AppTextStyles.s18w700.copyWith(
               color: isDark ? AppColors.white : AppColors.black,
             ),
           ),
           SizedBox(height: 16.h),
-          
+
           _buildSpecificationItem('Material', 'ABS Plastic', isDark),
           _buildSpecificationItem('Color', 'Red/Clear', isDark),
           _buildSpecificationItem('Size', '45 × 20 × 15 cm', isDark),
           _buildSpecificationItem('Weight', '1.2 kg', isDark),
-=======
-            style: AppTextStyles.s18w700,
-          ),
-          SizedBox(height: 16.h),
-          
-          _buildSpecificationItem('Material', 'ABS Plastic'),
-          _buildSpecificationItem('Color', 'Red/Clear'),
-          _buildSpecificationItem('Size', '45 × 20 × 15 cm'),
-          _buildSpecificationItem('Weight', '1.2 kg'),
->>>>>>> zoz
         ],
       ),
     );
   }
 
-<<<<<<< HEAD
   Widget _buildSpecificationItem(String label, String value, bool isDark) {
-=======
-  Widget _buildSpecificationItem(String label, String value) {
->>>>>>> zoz
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: Row(
@@ -69,25 +49,17 @@ class ProductSpecificationsSection extends StatelessWidget {
             width: 80.w,
             child: Text(
               '$label:',
-<<<<<<< HEAD
               style: AppTextStyles.s14w500.copyWith(
                 color: isDark ? AppColors.white : AppColors.black,
               ),
-=======
-              style: AppTextStyles.s14w500,
->>>>>>> zoz
             ),
           ),
           Expanded(
             child: Text(
               value,
-<<<<<<< HEAD
               style: AppTextStyles.s14w400.copyWith(
                 color: isDark ? AppColors.gray.withOpacity(0.8) : AppColors.gray,
               ),
-=======
-              style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
->>>>>>> zoz
             ),
           ),
         ],
@@ -95,3 +67,4 @@ class ProductSpecificationsSection extends StatelessWidget {
     );
   }
 }
+  
