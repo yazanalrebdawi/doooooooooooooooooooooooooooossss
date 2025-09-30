@@ -87,7 +87,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
             previous.success != current.success,
         builder: (context, state) {
           return Scaffold(
-            backgroundColor: AppColors.background,
+            
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,

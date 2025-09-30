@@ -12,7 +12,6 @@ class ThemeSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: CustomAppBarProfileWidget(title: "Theme Settings"),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),

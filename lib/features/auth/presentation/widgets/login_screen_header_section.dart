@@ -17,7 +17,7 @@ class LoginScreenHeaderSection extends StatelessWidget {
           child: Text(
             AppLocalizations.of(context)?.translate('welcomeBackFull') ??
                 'Welcome Back\nReady to hit the road.',
-            style: AppTextStyles.headLineBlackS30W600,
+            style: AppTextStyles.headLineBlackS30W600.withThemeColor(context),
           ),
         ),
         SizedBox(height: 32.h),

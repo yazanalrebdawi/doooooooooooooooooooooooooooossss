@@ -15,33 +15,31 @@ class ChangeLanguageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: CustomAppBarProfileWidget(title: "Change Language"),
       body: SingleChildScrollView(
         child: Column(
-          spacing: 23.h,
           children: [
+            SizedBox(height: 23.h),
             Center(child: SelectedLanguageWidget()),
+            SizedBox(height: 23.h),
             InfoToUserWidget(),
-            Column(
-              spacing: 5.h,
-              children: [
-                Divider(color: AppColors.field, thickness: 1, height: 9.h),
-                CustomButtonWidget(
-                  width: 336,
-                  height: 50,
-                  text: "Apply Language",
-                  onPressed: () {
-                    final applanguage =
-                        context.read<AppManagerCubit>().state.lastApply;
-                    if (applanguage != null) {
-                      context.read<AppManagerCubit>().changeLocale(applanguage);
-                    }
-                    log("Apply Language");
-                  },
-                ),
-              ],
+            SizedBox(height: 23.h),
+            Divider(color: AppColors.field, thickness: 1, height: 9.h),
+            SizedBox(height: 5.h),
+            CustomButtonWidget(
+              width: 336,
+              height: 50,
+              text: "Apply Language",
+              onPressed: () {
+                final applanguage =
+                    context.read<AppManagerCubit>().state.lastApply;
+                if (applanguage != null) {
+                  context.read<AppManagerCubit>().changeLocale(applanguage);
+                }
+                log("Apply Language");
+              },
             ),
+            SizedBox(height: 23.h),
           ],
         ),
       ),

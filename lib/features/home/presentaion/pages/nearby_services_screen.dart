@@ -31,7 +31,6 @@ class _NearbyServicesScreenState extends State<NearbyServicesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
       appBar: _buildAppBar(),
       body: BlocBuilder<ServiceCubit, ServiceState>(
         buildWhen: (previous, current) {

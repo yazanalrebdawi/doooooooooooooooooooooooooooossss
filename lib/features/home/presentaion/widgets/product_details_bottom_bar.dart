@@ -15,10 +15,12 @@ class ProductDetailsBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: theme.colorScheme.background,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -57,20 +59,24 @@ class ProductDetailsBottomBar extends StatelessWidget {
           SizedBox(width: 12.w),
 
           // Call Button
-          Container(
+          SizedBox(
             width: 56.w,
             height: 48.h,
             child: ElevatedButton(
               onPressed: onCallPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.gray.withOpacity(0.1),
-                foregroundColor: AppColors.black,
+                foregroundColor: theme.colorScheme.onBackground,
                 padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
                 ),
               ),
-              child: Icon(Icons.phone, color: AppColors.black, size: 24.sp),
+              child: Icon(
+                Icons.phone,
+                color: theme.colorScheme.onBackground,
+                size: 24.sp,
+              ),
             ),
           ),
         ],

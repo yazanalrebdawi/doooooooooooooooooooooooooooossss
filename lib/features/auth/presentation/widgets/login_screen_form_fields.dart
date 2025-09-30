@@ -20,7 +20,8 @@ class LoginScreenFormFields extends StatefulWidget {
   });
 
   @override
-  State<LoginScreenFormFields> createState() => _LoginScreen2FormFieldsState();
+  State<LoginScreenFormFields> createState() =>
+      _LoginScreen2FormFieldsState();
 }
 
 class _LoginScreen2FormFieldsState extends State<LoginScreenFormFields> {
@@ -28,18 +29,22 @@ class _LoginScreen2FormFieldsState extends State<LoginScreenFormFields> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         // Username Field
         TextFormField(
-          controller: widget.params.userName, // استخدام userName كـ username
+          controller: widget.params.userName,
           focusNode: widget.params.userNameNode,
           keyboardType: TextInputType.text,
-          style: AppTextStyles.s16w400,
+          style: AppTextStyles.s16w400.withThemeColor(context),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.person_outline, color: AppColors.primary),
-            hintText: AppLocalizations.of(context)?.translate('username') ?? 'Username',
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
+            hintText: AppLocalizations.of(context)?.translate('username') ??
+                'Username',
+            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400
+                .withThemeColor(context),
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.circular(10.r),
@@ -56,9 +61,10 @@ class _LoginScreen2FormFieldsState extends State<LoginScreenFormFields> {
               borderSide: const BorderSide(color: Colors.red, width: 1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
-            fillColor: AppColors.white,
+            fillColor: isDark ? AppColors.darkCard : AppColors.white,
           ),
           validator: (value) => Validator.notNullValidation(value),
           onChanged: (value) {
@@ -69,17 +75,20 @@ class _LoginScreen2FormFieldsState extends State<LoginScreenFormFields> {
           },
         ),
         SizedBox(height: 16.h),
+
         // Password Field
         TextFormField(
           controller: widget.params.password,
           focusNode: widget.params.passwordNode,
           obscureText: !_isPasswordVisible,
-          style: AppTextStyles.s16w400,
+          style: AppTextStyles.s16w400.withThemeColor(context),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(
-                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                _isPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
                 color: AppColors.primary,
               ),
               onPressed: () {
@@ -88,8 +97,10 @@ class _LoginScreen2FormFieldsState extends State<LoginScreenFormFields> {
                 });
               },
             ),
-            hintText: AppLocalizations.of(context)?.translate('password') ?? 'Password',
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
+            hintText: AppLocalizations.of(context)?.translate('password') ??
+                'Password',
+            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400
+                .withThemeColor(context),
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.circular(10.r),
@@ -106,9 +117,10 @@ class _LoginScreen2FormFieldsState extends State<LoginScreenFormFields> {
               borderSide: const BorderSide(color: Colors.red, width: 1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
-            fillColor: AppColors.white,
+            fillColor: isDark ? AppColors.darkCard : AppColors.white,
           ),
           validator: (value) => Validator.notNullValidation(value),
           onChanged: (value) {
@@ -119,4 +131,4 @@ class _LoginScreen2FormFieldsState extends State<LoginScreenFormFields> {
       ],
     );
   }
-} 
+}

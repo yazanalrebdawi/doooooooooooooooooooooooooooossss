@@ -57,7 +57,7 @@ class RegisterScreenButtonsSection extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Text(
                 AppLocalizations.of(context)?.translate('OR') ?? 'OR',
-                style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14),
+                style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14).withThemeColor(context),
               ),
             ),
             Expanded(child: Divider(thickness: 1, color: Colors.grey.shade300)),

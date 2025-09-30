@@ -53,11 +53,10 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
     return BlocProvider(
       create: (context) => appLocator<AuthCubit>(),
       child: BlocConsumer<AuthCubit, AuthState>(
-        listenWhen:
-            (prev, curr) =>
-                prev.checkAuthState != curr.checkAuthState ||
-                prev.error != curr.error ||
-                prev.success != curr.success,
+        listenWhen: (prev, curr) =>
+            prev.checkAuthState != curr.checkAuthState ||
+            prev.error != curr.error ||
+            prev.success != curr.success,
         listener: (context, state) {
           print('🔍 Verify OTP - Auth State: ${state.checkAuthState}');
           print('🔍 Verify OTP - Loading: ${state.isLoading}');
@@ -122,15 +121,13 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
             }
           }
         },
-        buildWhen:
-            (prev, curr) =>
-                prev.isLoading != curr.isLoading ||
-                prev.checkAuthState != curr.checkAuthState ||
-                prev.error != curr.error ||
-                prev.success != curr.success,
+        buildWhen: (prev, curr) =>
+            prev.isLoading != curr.isLoading ||
+            prev.checkAuthState != curr.checkAuthState ||
+            prev.error != curr.error ||
+            prev.success != curr.success,
         builder: (context, state) {
           return Scaffold(
-            backgroundColor: AppColors.background,
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -227,10 +224,9 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color:
-              _otpFocusNodes[index].hasFocus
-                  ? AppColors.primary
-                  : AppColors.gray,
+          color: _otpFocusNodes[index].hasFocus
+              ? AppColors.primary
+              : AppColors.gray,
           width: 1.5,
         ),
       ),
@@ -262,33 +258,32 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
       width: double.infinity,
       height: 54.h,
       child: ElevatedButton(
-        onPressed:
-            state.isLoading
-                ? null
-                : () {
-                  print('🔘 Verify OTP Button Pressed');
-                  print('📱 Phone Number: ${widget.phoneNumber}');
-                  print('🔢 OTP Code: $_otpCode');
+        onPressed: state.isLoading
+            ? null
+            : () {
+                print('🔘 Verify OTP Button Pressed');
+                print('📱 Phone Number: ${widget.phoneNumber}');
+                print('🔢 OTP Code: $_otpCode');
 
-                  if (_otpCode.length == 6) {
-                    final params = VerifycodeParams(
-                      phoneNumber: widget.phoneNumber,
-                      otp: _otpCode,
-                      isResetPassword: widget.isResetPassword,
-                    );
-                    context.read<AuthCubit>().verifyOtp(params);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      customAppSnackBar(
-                        AppLocalizations.of(
-                              context,
-                            )?.translate('enterCompleteOtp') ??
-                            "Please enter the complete 6-digit code",
-                        context,
-                      ),
-                    );
-                  }
-                },
+                if (_otpCode.length == 6) {
+                  final params = VerifycodeParams(
+                    phoneNumber: widget.phoneNumber,
+                    otp: _otpCode,
+                    isResetPassword: widget.isResetPassword,
+                  );
+                  context.read<AuthCubit>().verifyOtp(params);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customAppSnackBar(
+                      AppLocalizations.of(
+                            context,
+                          )?.translate('enterCompleteOtp') ??
+                          "Please enter the complete 6-digit code",
+                      context,
+                    ),
+                  );
+                }
+              },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           shape: RoundedRectangleBorder(
@@ -298,21 +293,19 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
           padding: EdgeInsets.zero,
         ),
         child: Center(
-          child:
-              state.isLoading
-                  ? SizedBox(
-                    width: 24.w,
-                    height: 24.h,
-                    child: const CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                  : Text(
-                    AppLocalizations.of(context)?.translate('verify') ??
-                        'Verify',
-                    style: AppTextStyles.buttonTextStyleWhiteS22W700,
+          child: state.isLoading
+              ? SizedBox(
+                  width: 24.w,
+                  height: 24.h,
+                  child: const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
                   ),
+                )
+              : Text(
+                  AppLocalizations.of(context)?.translate('verify') ?? 'Verify',
+                  style: AppTextStyles.buttonTextStyleWhiteS22W700,
+                ),
         ),
       ),
     );
@@ -330,32 +323,30 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
             ),
             SizedBox(height: 8.h),
             TextButton(
-              onPressed:
-                  state.isLoading
-                      ? null
-                      : () {
-                        print(
-                          '🔄 Resend OTP requested for: ${widget.phoneNumber}',
-                        );
-                        context.read<AuthCubit>().resendOtp(widget.phoneNumber);
-                      },
-              child:
-                  state.isLoading
-                      ? SizedBox(
-                        width: 16.w,
-                        height: 16.h,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.primary,
-                        ),
-                      )
-                      : Text(
-                        AppLocalizations.of(context)?.translate('resendOtp') ??
-                            'Resend OTP',
-                        style: AppTextStyles.s16w600.copyWith(
-                          color: AppColors.primary,
-                        ),
+              onPressed: state.isLoading
+                  ? null
+                  : () {
+                      print(
+                        '🔄 Resend OTP requested for: ${widget.phoneNumber}',
+                      );
+                      context.read<AuthCubit>().resendOtp(widget.phoneNumber);
+                    },
+              child: state.isLoading
+                  ? SizedBox(
+                      width: 16.w,
+                      height: 16.h,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primary,
                       ),
+                    )
+                  : Text(
+                      AppLocalizations.of(context)?.translate('resendOtp') ??
+                          'Resend OTP',
+                      style: AppTextStyles.s16w600.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
             ),
           ],
         );

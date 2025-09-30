@@ -25,7 +25,7 @@ class InfoToUserWidget extends StatelessWidget {
             spacing: 10.w,
             children: [
               Align(
-                alignment: AlignmentGeometry.topCenter,
+                alignment: Alignment.topCenter,
                 child: CircleAvatar(
                   radius: 15.r,
                   backgroundColor: Color(0xff2563EB),

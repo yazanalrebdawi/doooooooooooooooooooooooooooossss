@@ -18,12 +18,14 @@ class CardSettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: EdgeInsets.only(top: 20.h),
       width: 358.w,
       height: height.h,
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: isDark ? AppColors.darkCard : AppColors.background,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -62,7 +64,6 @@ class CardSettingsWidget extends StatelessWidget {
               Divider(color: AppColors.field, thickness: 1, height: 8.h),
             ],
           ),
-
           widget ?? SizedBox(),
         ],
       ),

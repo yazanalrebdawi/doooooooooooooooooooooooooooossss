@@ -104,7 +104,11 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
           padding: EdgeInsets.all(16.w),
           child: Column(
             children: [
-              Text('Select Country', style: AppTextStyles.s16w600),
+              Text(
+                'Select Country',
+                style: AppTextStyles.s16w600
+                    .copyWith(color: Theme.of(context).colorScheme.onBackground),
+              ),
               SizedBox(height: 16.h),
               Expanded(
                 child: ListView.builder(
@@ -114,12 +118,21 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                     return ListTile(
                       leading: Text(
                         country.flagEmoji,
-                        style: AppTextStyles.s20w400,
+                        style: AppTextStyles.s20w400.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
                       ),
-                      title: Text(country.name, style: AppTextStyles.s16w400),
+                      title: Text(
+                        country.name,
+                        style: AppTextStyles.s16w400.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                      ),
                       subtitle: Text(
                         '+${country.phoneCode}',
-                        style: AppTextStyles.s14w400,
+                        style: AppTextStyles.s14w400.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
                       ),
                       onTap: () {
                         setState(() {
@@ -129,7 +142,6 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                         if (_phoneNumberWithoutCode.isNotEmpty) {
                           String fullPhoneNumber =
                               '+${country.phoneCode}$_phoneNumberWithoutCode';
-                          print('📱 Updated phone number: $fullPhoneNumber');
                           widget.onPhoneChanged(fullPhoneNumber);
                         }
                         Navigator.pop(context);
@@ -145,129 +157,122 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
     );
   }
 
+  InputDecoration _inputDecoration({
+    required String hint,
+    required BuildContext context,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
+      hintText: hint,
+      hintStyle: AppTextStyles.hintTextStyleWhiteS20W400.copyWith(
+        color: Theme.of(context).hintColor,
+      ),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: AppColors.gray, width: 1),
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: AppColors.gray, width: 1),
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: AppColors.primary, width: 1),
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.red, width: 1),
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+      filled: true,
+      fillColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.grey[850]
+          : AppColors.white,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final textColor = Theme.of(context).colorScheme.onBackground;
+
     return Column(
       children: [
-        // Full Name Field
+        // Full Name
         TextFormField(
           controller: widget.params.userName,
           focusNode: widget.params.userNameNode,
-          style: AppTextStyles.s16w400,
-          decoration: InputDecoration(
+          style: AppTextStyles.s16w400.copyWith(color: textColor),
+          decoration: _inputDecoration(
+            hint: AppLocalizations.of(context)?.translate('username') ?? 'Username',
+            context: context,
             prefixIcon: Icon(Icons.person_outline, color: AppColors.primary),
-            hintText:
-                AppLocalizations.of(context)?.translate('username') ??
-                'Username',
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
-            border: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.gray, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.gray, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.primary, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 18.h,
-            ),
-            filled: true,
-            fillColor: AppColors.white,
           ),
           validator: (value) => Validator.notNullValidation(value),
           onChanged: widget.onFullNameChanged,
-          onFieldSubmitted: (value) {
+          onFieldSubmitted: (_) {
             FocusScope.of(context).requestFocus(widget.params.phonenumberNode);
           },
         ),
         SizedBox(height: 18.h),
 
-        // Phone Number Field
+        // Phone Number
         Container(
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[850]
+                : AppColors.white,
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(color: AppColors.gray, width: 1),
           ),
           child: Row(
             children: [
-              // Country Selector
               GestureDetector(
                 onTap: () => _showCountryPicker(context),
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 18.h,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        _selectedCountry.flagEmoji,
-                        style: AppTextStyles.s20w400,
-                      ),
+                      Text(_selectedCountry.flagEmoji,
+                          style: AppTextStyles.s20w400.copyWith(color: textColor)),
                       SizedBox(width: 8.w),
-                      Text(
-                        '+${_selectedCountry.phoneCode}',
-                        style: AppTextStyles.s16w400,
-                      ),
+                      Text('+${_selectedCountry.phoneCode}',
+                          style: AppTextStyles.s16w400.copyWith(color: textColor)),
                       SizedBox(width: 8.w),
-                      Icon(
-                        Icons.keyboard_arrow_down,
-                        color: AppColors.primary,
-                        size: 20.sp,
-                      ),
+                      Icon(Icons.keyboard_arrow_down,
+                          color: AppColors.primary, size: 20.sp),
                     ],
                   ),
                 ),
               ),
-
-              // Divider
               Container(height: 40.h, width: 1, color: AppColors.gray),
-
-              // Phone Number Input
               Expanded(
                 child: TextFormField(
                   controller: widget.params.phoneNumber,
                   focusNode: widget.params.phonenumberNode,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(
-                            context,
-                          )?.translate('phoneRequired') ??
+                      return AppLocalizations.of(context)?.translate('phoneRequired') ??
                           'Phone number is required';
                     }
                     if (value.length < 9) {
-                      return AppLocalizations.of(
-                            context,
-                          )?.translate('phoneInvalid') ??
+                      return AppLocalizations.of(context)?.translate('phoneInvalid') ??
                           'Phone number is too short';
                     }
                     return null;
                   },
                   keyboardType: TextInputType.phone,
-                  style: AppTextStyles.s16w400,
+                  style: AppTextStyles.s16w400.copyWith(color: textColor),
                   decoration: InputDecoration(
-                    hintText:
-                        AppLocalizations.of(
-                          context,
-                        )?.translate('phoneNumber') ??
+                    hintText: AppLocalizations.of(context)?.translate('phoneNumber') ??
                         'Phone Number',
-                    hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
+                    hintStyle: AppTextStyles.hintTextStyleWhiteS20W400
+                        .copyWith(color: Theme.of(context).hintColor),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 18.h,
-                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
                   ),
                   onChanged: (value) {
                     _phoneNumberWithoutCode = value;
@@ -275,10 +280,8 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
                         '+${_selectedCountry.phoneCode}$value';
                     widget.onPhoneChanged(fullPhoneNumber);
                   },
-                  onFieldSubmitted: (value) {
-                    FocusScope.of(
-                      context,
-                    ).requestFocus(widget.params.passwordNode);
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(widget.params.passwordNode);
                   },
                 ),
               ),
@@ -287,119 +290,59 @@ class _RegisterScreenFormFieldsState extends State<RegisterScreenFormFields> {
         ),
         SizedBox(height: 18.h),
 
-        // Password Field
+        // Password
         TextFormField(
           controller: widget.params.password,
           focusNode: widget.params.passwordNode,
           obscureText: !_isPasswordVisible,
-          style: AppTextStyles.s16w400,
-          decoration: InputDecoration(
+          style: AppTextStyles.s16w400.copyWith(color: textColor),
+          decoration: _inputDecoration(
+            hint: AppLocalizations.of(context)?.translate('password') ?? 'Password',
+            context: context,
             prefixIcon: Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(
                 _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                 color: AppColors.primary,
               ),
-              onPressed:
-                  () =>
-                      setState(() => _isPasswordVisible = !_isPasswordVisible),
+              onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
             ),
-            hintText:
-                AppLocalizations.of(context)?.translate('password') ??
-                'Password',
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
-            border: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.gray, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.gray, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.primary, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 18.h,
-            ),
-            filled: true,
-            fillColor: AppColors.white,
           ),
           validator: (value) => Validator.notNullValidation(value),
           onChanged: widget.onPasswordChanged,
-          onFieldSubmitted: (value) {
-            FocusScope.of(
-              context,
-            ).requestFocus(widget.params.confirmPasswordNode);
+          onFieldSubmitted: (_) {
+            FocusScope.of(context).requestFocus(widget.params.confirmPasswordNode);
           },
         ),
         SizedBox(height: 18.h),
 
-        // Confirm Password Field
+        // Confirm Password
         TextFormField(
           controller: widget.params.confirmPassword,
           focusNode: widget.params.confirmPasswordNode,
           obscureText: !_isConfirmPasswordVisible,
-          style: AppTextStyles.s16w400,
-          decoration: InputDecoration(
+          style: AppTextStyles.s16w400.copyWith(color: textColor),
+          decoration: _inputDecoration(
+            hint: AppLocalizations.of(context)?.translate('confirmPassword') ??
+                'Confirm Password',
+            context: context,
             prefixIcon: Icon(Icons.lock_outline, color: AppColors.primary),
             suffixIcon: IconButton(
               icon: Icon(
-                _isConfirmPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off,
+                _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
                 color: AppColors.primary,
               ),
-              onPressed:
-                  () => setState(
-                    () =>
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
-                  ),
+              onPressed: () => setState(() =>
+                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
             ),
-            hintText:
-                AppLocalizations.of(context)?.translate('confirmPassword') ??
-                'Confirm Password',
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
-            border: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.gray, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.gray, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.primary, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red, width: 1),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 18.h,
-            ),
-            filled: true,
-            fillColor: AppColors.white,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return AppLocalizations.of(
-                    context,
-                  )?.translate('confirmPassword') ??
+              return AppLocalizations.of(context)?.translate('confirmPassword') ??
                   'Please confirm your password';
             }
             if (value != widget.params.password.text) {
-              return AppLocalizations.of(
-                    context,
-                  )?.translate('passwordsDoNotMatch') ??
+              return AppLocalizations.of(context)?.translate('passwordsDoNotMatch') ??
                   'Passwords do not match';
             }
             return null;

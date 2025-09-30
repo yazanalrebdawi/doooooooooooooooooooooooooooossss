@@ -20,7 +20,7 @@ class AlreadyHaveAccount extends StatelessWidget {
             Text(
               AppLocalizations.of(context)?.translate('alreadyHaveAccount') ??
                   'Already have an account?',
-              style: AppTextStyles.descriptionS14W400,
+              style: AppTextStyles.descriptionS14W400.withThemeColor(context),
             ),
             const SizedBox(width: 3),
             InkWell(

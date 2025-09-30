@@ -57,10 +57,9 @@ class SettingsRowWidget extends StatelessWidget {
                     AppLocalizations.of(context)?.translate(text) ?? text,
                     style: AppTextStyles.s14w400.copyWith(
                       fontFamily: AppTextStyles.fontPoppins,
-                      color:
-                          isWidgetLogOut == true
-                              ? Color(0xffDC2626)
-                              : AppColors.textPrimary,
+                      color: isWidgetLogOut == true
+                          ? Color(0xffDC2626)
+                          : AppColors.textPrimary,
                     ),
                   ),
                 ],
