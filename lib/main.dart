@@ -1,24 +1,24 @@
 import 'dart:developer';
-import 'package:dooss_business_app/core/app/manager/app_manager_cubit.dart';
-import 'package:dooss_business_app/core/app/manager/app_manager_state.dart';
-import 'package:dooss_business_app/core/models/enums/app_them_enum.dart';
-import 'package:dooss_business_app/core/services/image/image_services.dart';
-import 'package:dooss_business_app/core/services/locator_service.dart';
-import 'package:dooss_business_app/core/services/storage/hivi/hive_service.dart';
-import 'package:dooss_business_app/core/services/storage/hivi/hivi_init.dart';
-import 'package:dooss_business_app/core/services/storage/secure_storage/secure_storage_service.dart';
-import 'package:dooss_business_app/core/services/storage/shared_preferances/shared_preferences_service.dart';
-import 'package:dooss_business_app/core/services/translation/translation_service.dart';
+import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
+import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
+import 'package:dooss_business_app/user/core/models/enums/app_them_enum.dart';
+import 'package:dooss_business_app/user/core/services/image/image_services.dart';
+import 'package:dooss_business_app/user/core/services/locator_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/hivi/hive_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/hivi/hivi_init.dart';
+import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/shared_preferances/shared_preferences_service.dart';
+import 'package:dooss_business_app/user/core/services/translation/translation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
-import 'core/services/locator_service.dart' as di;
-import 'core/utils/performance_monitor.dart';
-import 'core/style/app_theme.dart';
-import 'core/routes/app_router.dart';
-import 'core/localization/app_localizations.dart';
+import 'user/core/services/locator_service.dart' as di;
+import 'user/core/utils/performance_monitor.dart';
+import 'user/core/style/app_theme.dart';
+import 'user/core/routes/app_router.dart';
+import 'user/core/localization/app_localizations.dart';
 
 Future<void> main() async {
   log('🚀 MAIN: Starting app initialization...');
@@ -71,7 +71,6 @@ Future<void> main() async {
   );
 }
 
-
 class SimpleReelsApp extends StatelessWidget {
   final AppThemeEnum initialTheme;
   const SimpleReelsApp({super.key, required this.initialTheme});
@@ -97,10 +96,9 @@ class SimpleReelsApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: AppThemes.lightTheme,
             darkTheme: AppThemes.darkTheme,
-            themeMode:
-                state.themeMode == AppThemeEnum.light
-                    ? ThemeMode.light
-                    : ThemeMode.dark,
+            themeMode: state.themeMode == AppThemeEnum.light
+                ? ThemeMode.light
+                : ThemeMode.dark,
             routerConfig: AppRouter.router,
             locale: state.locale,
             supportedLocales: const [Locale('en'), Locale('ar')],
