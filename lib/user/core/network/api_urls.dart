@@ -2,7 +2,7 @@ class ApiUrls {
   ApiUrls._();
 
   // 🟢 Base URLs
-  static const String _baseURl = 'http://192.168.43.148:8010/api';
+  static const String _baseURl = 'http://192.168.1.129:8010/api';
   static const String _baseMediaUrl =
       'http://192.168.43.148:8010'; // للصور والفيديو
 
@@ -74,5 +74,5 @@ class ApiUrls {
 
   // 🟢 Chat
   static const String chats = '$_baseURl/chats/';
-  static const String wsBaseUrl = 'ws://192.168.1.219:8020';
+  static const String wsBaseUrl = 'ws://192.168.1.129:8020';
 }

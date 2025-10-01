@@ -65,7 +65,7 @@ class uploadProductImagesWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadiusGeometry.circular(8),
+                      borderRadius: BorderRadius.circular(8),
                       child: Image.file(
                         File(value.path),
                         width: double.infinity,

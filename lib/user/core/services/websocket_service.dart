@@ -11,7 +11,7 @@ class WebSocketService {
   bool _isConnecting = false;
 
   // Callbacks
-  Function(String)? onMessageReceived;
+  Function(Map<String, dynamic>)? onMessageReceived;
   Function(String)? onError;
   VoidCallback? onConnected;
   VoidCallback? onDisconnected;
@@ -33,13 +33,14 @@ class WebSocketService {
     _chatId = chatId;
     _accessToken = accessToken;
     _isConnecting = true;
-
+//for test
     // final wsUrl = '${ApiUrls.wsBaseUrl}/ws/chats/$chatId/?token=$accessToken';
+    // keep this if you dont want to test
     final wsUrl = "ws://localhost:8020/ws/chats/$chatId/?token=$accessToken" ; 
     print('🔌 WebSocket: Connecting to $wsUrl');
 
     try {
-      _socket = await WebSocket.connect('${ApiUrls.wsBaseUrl}/ws/chats/$chatId/?token=$accessToken');
+      _socket = await WebSocket.connect(wsUrl);
 
       _socket!.listen(
         (message) {
@@ -88,7 +89,6 @@ class WebSocketService {
     }
 
     final message = {
-      'action': 'send',
       'text': text,
     };
 
@@ -103,21 +103,27 @@ class WebSocketService {
     }
   }
 
-  void _handleMessage(dynamic message) {
-    try {
-      if (message is String) {
-        final data = jsonDecode(message);
+void _handleMessage(dynamic message) {
+  try {
+    if (message is String) {
+      final data = jsonDecode(message);
+      if (data is Map<String, dynamic>) {
         print('📨 WebSocket: Parsed message: $data');
-        onMessageReceived?.call(data.toString());
+        onMessageReceived?.call(data);
       } else {
-        print('📨 WebSocket: Raw message: $message');
-        onMessageReceived?.call(message.toString());
+        print('📨 WebSocket: Non-map JSON: $data');
+        onError?.call('Unexpected JSON format');
       }
-    } catch (e) {
-      print('❌ WebSocket: Error parsing message: $e');
-      onError?.call('Error parsing message: $e');
+    } else {
+      print('📨 WebSocket: Raw message: $message');
+      onError?.call('Unsupported WebSocket message type');
     }
+  } catch (e) {
+    print('❌ WebSocket: Error parsing message: $e');
+    onError?.call('Error parsing message: $e');
   }
+}
+
 
   void dispose() {
     disconnect();

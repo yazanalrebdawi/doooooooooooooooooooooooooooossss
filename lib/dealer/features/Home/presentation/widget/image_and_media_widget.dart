@@ -63,7 +63,7 @@ class _imageAndMediaWidgetState extends State<imageAndMediaWidget> {
                           border: Border.all(color: AppColors.borderColor),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
-                        child: ClipRRect(borderRadius: BorderRadiusGeometry.circular(8),
+                        child: ClipRRect(borderRadius: BorderRadius.circular(8),
                           child: Image.asset('assets/images/OliFilter.png',width: double.infinity,fit: BoxFit.fitWidth,height: 170.h,)),
                       );
                   },

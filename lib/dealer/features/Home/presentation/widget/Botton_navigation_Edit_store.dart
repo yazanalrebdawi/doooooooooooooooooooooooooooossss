@@ -137,7 +137,7 @@ class productInfoCard extends StatelessWidget {
                             // splashRadius: 0,
                             activeColor: Color(0xff349A51),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(4),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             onChanged: (value) {
                               BlocProvider.of<HomePageCubit>(

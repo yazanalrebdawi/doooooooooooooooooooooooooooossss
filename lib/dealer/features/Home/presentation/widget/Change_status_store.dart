@@ -194,7 +194,7 @@ class _selectStoreStatusState extends State<selectStoreStatus> {
         ],
       ),
       child: Padding(
-        padding: EdgeInsetsGeometry.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

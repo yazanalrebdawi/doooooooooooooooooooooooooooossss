@@ -79,7 +79,7 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
           ),
           title: Text(
             widget.dealerName,
-            style: AppTextStyles.blackS18W700.withThemeColor(context),
+            style: AppTextStyles.blackS18W700,
           ),
           centerTitle: true,
           // actions: [

@@ -37,7 +37,7 @@ class PublishingOptionsWidget extends StatelessWidget {
                 scale: 0.8,
 
                 child: Switch(
-                  activeThumbColor: AppColors.primary,
+                  // activeThumbColor: AppColors.primary,
                   activeColor: Colors.white,
                   value: true,
                   onChanged: (value) {},

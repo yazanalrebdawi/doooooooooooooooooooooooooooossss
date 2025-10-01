@@ -86,11 +86,11 @@ class ChatCubit extends OptimizedCubit<ChatState> {
       safeEmit(state.copyWith(isWebSocketConnected: false));
     };
 
-    _webSocketService.onMessageReceived = (message) {
-      print('📨 ChatCubit: Message received via WebSocket: $message');
-      // Handle incoming message
-      _handleIncomingMessage(message);
-    };
+ _webSocketService.onMessageReceived = (data) {
+  print('📨 ChatCubit: Message received via WebSocket: $data');
+  _handleIncomingMessage(data); // pass the map directly
+};
+
 
     _webSocketService.onError = (error) {
       print('❌ ChatCubit: WebSocket error: $error');
@@ -209,62 +209,58 @@ class ChatCubit extends OptimizedCubit<ChatState> {
     }
   }
 
-  void _handleIncomingMessage(String message) {
-    try {
-      final decoded = jsonDecode(message);
+ void _handleIncomingMessage(Map<String, dynamic> decoded) {
+  try {
+    if (decoded['type'] == 'chat.message') {
+      final socketMessage = SocketMessageModel.fromJson(decoded);
 
-      if (decoded is Map<String, dynamic> &&
-          decoded['type'] == 'chat.message') {
-        final socketMessage = SocketMessageModel.fromJson(decoded);
+      final updatedMessages = state.messages.map((m) {
+        final isSameText = m.text == socketMessage.text;
+        final isPending = m.status == 'pending';
+        return (isSameText && isPending)
+            ? m.copyWith(
+                id: socketMessage.messageId,
+                status: socketMessage.status,
+                timestamp: socketMessage.timestamp,
+              )
+            : m;
+      }).toList();
 
-        final updatedMessages = state.messages.map((m) {
-          final isSameText = m.text == socketMessage.text;
-          final isPending = m.status == 'pending';
-          return (isSameText && isPending)
-              ? m.copyWith(
-                  id: socketMessage.messageId,
-                  status: socketMessage.status,
-                  timestamp: socketMessage.timestamp,
-                )
-              : m;
-        }).toList();
+      final alreadyUpdated = updatedMessages.any(
+        (m) => m.id == socketMessage.messageId,
+      );
 
-        final alreadyUpdated = updatedMessages.any(
-          (m) => m.id == socketMessage.messageId,
-        );
+      final finalMessages = alreadyUpdated
+          ? updatedMessages
+          : [
+              ...updatedMessages,
+              MessageModel(
+                id: socketMessage.messageId,
+                sender: socketMessage.sender.toString(),
+                senderId: socketMessage.sender,
+                text: socketMessage.text,
+                type: socketMessage.messageType,
+                status: socketMessage.status,
+                imageUrl: socketMessage.imageUrl,
+                fileUrl: socketMessage.fileUrl,
+                fileSize: socketMessage.fileSize?.toString(),
+                timestamp: socketMessage.timestamp,
+                isMine: true,
+              ),
+            ];
 
-        final finalMessages = alreadyUpdated
-            ? updatedMessages
-            : [
-                ...updatedMessages,
-                MessageModel(
-                  id: socketMessage.messageId,
-                  sender: socketMessage.sender.toString(),
-                  senderId: socketMessage.sender,
-                  text: socketMessage.text,
-                  type: socketMessage.messageType,
-                  status: socketMessage.status,
-                  imageUrl: socketMessage.imageUrl,
-                  fileUrl: socketMessage.fileUrl,
-                  fileSize: socketMessage.fileSize?.toString(),
-                  timestamp: socketMessage.timestamp,
-                  isMine: true,
-                ),
-              ];
+      finalMessages.sort(
+        (a, b) => DateTime.parse(a.timestamp)
+            .compareTo(DateTime.parse(b.timestamp)),
+      );
 
-        // ✅ Sort messages by timestamp to ensure proper order
-        finalMessages.sort(
-          (a, b) => DateTime.parse(
-            a.timestamp,
-          ).compareTo(DateTime.parse(b.timestamp)),
-        );
-
-        safeEmit(state.copyWith(messages: finalMessages));
-      }
-    } catch (e) {
-      print('ChatCubit: Error decoding message: $e');
+      safeEmit(state.copyWith(messages: finalMessages));
     }
+  } catch (e) {
+    print('ChatCubit: Error handling incoming message: $e');
   }
+}
+
 
   int? _parseIntSafe(dynamic value) {
     if (value == null) return null;
