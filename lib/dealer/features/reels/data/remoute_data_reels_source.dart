@@ -4,26 +4,28 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:dooss_business_app/dealer/Core/network/Base_Url.dart';
-import 'package:dooss_business_app/dealer/Core/network/failure.dart';
-import 'package:dooss_business_app/dealer/Core/network/service_locator.dart';
-import 'package:dooss_business_app/dealer/features/reels/data/models/Reels_data_model.dart';
+
 import 'package:image_picker/image_picker.dart';
+
+import '../../../Core/network/Base_Url.dart';
+import '../../../Core/network/failure.dart';
+import '../../../Core/network/service_locator.dart';
+import 'models/Reels_data_model.dart';
 
 class remouteDataReelsSource {
   final Dio dio;
-  var header = {
-    'Authorization':
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYxMTE4NjMzLCJpYXQiOjE3NTg1MjY2MzMsImp0aSI6ImM1MGM4NTAyMWM1MDRmYzdiY2JjYmIyMTJkOWQ3NjRiIiwidXNlcl9pZCI6IjIifQ.MUGK14YXsoxMUgEX83kSaaSoijjNfrcynoGM4s66e9k',
-  };
+  // var header = {
+  //   'Authorization':
+  //       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYxMTE4NjMzLCJpYXQiOjE3NTg1MjY2MzMsImp0aSI6ImM1MGM4NTAyMWM1MDRmYzdiY2JjYmIyMTJkOWQ3NjRiIiwidXNlcl9pZCI6IjIifQ.MUGK14YXsoxMUgEX83kSaaSoijjNfrcynoGM4s66e9k',
+  // };
 
   remouteDataReelsSource({required this.dio});
   Future<Either<String, List<ReelDataModel>>> getDataReels() async {
     try {
       print(getIt<Dio>().options.headers);
       var response = await dio.get(
-        'http://10.0.2.2:8010/api/reels/my-reels/',
-        options: Options(headers: header),
+        '${AppUrl.BaseUrl}/reels/my-reels/',
+        // options: Options(headers: header),
       );
       print(response.data);
       List<ReelDataModel> dataResponse = (response.data as List).map((item) {
@@ -42,9 +44,13 @@ class remouteDataReelsSource {
     String title,
     String descraption,
   ) async {
-    var url = 'http://10.0.2.2:8010/api/reels/';
+    var url = '${AppUrl.BaseUrl}/reels/';
+    Map<String,dynamic> customHeader = Map.from(dio.options.headers);
+    customHeader.addAll({'Content-Type': 'application/json'});//////تعديل  ممكن تنحذف
 
-    print(videoUrl!.path);
+    print('________________________${videoUrl!.path}________________________');
+       print('________________________${customHeader}________________________');
+              print('________________________${dio.options.headers}________________________');
     var data = FormData.fromMap({
       'video': await MultipartFile.fromFile(
         videoUrl.path,
@@ -58,7 +64,10 @@ class remouteDataReelsSource {
       var response = await dio.request(
         url,
         data: data,
-        options: Options(method: 'POST', headers: header),
+        options: Options(
+          method: 'POST',
+          headers: customHeader
+        ),
       );
       // var response = await dio.post(
       //   url,
@@ -66,14 +75,16 @@ class remouteDataReelsSource {
       //   data: data,
       // );
       print(response.data);
+
       print('okey');
       return right(true);
     } catch (e) {
       print(Failure.handleExcaption(e).massageError);
-      if (e is DioException) {
+      if (e is DioException ) {
         print(e.response!.data);
       }
       // print(e.toString());
+
       return left(Failure.handleExcaption(e));
     }
   }
@@ -121,7 +132,7 @@ class remouteDataReelsSource {
     //  /
     try {
       var response = await dio.request(
-        'http://10.0.2.2:8010/api/reels/$id/',
+        '${AppUrl.BaseUrl}/reels/$id/',
         options: Options(
           method: 'PATCH',
           // headers: header
@@ -141,7 +152,7 @@ class remouteDataReelsSource {
   }
 
   Future<Either<Failure, bool>> deleteReel(int id) async {
-    var url = 'http://10.0.2.2:8010/api/reels/$id/';
+    var url = '${AppUrl.BaseUrl}/reels/$id/';
     try {
       var response = await dio.delete(
         url,

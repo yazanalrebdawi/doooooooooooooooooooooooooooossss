@@ -1,3 +1,4 @@
+
 import 'package:dooss_business_app/dealer/features/Home/data/models/dashboard_info_model.dart';
 import 'package:dooss_business_app/dealer/features/Home/data/models/data_profile_models.dart';
 import 'package:dooss_business_app/dealer/features/Home/data/models/product_data_model.dart';
@@ -10,7 +11,9 @@ class HomepageState {
   final bool isLoadingFecthProductData;
   final bool isSuccessEditProduct;
   final DataProfileModel dataStore;
-
+  final bool isSuccessGetProduct;
+  final bool isLoadingGetProduct;
+ final bool isLoadingeditProfile;
   HomepageState({
     required this.allProduct,
     this.error,
@@ -19,6 +22,10 @@ class HomepageState {
     this.isLoadingFecthProductData = false,
     this.isSuccessEditProduct = false,
     required this.dataStore,
+    this.isSuccessGetProduct = false,
+       this.isLoadingGetProduct = false,
+       this.isLoadingeditProfile =false
+
   });
 
   HomepageState copyWith({
@@ -29,6 +36,9 @@ class HomepageState {
     bool? isLoadingFecthProductData,
     bool? isSuccessEditProduct,
     DataProfileModel? dataStore,
+    bool? isSuccessGetProduct,
+   bool? isLoadingGetProduct,
+   bool? isLoadingeditProfile
   }) {
     return HomepageState(
       allProduct: allProduct ?? this.allProduct,
@@ -38,6 +48,10 @@ class HomepageState {
       isLoadingFecthProductData: isLoadingFecthProductData ?? false,
       isSuccessEditProduct: isSuccessEditProduct ?? false,
       dataStore: dataStore ?? this.dataStore,
+      isSuccessGetProduct: isSuccessGetProduct ?? false,
+      isLoadingGetProduct:isLoadingGetProduct??false,
+      isLoadingeditProfile: isLoadingeditProfile??this.isLoadingeditProfile
+
     );
   }
 }

@@ -8,9 +8,9 @@
 //   AppManagerCubit():super(StateAppManager());
 
 //     void savedDataUser(DataProfileModel data) async {
-//     // getIt<AppDio>().addToken(data.accessToken);
+//     getIt<AppDio>().addToken(data.accessToken);
 //     emit(state.copyWith(Userinfo: data));
-//     // await dataSource.saveUserData(data);
+//     await dataSource.saveUserData(data);
 //   }
 
 

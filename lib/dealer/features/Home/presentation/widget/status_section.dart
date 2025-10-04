@@ -1,20 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/home_page_state.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/remoute_dealer_data_source.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/manager/home_page_cubit.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/edit_Profile_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../Core/style/app_Colors.dart';
+import '../../data/remouteData/home_page_state.dart';
+import '../manager/home_page_cubit.dart';
+import '../page/edit_Profile_page.dart';
+
 class StatusSection extends StatelessWidget {
   const StatusSection({super.key});
+  bool isWithinRange(DateTime start, DateTime end) {
+  DateTime now = DateTime.now(); // الوقت الحالي
+  return now.isAfter(start) && now.isBefore(end);
+}
+bool isNowInSchedule({
+  required List<String> daysList, // مثال: ["sun", "mon", "tue"]
+  required String startTime,      // مثال: "09:00"
+  required String endTime,        // مثال: "18:00"
+}) {
+  // تحويل الأيام لأحرف صغيرة
+  final days = daysList.map((d) => d.toLowerCase().trim()).toList();
+
+  // جلب اليوم الحالي (0=Mon ... 6=Sun)
+  final now = DateTime.now();
+  final weekDays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+  final today = weekDays[now.weekday - 1];
+
+  // إذا اليوم الحالي مش ضمن الأيام المطلوبة -> false
+  if (!days.contains(today)) return false;
+
+  // تحويل أوقات البداية والنهاية
+  final startParts = startTime.split(':').map(int.parse).toList();
+  final endParts = endTime.split(':').map(int.parse).toList();
+
+  final start = DateTime(now.year, now.month, now.day, startParts[0], startParts[1]);
+  final end = DateTime(now.year, now.month, now.day, endParts[0], endParts[1]);
+
+  // إذا البداية < النهاية (مثال: 09:00 - 18:00)
+  if (start.isBefore(end)) {
+    return now.isAfter(start) && now.isBefore(end);
+  }
+
+  // إذا الفترة تتجاوز منتصف الليل (مثال: 22:00 - 02:00)
+  return now.isAfter(start) || now.isBefore(end);
+}
+
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomePageCubit, HomepageState>(
       builder: (context, state) {
+        
         return Container(
           width: 358.w,
           height: 100.h,
@@ -74,15 +111,15 @@ class StatusSection extends StatelessWidget {
                             alignment: Alignment.center,
                             height: 28.h,
                             decoration: BoxDecoration(
-                              color: AppColors.lightGreen,
+                              color:state.dataStore.isStoreOpen? AppColors.lightGreen:AppColors.redLight,
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            child: Text(
-                              'Open',
+                            child: Text(isNowInSchedule(daysList: state.dataStore.workingDays,startTime: state.dataStore.openingTime,endTime: state.dataStore.closingTime)??true?
+                              'Open':'Close',
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12,
-                                color: Color(0xff16A34A),
+                                color:isNowInSchedule(daysList: state.dataStore.workingDays,startTime: state.dataStore.openingTime,endTime: state.dataStore.closingTime)??true? Color(0xff16A34A):AppColors.red,
                               ),
                             ),
                           ),
@@ -110,25 +147,28 @@ class StatusSection extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditStoreProfile(
-                        lat: state.dataStore.latitude.toString(),
-                        log: state.dataStore.longitude.toString(),
-                        closeTime: state.dataStore.closingTime,
-                        openTime: state.dataStore.openingTime,
-                        storeDescription: TextEditingController(
-                          text: state.dataStore.storeDescription,
-                        ),
-                        phone: TextEditingController(
-                          text: state.dataStore.phone,
-                        ),
-                        storeName: TextEditingController(
-                          text: state.dataStore.name,
-                        ),
-                        location: TextEditingController(
-                          text: state.dataStore.locationAddress,
-                        ),
-                        email: TextEditingController(
-                          text: state.dataStore.googleMapsLink,
+                      builder: (_) => BlocProvider.value(
+                        value: BlocProvider.of<HomePageCubit>(context),
+                        child: EditStoreProfile(
+                          lat: state.dataStore.latitude.toString(),
+                          log: state.dataStore.longitude.toString(),
+                          closeTime: state.dataStore.closingTime,
+                          openTime: state.dataStore.openingTime,
+                          storeDescription: TextEditingController(
+                            text: state.dataStore.storeDescription,
+                          ),
+                          phone: TextEditingController(
+                            text: state.dataStore.phone,
+                          ),
+                          storeName: TextEditingController(
+                            text: state.dataStore.name,
+                          ),
+                          location: TextEditingController(
+                            text: state.dataStore.locationAddress,
+                          ),
+                          email: TextEditingController(
+                            text: state.dataStore.googleMapsLink,
+                          ),
                         ),
                       ),
                     ),

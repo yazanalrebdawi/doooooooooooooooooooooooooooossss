@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/widget/time_picker.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import '../../../reels/presentation/widget/time_picker.dart';
 
 class changeStatusStoreWidget extends StatelessWidget {
   const changeStatusStoreWidget({
@@ -47,7 +49,7 @@ class changeStatusStoreWidget extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12.h),
-          Row(
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('working Day', style: AppTextStyle.poppins414BlueDark),
               GestureDetector(
@@ -103,7 +105,7 @@ class changeStatusStoreWidget extends StatelessWidget {
                   ),
                   child: Text(
                     'Select Day working',
-                    style: AppTextStyle.poppins514BlueDark,
+                    style: AppTextStyle.poppins414BD,
                   ),
                 ),
               ),

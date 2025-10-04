@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/remoute_dealer_data_source.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Custom_Button_With_icon.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import 'Custom_Button_With_icon.dart';
 
 class BottonNavigationOfEditStore extends StatefulWidget {
   BottonNavigationOfEditStore({
@@ -15,7 +15,7 @@ class BottonNavigationOfEditStore extends StatefulWidget {
     required this.email,
     required this.location,
     required this.linkGoogle,
-    required this.onTap,
+    required this.onTap, required this.reset,
   });
   late bool isAvaialble;
   final String name;
@@ -25,7 +25,7 @@ class BottonNavigationOfEditStore extends StatefulWidget {
   final String location;
   final String linkGoogle;
   final Function() onTap;
-
+  final Function() reset;
   @override
   State<BottonNavigationOfEditStore> createState() =>
       _BottonNavigationOfEditStoreState();
@@ -67,51 +67,60 @@ class _BottonNavigationOfEditStoreState
           Row(
             children: [
               Expanded(
-                child: Container(
-                  // width: 173.w,
-                  height: 48.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.r),
-                    color: Color(0xffF3F4F6),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.replay, color: Color(0xff4B5563), size: 20),
-                      Text(
-                        ' Reset',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: Color(0xff4B5563),
+                child: GestureDetector(onTap: () {
+                  
+                },
+                  child: Container(
+                    // width: 173.w,
+                    height: 48.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      color: Color(0xffF3F4F6),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.replay, color: Color(0xff4B5563), size: 20),
+                        Text(
+                          ' Reset',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: Color(0xff4B5563),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
               SizedBox(width: 12.w),
               Expanded(
-                child: Container(
-                  // width: 173.w,
-                  height: 48.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.r),
-                    color: Color(0xffFEF2F2),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.delete, color: Color(0xffDC2626), size: 20),
-                      Text(
-                        ' cancel',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: Color(0xffDC2626),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    // width: 173.w,
+                    height: 48.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      color: Color(0xffFEF2F2),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.close, color: Color(0xffDC2626), size: 20),
+                        Text(
+                          ' cancel',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: Color(0xffDC2626),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -2,10 +2,12 @@
 import 'dart:math';
 
 import 'package:dio/dio.dart';
-import 'package:dooss_business_app/dealer/features/reels/data/models/Reels_data_model.dart';
-import 'package:dooss_business_app/dealer/features/reels/data/remoute_data_reels_source.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../data/models/Reels_data_model.dart';
+import '../../data/remoute_data_reels_source.dart';
 
 class ReelsStateCubit extends Cubit<reelsState> {
   final remouteDataReelsSource data;
@@ -33,11 +35,23 @@ class ReelsStateCubit extends Cubit<reelsState> {
     emit(state.copyWith(video: video));
   }
 
-  void AddNewReel(XFile? video,String title,String descraption) async {
+  void AddNewReel(XFile? video, String title, String descraption) async {
     var result = await data.addNewReel(video, title, descraption);
-    result.fold((failure) {}, (isSuccess) {
-      emit(state.copyWith(isSuccess: isSuccess)); 
-    });
+    result.fold(
+      (failure) {
+        print(failure.massageError);
+        if(failure.statusCode==400){
+              emit(state.copyWith(error: 'You have reached your monthly reel publishing quota'));
+        }else{
+   emit(state.copyWith(error: failure.massageError));
+        }
+        
+     
+      },
+      (isSuccess) {
+        emit(state.copyWith(isSuccess: isSuccess));
+      },
+    );
   }
 
   void EditDataReel(

@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
 
 class AddTagsWidget extends StatelessWidget {
   const AddTagsWidget({super.key});

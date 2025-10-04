@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPasswordChanged: (password) {},
                       ),
                       const LoginScreen2OptionsSection(),
-                      LoginScreenButtonsSection(params: _params),
+                      LoginScreenButtonsSection(params: _params , code: codeController),
                       SizedBox(height: 38.h),
                       const DontHaveAnAccount(),
                       SizedBox(height: 15.h),

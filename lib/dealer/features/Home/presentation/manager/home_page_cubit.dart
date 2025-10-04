@@ -1,12 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:dooss_business_app/dealer/features/Home/data/models/dashboard_info_model.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/models/data_profile_models.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/models/product_data_model.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/home_page_state.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/remoute_dealer_data_source.dart';
-import 'package:dooss_business_app/dealer/features/reels/data/remoute_data_reels_source.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../data/models/dashboard_info_model.dart';
+import '../../data/models/data_profile_models.dart';
+import '../../data/models/product_data_model.dart';
+import '../../data/remouteData/home_page_state.dart';
+import '../../data/remouteData/remoute_dealer_data_source.dart';
 
 class HomePageCubit extends Cubit<HomepageState> {
   HomePageCubit(this.data)
@@ -46,16 +46,16 @@ class HomePageCubit extends Cubit<HomepageState> {
       );
   final RemouteDealerDataSource data;
   void getdataproduct() async {
-    emit(state.copyWith(isLoadingFecthProductData: true));
+    // emit(state.copyWith(isLoadingGetProduct: true));
     var result = await data.getDataProduct();
     result.fold(
       (error) {
-        emit(state.copyWith(error: error.massageError));
+        emit(state.copyWith(error: error.massageError,isLoadingGetProduct: false));
         print(error.toString());
       },
       (data) {
         // print(data.length);
-        emit(state.copyWith(allProduct: data));
+        emit(state.copyWith(allProduct: data,isSuccessGetProduct: true,isLoadingGetProduct: false));
       },
     );
   }
@@ -76,25 +76,31 @@ class HomePageCubit extends Cubit<HomepageState> {
       discount,
       image!,
     );
-    result.fold((error) {}, (data) {
-      List<productdata> all = List.from(state.allProduct);
-      print(all.length);
+    result.fold(
+      (error) {
+        print(error);
+        emit(state.copyWith(error: error));
+      },
+      (data) {
+        List<productdata> all = List.from(state.allProduct);
+        print(all.length);
 
-      all.add(
-        productdata(
-          id: data.id,
-          name: data.name,
-          price: data.price,
-          discount: data.discount,
-          finalPrice: data.finalPrice,
-          mainImage: data.mainImage,
-          category: data.category,
-          isAvailable: true,
-        ),
-      );
-      print(all.length);
-      emit(state.copyWith(allProduct: all));
-    });
+        all.add(
+          productdata(
+            id: data.id,
+            name: data.name,
+            price: data.price,
+            discount: data.discount,
+            finalPrice: data.finalPrice,
+            mainImage: data.mainImage,
+            category: data.category,
+            isAvailable: true,
+          ),
+        );
+        print(all.length);
+        emit(state.copyWith(allProduct: all, isLoadingFecthProductData: true));
+      },
+    );
   }
 
   void deleteProduct(int id) async {
@@ -104,7 +110,7 @@ class HomePageCubit extends Cubit<HomepageState> {
     productdata deletedProduct = all[index];
     all.removeAt(index);
     emit(state.copyWith(allProduct: all));
-    var result = await RemouteDealerDataSource().deleteProduct(id);
+    var result = await data.deleteProduct(id);
     result.fold((e) {
       all.insert(index, deletedProduct);
       emit(state.copyWith(allProduct: all));
@@ -121,14 +127,13 @@ class HomePageCubit extends Cubit<HomepageState> {
     // allReels.insert(index, editReel);
     allProduct[index] = editProduct;
     emit(state.copyWith(allProduct: allProduct));
-    var result = await RemouteDealerDataSource().editAvailabilityProduct(
+    var result = await data.editAvailabilityProduct(
       id,
       !CurrentProduct.isAvailable,
     );
     result.fold((failure) {
       print(failure.massageError);
       allProduct[index] = CurrentProduct;
-
       emit(state.copyWith(allProduct: allProduct));
     }, (data) {});
   }
@@ -171,7 +176,7 @@ class HomePageCubit extends Cubit<HomepageState> {
 
   void AddNewCar(
     String brand,
-    String year,
+    int year,
     String model,
     String price,
     String milleage,
@@ -182,6 +187,10 @@ class HomePageCubit extends Cubit<HomepageState> {
     int Door,
     int seats,
     XFile video,
+    String status,
+    double lat,
+    double lon,
+    String color
   ) async {
     var result = await data.AddCars(
       brand,
@@ -196,10 +205,20 @@ class HomePageCubit extends Cubit<HomepageState> {
       Door,
       seats,
       video,
+      status,
+      lat,lon,
+      color
+
     );
-    result.fold((error) {}, (data) {
-      emit(state.copyWith(isSuccessAddCar: true));
-    });
+    result.fold(
+      (error) {
+        emit(state.copyWith(error: error.massageError));
+        print(error.massageError);
+      },
+      (data) {
+        emit(state.copyWith(isSuccessAddCar: true));
+      },
+    );
   }
 
   void getDataProfile() async {
@@ -217,15 +236,25 @@ class HomePageCubit extends Cubit<HomepageState> {
     String OpenTime,
     String lat,
     String lot,
+    List<String> day,
   ) async {
-    // var result = await data.editDataProfile(
-    //   name,
-    //   description,
-    //   phone,
-    //   closeTime,
-    //   OpenTime,
-    //   lat,
-    //   lot,
-    // );
+    var result = await data.editDataProfile(
+      name,
+      description,
+      phone,
+      closeTime,
+      OpenTime,
+      lat,
+      lot,
+      day,
+    );
+    result.fold(
+      (e) {
+        emit(state.copyWith(error: e.massageError));
+      },
+      (data) {
+        emit(state.copyWith(isLoadingeditProfile: true));
+      },
+    );
   }
 }

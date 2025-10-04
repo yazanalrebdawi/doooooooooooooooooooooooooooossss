@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/page/add_reels_page.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/widget/Radio_Attack_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import 'Radio_Attack_widget.dart';
 
 class attachProductOrService extends StatelessWidget {
   const attachProductOrService({super.key});

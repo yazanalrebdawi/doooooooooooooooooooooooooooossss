@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/add_new_car_page.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/google_map.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_form_with_title.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import 'custom_form_with_title.dart';
 
 class locationAndAvailability extends StatelessWidget {
   const locationAndAvailability({
@@ -51,6 +50,7 @@ class locationAndAvailability extends StatelessWidget {
               children: [
                 //  Icon(Icons.map_outlined)
                 CustomFormWithTitleWidget(
+                  validation: (val) {},
                   model: TextEditingController(),
                   hintForm: 'Enter address or pin location',
                   title: 'Service Area ',

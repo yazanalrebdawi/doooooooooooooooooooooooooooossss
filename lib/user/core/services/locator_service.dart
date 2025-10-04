@@ -3,6 +3,7 @@
 
 import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -72,11 +73,19 @@ import 'package:dooss_business_app/user/features/chat/presentation/manager/chat_
 import 'package:dooss_business_app/user/features/profile_dealer/data/data_source/dealer_profile_remote_data_source.dart';
 import 'package:dooss_business_app/user/features/profile_dealer/presentation/manager/dealer_profile_cubit.dart';
 
+import 'package:dooss_business_app/dealer/Core/network/dealers_App_dio.dart';
+import 'package:dooss_business_app/dealer/features/Home/data/remouteData/remoute_dealer_data_source.dart';
+import 'package:dooss_business_app/dealer/features/reels/data/remoute_data_reels_source.dart';
+
 final appLocator = GetIt.instance;
 final connectivity = Connectivity();
 
 Future<void> init() async {
   log('🔧 DI: Starting bulletproof dependency injection...');
+  // Dealer dependencies
+  await _setUpDealer();
+
+  log('🎯 DI: ALL (User + Dealer) dependencies initialized');
 
   // ------------------- Services -------------------
   appLocator.registerLazySingleton<NetworkInfoService>(
@@ -246,4 +255,21 @@ Future<void> init() async {
 
   // ------------------- Final Verification -------------------
   log('🎯 DI: BULLETPROOF DEPENDENCY INJECTION COMPLETE!');
+}
+
+// Dealer Dependencies
+Future<void> _setUpDealer() async {
+  // Dealer dependencies
+  appLocator.registerLazySingleton<DealersAppDio>(() => DealersAppDio());
+  appLocator.registerLazySingleton<Dio>(() => appLocator<DealersAppDio>().dio);
+
+  appLocator.registerLazySingleton<RemouteDealerDataSource>(
+    () => RemouteDealerDataSource(dio: appLocator<Dio>()),
+  );
+
+  appLocator.registerLazySingleton<remouteDataReelsSource>(
+    () => remouteDataReelsSource(dio: appLocator<Dio>()),
+  );
+
+  log('🚗 Dealer dependencies registered');
 }

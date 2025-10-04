@@ -1,9 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../../../../../user/core/utiles/validator.dart';
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
 
 class formEditProfileWidget extends StatelessWidget {
   const formEditProfileWidget({
@@ -52,8 +54,8 @@ class formEditProfileWidget extends StatelessWidget {
               SizedBox(height: 17.h),
               SizedBox(
                 width: 324.w,
-                height: 50.h,
-                child: TextFormField(
+                height: 70.h,
+                child: TextFormField(validator: (value) => Validator.notNullValidation(value),
                   controller: storeName,
                   decoration: InputDecoration(
                     hintText: 'El Sharkawy Auto',
@@ -99,6 +101,7 @@ class formEditProfileWidget extends StatelessWidget {
         width: 324.w,
         // height: 50.h,
         child: TextFormField(maxLines: 4,
+        validator: (value) => Validator.notNullValidation(value),
           controller: storeDescription,
           decoration: InputDecoration(
             hintText: 'Premium car dealership specializing in\nluxury vehicles and automotive\naccessories. We offer new and used\ncars with comprehensive warranty and',

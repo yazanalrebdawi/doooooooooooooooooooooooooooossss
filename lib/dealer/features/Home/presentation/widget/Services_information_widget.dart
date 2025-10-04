@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/Add_services_page.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/add_new_car_page.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/add_tags_widget.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_dropdown_list_with_title.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_form_with_title.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/select_rangePrice_widget.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import 'add_tags_widget.dart';
+import 'custom_dropdown_list_with_title.dart';
+import 'custom_form_with_title.dart';
+import 'select_rangePrice_widget.dart';
 
 class ServicesInformationWidget extends StatelessWidget {
   const ServicesInformationWidget({
@@ -57,6 +57,7 @@ class ServicesInformationWidget extends StatelessWidget {
             child: Column(
               children: [
                 CustomFormWithTitleWidget(
+                  validation: (val) {},
                   model: nameServices,
                   hintForm: 'e.g., Car Towing, Quick Oil Change',
                   title: 'Service Name ',
@@ -71,6 +72,7 @@ class ServicesInformationWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 16.h),
                 CustomFormWithTitleWidget(
+                  validation: (val) {},
                   model: description,
                   hintForm: 'Explain your service clearly (what,\nhow, why)',
                   title: 'Description ',

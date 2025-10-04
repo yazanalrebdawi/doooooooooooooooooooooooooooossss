@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/add_new_car_page.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_form_with_title.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import '../../../Home/presentation/page/home_Page1.dart';
+import '../../../Home/presentation/widget/custom_form_with_title.dart';
 
 class addReelDetailsWidget extends StatelessWidget {
   const addReelDetailsWidget({
@@ -37,16 +39,19 @@ class addReelDetailsWidget extends StatelessWidget {
           Text('Reel Details', style: AppTextStyle.poppins416blueBlack),
           SizedBox(height: 13.h),
           CustomFormWithTitleWidget(
+            validation: (value) =>Validator.notNullValidation(value),
             model: title,
-            hintForm: 'Write a catchy caption for your reel...',
-            title: 'Title / Caption',
-            lineNum: 2,
+            hintForm: 'enter title here',
+            title: 'Title ',
+            lineNum: 1,
           ),
           SizedBox(height: 16.h),
           CustomFormWithTitleWidget(
+            validation:  (value) =>Validator.notNullValidation(value),
             model: descraption,
-            hintForm: '#offers #cleaning #deals',
-            title: 'Hashtags',
+            hintForm: 'Write a catchy caption for your reel...',
+            title: ' Caption',
+            lineNum: 2,
           ),
           // Text(
           //   'Add tags for better discovery',

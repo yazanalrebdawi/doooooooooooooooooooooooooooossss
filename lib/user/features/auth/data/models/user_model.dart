@@ -2,6 +2,7 @@ import 'dart:io';
 
 class UserModel {
   final int id;
+  final int? dealerId;
   final String name;
   final String phone;
   final String role;
@@ -15,6 +16,7 @@ class UserModel {
     required this.id,
     required this.name,
     required this.phone,
+    this.dealerId,
     required this.role,
     required this.verified,
     required this.latitude,
@@ -33,17 +35,19 @@ class UserModel {
     dynamic longitude,
     DateTime? createdAt,
     File? avatar,
-  }) => UserModel(
-    id: id ?? this.id,
-    name: name ?? this.name,
-    phone: phone ?? this.phone,
-    role: role ?? this.role,
-    verified: verified ?? this.verified,
-    latitude: latitude ?? this.latitude,
-    longitude: longitude ?? this.longitude,
-    createdAt: createdAt ?? this.createdAt,
-    avatar: avatar ?? this.avatar,
-  );
+  }) =>
+      UserModel(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        phone: phone ?? this.phone,
+        role: role ?? this.role,
+        verified: verified ?? this.verified,
+        latitude: latitude ?? this.latitude,
+        longitude: longitude ?? this.longitude,
+        createdAt: createdAt ?? this.createdAt,
+        avatar: avatar ?? this.avatar,
+        dealerId: dealerId ?? this.dealerId,
+      );
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -56,12 +60,14 @@ class UserModel {
       'longitude': longitude,
       'created_at': createdAt.toIso8601String(),
       'avatar': avatar?.path,
+      'dealer_id': dealerId,
     };
   }
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] ?? 0,
+      dealerId: map['dealer_id'] ?? 0,
       name: map['name'] ?? '',
       phone: map['phone'] ?? '',
       role: map['role'] ?? '',

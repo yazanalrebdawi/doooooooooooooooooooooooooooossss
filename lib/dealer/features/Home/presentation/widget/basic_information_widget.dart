@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/add_new_car_page.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/brand_year_selector_widget.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_form_with_title.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../../../../../user/core/utiles/validator.dart';
+import '../../../../Core/style/app_text_style.dart';
+import 'brand_year_selector_widget.dart';
+import 'custom_form_with_title.dart';
 
 class BasicInformtionWidget extends StatefulWidget {
   const BasicInformtionWidget({
@@ -17,6 +18,7 @@ class BasicInformtionWidget extends StatefulWidget {
     required this.getDataBrand,
     required this.year,
     required this.status,
+    //  required this.form,
   });
 
   final TextEditingController model;
@@ -26,7 +28,7 @@ class BasicInformtionWidget extends StatefulWidget {
   final Function(String value) getDataBrand;
   final Function(int value) year;
   final Function(String value) status;
-
+//  final GlobalKey<FormState> form;
   @override
   State<BasicInformtionWidget> createState() => _BasicInformtionWidgetState();
 }
@@ -85,11 +87,14 @@ class _BasicInformtionWidgetState extends State<BasicInformtionWidget> {
                 ),
                 SizedBox(height: 16.w),
                 CustomFormWithTitleWidget(
+                  validation: (value) {
+                 return   Validator.notNullValidation(value);
+                  },
                   model: widget.model,
                   title: 'Model',
                   hintForm: 'e.g., Elantra, Civic, X5',
                 ),
-
+    
                 StatusCarSelectedWidget(
                   statusCar: statusCar,
                   sateus: (value) {
@@ -97,8 +102,11 @@ class _BasicInformtionWidgetState extends State<BasicInformtionWidget> {
                     print(value);
                   },
                 ),
-
-                CustomFormWithTitleWidget(
+    
+                CustomFormWithTitleWidget(isNum: true,
+                  validation: (value) {
+                  return  Validator.notNullValidationValue(value);
+                  },
                   model: widget.price,
                   title: 'price(USD)',
                   hintForm: '85,000',
@@ -107,7 +115,10 @@ class _BasicInformtionWidgetState extends State<BasicInformtionWidget> {
                 Row(
                   children: [
                     Expanded(
-                      child: CustomFormWithTitleWidget(
+                      child: CustomFormWithTitleWidget(isNum: true,
+                        validation: (value) {
+                      return    Validator.notNullValidation(value);
+                        },
                         model: widget.mileage,
                         title: 'Mileage (km)',
                         hintForm: '43,000',
@@ -116,6 +127,9 @@ class _BasicInformtionWidgetState extends State<BasicInformtionWidget> {
                     SizedBox(width: 16.w),
                     Expanded(
                       child: CustomFormWithTitleWidget(
+                        validation: (value) {
+                      return    Validator.notNullValidation(value);
+                        },
                         model: widget.engineSize,
                         title: 'Engine Size',
                         hintForm: '6.3L',
@@ -177,7 +191,7 @@ class _StatusCarSelectedWidgetState extends State<StatusCarSelectedWidget> {
                     widget.sateus(isSelected!);
                   });
                 },
-                child: Container(
+                child: Container(child: Text(widget.statusCar[i],style: TextStyle(fontWeight: FontWeight.w700,fontSize: 16,color: isSelected == widget.statusCar[i]?Color(0xffffffff):AppColors.silverDark),),
                   alignment: Alignment.center,
                   height: 75.h,
                   decoration: BoxDecoration(

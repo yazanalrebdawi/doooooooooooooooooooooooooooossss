@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/add_new_car_page.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_dropdown_list_with_title.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import 'custom_dropdown_list_with_title.dart';
 
 class SpecificationsWidget extends StatefulWidget {
   SpecificationsWidget({
@@ -121,6 +121,8 @@ class _SpecificationsWidgetState extends State<SpecificationsWidget> {
                         items: [
                           DropdownMenuItem(child: Text('2'), value: 2),
                           DropdownMenuItem(child: Text('4'), value: 4),
+                 
+                     
                         ],
                         hintForm: '4',
                         title: 'Doors',
@@ -135,8 +137,10 @@ class _SpecificationsWidgetState extends State<SpecificationsWidget> {
                         items: [
                           DropdownMenuItem(child: Text('2'), value: 2),
                           DropdownMenuItem(child: Text('4'), value: 4),
+                            DropdownMenuItem(child: Text('5'), value: 5),
+                          DropdownMenuItem(child: Text('7'), value: 7),
                         ],
-                        hintForm: '5',
+                        hintForm: '2',
                         title: 'Seats',
                         CurrentValue: (value) {
                           widget.seats(value);

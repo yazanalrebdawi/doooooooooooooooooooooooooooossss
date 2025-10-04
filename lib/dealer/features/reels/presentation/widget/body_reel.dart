@@ -1,15 +1,17 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/network/service_locator.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/reels/data/models/Reels_data_model.dart';
-import 'package:dooss_business_app/dealer/features/reels/data/remoute_data_reels_source.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/manager/reels_state_cubit.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/page/edit_reels_page.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import '../../data/models/Reels_data_model.dart';
+import '../manager/reels_state_cubit.dart';
+import '../page/edit_reels_page.dart';
 
 class bodyReel extends StatelessWidget {
   const bodyReel({super.key, required this.item});
@@ -26,6 +28,34 @@ class bodyReel extends StatelessWidget {
     } else {
       // أقل من ألف
       return number.toString();
+    }
+  }
+
+  String timeDiffStr(String isoString) {
+    // نحول النص إلى DateTime
+    DateTime inputTime = DateTime.parse(isoString);
+    DateTime now = DateTime.now().toUtc();
+
+    Duration diff = now.difference(inputTime);
+    int seconds = diff.inSeconds;
+    int minutes = diff.inMinutes;
+    int hours = diff.inHours;
+    int days = diff.inDays;
+
+    if (seconds < 60) {
+      return "${seconds} sec ago";
+    } else if (minutes < 60) {
+      return "${minutes}min ago";
+    } else if (hours < 24) {
+      return "${hours}hour ago";
+    } else if (days < 7) {
+      return "${days}day ago";
+    } else if (days < 30) {
+      return "${(days / 7).floor()}week ago ";
+    } else if (days < 365) {
+      return "${(days / 30).floor()}month age";
+    } else {
+      return "${(days / 365).floor()}year age";
     }
   }
 
@@ -78,16 +108,23 @@ class bodyReel extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('2 hours ago', style: AppTextStyle.poppins414BlueDark),
+              Text(
+                timeDiffStr(item.createdAt),
+                style: AppTextStyle.poppins414BlueDark,
+              ),
               Row(
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        Icons.remove_red_eye,
-                        size: 16,
+                      SvgPicture.asset(
+                        'assets/icons/eye.svg',
                         color: Color(0xff6B7280),
                       ),
+                      // Icon(
+                      //   Icons.remove_red_eye,
+                      //   size: 16,
+                      //   color: Color(0xff6B7280),
+                      // ),
                       SizedBox(width: 4.w),
                       Text(
                         ' ${_formatNumber(item.viewsCount)}',
@@ -155,11 +192,12 @@ class bodyReel extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.edit_note_sharp,
-                          size: 18,
-                          color: AppColors.BlueDark,
-                        ),
+                        // Icon(
+                        //   Icons.edit_note_sharp,
+                        //   size: 18,
+                        //   color: AppColors.BlueDark,
+                        // ),
+                        SvgPicture.asset('assets/icons/edit.svg',color: AppColors.BlueDark,),
                         Text(' Edit', style: AppTextStyle.poppins414BD),
                       ],
                     ),

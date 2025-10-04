@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_text_style.dart';
 
 class CustomFormWithTitleWidget extends StatelessWidget {
   const CustomFormWithTitleWidget({
@@ -12,6 +13,8 @@ class CustomFormWithTitleWidget extends StatelessWidget {
     this.isImportant = false,
     this.isOption = false,
     this.wid,
+    required this.validation,
+     this.isNum,
   });
   final bool? isImportant;
   final TextEditingController model;
@@ -20,7 +23,10 @@ class CustomFormWithTitleWidget extends StatelessWidget {
   final int? lineNum;
   final bool isOption;
   final double? wid;
+  final bool? isNum;
 
+ 
+  final Function(String? value) validation;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -48,7 +54,8 @@ class CustomFormWithTitleWidget extends StatelessWidget {
         SizedBox(
           width: wid == null ? 324.w : wid,
           // height: 50.h,
-          child: TextFormField(
+          child: TextFormField(keyboardType: isNum==true? TextInputType.numberWithOptions():null,
+            validator: (value) => validation(value),
             maxLines: lineNum,
             controller: model,
             decoration: InputDecoration(hintText: hintForm),

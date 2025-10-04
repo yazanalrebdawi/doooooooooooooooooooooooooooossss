@@ -1,17 +1,19 @@
 
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../../user/core/utiles/validator.dart';
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
 
 class ContactInfoWidget extends StatelessWidget {
   const ContactInfoWidget({
     super.key,
-    required this.phone,
+    required this.phone, required this.email,
   });
 
   final TextEditingController phone;
-
+  final TextEditingController email;
   @override
   Widget build(BuildContext context) {
     return Container(margin: EdgeInsets.symmetric(vertical: 16.h),
@@ -59,8 +61,8 @@ class ContactInfoWidget extends StatelessWidget {
                     SizedBox(height: 8.h,),    
                   SizedBox(
                     width: 324.w,
-                    height: 50.h,
-                    child: TextFormField(
+                    height: 70.h,
+                    child: TextFormField(validator: (value) => Validator.notNullValidation(value),
     controller: phone,
     decoration: InputDecoration(
       hintText: '+20 123 456 7890',
@@ -83,7 +85,7 @@ class ContactInfoWidget extends StatelessWidget {
                     width: 324.w,
                     height: 50.h,
                     child: TextFormField(
-    controller: phone,
+    controller: email,
     decoration: InputDecoration(
       hintText: 'info@elsharkawyauto.com',
     ),

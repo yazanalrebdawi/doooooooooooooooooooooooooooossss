@@ -1,18 +1,30 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/remoute_dealer_data_source.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/Log_in_page.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/home_Page1.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Change_status_store.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Custom_Button_With_icon.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Location_selection_widget.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Select_Store_type_widget.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/bottom_navigationBar_of_Edit_Store.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/contectI_info_widget.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/form_edit_profile_widget.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/upload_logo_store_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import '../../../reels/presentation/widget/Custom_app_bar.dart';
+import '../../data/remouteData/home_page_state.dart';
+import '../manager/home_page_cubit.dart';
+import '../widget/Category_Section_widget.dart';
+import '../widget/Change_status_store.dart';
+import '../widget/Custom_Button_With_icon.dart';
+import '../widget/Location_selection_widget.dart';
+import '../widget/Upload_Product_images_widdget.dart';
+import '../widget/bottom_navigationBar_of_Edit_Store.dart';
+import '../widget/contectI_info_widget.dart';
+import '../widget/form_ProductAndDescriptionWidget.dart';
+import '../widget/form_edit_profile_widget.dart';
+import '../widget/priceAndQuantityWidget.dart';
+import 'edit_Prodect_page.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -38,6 +50,7 @@ class EditStoreProfile extends StatefulWidget {
   final String openTime;
   final String lat;
   final String log;
+ 
   @override
   State<EditStoreProfile> createState() => _EditStoreProfileState();
 }
@@ -57,80 +70,138 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
     lonValue = widget.log;
     super.initState();
   }
-
+GlobalKey<FormState> form = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     late bool isAvaiable = true;
     return Scaffold(
+      appBar: CustomAppBar(
+        backgroundColor: Color(0xffffffff),
+        title: 'Edit Store profile',
+        subtitle: 'Keep your store details up to date for better\nvisibility and trust',
+        ontap: () {
+          BlocProvider.of<HomePageCubit>(context).getDataProfile();
+        },
+      ),
       backgroundColor: AppColors.background,
       // appBar: AppBar(),
       // bottomNavigationBar: BottonNavigationOfEditStore(isAvaialble: isAvaiable),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
-          child: Center(
-            child: Column(
-              children: [
-                formEditProfileWidget(
-                  storeName: widget.storeName,
-                  storeDescription: widget.storeDescription,
+      body: BlocListener<HomePageCubit, HomepageState>(
+        listener: (context, state) {
+          if (state.isLoadingeditProfile == true) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: CustomSnakeBar(text: 'Add Car is Success'),
+                backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                elevation: 0,
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.only(
+                  top: 20, // مسافة من الأعلى
+                  left: 10,
+                  right: 10,
                 ),
-                // AddStoreLogoWidget(),
-                ContactInfoWidget(phone: widget.phone),
-                locationSelectWidget(
-                  lat: (value) {
-                    latValue = value;
-                  },
-                  lon: (value) {
-                    lonValue = value;
-                  },
-                  location: widget.location,
-                  linkGoogle: widget.email,
+              ),
+            );
+            BlocProvider.of<HomePageCubit>(context).getDataProfile();
+            Navigator.pop(context);
+          } else if (state.error != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: CustomSnakeBar(
+                  text: 'failure edit Store ',
+                  isFailure: true,
                 ),
-                // storeTypeSelectWidget(),
-                changeStatusStoreWidget(
-                  openungTime: (String value) {
-                    start = value;
-                  },
-                  closeTime: (String value) {
-                    close = value;
-                    print(value);
-                  },
-                  day: (daysSelected) {
-                    print(daysSelected);
-                    days = daysSelected;
-                  },
+                backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                elevation: 0,
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.only(
+                  top: 20, // مسافة من الأعلى
+                  left: 10,
+                  right: 10,
                 ),
+              ),
+            );
+          }
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+            child: Center(
+              child: Form(
+                key: form,
+                child: Column(
+                  children: [
+                    formEditProfileWidget(
+                      storeName: widget.storeName,
+                      storeDescription: widget.storeDescription,
+                    ),
+                    // AddStoreLogoWidget(),
+                    ContactInfoWidget(phone: widget.phone,email: widget.email,),
+                    locationSelectWidget(
+                      lat: (value) {
+                        latValue = value;
+                      },
+                      lon: (value) {
+                        lonValue = value;
+                      },
+                      location: widget.location,
+                      linkGoogle: widget.email,
+                    ),
+                    // storeTypeSelectWidget(),
+                    changeStatusStoreWidget(
+                      openungTime: (String value) {
+                        start = value;
+                      },
+                      closeTime: (String value) {
+                        close = value;
+                        print(value);
+                      },
+                      day: (daysSelected) {
+                        print(daysSelected);
+                        days = daysSelected;
+                      },
+                    ),
 
-                // selectStoreStatus(
-                //   toggleStatus: (value) {
-                //     // print(value);
-                //     isAvaiable = value;
-                //     print(isAvaiable);
-                //   },
-                // ),
-                BottonNavigationOfEditStore(
-                  onTap: () {
-                    RemouteDealerDataSource().editDataProfile(
-                      widget.storeName.text,
-                      widget.storeDescription.text,
-                      widget.phone.text,
-                      close.toString(),
-                      start.toString(),
-                      latValue,
-                      lonValue,
-                      days,
-                    );
-                  },
-                  isAvaialble: isAvaiable,
-                  name: widget.storeName.text,
-                  descraption: widget.storeDescription.text,
-                  phone: widget.phone.text,
-                  email: widget.email.text,
-                  location: widget.location.text,
-                  linkGoogle: widget.email.text,
+                    // selectStoreStatus(
+                    //   toggleStatus: (value) {
+                    //     // print(value);
+                    //     isAvaiable = value;
+                    //     print(isAvaiable);
+                    //   },
+                    // ),
+                    BottonNavigationOfEditStore(
+                      reset: () {
+                        widget.storeName.text = '';
+                        widget.storeDescription.text = '';
+                        widget.phone.text = '';
+                        days = [];
+                      },
+                      onTap: () {
+                            if (form.currentState!.validate()) {
+                               BlocProvider.of<HomePageCubit>(context).EditDataProfile(
+                          widget.storeName.text,
+                          widget.storeDescription.text,
+                          widget.phone.text,
+                          close.toString(),
+                          start.toString(),
+                          latValue,
+                          lonValue,
+                          days,
+                        );
+                            }
+                       
+                      },
+                      isAvaialble: isAvaiable,
+                      name: widget.storeName.text,
+                      descraption: widget.storeDescription.text,
+                      phone: widget.phone.text,
+                      email: widget.email.text,
+                      location: widget.location.text,
+                      linkGoogle: widget.email.text,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

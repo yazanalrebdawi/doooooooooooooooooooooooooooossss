@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/google_map.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:latlong2/latlong.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import '../page/google_map.dart';
 
 class locationSelectWidget extends StatelessWidget {
   const locationSelectWidget({
@@ -48,6 +50,7 @@ class locationSelectWidget extends StatelessWidget {
             ],
           ),
           SizedBox(height: 17.h),
+
           InkWell(
             onTap: () async {
               Navigator.push(
@@ -104,6 +107,7 @@ class locationSelectWidget extends StatelessWidget {
               ),
             ),
           ),
+
           SizedBox(height: 12.h),
           SizedBox(
             width: 324.w,

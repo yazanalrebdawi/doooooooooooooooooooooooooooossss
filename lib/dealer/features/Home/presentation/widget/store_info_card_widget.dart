@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/manager/home_page_cubit.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/status_Card.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'status_Card.dart';
 
 class StoreInfoCardWidget extends StatefulWidget {
   StoreInfoCardWidget({super.key, required this.infoStore});
@@ -45,7 +46,7 @@ class _StoreInfoCardWidgetState extends State<StoreInfoCardWidget> {
 }
 
 class StoreInfoState {
-  final IconData icon;
+  final String icon;
   final String labal;
   final int value;
 

@@ -13,7 +13,7 @@ class ReelDataModel {
   bool isActive;
   int viewsCount;
   int likesCount;
-
+  String createdAt;
   dynamic deletedAt;
   int dealer;
 
@@ -29,8 +29,8 @@ class ReelDataModel {
     required this.isActive,
     required this.viewsCount,
     required this.likesCount,
-
-    required this.deletedAt,
+    required this.createdAt,
+    required this.deletedAt,// تعديل
     required this.dealer,
   });
 
@@ -46,7 +46,7 @@ class ReelDataModel {
     bool? isActive,
     int? viewsCount,
     int? likesCount,
-
+    String? createdAt,  //تعديل 
     dynamic deletedAt,
     int? dealer,
   }) => ReelDataModel(
@@ -62,6 +62,7 @@ class ReelDataModel {
     viewsCount: viewsCount ?? this.viewsCount,
     likesCount: likesCount ?? this.likesCount,
     deletedAt: deletedAt ?? this.deletedAt,
+    createdAt: createdAt ?? this.createdAt,// تعديل
     dealer: dealer ?? this.dealer,
   );
 
@@ -97,7 +98,7 @@ class ReelDataModel {
       isActive: map['is_active'] as bool,
       viewsCount: map['views_count'] as int,
       likesCount: map['likes_count'] as int,
-      // createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
+      createdAt: map['created_at'] as String,// تعديل
       deletedAt: map['deleted_at'] as dynamic,
       dealer: map['dealer'] as int,
     );

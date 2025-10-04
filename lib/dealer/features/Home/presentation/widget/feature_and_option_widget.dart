@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_checkBox_with_Title.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import 'custom_checkBox_with_Title.dart';
 
 class featuresAndOptionsWidget extends StatelessWidget {
   const featuresAndOptionsWidget({super.key});

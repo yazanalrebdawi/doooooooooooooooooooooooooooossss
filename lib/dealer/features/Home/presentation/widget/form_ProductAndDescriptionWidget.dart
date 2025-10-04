@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../../../../../user/core/utiles/validator.dart';
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
 
 class formProductAndDescrictionWidget extends StatelessWidget {
   const formProductAndDescrictionWidget({
@@ -49,6 +51,7 @@ class formProductAndDescrictionWidget extends StatelessWidget {
                 width: 324.w,
                 height: 50.h,
                 child: TextFormField(
+                  validator: (value) => Validator.notNullValidation(value),
                   controller: product,
                   decoration: InputDecoration(
                     hintText: 'e.g., Brake Pads - Toyota',
@@ -90,6 +93,7 @@ class formProductAndDescrictionWidget extends StatelessWidget {
                 width: 324.w,
 
                 child: TextFormField(
+                  validator: (value) => Validator.notNullValidation(value),
                   controller: Description,
                   maxLines: 3,
                   decoration: InputDecoration(

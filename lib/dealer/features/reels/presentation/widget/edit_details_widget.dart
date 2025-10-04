@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_form_with_title.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/widget/time_picker.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../../Core/style/app_text_style.dart';
+import '../../../Home/presentation/widget/custom_form_with_title.dart';
 
 class editDetailsWidget extends StatelessWidget {
   const editDetailsWidget({
@@ -22,9 +22,10 @@ class editDetailsWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Edit Details', style: AppTextStyle.poppins514),
+            Text('Edit Details', style: AppTextStyle.poppins516),
             SizedBox(height: 16.w),
             CustomFormWithTitleWidget(
+              validation: (value) {},
               model: title,
               hintForm: 'title reel',
               title: ' Title',
@@ -32,6 +33,7 @@ class editDetailsWidget extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             CustomFormWithTitleWidget(
+              validation: (value) {},
               model: descraption,
               hintForm:
                   'Summer collection is here! Check out our\nlatest styles 🌟 #fashion #summer #style',
@@ -229,28 +231,28 @@ class editDetailsWidget extends StatelessWidget {
             //     ],
             //   ),
             // ),
-            SizedBox(height: 16.h),
-            Text('Schedule', style: AppTextStyle.poppins514),
-            SizedBox(height: 10.h),
-            Row(
-              children: [
-                Expanded(
-                  child: SelectDateWidget(
-                    EditData: (Date) {
-                      print(Date);
-                    },
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: TimePickerWidget(
-                    editDateValue: (v) {
-                      print(v);
-                    },
-                  ),
-                ),
-              ],
-            ),
+            // SizedBox(height: 16.h),
+            // Text('Schedule', style: AppTextStyle.poppins514),
+            // SizedBox(height: 10.h),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: SelectDateWidget(
+            //         EditData: (Date) {
+            //           print(Date);
+            //         },
+            //       ),
+            //     ),
+            //     SizedBox(width: 8.w),
+            //     Expanded(
+            //       child: TimePickerWidget(
+            //         editDateValue: (v) {
+            //           print(v);
+            //         },
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

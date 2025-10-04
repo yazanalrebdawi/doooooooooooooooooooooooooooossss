@@ -1,10 +1,17 @@
 import 'dart:developer';
 
+import 'package:dooss_business_app/dealer/Core/network/dealers_App_dio.dart';
+import 'package:dooss_business_app/dealer/Core/network/service_locator.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/page/home_Page1.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigotorPage.dart';
 import 'package:dooss_business_app/dealer/features/auth/manager/auth_dealer_cubit.dart';
+import 'package:dooss_business_app/dealer/features/auth/presentation/manager/Auth_state_dealers.dart';
+import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
+import 'package:dooss_business_app/user/core/services/token_service.dart';
 import 'package:dooss_business_app/user/features/auth/data/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +25,8 @@ import 'auth_button.dart';
 
 class LoginScreenButtonsSection extends StatelessWidget {
   final CreateAccountParams params;
-
-  const LoginScreenButtonsSection({super.key, required this.params});
+  final TextEditingController? code;
+  const LoginScreenButtonsSection({super.key, required this.params, this.code});
 
   @override
   Widget build(BuildContext context) {
@@ -53,28 +60,53 @@ class LoginScreenButtonsSection extends StatelessWidget {
             return BlocSelector<AppManagerCubit, AppManagerState, bool>(
               selector: (managerState) => managerState.isDealer,
               builder: (context, isDealer) {
-                return AuthButton(
-                  onTap: isLoading
-                      ? null
-                      : () {
-                          if (params.formState.currentState!.validate()) {
-                            final signinParams = SigninParams();
-                            signinParams.email.text = params.userName.text;
-                            signinParams.password.text = params.password.text;
-                            if (isDealer) {
-                              //todo -------------------------------------
-                              // context
-                              //     .read<AuthDealerCubit>()
-                              //     .signIn("", " ", "");
-                            } else {
-                              context.read<AuthCubit>().signIn(signinParams);
-                            }
-                          }
+                return BlocListener<AuthCubitDealers, AuthStateDealers>(
+                  listener: (context, state) {
+                    if (state.dataUser != null) {
+                      context.read<AppManagerCubit>().saveUserData(UserModel(
+                            id: state.dataUser!.user.id,
+                            name: state.dataUser!.user.name, latitude: '',
+                            createdAt: DateTime.now(), longitude: '',
+                            phone: state.dataUser!.user.phone,
+                            role:
+                                'dealer', // Assuming dealers have the role 'dealer'
+                            verified: state.dataUser!.user.verified,
+                          ));
+                      TokenService.saveToken(state.dataUser!.access);
+                      DealersAppDio().addToken(state.dataUser!.access);
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return NavigatorPage();
                         },
-                  buttonText:
-                      AppLocalizations.of(context)?.translate('login') ??
-                          'Login',
-                  isLoading: isLoading,
+                      ));
+                    }
+                  },
+                  child: AuthButton(
+                    onTap: isLoading
+                        ? null
+                        : () {
+                            if (params.formState.currentState!.validate()) {
+                              final signinParams = SigninParams();
+                              signinParams.email.text = params.userName.text;
+                              signinParams.password.text = params.password.text;
+                              if (isDealer) {
+                                //todo -------------------------------------
+                                // context
+                                //     .read<AuthDealerCubit>()
+                                //     .signIn("", " ", "");
+                                context.read<AuthCubitDealers>().SignIn(
+                                    name: params.userName.text,
+                                    password: params.password.text,
+                                    code: code?.text ?? '');
+                                print("the code dddddddddd is ");
+                              } else {}
+                            }
+                          },
+                    buttonText:
+                        AppLocalizations.of(context)?.translate('login') ??
+                            'Login',
+                    isLoading: isLoading,
+                  ),
                 );
               },
             );

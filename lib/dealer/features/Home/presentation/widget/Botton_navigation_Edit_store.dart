@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/models/product_data_model.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/home_page_state.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/remoute_dealer_data_source.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/manager/home_page_cubit.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/edit_Prodect_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../data/models/product_data_model.dart';
+import '../../data/remouteData/home_page_state.dart';
+import '../manager/home_page_cubit.dart';
+import '../page/edit_Prodect_page.dart';
 
 class ProductListwidget extends StatelessWidget {
   const ProductListwidget({super.key});
@@ -19,10 +19,8 @@ class ProductListwidget extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: BlocBuilder<HomePageCubit, HomepageState>(
-        buildWhen: (previous, current) =>
-            previous.allProduct != current.allProduct,
         builder: (context, state) {
-          if (state.isLoadingFecthProductData) {
+          if (state.isLoadingeditProfile==true) {
             return SizedBox(
               height: 300.h,
               child: Center(
@@ -80,19 +78,7 @@ class productInfoCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                'http://10.0.2.2:8010${item.mainImage ?? ''}',
-                width: 60.w,
-                height: 60.w,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+          ImageProduct(item: item.mainImage),
           SizedBox(width: 12.w),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -211,6 +197,61 @@ class productInfoCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+// class imageProduct extends StatelessWidget {
+//   const imageProduct({
+//     super.key,
+//     required this.item,
+//   });
+
+//   final String? item;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       width: 60,
+//       height: 60,
+//       child: ClipRRect(
+//         borderRadius: BorderRadius.circular(10),
+//         child: Image.network(
+//           'http://10.0.2.2:8010${item.mainImage ?? ''}',
+//           width: 60.w,
+//           height: 60.w,
+//           fit: BoxFit.cover,
+//         ),
+//       ),
+//     );
+//   }
+// }
+class ImageProduct extends StatelessWidget {
+  const ImageProduct({
+    super.key,
+    required this.item,
+  });
+
+  final dynamic? item; // لو string url
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60,
+      height: 60,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: item == null || item!.isEmpty
+            ? Container(color: Colors.grey[300]) // بدون صورة
+            : Image.network(
+                '$item',
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => 
+                    Container(color: AppColors.borderColor), // لو صار خطأ بالتحميل
+              ),
       ),
     );
   }

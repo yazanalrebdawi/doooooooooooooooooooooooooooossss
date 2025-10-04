@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/features/reels/data/models/Reels_data_model.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/page/my_reels_page.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/widget/body_reel.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/widget/video_palyer_widget.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../data/models/Reels_data_model.dart';
+import 'body_reel.dart';
+import 'video_palyer_widget.dart';
 
 class ReelCardWidget extends StatelessWidget {
   const ReelCardWidget({super.key, required this.item});
@@ -27,15 +28,15 @@ class ReelCardWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // videoPlayerWidget(Video: item.video),
-          Container(
-            width: double.infinity,
-            height: 632,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.black,
-            ),
-          ),
+          VideoPlayerWidget(videoUrl: item.video??''),
+          // Container(
+          //   width: double.infinity,
+          //   height: 632,
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(10),
+          //     color: Colors.black,
+          //   ),
+          // ),
           bodyReel(item: item),
         ],
       ),

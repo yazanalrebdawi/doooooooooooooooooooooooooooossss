@@ -1,4 +1,7 @@
 import 'dart:developer';
+import 'package:dooss_business_app/dealer/Core/network/dealers_App_dio.dart';
+import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remoute_data_Source.dart';
+import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:dooss_business_app/user/core/models/enums/app_them_enum.dart';
@@ -14,6 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
+import 'dealer/Core/network/service_locator.dart';
 import 'user/core/services/locator_service.dart' as di;
 import 'user/core/utils/performance_monitor.dart';
 import 'user/core/style/app_theme.dart';
@@ -22,7 +26,7 @@ import 'user/core/localization/app_localizations.dart';
 
 Future<void> main() async {
   log('🚀 MAIN: Starting app initialization...');
-
+  // setUpDealer();
   //* 1. Ensure binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
   log('✅ MAIN: Flutter binding initialized');
@@ -36,6 +40,7 @@ Future<void> main() async {
   log('🔧 MAIN: Initializing dependencies...');
   await di.init();
   log('✅ MAIN: Dependencies initialized');
+  log('🎯 DI: ALL (User + Dealer) dependencies initialized');
 
   //* 4. Initialize performance monitoring
   PerformanceMonitor().init();
@@ -92,22 +97,26 @@ class SimpleReelsApp extends StatelessWidget {
       },
       child: BlocBuilder<AppManagerCubit, AppManagerState>(
         builder: (context, state) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            theme: AppThemes.lightTheme,
-            darkTheme: AppThemes.darkTheme,
-            themeMode: state.themeMode == AppThemeEnum.light
-                ? ThemeMode.light
-                : ThemeMode.dark,
-            routerConfig: AppRouter.router,
-            locale: state.locale,
-            supportedLocales: const [Locale('en'), Locale('ar')],
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+          return BlocProvider(
+            create: (context) => AuthCubitDealers(
+                DealersAuthRemouteDataSource(dio: DealersAppDio().dio)),
+            child: MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              theme: AppThemes.lightTheme,
+              darkTheme: AppThemes.darkTheme,
+              themeMode: state.themeMode == AppThemeEnum.light
+                  ? ThemeMode.light
+                  : ThemeMode.dark,
+              routerConfig: AppRouter.router,
+              locale: state.locale,
+              supportedLocales: const [Locale('en'), Locale('ar')],
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+            ),
           );
         },
       ),

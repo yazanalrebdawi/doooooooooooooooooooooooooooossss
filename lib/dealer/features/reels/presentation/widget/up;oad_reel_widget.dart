@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/reels/presentation/widget/Custom_uplaod_video.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import 'Custom_uplaod_video.dart';
 
 class UploadReelWidget extends StatelessWidget {
   UploadReelWidget({super.key, required this.video});

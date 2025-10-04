@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../Core/style/app_Colors.dart';
 
 class CustomButtonWithIcon extends StatelessWidget {
   const CustomButtonWithIcon({
@@ -19,7 +20,7 @@ class CustomButtonWithIcon extends StatelessWidget {
         ontap();
       },
       child: Container(
-        margin: EdgeInsets.only(top: 24.h, bottom: 16.h),
+    
         width: 358.w,
         height: 60.h,
         decoration: BoxDecoration(

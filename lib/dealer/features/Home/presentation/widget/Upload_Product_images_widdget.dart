@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../../Core/style/app_Colors.dart';
 
 class uploadProductImagesWidget extends StatelessWidget {
   uploadProductImagesWidget({super.key, required this.Setimage});
@@ -32,7 +33,7 @@ class uploadProductImagesWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              SvgPicture.asset('assets/icons/coin.svg'),
+              Icon(Icons.image, color: AppColors.primary),
               SizedBox(width: 4.w),
               Text(
                 'product images',

@@ -1,22 +1,24 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
-import 'package:dooss_business_app/dealer/Core/style/app_text_style.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/models/product_data_model.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/home_page_state.dart';
-import 'package:dooss_business_app/dealer/features/Home/data/remouteData/remoute_dealer_data_source.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/manager/home_page_cubit.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/edit_Profile_page.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/home_Page1.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Custom_Button_With_icon.dart';
-import 'package:dooss_business_app/dealer/features/reels/data/remoute_data_reels_source.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../../Core/style/app_Colors.dart';
+import '../../../../Core/style/app_text_style.dart';
+import '../../../reels/presentation/widget/Custom_app_bar.dart';
+import '../../data/models/product_data_model.dart';
+import '../../data/remouteData/home_page_state.dart';
+import '../manager/home_page_cubit.dart';
+import '../widget/Category_Section_widget.dart';
+import '../widget/Custom_Button_With_icon.dart';
+import '../widget/Upload_Product_images_widdget.dart';
+import '../widget/form_ProductAndDescriptionWidget.dart';
+import '../widget/priceAndQuantityWidget.dart';
+import 'edit_Prodect_page.dart';
 
 class EditProdectPage extends StatefulWidget {
   EditProdectPage({
@@ -61,9 +63,6 @@ class _EditProdectPageState extends State<EditProdectPage> {
         child: Padding(
           padding: EdgeInsets.only(top: 50.h),
           child: BlocListener<HomePageCubit, HomepageState>(
-            listenWhen: (previous, current) =>
-                previous.isSuccessEditProduct != current.isSuccessEditProduct ||
-                previous.error != current.error,
             listener: (context, state) {
               if (state.isSuccessEditProduct) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -113,14 +112,27 @@ class _EditProdectPageState extends State<EditProdectPage> {
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.arrow_back,
-                            color: Color(0xff4B5563),
-                            size: 20,
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              BlocProvider.of<HomePageCubit>(
+                                context,
+                              ).getdataproduct();
+                            },
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: Color(0xff4B5563),
+                              size: 20,
+                            ),
                           ),
                           SizedBox(width: 12.w),
-                          Icon(Icons.oil_barrel, color: AppColors.primary),
+                          // Icon(Icons.oil_barrel, color: AppColors.primary),
+                          SvgPicture.asset(
+                            'assets/icons/product.svg',
+                            width: 18.w,
+                          ),
                           Text(
+                            overflow: TextOverflow.ellipsis,
                             '  ${widget.item.name}',
                             style: AppTextStyle.poppins616blueDark,
                           ),
@@ -210,39 +222,39 @@ class _EditProdectPageState extends State<EditProdectPage> {
                                 ),
                               ),
                               SizedBox(height: 24.h),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.business_outlined,
-                                    color: AppColors.silverDark,
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    'Brand',
-                                    style: AppTextStyle.poppins514BlueDark,
-                                  ),
-                                  // Text('*', style: TextStyle(color: Colors.redAccent)),
-                                ],
-                              ),
-                              SizedBox(height: 17.h),
-                              SizedBox(
-                                width: 324.w,
-                                // height: 55.h,
-                                child: DropdownButtonFormField(
-                                  icon: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: Colors.black,
-                                  ),
-                                  hint: Text(
-                                    ' Toyota',
-                                    style: AppTextStyle.poppinsw416black,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  items: [],
-                                  onChanged: (value) {},
-                                ),
-                              ),
-                              SizedBox(height: 24.h),
+                              // Row(
+                              //   children: [
+                              //     Icon(
+                              //       Icons.business_outlined,
+                              //       color: AppColors.silverDark,
+                              //     ),
+                              //     SizedBox(width: 8.w),
+                              //     Text(
+                              //       'Brand',
+                              //       style: AppTextStyle.poppins514BlueDark,
+                              //     ),
+                              //     // Text('*', style: TextStyle(color: Colors.redAccent)),
+                              //   ],
+                              // ),
+                              // SizedBox(height: 17.h),
+                              // SizedBox(
+                              //   width: 324.w,
+                              //   // height: 55.h,
+                              //   child: DropdownButtonFormField(
+                              //     icon: Icon(
+                              //       Icons.keyboard_arrow_down,
+                              //       color: Colors.black,
+                              //     ),
+                              //     hint: Text(
+                              //       ' Toyota',
+                              //       style: AppTextStyle.poppinsw416black,
+                              //       textAlign: TextAlign.center,
+                              //     ),
+                              //     items: [],
+                              //     onChanged: (value) {},
+                              //   ),
+                              // ),
+                              // SizedBox(height: 24.h),
                               Row(
                                 children: [
                                   Expanded(
@@ -269,6 +281,8 @@ class _EditProdectPageState extends State<EditProdectPage> {
                                           width: 137.w,
                                           // height: 55.h,
                                           child: TextFormField(
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(),
                                             controller: widget.price,
                                             decoration: InputDecoration(
                                               hintText: widget.price.text,
@@ -303,6 +317,8 @@ class _EditProdectPageState extends State<EditProdectPage> {
                                           width: 137.w,
                                           // height: 55.h,
                                           child: TextFormField(
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(),
                                             controller: widget.discount,
                                             decoration: InputDecoration(
                                               hintText: widget.discount.text,
@@ -385,8 +401,8 @@ class _EditProdectPageState extends State<EditProdectPage> {
                                   ),
                                   items: [
                                     DropdownMenuItem(
-                                      child: Text('ghass'),
-                                      value: 'ghassan',
+                                      child: Text('lighting'),
+                                      value: 'lighting',
                                     ),
                                     DropdownMenuItem(
                                       child: Text('screens'),
@@ -419,13 +435,13 @@ class _EditProdectPageState extends State<EditProdectPage> {
                         ontap: () {
                           // print(widget.productName);
                           // print(Category);
-                          print(widget.item.id);
-                          print(widget.productName.text);
-                          print(widget.price.text);
-                          print(widget.discount.text);
-                          print(widget.item.isAvailable);
-                          print(Category);
-
+                          // print(widget.item.id);
+                          // print(widget.productName.text);
+                          // print(widget.price.text);
+                          // print(widget.discount.text);
+                          // print(widget.item.isAvailable);
+                          // print(Category);
+                          // if(imageData!=null){
                           BlocProvider.of<HomePageCubit>(context).EditProduct(
                             widget.item.id,
                             widget.productName.text,
@@ -436,6 +452,8 @@ class _EditProdectPageState extends State<EditProdectPage> {
                             imageData,
                           );
                         },
+
+                        // },
                       ),
 
                       // Icon(Icons.line)
@@ -480,41 +498,41 @@ class _editProductImageState extends State<editProductImage> {
         Container(
           width: 308.w,
           height: 85.h,
-          child: SingleChildScrollView(
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image = await picker.pickImage(
-                      source: ImageSource.gallery,
-                    );
-                    imagelistner.value = image;
-                    widget.imagedata(image!);
-                  },
-                  child: ValueListenableBuilder(
-                    valueListenable: imagelistner,
-                    builder: (context, value, child) {
-                      if (value == null) {
-                        return Container(
-                          width: 94.w,
-                          height: 80.h,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.borderColor,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Center(
-                            child: Icon(Icons.add, color: AppColors.silverDark),
-                          ),
-                        );
-                      } else {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(8.r),
-                          child: Container(
-                            margin: EdgeInsets.only(right: 12.w),
+          child: BlocListener<HomePageCubit, HomepageState>(
+            listener: (context, state) {
+              if (state.isLoadingeditProfile == true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: CustomSnakeBar(text: 'change data profile'),
+                    backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                    elevation: 0,
+                    behavior: SnackBarBehavior.floating,
+                    margin: EdgeInsets.only(
+                      top: 20, // مسافة من الأعلى
+                      left: 10,
+                      right: 10,
+                    ),
+                  ),
+                );
+              }
+            },
+            child: SingleChildScrollView(
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image = await picker.pickImage(
+                        source: ImageSource.gallery,
+                      );
+                      imagelistner.value = image;
+                      widget.imagedata(image!);
+                    },
+                    child: ValueListenableBuilder(
+                      valueListenable: imagelistner,
+                      builder: (context, value, child) {
+                        if (value == null) {
+                          return Container(
                             width: 94.w,
                             height: 80.h,
                             decoration: BoxDecoration(
@@ -524,20 +542,42 @@ class _editProductImageState extends State<editProductImage> {
                               ),
                               borderRadius: BorderRadius.circular(8.r),
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.r),
-                              child: Image.file(
-                                File(value.path), // ✅ تحويل XFile إلى File
-                                fit: BoxFit.cover,
+                            child: Center(
+                              child: Icon(
+                                Icons.add,
+                                color: AppColors.silverDark,
                               ),
                             ),
-                          ),
-                        );
-                      }
-                    },
+                          );
+                        } else {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(8.r),
+                            child: Container(
+                              margin: EdgeInsets.only(right: 12.w),
+                              width: 94.w,
+                              height: 80.h,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.borderColor,
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.r),
+                                child: Image.file(
+                                  File(value.path), // ✅ تحويل XFile إلى File
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -585,7 +625,14 @@ class CustomSnakeBar extends StatelessWidget {
                     size: 20.r,
                   ),
             SizedBox(width: 8.w),
-            Text(text, style: AppTextStyle.poppins416white),
+            SizedBox(
+              width: 250.w,
+              child: Text(
+                text,
+                style: AppTextStyle.poppins416white,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),
