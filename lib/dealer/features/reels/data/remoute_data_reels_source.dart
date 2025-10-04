@@ -4,6 +4,9 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:dooss_business_app/user/core/network/api_urls.dart';
+import 'package:dooss_business_app/user/core/network/failure.dart';
+import 'package:dooss_business_app/user/core/services/locator_service.dart';
 
 import 'package:image_picker/image_picker.dart';
 
@@ -22,16 +25,17 @@ class remouteDataReelsSource {
   remouteDataReelsSource({required this.dio});
   Future<Either<String, List<ReelDataModel>>> getDataReels() async {
     try {
-      print(getIt<Dio>().options.headers);
+      print(appLocator<Dio>().options.headers);
       var response = await dio.get(
-        '${AppUrl.BaseUrl}/reels/my-reels/',
+        '${ApiUrls.baseURl}/reels/my-reels/',
         // options: Options(headers: header),
       );
       print(response.data);
       List<ReelDataModel> dataResponse = (response.data as List).map((item) {
         return ReelDataModel.fromMap(item);
       }).toList();
-
+    print('🔹 LOGIN REQUEST HEADERS: ${dio.options.headers}');
+     print('🔹 LOGIN URL: ${ApiUrls.baseURl}/reels/my-reels/');
       return right(dataResponse);
     } catch (error) {
       print(error.toString());
@@ -44,7 +48,7 @@ class remouteDataReelsSource {
     String title,
     String descraption,
   ) async {
-    var url = '${AppUrl.BaseUrl}/reels/';
+    var url = '${ApiUrls.baseURl}/reels/';
     Map<String,dynamic> customHeader = Map.from(dio.options.headers);
     customHeader.addAll({'Content-Type': 'application/json'});//////تعديل  ممكن تنحذف
 
@@ -79,13 +83,13 @@ class remouteDataReelsSource {
       print('okey');
       return right(true);
     } catch (e) {
-      print(Failure.handleExcaption(e).massageError);
+      print(e.toString());
       if (e is DioException ) {
         print(e.response!.data);
       }
       // print(e.toString());
 
-      return left(Failure.handleExcaption(e));
+      return left(Failure.handleError(e as DioException));
     }
   }
 
@@ -132,7 +136,7 @@ class remouteDataReelsSource {
     //  /
     try {
       var response = await dio.request(
-        '${AppUrl.BaseUrl}/reels/$id/',
+        '${ApiUrls.baseURl}/reels/$id/',
         options: Options(
           method: 'PATCH',
           // headers: header
@@ -147,12 +151,12 @@ class remouteDataReelsSource {
         print(error.response!.statusMessage);
       }
       print(error.toString());
-      return left(Failure.handleExcaption(error));
+      return left(Failure.handleError(error as DioException));
     }
   }
 
   Future<Either<Failure, bool>> deleteReel(int id) async {
-    var url = '${AppUrl.BaseUrl}/reels/$id/';
+    var url = '${ApiUrls.baseURl}/reels/$id/';
     try {
       var response = await dio.delete(
         url,
@@ -161,11 +165,11 @@ class remouteDataReelsSource {
       if (response.statusCode == 204) {
         return right(true);
       } else {
-        return left(Failure(massageError: 'Error Dalete'));
+        return left(Failure( message: 'Error Dalete'));
       }
     } catch (e) {
       print(e.toString());
-      return left(Failure.handleExcaption(e));
+      return left(Failure.handleError(e as DioException));
     }
   }
 }

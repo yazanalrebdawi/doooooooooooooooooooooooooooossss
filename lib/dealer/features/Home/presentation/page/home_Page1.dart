@@ -1,3 +1,4 @@
+import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +35,7 @@ class HomePage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomePageCubit(getIt<RemouteDealerDataSource>())
+      create: (context) => HomePageCubit(appLocator<RemouteDealerDataSource>())
         ..getdataproduct()
         ..gatDataDashboard()
         ..getDataProfile(),

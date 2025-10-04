@@ -6,42 +6,52 @@ import '../services/auth_service.dart';
 import '../services/navigation_service.dart';
 
 class AppDio {
+  // ✅ Singleton instance
+  static final AppDio _instance = AppDio._internal();
   late Dio _dio;
 
-  AppDio() {
-    _dio = Dio(BaseOptions(
-      connectTimeout: const Duration(seconds: 15), // Reduced timeout for faster failures
-      receiveTimeout: const Duration(seconds: 30),
-      sendTimeout: const Duration(seconds: 15),
-      contentType: Headers.jsonContentType,
-      // Enable response compression
-      headers: {
-        'Accept-Encoding': 'gzip, deflate, br',
-      },
-    ));
-    
-    // Configure HTTP adapter for better performance
+  // ✅ Factory constructor ensures one instance only
+  factory AppDio() => _instance;
+
+  // ✅ Private constructor
+  AppDio._internal() {
+    _dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 15),
+        contentType: Headers.jsonContentType,
+        headers: {
+          'Accept-Encoding': 'gzip, deflate, br',
+        },
+      ),
+    );
+
+    // Configure HTTP adapter
     _dio.httpClientAdapter = IOHttpClientAdapter()
       ..onHttpClientCreate = (client) {
-        client.maxConnectionsPerHost = 6; // Increase concurrent connections
+        client.maxConnectionsPerHost = 6;
         client.connectionTimeout = const Duration(seconds: 15);
         return client;
       };
-    
+
     _addHeaderToDio();
     _addLogger();
     _addTokenInterceptor();
     _addCacheInterceptor();
-  }                   
-
-  _addHeaderToDio() {
-    _dio.options.headers = {
-      // لا نضيف Content-Type هنا لتجنب التكرار
-    };
   }
 
-  addTokenToHeader(String token) {
+  // ---------------------------------------------------------------------------
+  // 🌍 Configuration & Setup
+  // ---------------------------------------------------------------------------
+
+  _addHeaderToDio() {
+    _dio.options.headers = {};
+  }
+
+  void addTokenToHeader(String token) {
     _dio.options.headers["Authorization"] = "Bearer $token";
+    print('✅ Token added to Dio header');
   }
 
   _addLogger() {
@@ -56,11 +66,8 @@ class AppDio {
         maxWidth: 90,
         enabled: true,
         filter: (options, args) {
-          // don't print requests with uris containing '/posts'
-          if (options.path.contains('/posts')) {
-            return false;
-          }
-          // don't print responses with unit8 list data
+          // Example: skip certain logs if needed
+          if (options.path.contains('/posts')) return false;
           return !args.isResponse || !args.hasUint8ListData;
         },
       ),
@@ -71,7 +78,6 @@ class AppDio {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // قائمة الـ endpoints التي لا تحتاج token
           final authEndpoints = [
             '/users/login/',
             '/users/register/',
@@ -82,90 +88,76 @@ class AppDio {
             '/users/resend-otp/',
             '/users/verify/',
             '/users/refresh/',
+            '/dealers/login/',
           ];
-          
-          final isAuthEndpoint = authEndpoints.any((endpoint) => 
-            options.path.contains(endpoint));
-          
+
+          final isAuthEndpoint =
+              authEndpoints.any((endpoint) => options.path.contains(endpoint));
+
           if (!isAuthEndpoint) {
-            // التحقق من صلاحية الـ token قبل كل request
             final isTokenValid = await AuthService.refreshTokenIfNeeded();
-            
-            
             final token = await TokenService.getToken();
-            print('🔍 Token Interceptor - Token: $token');
-            print('🔍 Token Interceptor - Is token valid: $isTokenValid');
-            
+
+            print('🔍 Interceptor: Token valid? $isTokenValid');
+            print('🔍 Interceptor: Current token: $token');
+
             if (token != null && token.isNotEmpty && isTokenValid) {
               options.headers['Authorization'] = 'Bearer $token';
-              print('🔍 Token Interceptor - Added token to headers');
+              print('✅ Token attached to request');
             } else {
-              print('⚠️ Token Interceptor - No valid token found');
+              print('⚠️ No valid token available');
             }
           } else {
-            print('🔍 Token Interceptor - Auth endpoint, skipping token');
+            print('🔓 Auth endpoint, skipping token attachment');
           }
+
           handler.next(options);
         },
         onError: (error, handler) async {
-          // التعامل مع timeout errors
+          // Handle timeout
           if (error.type == DioExceptionType.connectionTimeout ||
               error.type == DioExceptionType.receiveTimeout ||
               error.type == DioExceptionType.sendTimeout) {
-            print('⏰ Connection timeout error: ${error.message}');
-            print('🔄 Request details: ${error.requestOptions.uri}');
-            
-            // إعادة محاولة للـ timeout errors (مرة واحدة فقط)
+            print('⏰ Timeout error: ${error.message}');
+            print('🔄 Retrying request once...');
             if (error.requestOptions.extra['retry'] != true) {
-              print('🔄 Retrying request due to timeout...');
               error.requestOptions.extra['retry'] = true;
-              
               try {
                 final response = await _dio.fetch(error.requestOptions);
                 handler.resolve(response);
                 return;
               } catch (retryError) {
                 print('❌ Retry failed: $retryError');
-                // الاستمرار مع الـ error الأصلي
               }
             }
           }
-          
+
+          // Handle 401 (expired token)
           if (error.response?.statusCode == 401) {
-            print('🚨 Token expired - attempting to refresh...');
-            print('🚨 Error details: ${error.response?.data}');
-            
-            // محاولة تجديد الـ token
+            print('🚨 Token expired - trying to refresh...');
             final refreshSuccess = await AuthService.refreshToken();
-            
+
             if (refreshSuccess) {
-              print('✅ Token refreshed successfully, retrying request...');
-              
-              // إعادة إرسال الـ request مع الـ token الجديد
+              print('✅ Token refreshed successfully');
               final newToken = await TokenService.getToken();
               if (newToken != null && newToken.isNotEmpty) {
-                error.requestOptions.headers['Authorization'] = 'Bearer $newToken';
-                
-                // إعادة إرسال الـ request
+                error.requestOptions.headers['Authorization'] =
+                    'Bearer $newToken';
                 try {
                   final response = await _dio.fetch(error.requestOptions);
                   handler.resolve(response);
                   return;
                 } catch (retryError) {
-                  print('❌ Retry request failed: $retryError');
-                  handler.next(error);
-                  return;
+                  print('❌ Retried request failed: $retryError');
                 }
               }
             } else {
-              print('❌ Token refresh failed, clearing auth data');
-              print('🔄 User will be redirected to login screen');
+              print('❌ Token refresh failed, clearing session');
               await TokenService.clearToken();
-              
-              // الانتقال التلقائي لشاشة تسجيل الدخول
               NavigationService.navigateToLoginFromAnywhere();
             }
           }
+
           handler.next(error);
         },
       ),
@@ -176,22 +168,25 @@ class AppDio {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          // Add cache control headers for GET requests
           if (options.method.toUpperCase() == 'GET') {
-            options.headers['Cache-Control'] = 'max-age=300'; // 5 minutes cache
+            options.headers['Cache-Control'] = 'max-age=300'; // 5 min cache
           }
           handler.next(options);
         },
         onResponse: (response, handler) {
-          // Log successful responses in debug mode
           if (response.statusCode == 200) {
-            print('✅ Network: ${response.requestOptions.method} ${response.requestOptions.path} - ${response.statusCode}');
+            print(
+                '✅ Network: ${response.requestOptions.method} ${response.requestOptions.path} - ${response.statusCode}');
           }
           handler.next(response);
         },
       ),
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // 📦 Accessor
+  // ---------------------------------------------------------------------------
 
   Dio get dio => _dio;
 }

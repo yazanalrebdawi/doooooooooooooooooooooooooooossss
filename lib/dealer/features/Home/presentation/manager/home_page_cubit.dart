@@ -50,7 +50,7 @@ class HomePageCubit extends Cubit<HomepageState> {
     var result = await data.getDataProduct();
     result.fold(
       (error) {
-        emit(state.copyWith(error: error.massageError,isLoadingGetProduct: false));
+        emit(state.copyWith(error: error.message,isLoadingGetProduct: false));
         print(error.toString());
       },
       (data) {
@@ -132,7 +132,7 @@ class HomePageCubit extends Cubit<HomepageState> {
       !CurrentProduct.isAvailable,
     );
     result.fold((failure) {
-      print(failure.massageError);
+      print(failure.message);
       allProduct[index] = CurrentProduct;
       emit(state.copyWith(allProduct: allProduct));
     }, (data) {});
@@ -165,7 +165,7 @@ class HomePageCubit extends Cubit<HomepageState> {
     );
     result.fold(
       (error) {
-        emit(state.copyWith(error: error.massageError));
+        emit(state.copyWith(error: error.message));
       },
       (isSuccess) {
         print('success');
@@ -212,8 +212,8 @@ class HomePageCubit extends Cubit<HomepageState> {
     );
     result.fold(
       (error) {
-        emit(state.copyWith(error: error.massageError));
-        print(error.massageError);
+        emit(state.copyWith(error: error.message));
+        print(error.message);
       },
       (data) {
         emit(state.copyWith(isSuccessAddCar: true));
@@ -250,7 +250,7 @@ class HomePageCubit extends Cubit<HomepageState> {
     );
     result.fold(
       (e) {
-        emit(state.copyWith(error: e.massageError));
+        emit(state.copyWith(error: e.message));
       },
       (data) {
         emit(state.copyWith(isLoadingeditProfile: true));

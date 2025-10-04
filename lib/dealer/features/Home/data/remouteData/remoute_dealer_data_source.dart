@@ -7,6 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:dooss_business_app/dealer/Core/network/failure.dart';
 import 'package:dooss_business_app/dealer/features/Home/data/models/dashboard_info_model.dart';
 import 'package:dooss_business_app/dealer/features/Home/data/models/product_data_model.dart';
+import 'package:dooss_business_app/user/core/network/api_urls.dart';
+import 'package:dooss_business_app/user/core/network/failure.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../Core/network/Base_Url.dart';
@@ -23,9 +25,9 @@ class RemouteDealerDataSource {
   Future<Either<Failure, List<productdata>>> getDataProduct() async {
     try {
          print('________________________${dio.options.headers}________________________');
-      var url = Uri.parse('${AppUrl.BaseUrl}/products/');
+      var url = Uri.parse('${ApiUrls.baseURl}/products/');
       var response = await dio.get(
-        '${AppUrl.BaseUrl}/products/',
+        '${ApiUrls.baseURl}/products/',
         // options: Options(headers: header),
       );
       List<productdata> responsedata = (response.data as List).map((item) {
@@ -34,7 +36,7 @@ class RemouteDealerDataSource {
       print(responsedata.length);
       return right(responsedata);
     } catch (e) {
-      return left(Failure.handleExcaption(e));
+          return Left(Failure.handleError (e as DioException));
     }
   }
 
@@ -76,7 +78,7 @@ class RemouteDealerDataSource {
     try {
       print(dio.options.headers);
       var response = await dio.post(
-        '${AppUrl.BaseUrl}/products/',
+        '${ApiUrls.baseURl}/products/',
         data: dat1a,
         // options: Options(headers: header),
       );
@@ -101,7 +103,7 @@ class RemouteDealerDataSource {
 
   Future<Either<String, void>> deleteProduct(int id) async {
     try {
-      var url = Uri.parse('${AppUrl.BaseUrl}/products/$id/');
+      var url = Uri.parse('${ApiUrls.baseURl}/products/$id/');
       print(dio.options.headers);
       var response = await dio.deleteUri(
         url,
@@ -132,7 +134,7 @@ class RemouteDealerDataSource {
 headerAvaailable.addAll({'Content-Type': 'application/json'});
   ///////////////////  تعديل
      print(headerAvaailable);
-    var url = '${AppUrl.BaseUrl}/dealers/products/$id/availability/';
+    var url = '${ApiUrls.baseURl}/dealers/products/$id/availability/';
     var data = {"available": currentValue};
     try {
       var response = await dio.patch(
@@ -145,17 +147,18 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
         return right(null);
       } else {
         return left(
-          Failure.handleExcaption(Failure(massageError: 'Error Editing')),
+            Failure.handleError( DioException(message: 'error', requestOptions: RequestOptions ()))
+
         );
       }
     } catch (error) {
       print(error.toString());
-      return left(Failure.handleExcaption(error));
+      return left(Failure.handleError(error as DioException));
     }
   }
 
   Future<Either<Failure, DealerDashboardInfo>> getDataDashboard() async {
-    var url = '${AppUrl.BaseUrl}/dealers/dashboard/';
+    var url = '${ApiUrls.baseURl}/dealers/dashboard/';
     try {
       var response = await dio.get(
         url,
@@ -165,7 +168,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
       DealerDashboardInfo data = DealerDashboardInfo.fromMap(response.data);
       return right(data);
     } catch (e) {
-      return left(Failure.handleExcaption(e));
+      return left(Failure.handleError(e as DioException));
     }
   }
 
@@ -243,7 +246,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
     print(Model);
     print(year);
     print(seats);
-    var url = Uri.parse('${AppUrl.BaseUrl}/cars/');
+    var url = Uri.parse('${ApiUrls.baseURl}/cars/');
     try {
       var response = await dio.postUri(
         url,
@@ -256,7 +259,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
       return right(true);
     } catch (error) {
       print(error.toString());
-      return left(Failure.handleExcaption(error));
+      return left(Failure.handleError(error as DioException));
     }
   }
 
@@ -269,7 +272,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
     String Category,
     XFile? image,
   ) async {
-    // var url = '${AppUrl.BaseUrl}/products/$id/';
+    // var url = '${ApiUrls.baseURl}/products/$id/';
     // print(image!.path);
     var data = FormData.fromMap({
       // 'main_image': [
@@ -309,7 +312,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
     print(data.fields);
     try {
       var response = await dio.patch(
-        '${AppUrl.BaseUrl}/products/$id/',
+        '${ApiUrls.baseURl}/products/$id/',
         data: data,
         // options: Options(headers: header),
       );
@@ -323,12 +326,12 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
       // if (error is DioException) {
       //   print(error.response!.statusMessage);
       // }
-      return left(Failure.handleExcaption(error));
+      return left(Failure.handleError(error as DioException));
     }
   }
 
   Future<Either<Failure, DataProfileModel>> getDataStoreProfile() async {
-    var url = '${AppUrl.BaseUrl}/dealers/me/profile/';
+    var url = '${ApiUrls.baseURl}/dealers/me/profile/';
     try {
       var response = await dio.get(
         url,
@@ -339,7 +342,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
       return right(responseData);
     } catch (e) {
       print(e.toString());
-      return left(Failure.handleExcaption(e));
+      return left(Failure.handleError(e as DioException));
     }
   }
 
@@ -354,7 +357,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
     List<String> day,
   ) async {
     //
-    var url = '${AppUrl.BaseUrl}/dealers/me/profile/';
+    var url = '${ApiUrls.baseURl}/dealers/me/profile/';
     print('-------${dio.options.headers}-----');
     print(OpenTime.runtimeType);
     var data = FormData.fromMap({
@@ -389,7 +392,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
         e.response!.statusMessage;
       }
       print(e.toString());
-      return left(Failure.handleExcaption(e));
+      return left(Failure.handleError(e as DioException));
     }
   }
 }

@@ -5,6 +5,7 @@ import 'package:dooss_business_app/dealer/features/auth/presentation/manager/aut
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:dooss_business_app/user/core/models/enums/app_them_enum.dart';
+import 'package:dooss_business_app/user/core/network/app_dio.dart';
 import 'package:dooss_business_app/user/core/services/image/image_services.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/hivi/hive_service.dart';
@@ -17,7 +18,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
-import 'dealer/Core/network/service_locator.dart';
 import 'user/core/services/locator_service.dart' as di;
 import 'user/core/utils/performance_monitor.dart';
 import 'user/core/style/app_theme.dart';
@@ -99,7 +99,7 @@ class SimpleReelsApp extends StatelessWidget {
         builder: (context, state) {
           return BlocProvider(
             create: (context) => AuthCubitDealers(
-                DealersAuthRemouteDataSource(dio: DealersAppDio().dio)),
+                DealersAuthRemouteDataSource(dio: AppDio().dio)),
             child: MaterialApp.router(
               debugShowCheckedModeBanner: false,
               theme: AppThemes.lightTheme,

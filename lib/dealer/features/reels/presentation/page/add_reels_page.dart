@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +26,7 @@ class AddReelsPage extends StatelessWidget {
     TextEditingController title = TextEditingController();
     TextEditingController descraption = TextEditingController();
     return BlocProvider(
-      create: (context) => ReelsStateCubit(getIt<remouteDataReelsSource>()),
+      create: (context) => ReelsStateCubit(appLocator<remouteDataReelsSource>()),
       child: Builder(
         builder: (context) {
           return Scaffold(

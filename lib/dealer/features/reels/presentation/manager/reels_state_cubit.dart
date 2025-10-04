@@ -39,11 +39,11 @@ class ReelsStateCubit extends Cubit<reelsState> {
     var result = await data.addNewReel(video, title, descraption);
     result.fold(
       (failure) {
-        print(failure.massageError);
+        print(failure.message);
         if(failure.statusCode==400){
               emit(state.copyWith(error: 'You have reached your monthly reel publishing quota'));
         }else{
-   emit(state.copyWith(error: failure.massageError));
+   emit(state.copyWith(error: failure.message));
         }
         
      
@@ -65,7 +65,7 @@ class ReelsStateCubit extends Cubit<reelsState> {
     var result = await data.EditReel(id, title, descraption, video, thumbnail);
     result.fold(
       (failure) {
-        emit(state.copyWith(error: failure.massageError));
+        emit(state.copyWith(error: failure.message));
       },
       (DataResponse) {
         // List<ReelDataModel> allReels = List.from(state.allReels);
@@ -91,7 +91,7 @@ class ReelsStateCubit extends Cubit<reelsState> {
     result.fold(
       (e) {
         all.insert(index, CurrentReel);
-        emit(state.copyWith(error: e.massageError, allReels: all));
+        emit(state.copyWith(error: e.message, allReels: all));
       },
       (isSuccess) {
         emit(state.copyWith(isSuccess: isSuccess));

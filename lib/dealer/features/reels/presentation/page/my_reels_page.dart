@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +20,7 @@ class MyReelsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          ReelsStateCubit(getIt<remouteDataReelsSource>())..getDataReels(),
+          ReelsStateCubit(appLocator<remouteDataReelsSource>())..getDataReels(),
       child: Builder(
         builder: (context) {
           return Scaffold(

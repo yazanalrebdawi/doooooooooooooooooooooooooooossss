@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:dooss_business_app/user/core/network/failure.dart';
 
 import '../../../Core/network/failure.dart';
 
@@ -10,7 +11,7 @@ class DealersAuthRemouteDataSource {
   final Dio dio;
 
   DealersAuthRemouteDataSource({required this.dio});
-  Future<Either<String, AuthDataResponse>> SignIn({required String name ,required String password , required code}) async {
+  Future<Either<Failure, AuthDataResponse>> SignIn({required String name ,required String password , required code}) async {
     var url = 'http://192.168.1.129:8010/api/dealers/login/';
     var data = {
       "username": name,
@@ -31,7 +32,7 @@ print('🔹 LOGIN URL: $url');
       return right(dataResponse);
     } catch (error) {
       print(error.toString());
-      return left(Failure.handleExcaption(error).massageError);
+      return left(Failure.handleError(error as DioException));
     }
   }
 }

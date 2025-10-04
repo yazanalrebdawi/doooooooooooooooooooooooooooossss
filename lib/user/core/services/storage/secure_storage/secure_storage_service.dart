@@ -30,8 +30,29 @@ class SecureStorageService {
     } catch (e) {
       return null;
     }
+
+
+    
+  }
+  /// 💾 Set whether the user is a dealer
+  Future<void> setIsDealer(bool value) async {
+    try {
+      await storage.write(key: 'isDealer', value: value.toString());
+    } catch (e) {
+      rethrow;
+    }
   }
 
+  /// 📥 Get whether the user is a dealer (default: false)
+  Future<bool> getIsDealer() async {
+    try {
+      final value = await storage.read(key: 'isDealer');
+      if (value == null) return false; // default
+      return value.toLowerCase() == 'true';
+    } catch (e) {
+      return false;
+    }
+  }
   /// 🔄 تحديث معلومات المستخدم فقط (id / name / phone / role / verified)
   Future<void> updateUserDataModel({
     int? id,

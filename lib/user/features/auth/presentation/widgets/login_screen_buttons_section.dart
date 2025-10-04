@@ -9,6 +9,7 @@ import 'package:dooss_business_app/dealer/features/auth/presentation/manager/Aut
 import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
+import 'package:dooss_business_app/user/core/network/app_dio.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
 import 'package:dooss_business_app/user/core/services/token_service.dart';
@@ -16,6 +17,7 @@ import 'package:dooss_business_app/user/features/auth/data/models/user_model.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../data/models/create_account_params_model.dart';
@@ -30,6 +32,8 @@ class LoginScreenButtonsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final secureStorage = SecureStorageService(storage: FlutterSecureStorage());
+
     return Column(
       children: [
         SizedBox(height: 16.h),
@@ -61,8 +65,8 @@ class LoginScreenButtonsSection extends StatelessWidget {
               selector: (managerState) => managerState.isDealer,
               builder: (context, isDealer) {
                 return BlocListener<AuthCubitDealers, AuthStateDealers>(
-                  listener: (context, state) {
-                    if (state.dataUser != null) {
+                  listener: (context, state)async {
+                    if (state.dataUser != null)  {
                       context.read<AppManagerCubit>().saveUserData(UserModel(
                             id: state.dataUser!.user.id,
                             name: state.dataUser!.user.name, latitude: '',
@@ -73,7 +77,9 @@ class LoginScreenButtonsSection extends StatelessWidget {
                             verified: state.dataUser!.user.verified,
                           ));
                       TokenService.saveToken(state.dataUser!.access);
-                      DealersAppDio().addToken(state.dataUser!.access);
+appLocator<AppDio>().addTokenToHeader(state.dataUser!.access);
+await secureStorage.setIsDealer(true);
+
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
                           return NavigatorPage();
