@@ -2,7 +2,7 @@ class ApiUrls {
   ApiUrls._();
 
   // 🟢 Base URLs
-  static const String baseURl = 'http://192.168.1.103:8010/api';
+  static const String baseURl = 'http://10.0.2.2:8010/api';
   static const String _baseMediaUrl =
       'http://192.168.1.103:8010'; // للصور والفيديو
 

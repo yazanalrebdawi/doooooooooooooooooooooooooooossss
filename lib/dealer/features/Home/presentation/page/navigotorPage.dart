@@ -117,13 +117,16 @@
 //     );
 //   }
 // }
+import 'package:dooss_business_app/user/features/chat/data/data_source/chat_remote_data_source.dart';
+import 'package:dooss_business_app/user/features/chat/presentation/manager/chat_cubit.dart';
+import 'package:dooss_business_app/user/features/chat/presentation/pages/chats_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-
+import '../../data/data_source/chat_remote_data_source.dart';
 import '../../../../Core/style/app_Colors.dart';
 import '../../../../Core/style/app_text_style.dart';
 import '../../../reels/presentation/page/my_reels_page.dart';
@@ -175,17 +178,20 @@ class _NavigatorPageState extends State<NavigatorPage> {
         children: [
                    MyReelsPage(),
           HomePage1(),
+      //  BlocProvider(create: (context) => ChatCubit(ChatRemoteDataSource()),
+      //   child: ChatsListScreen())
+
  
 
-          // Container(
-          //   color: Colors.blue,
-          //   child: const Center(
-          //     child: Text(
-          //       "Screen 1",
-          //       style: TextStyle(fontSize: 28, color: Colors.white),
-          //     ),
-          //   ),
-          // ),
+          Container(
+            color: Colors.blue,
+            child: const Center(
+              child: Text(
+                "Screen 1",
+                style: TextStyle(fontSize: 28, color: Colors.white),
+              ),
+            ),
+          ),
           // Container(
           //   color: Colors.green,
           //   child: const Center(
@@ -213,6 +219,10 @@ class _NavigatorPageState extends State<NavigatorPage> {
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.home_filled),
+            label: "Screen 2",
+          ),
+           const BottomNavigationBarItem(
+            icon: Icon(Icons.message),
             label: "Screen 2",
           ),
         ],
