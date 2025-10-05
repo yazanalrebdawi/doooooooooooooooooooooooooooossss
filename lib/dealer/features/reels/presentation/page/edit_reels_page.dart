@@ -109,6 +109,7 @@ class _EditReelsPageState extends State<EditReelsPage> {
               ),
 
               replaceVideoWidget(),
+              SizedBox(height: 12.h,),
 
               Center(
                 child: CustomUploadVideoWidget(
@@ -124,21 +125,25 @@ class _EditReelsPageState extends State<EditReelsPage> {
                   },
                 ),
               ),
+              SizedBox(height: 16.h,),
               Center(
-                child: CustomButtonWithIcon(
-                  type: 'Save Edits Reel',
-                  iconButton: Icons.save,
-                  ontap: () {
-                    print(video);
-
-                    BlocProvider.of<ReelsStateCubit>(context).EditDataReel(
-                      widget.item.id,
-                      widget.title.text,
-                      widget.descraption.text,
-                      video,
-                      widget.item.thumbnail,
-                    );
-                  },
+                child: Padding(
+                  padding:  EdgeInsets.symmetric(horizontal: 16.w,vertical: 10.h),
+                  child: CustomButtonWithIcon(
+                    type: 'Save Edits Reel',
+                    iconButton: Icons.save,
+                    ontap: () {
+                      print(video);
+                  
+                      BlocProvider.of<ReelsStateCubit>(context).EditDataReel(
+                        widget.item.id,
+                        widget.title.text,
+                        widget.descraption.text,
+                        video,
+                        widget.item.thumbnail,
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

@@ -64,7 +64,11 @@ class _BottonNavigationOfEditStoreState
               print(widget.email);
             },
           ),
-          Row(
+      SizedBox(
+        height: 10.h,
+      
+      )
+          ,Row(
             children: [
               Expanded(
                 child: GestureDetector(onTap: () {

@@ -88,21 +88,21 @@ GlobalKey<FormState> form = GlobalKey<FormState>();
       // bottomNavigationBar: BottonNavigationOfEditStore(isAvaialble: isAvaiable),
       body: BlocListener<HomePageCubit, HomepageState>(
         listener: (context, state) {
-          if (state.isLoadingeditProfile == true) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: CustomSnakeBar(text: 'Add Car is Success'),
-                backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
-                elevation: 0,
-                behavior: SnackBarBehavior.floating,
-                margin: EdgeInsets.only(
-                  top: 20, // مسافة من الأعلى
-                  left: 10,
-                  right: 10,
-                ),
-              ),
-            );
-            BlocProvider.of<HomePageCubit>(context).getDataProfile();
+          if (state.isSuccess == true) {
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     content: CustomSnakeBar(text: 'Edit profile store is Success'),
+            //     backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
+            //     elevation: 0,
+            //     behavior: SnackBarBehavior.floating,
+            //     margin: EdgeInsets.only(
+            //       top: 20, // مسافة من الأعلى
+            //       left: 10,
+            //       right: 10,
+            //     ),
+            //   ),
+            // );
+            // BlocProvider.of<HomePageCubit>(context).getDataProfile();
             Navigator.pop(context);
           } else if (state.error != null) {
             ScaffoldMessenger.of(context).showSnackBar(

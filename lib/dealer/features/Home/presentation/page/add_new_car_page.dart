@@ -38,8 +38,8 @@ class AddNewCarPage extends StatefulWidget {
   String status = 'new';
   int? year = 2024;
   ValueNotifier<XFile?> image = ValueNotifier(null);
-  double lat = 0.0;
-  double lon = 0.0;
+  double lat = 33.5138;
+  double lon = 36.2765;
 }
 
 class _AddNewCarPageState extends State<AddNewCarPage> {
@@ -205,7 +205,7 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                       // );
                       
                         if (formKey.currentState!.validate()){
-                               if(widget.image!=null){
+                               if(widget.image.value!=null){
                      BlocProvider.of<HomePageCubit>(context).AddNewCar(
                           widget.brand,
                           widget.year!,
@@ -225,7 +225,7 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                           widget.color.text
                         );
                                }
-                               else if(widget.image==null) {
+                               else if(widget.image.value==null) {
                     return   ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: CustomSnakeBar(

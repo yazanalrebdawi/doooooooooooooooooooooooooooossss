@@ -17,7 +17,7 @@ class addReelDetailsWidget extends StatelessWidget {
   final TextEditingController descraption;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Container(margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(16),
       width: 358.w,
       // height: 300.h,

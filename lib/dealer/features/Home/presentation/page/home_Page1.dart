@@ -128,7 +128,26 @@ class HomePage1 extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  BlocBuilder<HomePageCubit, HomepageState>(
+                  BlocConsumer<HomePageCubit, HomepageState>(listener: (context, state) {
+                            if (state.isSuccess == true) {
+             ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: CustomSnakeBar(text: 'Edit profile store is Success'),
+                backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                elevation: 0,
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.only(
+                  top: 20, // مسافة من الأعلى
+                  left: 10,
+                  right: 10,
+                ),
+              ),
+            );
+                   BlocProvider.of<HomePageCubit>(
+                          context,
+                        ).getDataProfile();
+                      }
+                  },
                     builder: (context, state) {
                       return StoreInfoCardWidget(
                         infoStore: [

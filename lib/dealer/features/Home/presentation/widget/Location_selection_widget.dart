@@ -109,16 +109,16 @@ class locationSelectWidget extends StatelessWidget {
           ),
 
           SizedBox(height: 12.h),
-          SizedBox(
-            width: 324.w,
-            height: 50.h,
-            child: TextFormField(
-              controller: linkGoogle,
-              decoration: InputDecoration(
-                hintText: 'Google Maps link (optional)',
-              ),
-            ),
-          ),
+          // SizedBox(
+          //   width: 324.w,
+          //   height: 50.h,
+          //   child: TextFormField(
+          //     controller: linkGoogle,
+          //     decoration: InputDecoration(
+          //       hintText: 'Google Maps link (optional)',
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

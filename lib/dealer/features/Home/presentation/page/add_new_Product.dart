@@ -26,7 +26,7 @@ class AddNewProductPage extends StatelessWidget {
     TextEditingController price = TextEditingController();
     TextEditingController quintity = TextEditingController();
     String category = 'rims';
-    XFile? image = XFile('');
+    XFile? image = null;
     final _form = GlobalKey<FormState>();
     return Form(
       key: _form,
@@ -146,7 +146,8 @@ class AddNewProductPage extends StatelessWidget {
                               iconButton: Icons.add,
                               ontap: () {
                                 if (_form.currentState!.validate()) {
-                                  print(image!.path);
+                                  if(image!=null){
+ print(image!.path);
                                   BlocProvider.of<HomePageCubit>(
                                     context,
                                   ).addProduct(
@@ -157,6 +158,25 @@ class AddNewProductPage extends StatelessWidget {
                                     quintity.text,
                                     image,
                                   );
+                                  }else{
+                                     ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: CustomSnakeBar(
+                      isFailure: true,
+                      text: 'please ,add image product',
+                    ),
+                    backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                    elevation: 0,
+                    behavior: SnackBarBehavior.floating,
+                    margin: EdgeInsets.only(
+                      top: 20, // مسافة من الأعلى
+                      left: 10,
+                      right: 10,
+                    ),
+                  ),
+                );
+                                  }
+                                 
                                 }
                               },
                             );

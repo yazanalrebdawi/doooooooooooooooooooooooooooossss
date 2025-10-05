@@ -50,24 +50,27 @@ class MyReelsPage extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     child: BlocConsumer<ReelsStateCubit, reelsState>(
                       listener: (context, state) {
-                        // if (state.isSuccess == true) {
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     SnackBar(
-                        //       content: CustomSnakeBar(
-                        //         text: 'add Reel is success',
-                        //       ),
-                        //       backgroundColor:
-                        //           Colors.transparent, // ⬅️ جعل الخلفية شفافة
-                        //       elevation: 0,
-                        //       behavior: SnackBarBehavior.floating,
-                        //       margin: EdgeInsets.only(
-                        //         top: 20, // مسافة من الأعلى
-                        //         left: 10,
-                        //         right: 10,
-                        //       ),
-                        //     ),
-                        //   );
-                        // }
+                        if (state.isSuccess == true) {
+                           BlocProvider.of<ReelsStateCubit>(
+                              context,
+                            ).getDataReels();
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   SnackBar(
+                          //     content: CustomSnakeBar(
+                          //       text: 'add Reel is success',
+                          //     ),
+                          //     backgroundColor:
+                          //         Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                          //     elevation: 0,
+                          //     behavior: SnackBarBehavior.floating,
+                          //     margin: EdgeInsets.only(
+                          //       top: 20, // مسافة من الأعلى
+                          //       left: 10,
+                          //       right: 10,
+                          //     ),
+                          //   ),
+                          // );
+                        }
                       },
                       builder: (context, state) {
                         if (state.isLoading == true) {

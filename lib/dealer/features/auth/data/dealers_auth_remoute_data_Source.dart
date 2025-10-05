@@ -12,7 +12,7 @@ class DealersAuthRemouteDataSource {
 
   DealersAuthRemouteDataSource({required this.dio});
   Future<Either<Failure, AuthDataResponse>> SignIn({required String name ,required String password , required code}) async {
-    var url = 'http://192.168.1.129:8010/api/dealers/login/';
+    var url = 'http://10.0.2.2:8010/api/dealers/login/';
     var data = {
       "username": name,
       "password": password,
