@@ -318,6 +318,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   // ✅ بدل dispose بخاصية pause فقط
   void checkVisibility(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final renderObject = context.findRenderObject();
       if (renderObject is RenderBox) {
         final visibility = renderObject.localToGlobal(Offset.zero).dy;
@@ -394,7 +395,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   const Center(
                     child: CircularProgressIndicator(color: Color(0xff349A51)),
                   ),
-
                 if (showPlayPause)
                   Container(
                     width: 46.w,

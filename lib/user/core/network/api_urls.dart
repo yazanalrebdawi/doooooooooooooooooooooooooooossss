@@ -3,8 +3,7 @@ class ApiUrls {
 
   // 🟢 Base URLs
   static const String baseURl = 'https://doossapp.com/';
-  static const String _baseMediaUrl =
-      'https://doossapp.com'; // للصور والفيديو
+  static const String _baseMediaUrl = 'https://doossapp.com'; // للصور والفيديو
 
   static String media(String path) => '$_baseMediaUrl$path'; // Getter للصور
 
