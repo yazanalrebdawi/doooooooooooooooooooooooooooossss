@@ -13,5 +13,6 @@ class CacheKeys {
   static const String appThemeMode = 'THEME_MODE';
   static const String favoritesList = 'FAVORITES_List';
   static const String userIdKey = 'USER_ID_KEY';
-
+  static const String userToken = 'USER_TOKEN';
+  static const String dealerData = 'DEALER_DATA';
 }

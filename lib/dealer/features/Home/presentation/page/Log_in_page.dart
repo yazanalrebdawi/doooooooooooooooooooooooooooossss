@@ -1,27 +1,10 @@
+import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
+import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_state_dealers.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:image_picker/image_picker.dart';
-
-import '../../../../Core/style/app_Colors.dart';
 import '../../../../Core/style/app_text_style.dart';
-import '../../../auth/presentation/manager/Auth_state_dealers.dart';
-import '../../../auth/presentation/manager/auth_Cubit_dealers.dart';
-import '../../../reels/presentation/widget/Custom_app_bar.dart';
-import '../../data/remouteData/home_page_state.dart';
-import '../manager/home_page_cubit.dart';
-import '../widget/Category_Section_widget.dart';
-import '../widget/Custom_Button_With_icon.dart';
-import '../widget/Upload_Product_images_widdget.dart';
-import '../widget/form_ProductAndDescriptionWidget.dart';
-import '../widget/priceAndQuantityWidget.dart';
-import 'edit_Prodect_page.dart';
-
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'navigotorPage.dart';
 

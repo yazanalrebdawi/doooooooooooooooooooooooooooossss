@@ -2,9 +2,9 @@ class ApiUrls {
   ApiUrls._();
 
   // 🟢 Base URLs
-  static const String baseURl = 'http://192.168.1.129:8010/api';
+  static const String baseURl = 'http://192.168.1.103:8010/api';
   static const String _baseMediaUrl =
-      'http://192.168.1.129:8010'; // للصور والفيديو
+      'http://192.168.1.103:8010'; // للصور والفيديو
 
   static String media(String path) => '$_baseMediaUrl$path'; // Getter للصور
 
@@ -74,5 +74,5 @@ class ApiUrls {
 
   // 🟢 Chat
   static const String chats = '$baseURl/chats/';
-  static const String wsBaseUrl = 'ws://192.168.1.129:8020';
+  static const String wsBaseUrl = 'ws://192.168.1.103:8020';
 }

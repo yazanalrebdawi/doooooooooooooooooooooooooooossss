@@ -10,8 +10,8 @@
 // import 'package:dooss_business_app/user/features/profile_dealer/data/models/dealer_model.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 
-// class AuthDealerCubit extends Cubit<AuthDealerState> {
-//   AuthDealerCubit({required this.remote}) : super(AuthDealerState());
+// class AuthCubit extends Cubit<AuthDealerState> {
+//   AuthCubit({required this.remote}) : super(AuthDealerState());
 //   final AuthDealerRemoteDataSource remote;
 
 // //? -------------------------------------------------------------------------

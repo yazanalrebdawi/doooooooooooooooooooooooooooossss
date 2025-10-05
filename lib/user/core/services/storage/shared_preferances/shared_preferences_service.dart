@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
+import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remoute_data_Source.dart';
 import 'package:dooss_business_app/user/core/constants/cache_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +15,32 @@ class SharedPreferencesService {
     try {
       await storagePreferences.clear();
     } catch (_) {}
+  }
+
+  // ------------------ Save Dealer Auth Data ------------------------
+  Future<void> saveDealerAuthData(AuthDataResponse dealer) async {
+    try {
+      final encoded = jsonEncode(dealer.toMap());
+      await storagePreferences.setString('dealer_data', encoded);
+      await storagePreferences.setBool(CacheKeys.dealerData, true);
+      log("✅ Dealer saved successfully");
+    } catch (e) {
+      log("❌ Error saving dealer: $e");
+    }
+  }
+
+  // ------------------ Get Dealer Auth Data -------------------------
+  Future<AuthDataResponse?> getDealerAuthData() async {
+    try {
+      final jsonString = storagePreferences.getString('dealer_data');
+      if (jsonString == null) return null;
+
+      final Map<String, dynamic> map = jsonDecode(jsonString);
+      return AuthDataResponse.fromMap(map);
+    } catch (e) {
+      log("❌ Error reading dealer: $e");
+      return null;
+    }
   }
 
   //?----------------  Them ------------------------------------------------

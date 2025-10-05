@@ -1,19 +1,15 @@
 import 'dart:developer';
-
-import 'package:dooss_business_app/dealer/Core/network/dealers_App_dio.dart';
-import 'package:dooss_business_app/dealer/Core/network/service_locator.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/home_Page1.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigotorPage.dart';
-import 'package:dooss_business_app/dealer/features/auth/manager/auth_dealer_cubit.dart';
-import 'package:dooss_business_app/dealer/features/auth/presentation/manager/Auth_state_dealers.dart';
 import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:dooss_business_app/user/core/network/app_dio.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/shared_preferances/shared_preferences_service.dart';
 import 'package:dooss_business_app/user/core/services/token_service.dart';
 import 'package:dooss_business_app/user/features/auth/data/models/user_model.dart';
+import 'package:dooss_business_app/user/features/auth/presentation/widgets/custom_app_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,11 +20,17 @@ import '../../data/models/create_account_params_model.dart';
 import '../manager/auth_cubit.dart';
 import '../manager/auth_state.dart';
 import 'auth_button.dart';
+import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_state_dealers.dart';
 
 class LoginScreenButtonsSection extends StatelessWidget {
   final CreateAccountParams params;
   final TextEditingController? code;
-  const LoginScreenButtonsSection({super.key, required this.params, this.code});
+
+  const LoginScreenButtonsSection({
+    super.key,
+    required this.params,
+    this.code,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,17 @@ class LoginScreenButtonsSection extends StatelessWidget {
               );
               log("User ID: ${state.user!.user.id}");
             }
+            if (state.error != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                customAppSnackBar(
+                  AppLocalizations.of(
+                        context,
+                      )?.translate(state.error ?? "") ??
+                      "error",
+                  context,
+                ),
+              );
+            }
           },
           buildWhen: (previous, current) =>
               previous.isLoading != current.isLoading ||
@@ -64,55 +77,91 @@ class LoginScreenButtonsSection extends StatelessWidget {
             return BlocSelector<AppManagerCubit, AppManagerState, bool>(
               selector: (managerState) => managerState.isDealer,
               builder: (context, isDealer) {
-                return BlocListener<AuthCubitDealers, AuthStateDealers>(
-                  listener: (context, state)async {
-                    if (state.dataUser != null)  {
-                      context.read<AppManagerCubit>().saveUserData(UserModel(
-                            id: state.dataUser!.user.id,
-                            name: state.dataUser!.user.name, latitude: '',
-                            createdAt: DateTime.now(), longitude: '',
-                            phone: state.dataUser!.user.phone,
-                            role:
-                                'dealer', // Assuming dealers have the role 'dealer'
-                            verified: state.dataUser!.user.verified,
-                          ));
-                      TokenService.saveToken(state.dataUser!.access);
-appLocator<AppDio>().addTokenToHeader(state.dataUser!.access);
-await secureStorage.setIsDealer(true);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  params.userName.clear();
+                  params.password.clear();
+                  code?.clear();
+                });
 
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return NavigatorPage();
-                        },
-                      ));
+                log("🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️");
+
+                return BlocConsumer<AuthCubitDealers, AuthStateDealers>(
+                  listener: (context, dealerState) async {
+                    if (dealerState.dataUser != null) {
+                      context.read<AppManagerCubit>().saveUserData(
+                            UserModel(
+                              id: dealerState.dataUser!.user.id,
+                              name: dealerState.dataUser!.user.name,
+                              latitude: '',
+                              createdAt: DateTime.now(),
+                              longitude: '',
+                              phone: dealerState.dataUser!.user.phone,
+                              role: 'dealer',
+                              verified: dealerState.dataUser!.user.verified,
+                            ),
+                          );
+
+                      TokenService.saveToken(dealerState.dataUser!.access);
+                      appLocator<AppDio>().addTokenToHeader(
+                        dealerState.dataUser!.access,
+                      );
+                      await secureStorage.setIsDealer(true);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NavigatorPage(),
+                        ),
+                      );
                     }
                   },
-                  child: AuthButton(
-                    onTap: isLoading
-                        ? null
-                        : () {
-                            if (params.formState.currentState!.validate()) {
-                              final signinParams = SigninParams();
-                              signinParams.email.text = params.userName.text;
-                              signinParams.password.text = params.password.text;
-                              if (isDealer) {
-                                //todo -------------------------------------
-                                // context
-                                //     .read<AuthDealerCubit>()
-                                //     .signIn("", " ", "");
-                                context.read<AuthCubitDealers>().SignIn(
-                                    name: params.userName.text,
-                                    password: params.password.text,
-                                    code: code?.text ?? '');
-                                print("the code dddddddddd is ");
-                              } else {}
-                            }
-                          },
-                    buttonText:
-                        AppLocalizations.of(context)?.translate('login') ??
-                            'Login',
-                    isLoading: isLoading,
-                  ),
+                  builder: (context, dealerState) {
+                    final dealerLoading = dealerState.isLoading;
+
+                    return AuthButton(
+                      onTap: dealerLoading || isLoading
+                          ? null
+                          : () async {
+                              if (params.formState.currentState!.validate()) {
+                                final signinParams = SigninParams();
+                                signinParams.email.text = params.userName.text;
+                                signinParams.password.text =
+                                    params.password.text;
+
+                                if (isDealer) {
+                                  context.read<AuthCubitDealers>().signIn(
+                                        name: params.userName.text,
+                                        password: params.password.text,
+                                        code: code?.text ?? '',
+                                      );
+                                  final secureStorage =
+                                      appLocator<SecureStorageService>();
+                                  final app = context
+                                      .read<AppManagerCubit>()
+                                      .state
+                                      .dealer;
+                                  if (app != null) {
+                                    await secureStorage.saveDealerAuthData(app);
+                                    await appLocator<SharedPreferencesService>()
+                                        .saveDealerAuthData(app);
+                                    await secureStorage.setIsDealer(true);
+                                    await TokenService.saveToken(app.access);
+                                  }
+                                  print("the code dddddddddd is ");
+                                } else {
+                                  log("user");
+                                  context
+                                      .read<AuthCubit>()
+                                      .signIn(signinParams);
+                                }
+                              }
+                            },
+                      buttonText:
+                          AppLocalizations.of(context)?.translate('login') ??
+                              'Login',
+                      isLoading: isDealer ? dealerLoading : isLoading,
+                    );
+                  },
                 );
               },
             );
@@ -124,7 +173,12 @@ await secureStorage.setIsDealer(true);
         // ###################### OR Divider ######################
         Row(
           children: [
-            Expanded(child: Divider(thickness: 1, color: Colors.grey.shade300)),
+            Expanded(
+              child: Divider(
+                thickness: 1,
+                color: Colors.grey.shade300,
+              ),
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Text(
@@ -132,7 +186,12 @@ await secureStorage.setIsDealer(true);
                 style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14),
               ),
             ),
-            Expanded(child: Divider(thickness: 1, color: Colors.grey.shade300)),
+            Expanded(
+              child: Divider(
+                thickness: 1,
+                color: Colors.grey.shade300,
+              ),
+            ),
           ],
         ),
       ],

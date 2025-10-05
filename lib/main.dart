@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:dooss_business_app/dealer/Core/network/dealers_App_dio.dart';
 import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remoute_data_Source.dart';
 import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
@@ -98,8 +97,9 @@ class SimpleReelsApp extends StatelessWidget {
       child: BlocBuilder<AppManagerCubit, AppManagerState>(
         builder: (context, state) {
           return BlocProvider(
-            create: (context) => AuthCubitDealers(
-                DealersAuthRemouteDataSource(dio: AppDio().dio)),
+            create: (context) => AuthCubitDealers(DealersAuthRemouteDataSource(
+                dio: AppDio().dio,
+                secureStorage: appLocator<SecureStorageService>())),
             child: MaterialApp.router(
               debugShowCheckedModeBanner: false,
               theme: AppThemes.lightTheme,

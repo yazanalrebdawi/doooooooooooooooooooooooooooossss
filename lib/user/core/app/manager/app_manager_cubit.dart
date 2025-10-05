@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remoute_data_Source.dart';
 import 'package:dooss_business_app/user/core/app/source/local/user_storage_service.dart';
 import 'package:dooss_business_app/user/core/models/enums/app_language_enum.dart';
 import 'package:dooss_business_app/user/core/models/enums/app_them_enum.dart';
@@ -94,6 +95,24 @@ class AppManagerCubit extends Cubit<AppManagerState> {
       secureStorage.removeAll(),
     ]);
     await hive.clearAllInCache();
+  }
+
+  //* حفظ بيانات الديلر بعد تسجيل الدخول
+  Future<void> saveDealerData(AuthDataResponse dealerAuth) async {
+    await secureStorage.saveDealerAuthData(dealerAuth);
+     await appLocator<SharedPreferencesService>()
+          .saveDealerAuthData(dealerAuth);
+    await secureStorage.setIsDealer(true);
+    emit(state.copyWith(isDealer: true, dealer: dealerAuth));
+    log("✅ Dealer data saved successfully");
+  }
+
+  //* تسجيل خروج الديلر فقط
+  Future<void> dealerLogOut() async {
+    await secureStorage.removeAll();
+    await secureStorage.removeAll();
+    emit(state.copyWith(isDealer: false, user: null));
+    log("🚪 Dealer logged out and secure storage cleared");
   }
 
   //?-------  Them  ---------------------------------------------------------------------------
