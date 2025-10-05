@@ -36,7 +36,7 @@ class WebSocketService {
 //for test
     // final wsUrl = '${ApiUrls.wsBaseUrl}/ws/chats/$chatId/?token=$accessToken';
     // keep this if you dont want to test
-    final wsUrl = "ws://localhost:8020/ws/chats/$chatId/?token=$accessToken" ; 
+    final wsUrl = "ws://doossapp.com/ws/chats/$chatId/?token=$accessToken" ; 
     print('🔌 WebSocket: Connecting to $wsUrl');
 
     try {
