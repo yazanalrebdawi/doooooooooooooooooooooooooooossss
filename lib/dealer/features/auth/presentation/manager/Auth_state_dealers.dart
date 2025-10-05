@@ -4,10 +4,24 @@ import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remout
 
 class AuthStateDealers {
   final AuthDataResponse? dataUser;
+  final bool isLoading;
+  final String? errorMessage;
 
-  AuthStateDealers({this.dataUser});
+  AuthStateDealers({
+    this.dataUser,
+    this.isLoading = false,
+    this.errorMessage,
+  });
 
-  AuthStateDealers copyWith({AuthDataResponse? dataUser}) {
-    return AuthStateDealers(dataUser: dataUser ?? this.dataUser);
+  AuthStateDealers copyWith({
+    AuthDataResponse? dataUser,
+    bool? isLoading,
+    String? errorMessage,
+  }) {
+    return AuthStateDealers(
+      dataUser: dataUser ?? this.dataUser,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+    );
   }
 }

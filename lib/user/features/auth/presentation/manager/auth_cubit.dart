@@ -46,7 +46,8 @@ class AuthCubit extends OptimizedCubit<AuthState> {
     log("🚀 AuthCubit - Starting sign in process");
     safeEmit(state.copyWith(isLoading: true));
 
-    final Either<Failure, AuthResponceModel> result = await remote.signin(params);
+    final Either<Failure, AuthResponceModel> result =
+        await remote.signin(params);
 
     result.fold(
       (failure) {
@@ -253,7 +254,8 @@ class AuthCubit extends OptimizedCubit<AuthState> {
     try {
       final refreshToken = await TokenService.getRefreshToken();
       if (refreshToken != null && refreshToken.isNotEmpty) {
-        final Either<Failure, String> result = await remote.logout(refreshToken);
+        final Either<Failure, String> result =
+            await remote.logout(refreshToken);
 
         result.fold(
           (failure) async {

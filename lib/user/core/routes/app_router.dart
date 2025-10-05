@@ -1,3 +1,4 @@
+import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigotorPage.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/core/widgets/base/splash_screen_page.dart';
 import 'package:dooss_business_app/user/features/auth/presentation/pages/forget_password_screen.dart';
@@ -129,6 +130,11 @@ class AppRouter {
         );
       },
     ),
+    GoRoute(
+      path: RouteNames.navigatorPage,
+      builder: (context, state) => const NavigatorPage(),
+    ),
+
     GoRoute(
       path: RouteNames.homeScreen,
       builder: (context, state) => HomeScreen(),

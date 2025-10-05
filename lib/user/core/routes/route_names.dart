@@ -38,6 +38,7 @@ class RouteNames {
   static const String editProfileScreen = '/edit-profile';
   static const String profileScreen = '/profileScreen';
   static const String savedItemsScreen = '/savedItemsScreen';
+  static const String navigatorPage = '/navigatorPage';
   static const String settingsNotificationsScreen =
       '/settingsNotificationsScreen';
   static const String themeSettingsScreen = '/themeSettingsScreen';

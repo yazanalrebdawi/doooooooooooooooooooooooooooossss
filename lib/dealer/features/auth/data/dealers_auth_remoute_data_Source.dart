@@ -1,34 +1,56 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
+import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:dooss_business_app/user/core/network/failure.dart';
-
-import '../../../Core/network/failure.dart';
+import 'package:dooss_business_app/user/core/services/locator_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/shared_preferances/shared_preferences_service.dart';
+import 'package:dooss_business_app/user/core/services/token_service.dart';
 
 class DealersAuthRemouteDataSource {
   final Dio dio;
+  final SecureStorageService secureStorage;
 
-  DealersAuthRemouteDataSource({required this.dio});
-  Future<Either<Failure, AuthDataResponse>> SignIn({required String name ,required String password , required code}) async {
-    var url = 'http://10.0.2.2:8010/api/dealers/login/';
+  DealersAuthRemouteDataSource(
+      {required this.dio, required this.secureStorage});
+  Future<Either<Failure, AuthDataResponse>> SignIn(
+      {required String name, required String password, required code}) async {
+    var url = 'http://192.168.1.103:8010/api/dealers/login/';
     var data = {
       "username": name,
       "password": password,
       "code": code,
     };
     print('🔹 LOGIN REQUEST HEADERS: ${dio.options.headers}');
-print('🔹 LOGIN REQUEST BODY: $data');
-print('🔹 LOGIN URL: $url');
+    print('🔹 LOGIN REQUEST BODY: $data');
+    print('🔹 LOGIN URL: $url');
 
     try {
-      var response = await dio.post(url, data: data ,
+      var response = await dio.post(
+        url, data: data,
         options: Options(validateStatus: (status) => true), // <– add this
-
       );
       print(response.data);
+      log("🧠 Dealer auth saved: ${response.data}");
+
       AuthDataResponse dataResponse = AuthDataResponse.fromMap(response.data);
+      await secureStorage.saveDealerAuthData(dataResponse);
+
+      await appLocator<SharedPreferencesService>()
+          .saveDealerAuthData(dataResponse);
+
+      await secureStorage.setIsDealer(true);
+      await TokenService.saveToken(dataResponse.access);
+
+      // final checkDealer = await secureStorage.getDealerAuthData();
+      final checkDealer =
+          await appLocator<SharedPreferencesService>().getDealerAuthData();
+      final checkFlag = await secureStorage.getIsDealer();
+      log("📦 Saved dealer flag: $checkFlag");
+      log("📦 Saved dealer data: ${checkDealer?.toMap()}");
+
       return right(dataResponse);
     } catch (error) {
       print(error.toString());

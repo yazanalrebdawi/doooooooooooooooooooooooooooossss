@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +48,6 @@ class HomePage1 extends StatelessWidget {
             backgroundColor: AppColors.background,
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
-
               child: Container(
                 decoration: BoxDecoration(
                   color: Color(0xffffffff),
@@ -60,7 +62,6 @@ class HomePage1 extends StatelessWidget {
                 ),
                 child: AppBar(
                   backgroundColor: Color(0xffffffff),
-                
                   shadowColor: Color.fromARGB(38, 0, 0, 0),
                   actions: [
                     Padding(
@@ -103,9 +104,7 @@ class HomePage1 extends StatelessWidget {
                     ),
                   ],
                   title: GestureDetector(
-                    onTap: () {
-                  
-                    },
+                    onTap: () {},
                     child: Row(
                       children: [
                         // Icon(Icons.directions_car, color: AppColors.primary, size: 24),
@@ -178,8 +177,9 @@ class HomePage1 extends StatelessWidget {
                   SizedBox(height: 24.h),
                   StatusSection(),
                   Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Expanded(
                           child: CustomButtonWithIcon(
@@ -187,11 +187,18 @@ class HomePage1 extends StatelessWidget {
                             iconButton: Icons.add,
                             ontap: () {
                               // RemouteDealerDataSource().AddCars();
+                              final dataDealer =
+                                  context.read<AppManagerCubit>().state;
+                              log(dataDealer.isDealer.toString());
+                              if (dataDealer.dealer?.access != null) {
+                                log(dataDealer.dealer!.access);
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => BlocProvider.value(
-                                    value: BlocProvider.of<HomePageCubit>(context),
+                                    value:
+                                        BlocProvider.of<HomePageCubit>(context),
                                     child: AddNewProductPage(),
                                   ),
                                 ),
@@ -199,27 +206,34 @@ class HomePage1 extends StatelessWidget {
                             },
                           ),
                         ),
-                        SizedBox(width: 12.w,),
-                        GestureDetector(onTap: () {
-                              Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: BlocProvider.of<HomePageCubit>(context),
-                              child: AddNewCarPage(),
-                            ),
-                          ),
-                        );
-                        },
-                          child: Container(width: 60.h,
+                        SizedBox(
+                          width: 12.w,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider.value(
+                                  value:
+                                      BlocProvider.of<HomePageCubit>(context),
+                                  child: AddNewCarPage(),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                              width: 60.h,
                               margin: EdgeInsets.only(top: 16.h, bottom: 16.h),
-                          height: 60.h,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.secondary,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: SvgPicture.asset('assets/icons/car.svg',)),
+                              height: 60.h,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.secondary,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/icons/car.svg',
+                              )),
                         )
                       ],
                     ),

@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remoute_data_Source.dart';
 import 'package:dooss_business_app/user/core/constants/cache_keys.dart';
 import 'package:dooss_business_app/user/features/auth/data/models/auth_response_model.dart';
 import 'package:dooss_business_app/user/features/auth/data/models/user_model.dart';
@@ -30,14 +32,35 @@ class SecureStorageService {
     } catch (e) {
       return null;
     }
-
-
-    
   }
+
+  Future<void> saveDealerAuthData(AuthDataResponse dealer) async {
+    try {
+      final encoded = jsonEncode(dealer.toMap());
+      await storage.write(key: 'dealer_data', value: encoded);
+      await storage.write(key: CacheKeys.dealerData, value: 'true');
+      log("✅ Dealer saved successfully");
+    } catch (e) {
+      log("❌ Error saving dealer: $e");
+    }
+  }
+
+  Future<AuthDataResponse?> getDealerAuthData() async {
+    try {
+      final jsonString = await storage.read(key: 'dealer_data');
+      if (jsonString == null) return null;
+      final Map<String, dynamic> map = jsonDecode(jsonString);
+      return AuthDataResponse.fromMap(map);
+    } catch (e) {
+      log("❌ Error reading dealer: $e");
+      return null;
+    }
+  }
+
   /// 💾 Set whether the user is a dealer
   Future<void> setIsDealer(bool value) async {
     try {
-      await storage.write(key: 'isDealer', value: value.toString());
+      await storage.write(key: CacheKeys.dealerData, value: value.toString());
     } catch (e) {
       rethrow;
     }
@@ -46,13 +69,14 @@ class SecureStorageService {
   /// 📥 Get whether the user is a dealer (default: false)
   Future<bool> getIsDealer() async {
     try {
-      final value = await storage.read(key: 'isDealer');
+      final value = await storage.read(key: CacheKeys.dealerData);
       if (value == null) return false; // default
       return value.toLowerCase() == 'true';
     } catch (e) {
       return false;
     }
   }
+
   /// 🔄 تحديث معلومات المستخدم فقط (id / name / phone / role / verified)
   Future<void> updateUserDataModel({
     int? id,

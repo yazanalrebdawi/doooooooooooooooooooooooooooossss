@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigotorPage.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/network/app_dio.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
-import 'package:dooss_business_app/user/features/auth/data/models/auth_response_model.dart';
+import 'package:dooss_business_app/user/core/services/token_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/shared_preferances/shared_preferences_service.dart';
@@ -13,10 +14,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
-  final SecureStorageService? secureStorage;
   final SharedPreferencesService? sharedPreferences;
 
-  const SplashScreen({super.key, this.secureStorage, this.sharedPreferences});
+  const SplashScreen({super.key, this.sharedPreferences});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -51,61 +51,90 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _startChecks() async {
-    const minDisplay = Duration(milliseconds: 1200);
-    final timer = Future.delayed(minDisplay);
+    final secureStorage1 = appLocator<SecureStorageService>();
+    // final dealer = await secureStorage1.getDealerAuthData();
+    final dealer =
+        await appLocator<SharedPreferencesService>().getDealerAuthData();
+    final flag = await secureStorage1.getIsDealer();
+    final token = await TokenService.getAccessToken();
+    log(token.toString());
+    log("📦 Dealer just saved: data=${dealer?.toMap()}, flag=$flag");
+    final secureStorage = appLocator<SecureStorageService>();
+    // final checkDealer = await secureStorage.getDealerAuthData();
+    final checkDealer =
+        await appLocator<SharedPreferencesService>().getDealerAuthData();
+    final checkFlag = await secureStorage.getIsDealer();
+    log("📦 Saved dealer flag: $checkFlag");
+    log("📦 Saved dealer data: ${checkDealer?.toMap()}");
+    const minDisplay = Duration(milliseconds: 1000);
+    await Future.delayed(minDisplay);
 
     bool isAuthenticated = false;
-    AuthResponceModel? cachedAuth;
+    bool isDealer = false;
 
     try {
-      // ✅ استرجاع كامل بيانات المستخدم من SecureStorage
-      if (widget.secureStorage != null) {
-        cachedAuth = await widget.secureStorage!.getAuthModel();
-        log("[SecureStorage] Auth model loaded? ${cachedAuth != null}");
-      }
+      final storage = appLocator<SecureStorageService>();
+      final appDio = appLocator<AppDio>();
+      final appManagerCubit = context.read<AppManagerCubit>();
 
-      if (cachedAuth != null) {
-        final token = cachedAuth.token;
-        final expiry = cachedAuth.expiry;
+      // 🔹 جلب بيانات Dealer
+      // final dealer = await storage.getDealerAuthData();
+      final dealer =
+          await appLocator<SharedPreferencesService>().getDealerAuthData();
+      final dealerFlag = await storage.getIsDealer();
 
-        // ✅ التحقق من صلاحية التوكن
-        if (token.isNotEmpty &&
-            expiry != null &&
-            DateTime.now().isBefore(expiry)) {
-          isAuthenticated = true;
-          appLocator<AppDio>().addTokenToHeader(token);
-
-          log("✅ Token added to Dio header");
-        }
-
-        // ✅ خزّن بيانات اليوزر في Cubit بعد الـ build
+      if (checkDealer != null ) {
+        // ✅ Dealer موجود
+        appDio.addTokenToHeader(checkDealer.access);
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final appManagerCubit = context.read<AppManagerCubit>();
-          if (cachedAuth?.user != null) {
-            appManagerCubit.saveUserData(cachedAuth!.user);
-            appLocator<SecureStorageService>().saveAuthModel(cachedAuth);
-          }
-          log("✅ User data saved in Cubit");
+          appManagerCubit.saveDealerData(checkDealer);
         });
+
+        isAuthenticated = true;
+        isDealer = true;
+        log("✅ Dealer authenticated successfully");
       } else {
-        log("⚠️ No cached user found");
+        // 🔹 جلب بيانات المستخدم العادي
+        final auth = await storage.getAuthModel();
+
+        if (auth != null &&
+            auth.token.isNotEmpty &&
+            auth.expiry != null &&
+            DateTime.now().isBefore(auth.expiry!)) {
+          appDio.addTokenToHeader(auth.token);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            appManagerCubit.saveUserData(auth.user);
+          });
+
+          isAuthenticated = true;
+          isDealer = false;
+          log("✅ Regular user authenticated successfully");
+        } else {
+          log("⚠️ No user or dealer data found");
+        }
       }
     } catch (e) {
       log("❌ Error in _startChecks: $e");
       isAuthenticated = false;
     }
 
-    // ⏳ ضمان عرض السبلاتش للمدة الدنيا
-    await timer;
-
+    // 🚀 التوجيه حسب الحالة
     if (!mounted) return;
 
-    // 🚀 الانتقال للشاشة المناسبة
+    await Future.delayed(const Duration(milliseconds: 200));
+
     if (isAuthenticated) {
-      log("➡️ Go to Home Screen");
-      context.go(RouteNames.homeScreen);
+      if (isDealer) {
+        context.go(RouteNames.navigatorPage);
+
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(builder: (_) => NavigatorPage()),
+        // );
+      } else {
+        context.go(RouteNames.homeScreen);
+      }
     } else {
-      log("➡️ Go to OnBoarding Screen");
       context.go(RouteNames.onBoardingScreen);
     }
   }

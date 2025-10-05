@@ -1,3 +1,4 @@
+import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remoute_data_Source.dart';
 import 'package:dooss_business_app/user/core/models/enums/app_language_enum.dart';
 import 'package:dooss_business_app/user/core/models/enums/app_them_enum.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class AppManagerState {
 
   //! Dealer or user
   final bool isDealer;
+  final AuthDataResponse? dealer;
 
   //?-------------------------------------------------------------------
 
@@ -28,10 +30,12 @@ class AppManagerState {
     this.user,
     this.locale = const Locale('en'),
     this.lastApply,
+    this.dealer,
   });
   //?-------------------------------------------------------------------
   AppManagerState copyWith({
     bool? isDealer,
+    AuthDataResponse? dealer,
     bool? tempThem,
     UserModel? user,
     AppThemeEnum? themeMode,
@@ -40,6 +44,7 @@ class AppManagerState {
   }) {
     return AppManagerState(
       themeMode: themeMode ?? this.themeMode,
+      dealer: dealer ?? this.dealer,
       isDealer: isDealer ?? this.isDealer,
       user: user ?? this.user,
       tempThem: tempThem ?? this.tempThem,
