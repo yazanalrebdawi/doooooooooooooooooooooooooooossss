@@ -1,12 +1,18 @@
 import 'dart:developer';
 
+import 'package:dooss_business_app/dealer/features/Home/presentation/page/Log_in_page.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
+import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/shared_preferances/shared_preferences_service.dart';
+import 'package:dooss_business_app/user/core/widgets/base/splash_screen_page.dart';
+import 'package:dooss_business_app/user/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../Core/network/service_locator.dart';
@@ -68,12 +74,16 @@ class HomePage1 extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         children: [
-                          // IconButton(
-                          //   onPressed: () {
-                          //     BlocProvider.of<AuthCubit>(context).SignIn();
-                          //   },
-                          //   icon: Icon(Icons.notifications, size: 20),
-                          // ),
+                          IconButton(
+                            onPressed: () {
+                              // BlocProvider.of<AppManagerCubit>(context).dealerLogOut();
+                              appLocator<SharedPreferencesService>()
+                                  .removeAll();
+                           context.go(RouteNames.splashScreen);
+                            },
+                            icon: Icon(Icons.logout,
+                                color: AppColors.silverDark, size: 20),
+                          ),
                           SizedBox(width: 10.w),
                           GestureDetector(
                             onTap: () {
