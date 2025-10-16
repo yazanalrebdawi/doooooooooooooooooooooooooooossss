@@ -41,4 +41,10 @@ abstract class MyProfileRepository {
   Future<Either<Failure, String?>> cancelPhoneUpdateRepo();
 
   Future<Either<Failure, EditUserModel>> updateAvatarRepo(File avatar);
+
+  //* Delete Account
+  Future<Either<Failure, String>> deleteAccountRepo({
+    required String currentPassword,
+    required String reason,
+  });
 }

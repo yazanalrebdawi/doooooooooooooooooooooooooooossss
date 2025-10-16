@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:dooss_business_app/user/core/network/api_urls.dart';
 import 'package:dooss_business_app/user/core/network/failure.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
@@ -17,7 +18,7 @@ class DealersAuthRemouteDataSource {
       {required this.dio, required this.secureStorage});
   Future<Either<Failure, AuthDataResponse>> SignIn(
       {required String name, required String password, required code}) async {
-    var url = 'https://doossapp.com/dealers/login/';
+    var url = ApiUrls.loginDaelar;
     var data = {
       "username": name,
       "password": password,

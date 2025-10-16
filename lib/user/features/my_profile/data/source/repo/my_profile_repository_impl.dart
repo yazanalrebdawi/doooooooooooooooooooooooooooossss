@@ -230,5 +230,32 @@ class MyProfileRepositoryImpl implements MyProfileRepository {
     }
   }
 
+//?---------------------------------------------------------------
+
+//* Delete Account
+  @override
+  Future<Either<Failure, String>> deleteAccountRepo({
+    required String currentPassword,
+    required String reason,
+  }) async {
+    try {
+      if (!await network.isConnected) {
+        return Left(FailureNoConnection());
+      }
+
+      final result = await remote.deleteAccountRemote(
+        currentPassword: currentPassword,
+        reason: reason,
+      );
+
+      return result.fold(
+        (failure) => Left(failure),
+        (message) => Right(message),
+      );
+    } catch (e) {
+      return Left(Failure.handleError(e as DioException));
+    }
+  }
+
   //?---------------------------------------------------------
 }

@@ -1,4 +1,7 @@
+import 'package:dooss_business_app/dealer/features/Home/presentation/manager/home_page_cubit.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/page/delete_account_page.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigotorPage.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/page/privacy_policy_page.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/core/widgets/base/splash_screen_page.dart';
 import 'package:dooss_business_app/user/features/auth/presentation/pages/forget_password_screen.dart';
@@ -18,6 +21,7 @@ import 'package:dooss_business_app/user/features/home/presentaion/pages/car_deta
 import 'package:dooss_business_app/user/features/my_profile/presentation/manager/my_profile_cubit.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/pages/change_language_screen.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/pages/change_password_screen.dart';
+import 'package:dooss_business_app/user/features/my_profile/presentation/pages/delete_account_user_page.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/pages/edit_profile_screen.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/pages/otp_verification_screen.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/pages/profile_screen.dart';
@@ -52,6 +56,7 @@ import 'package:flutter/material.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: RouteNames.splashScreen,
+    // initialLocation: RouteNames.navigatorPage,
     routes: routes,
   );
 
@@ -67,6 +72,10 @@ class AppRouter {
     GoRoute(
       path: RouteNames.splashScreen,
       builder: (context, state) => const SplashScreen(),
+    ),
+    GoRoute(
+      path: RouteNames.privacyPolicy,
+      builder: (context, state) => const PrivacyPolicyPage(),
     ),
     GoRoute(
       path: RouteNames.onBoardingScreen,
@@ -94,7 +103,7 @@ class AppRouter {
         String phoneNumber = state.extra as String? ?? '';
         return VerifyOtpPage(
           phoneNumber: phoneNumber,
-          isResetPassword: true, // تحديد أن هذا reset password flow
+          isResetPassword: true,
         );
       },
     ),
@@ -104,7 +113,7 @@ class AppRouter {
         String phoneNumber = state.extra as String? ?? '';
         return VerifyOtpPage(
           phoneNumber: phoneNumber,
-          isResetPassword: false, // تحديد أن هذا register flow
+          isResetPassword: false,
         );
       },
     ),
@@ -133,6 +142,30 @@ class AppRouter {
     GoRoute(
       path: RouteNames.navigatorPage,
       builder: (context, state) => const NavigatorPage(),
+    ),
+
+    GoRoute(
+      path: RouteNames.deleteAccountDealer,
+      builder: (context, state) {
+        final Map<String, dynamic> args = state.extra as Map<String, dynamic>;
+        final blocProvider = args["blocProvide"] as HomePageCubit;
+        return BlocProvider.value(
+          value: blocProvider,
+          child: DeleteAccountDealerPage(),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: RouteNames.deleteAccountUser,
+      builder: (context, state) {
+        final Map<String, dynamic> args = state.extra as Map<String, dynamic>;
+        final blocProvider = args["blocProvide"] as MyProfileCubit;
+        return BlocProvider.value(
+          value: blocProvider,
+          child: DeleteAccountUserPage(),
+        );
+      },
     ),
 
     GoRoute(

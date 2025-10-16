@@ -79,10 +79,36 @@ class HomePage1 extends StatelessWidget {
                               // BlocProvider.of<AppManagerCubit>(context).dealerLogOut();
                               appLocator<SharedPreferencesService>()
                                   .removeAll();
-                           context.go(RouteNames.splashScreen);
+                              context.go(RouteNames.splashScreen);
                             },
                             icon: Icon(Icons.logout,
                                 color: AppColors.silverDark, size: 20),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              context.push(RouteNames.privacyPolicy);
+                            },
+                            icon: Icon(
+                              Icons.privacy_tip,
+                              color: AppColors.silverDark,
+                              size: 24,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              context.push(
+                                RouteNames.deleteAccountDealer,
+                                extra: {
+                                  'blocProvide':
+                                      BlocProvider.of<HomePageCubit>(context),
+                                },
+                              );
+                            },
+                            icon: Icon(
+                              Icons.delete_forever,
+                              color: AppColors.silverDark,
+                              size: 20,
+                            ),
                           ),
                           SizedBox(width: 10.w),
                           GestureDetector(

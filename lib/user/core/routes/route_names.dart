@@ -24,6 +24,8 @@ class RouteNames {
   static const String addCarStep3 = '/addCarStep3';
   static const String addCarStep4 = '/addCarStep4';
   static const String nearbyServicesScreen = '/nearby-services';
+  static const String deleteAccountUser = '/delete-account-user';
+
   // Reels Routes
   static const String reelsScreen = '/reels';
   static const String reelsWithId = '/reels/:id';
@@ -31,6 +33,8 @@ class RouteNames {
   // Dealer Profile Routes
   static const String dealerProfileScreen = '/dealer-profile';
   static const String dealerProfileWithId = '/dealer-profile/:id';
+  static const String deleteAccountDealer = '/delete-account-dealer';
+  static const String privacyPolicy = '/privacy-policy';
 
   // my profile & settings
   static const String changeLanguageScreen = '/changeLanguageScreen';
