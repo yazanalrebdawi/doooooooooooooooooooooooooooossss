@@ -197,7 +197,7 @@ class MyProfileRemoteDataSourceImpl implements MyProfileRemoteDataSource {
         "reason": reason,
       };
 
-      final result = await api.post(
+      final result = await api.delete(
         apiRequest: ApiRequest(
           url: ApiUrls.deleteUserAccount,
           data: data,

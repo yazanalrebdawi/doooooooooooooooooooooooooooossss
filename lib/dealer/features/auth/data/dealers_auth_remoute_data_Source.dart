@@ -18,7 +18,7 @@ class DealersAuthRemouteDataSource {
       {required this.dio, required this.secureStorage});
   Future<Either<Failure, AuthDataResponse>> SignIn(
       {required String name, required String password, required code}) async {
-    var url = ApiUrls.loginDaelar;
+    var url = "https://www.doossapp.com/api/dealers/login/";
     var data = {
       "username": name,
       "password": password,

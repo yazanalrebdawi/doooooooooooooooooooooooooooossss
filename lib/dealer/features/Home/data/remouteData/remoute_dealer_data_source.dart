@@ -41,7 +41,7 @@ class RemouteDealerDataSource {
         return Left(Failure(message: 'No authentication token found'));
       }
 
-      final response = await dio.post(
+      final response = await dio.delete(
         ApiUrls.deleteDealerAccount,
         data: {
           "current_password": currentPassword,

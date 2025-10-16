@@ -50,7 +50,7 @@ class EditStoreProfile extends StatefulWidget {
   final String openTime;
   final String lat;
   final String log;
- 
+
   @override
   State<EditStoreProfile> createState() => _EditStoreProfileState();
 }
@@ -70,7 +70,8 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
     lonValue = widget.log;
     super.initState();
   }
-GlobalKey<FormState> form = GlobalKey<FormState>();
+
+  GlobalKey<FormState> form = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     late bool isAvaiable = true;
@@ -78,7 +79,8 @@ GlobalKey<FormState> form = GlobalKey<FormState>();
       appBar: CustomAppBar(
         backgroundColor: Color(0xffffffff),
         title: 'Edit Store profile',
-        subtitle: 'Keep your store details up to date for better\nvisibility and trust',
+        subtitle:
+            'Keep your store details up to date for better\nvisibility and trust',
         ontap: () {
           BlocProvider.of<HomePageCubit>(context).getDataProfile();
         },
@@ -111,11 +113,11 @@ GlobalKey<FormState> form = GlobalKey<FormState>();
                   text: 'failure edit Store ',
                   isFailure: true,
                 ),
-                backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                backgroundColor: Colors.transparent,
                 elevation: 0,
                 behavior: SnackBarBehavior.floating,
                 margin: EdgeInsets.only(
-                  top: 20, // مسافة من الأعلى
+                  top: 20,
                   left: 10,
                   right: 10,
                 ),
@@ -136,7 +138,10 @@ GlobalKey<FormState> form = GlobalKey<FormState>();
                       storeDescription: widget.storeDescription,
                     ),
                     // AddStoreLogoWidget(),
-                    ContactInfoWidget(phone: widget.phone,email: widget.email,),
+                    ContactInfoWidget(
+                      phone: widget.phone,
+                      email: widget.email,
+                    ),
                     locationSelectWidget(
                       lat: (value) {
                         latValue = value;
@@ -177,19 +182,19 @@ GlobalKey<FormState> form = GlobalKey<FormState>();
                         days = [];
                       },
                       onTap: () {
-                            if (form.currentState!.validate()) {
-                               BlocProvider.of<HomePageCubit>(context).EditDataProfile(
-                          widget.storeName.text,
-                          widget.storeDescription.text,
-                          widget.phone.text,
-                          close.toString(),
-                          start.toString(),
-                          latValue,
-                          lonValue,
-                          days,
-                        );
-                            }
-                       
+                        if (form.currentState!.validate()) {
+                          BlocProvider.of<HomePageCubit>(context)
+                              .EditDataProfile(
+                            widget.storeName.text,
+                            widget.storeDescription.text,
+                            widget.phone.text,
+                            close.toString(),
+                            start.toString(),
+                            latValue,
+                            lonValue,
+                            days,
+                          );
+                        }
                       },
                       isAvaialble: isAvaiable,
                       name: widget.storeName.text,
