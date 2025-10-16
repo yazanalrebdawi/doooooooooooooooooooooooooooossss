@@ -11,7 +11,6 @@ class MyProfileState {
   final UserModel? user;
   final EditUserModel? editUser;
   final String? errorEditInfo;
-
   final ResponseStatusEnum statusEdit;
 
   //?----------------------------------------------------
@@ -30,6 +29,10 @@ class MyProfileState {
   //?----------------------------------------------------
   final ResponseStatusEnum statusChangePassword;
   final String? errorChangePassword;
+
+  //?----------------------------------------------------
+  final ResponseStatusEnum statusDeletAccount;
+  final String? errorDeletAccount;
 
   //?----------------------------------------------------
   final ResponseStatusEnum statusGetListFavorites;
@@ -51,6 +54,8 @@ class MyProfileState {
     required this.numberOfList,
     this.statusCancelPhone = ResponseStatusEnum.initial,
     this.errorCancelPhone,
+    this.statusDeletAccount = ResponseStatusEnum.initial,
+    this.errorDeletAccount,
     this.statusRequestOtp = ResponseStatusEnum.initial,
     this.errorRequestOtp,
     this.statusGetListFavorites = ResponseStatusEnum.initial,
@@ -72,6 +77,8 @@ class MyProfileState {
   //?-------------------------------------------------------------------------
 
   MyProfileState copyWith({
+    ResponseStatusEnum? statusDeletAccount,
+    String? errorDeletAccount,
     List<FavoriteModel>? lsitFilterations,
     int? numberOfList,
     String? errorCancelPhone,
@@ -95,11 +102,13 @@ class MyProfileState {
   }) {
     return MyProfileState(
       lsitFilterations: lsitFilterations ?? this.lsitFilterations,
+      statusDeletAccount: statusDeletAccount ?? this.statusDeletAccount,
+      errorRequestOtp: errorRequestOtp,
       numberOfList: numberOfList ?? this.numberOfList,
       errorCancelPhone: errorCancelPhone,
       statusCancelPhone: statusCancelPhone ?? this.statusCancelPhone,
       statusRequestOtp: statusRequestOtp ?? this.statusRequestOtp,
-      errorRequestOtp: errorRequestOtp,
+      errorDeletAccount: errorDeletAccount,
       errorConfirmPhone: errorConfirmPhone,
       statusConfirmPhone: statusConfirmPhone ?? ResponseStatusEnum.initial,
       statusChangePassword: statusChangePassword ?? this.statusChangePassword,

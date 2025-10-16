@@ -136,8 +136,8 @@ class DataProfileModel {
       closingTime: map['closing_time']  ?? '',
       isStoreOpen: map['is_store_open'] as bool,
       storeStatus: map['store_status'] ??'',
-      latitude: map['latitude'] ?? 0.0,
-      longitude: map['longitude'] ?? 0.0,
+      latitude: map['latitude'] ?? 33.5138,
+      longitude: map['longitude'] ?? 36.2765,
       storeLogo: map['store_logo'] ?? '',
     );
   }

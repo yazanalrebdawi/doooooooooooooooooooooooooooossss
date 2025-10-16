@@ -101,16 +101,20 @@ class _ProfileSettingsWidgetState extends State<ProfileSettingsWidget> {
             text: "Edit Profile",
             onPressed: () {
               final appmanagerUser = context.read<AppManagerCubit>().state.user;
+
               if (appmanagerUser != null) {
                 log("🫠 User info:");
-                log(appmanagerUser.name);
-                log(appmanagerUser.phone);
-                log(appmanagerUser.role);
-                log(appmanagerUser.avatar!.path);
-                log(appmanagerUser.createdAt.toString());
-                log(appmanagerUser.id.toString());
-                log(appmanagerUser.verified.toString());
+                log("Name: ${appmanagerUser.name}");
+                log("Phone: ${appmanagerUser.phone}");
+                log("Role: ${appmanagerUser.role}");
+                log("Avatar: ${appmanagerUser.avatar?.path ?? 'No avatar'}");
+                log("CreatedAt: ${appmanagerUser.createdAt}");
+                log("ID: ${appmanagerUser.id}");
+                log("Verified: ${appmanagerUser.verified}");
+              } else {
+                log("User is null");
               }
+
               Navigator.push(
                 context,
                 MaterialPageRoute(

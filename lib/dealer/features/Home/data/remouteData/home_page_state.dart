@@ -1,6 +1,7 @@
 import 'package:dooss_business_app/dealer/features/Home/data/models/dashboard_info_model.dart';
 import 'package:dooss_business_app/dealer/features/Home/data/models/data_profile_models.dart';
 import 'package:dooss_business_app/dealer/features/Home/data/models/product_data_model.dart';
+import 'package:dooss_business_app/user/core/utils/response_status_enum.dart';
 
 class HomepageState {
   final List<productdata> allProduct;
@@ -14,23 +15,30 @@ class HomepageState {
   final bool isLoadingGetProduct;
   final bool isLoadingeditProfile;
   final bool isSuccess;
-  HomepageState(
-      {required this.allProduct,
-      this.error,
-      required this.dataDash,
-      required this.isSuccessAddCar,
-      this.isLoadingFecthProductData = false,
-      this.isSuccessEditProduct = false,
-      required this.dataStore,
-      this.isSuccessGetProduct = false,
-      this.isLoadingGetProduct = false,
-      this.isLoadingeditProfile = false,
-      this.isSuccess = false,
-      });
+  final ResponseStatusEnum deleateAccount;
+  final String? errorDeleteAccount;
+
+  HomepageState({
+    required this.allProduct,
+    this.errorDeleteAccount,
+    this.error,
+    this.deleateAccount = ResponseStatusEnum.initial,
+    required this.dataDash,
+    required this.isSuccessAddCar,
+    this.isLoadingFecthProductData = false,
+    this.isSuccessEditProduct = false,
+    required this.dataStore,
+    this.isSuccessGetProduct = false,
+    this.isLoadingGetProduct = false,
+    this.isLoadingeditProfile = false,
+    this.isSuccess = false,
+  });
 
   HomepageState copyWith(
       {List<productdata>? allProduct,
+      String? errorDeleteAccount,
       String? error,
+      ResponseStatusEnum? deleateAccount,
       DealerDashboardInfo? dataDash,
       bool? isSuccessAddCar,
       bool? isLoadingFecthProductData,
@@ -39,11 +47,12 @@ class HomepageState {
       bool? isSuccessGetProduct,
       bool? isLoadingGetProduct,
       bool? isLoadingeditProfile,
-      bool? isSuccess
-      }) {
+      bool? isSuccess}) {
     return HomepageState(
         allProduct: allProduct ?? this.allProduct,
+        deleateAccount: deleateAccount ?? this.deleateAccount,
         error: error,
+        errorDeleteAccount: errorDeleteAccount,
         dataDash: dataDash ?? this.dataDash,
         isSuccessAddCar: isSuccessAddCar ?? false,
         isLoadingFecthProductData: isLoadingFecthProductData ?? false,
@@ -51,8 +60,7 @@ class HomepageState {
         dataStore: dataStore ?? this.dataStore,
         isSuccessGetProduct: isSuccessGetProduct ?? false,
         isLoadingGetProduct: isLoadingGetProduct ?? false,
-        isLoadingeditProfile:  isLoadingeditProfile ?? false,
-        isSuccess: isSuccess ?? false
-        );
+        isLoadingeditProfile: isLoadingeditProfile ?? false,
+        isSuccess: isSuccess ?? false);
   }
 }

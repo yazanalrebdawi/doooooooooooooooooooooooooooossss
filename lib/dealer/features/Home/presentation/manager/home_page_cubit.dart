@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:dooss_business_app/user/core/utils/response_status_enum.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -10,52 +11,81 @@ import '../../data/remouteData/remoute_dealer_data_source.dart';
 
 class HomePageCubit extends Cubit<HomepageState> {
   HomePageCubit(this.data)
-    : super(
-        HomepageState(
-          dataStore: DataProfileModel(
-            id: 0,
-            name: '',
-            storeDescription: '',
-            reelsCount: 0,
-            carsActive: 0,
-            carsSold: 0,
-            handle: '',
-            phone: '',
-            monthlyReelsLimit: 0,
-            contactPhone: '',
-            locationAddress: '',
-            googleMapsLink: '',
-            workingDays: [],
-            openingTime: '',
-            closingTime: '',
-            isStoreOpen: true,
-            storeStatus: '',
-            latitude: 0,
-            longitude: 0,
-            storeLogo: '',
+      : super(
+          HomepageState(
+            dataStore: DataProfileModel(
+              id: 0,
+              name: '',
+              storeDescription: '',
+              reelsCount: 0,
+              carsActive: 0,
+              carsSold: 0,
+              handle: '',
+              phone: '',
+              monthlyReelsLimit: 0,
+              contactPhone: '',
+              locationAddress: '',
+              googleMapsLink: '',
+              workingDays: [],
+              openingTime: '',
+              closingTime: '',
+              isStoreOpen: true,
+              storeStatus: '',
+              latitude: 0,
+              longitude: 0,
+              storeLogo: '',
+            ),
+            isSuccessAddCar: false,
+            allProduct: [],
+            dataDash: DealerDashboardInfo(
+              messages: Messages(messagesNew: 0),
+              ratings: 0,
+              reels: Reels(views: 0, likes: 0),
+              cars:
+                  Cars(active: 0, sold: 0, archived: 0, topRating: 0, list: []),
+            ),
           ),
-          isSuccessAddCar: false,
-          allProduct: [],
-          dataDash: DealerDashboardInfo(
-            messages: Messages(messagesNew: 0),
-            ratings: 0,
-            reels: Reels(views: 0, likes: 0),
-            cars: Cars(active: 0, sold: 0, archived: 0, topRating: 0, list: []),
-          ),
-        ),
-      );
+        );
   final RemouteDealerDataSource data;
+
+  //?-------------------------------------------------------------
+
+  void deleteAccount(String password, String reason) async {
+    emit(state.copyWith(deleateAccount: ResponseStatusEnum.loading));
+
+    final result = await data.deleteAccountRemote(
+        currentPassword: password, reason: reason);
+
+    result.fold(
+      (failure) {
+        emit(state.copyWith(
+          deleateAccount: ResponseStatusEnum.failure,
+          errorDeleteAccount: failure.message,
+        ));
+      },
+      (_) {
+        emit(state.copyWith(
+          deleateAccount: ResponseStatusEnum.success,
+        ));
+      },
+    );
+  }
+
+  //?-------------------------------------------------------------
   void getdataproduct() async {
     // emit(state.copyWith(isLoadingGetProduct: true));
     var result = await data.getDataProduct();
     result.fold(
       (error) {
-        emit(state.copyWith(error: error.message,isLoadingGetProduct: false));
+        emit(state.copyWith(error: error.message, isLoadingGetProduct: false));
         print(error.toString());
       },
       (data) {
         // print(data.length);
-        emit(state.copyWith(allProduct: data,isSuccessGetProduct: true,isLoadingGetProduct: false));
+        emit(state.copyWith(
+            allProduct: data,
+            isSuccessGetProduct: true,
+            isLoadingGetProduct: false));
       },
     );
   }
@@ -175,41 +205,39 @@ class HomePageCubit extends Cubit<HomepageState> {
   }
 
   void AddNewCar(
-    String brand,
-    int year,
-    String model,
-    String price,
-    String milleage,
-    String engineSize,
-    String typeFuel,
-    String Transmissiion,
-    String Drivetrain,
-    int Door,
-    int seats,
-    XFile video,
-    String status,
-    double lat,
-    double lon,
-    String color
-  ) async {
+      String brand,
+      int year,
+      String model,
+      String price,
+      String milleage,
+      String engineSize,
+      String typeFuel,
+      String Transmissiion,
+      String Drivetrain,
+      int Door,
+      int seats,
+      XFile video,
+      String status,
+      double lat,
+      double lon,
+      String color) async {
     var result = await data.AddCars(
-      brand,
-      year,
-      model,
-      price,
-      milleage,
-      engineSize,
-      typeFuel,
-      Transmissiion,
-      Drivetrain,
-      Door,
-      seats,
-      video,
-      status,
-      lat,lon,
-      color
-
-    );
+        brand,
+        year,
+        model,
+        price,
+        milleage,
+        engineSize,
+        typeFuel,
+        Transmissiion,
+        Drivetrain,
+        Door,
+        seats,
+        video,
+        status,
+        lat,
+        lon,
+        color);
     result.fold(
       (error) {
         emit(state.copyWith(error: error.message));
@@ -253,7 +281,7 @@ class HomePageCubit extends Cubit<HomepageState> {
         emit(state.copyWith(error: e.message));
       },
       (data) {
-        emit(state.copyWith(isSuccess: true));//تعديييييييييييييل
+        emit(state.copyWith(isSuccess: true)); //تعديييييييييييييل
       },
     );
   }

@@ -8,6 +8,7 @@ import 'package:dooss_business_app/user/core/network/api_urls.dart';
 import 'package:dooss_business_app/user/core/network/failure.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
+import 'package:dooss_business_app/user/core/services/token_service.dart';
 import 'package:dooss_business_app/user/features/auth/data/models/user_model.dart';
 import 'package:dooss_business_app/user/features/my_profile/data/models/edit_user_model.dart';
 import 'package:dooss_business_app/user/features/my_profile/data/models/favorite_model.dart';
@@ -178,6 +179,50 @@ class MyProfileRemoteDataSourceImpl implements MyProfileRemoteDataSource {
   }
 
   //?----------------------------------------------------------------
+  //* Delete Account
+  @override
+  Future<Either<Failure, String>> deleteAccountRemote({
+    required String currentPassword,
+    required String reason,
+  }) async {
+    try {
+      final userToken = await TokenService.getAccessToken();
+
+      if (userToken == null) {
+        return Left(Failure(message: 'No authentication token found'));
+      }
+
+      final Map<String, dynamic> data = {
+        "current_password": currentPassword,
+        "reason": reason,
+      };
+
+      final result = await api.delete(
+        apiRequest: ApiRequest(
+          url: ApiUrls.deleteUserAccount,
+          data: data,
+        ),
+      );
+
+      return result.fold(
+        (failure) => Left(failure),
+        (data) {
+          String message = "Account deleted successfully";
+          if (data is Map<String, dynamic> && data["detail"] != null) {
+            message = data["detail"].toString();
+          }
+          return Right(message);
+        },
+      );
+    } catch (e) {
+      if (e is DioException) {
+        return Left(Failure.handleError(e));
+      } else {
+        return Left(Failure(message: e.toString()));
+      }
+    }
+  }
+
   //?---------------------------------------------------------------------
   //?----------------------------------------------------------------
   //* Request OTP for Phone Confirmation
@@ -333,13 +378,12 @@ class MyProfileRemoteDataSourceImpl implements MyProfileRemoteDataSource {
       (result) {
         try {
           if (result is List) {
-            final favorites =
-                result
-                    .map(
-                      (item) =>
-                          FavoriteModel.fromJson(item as Map<String, dynamic>),
-                    )
-                    .toList();
+            final favorites = result
+                .map(
+                  (item) =>
+                      FavoriteModel.fromJson(item as Map<String, dynamic>),
+                )
+                .toList();
 
             for (final fav in favorites) {
               log(
@@ -388,6 +432,7 @@ class MyProfileRemoteDataSourceImpl implements MyProfileRemoteDataSource {
       return Left(Failure.handleError(e as DioException));
     }
   }
+  
 
   //?----------------------------------------------------------------
 }

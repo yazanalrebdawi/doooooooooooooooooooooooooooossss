@@ -17,6 +17,28 @@ class SharedPreferencesService {
     } catch (_) {}
   }
 
+  //?---------------- Get Dealer Token ----------------------------------------
+  Future<String?> getDealerToken() async {
+    try {
+      final jsonString = storagePreferences.getString('dealer_data');
+      if (jsonString == null) return null;
+
+      final Map<String, dynamic> map = jsonDecode(jsonString);
+      final dealer = AuthDataResponse.fromMap(map);
+
+      // 🔹 تأكد إنو في توكن
+      if (dealer.access != null && dealer.access.isNotEmpty) {
+        return dealer.access;
+      } else {
+        log("⚠️ Dealer token is null or empty");
+        return null;
+      }
+    } catch (e) {
+      log("❌ Error getting dealer token: $e");
+      return null;
+    }
+  }
+
   // ------------------ Save Dealer Auth Data ------------------------
   Future<void> saveDealerAuthData(AuthDataResponse dealer) async {
     try {

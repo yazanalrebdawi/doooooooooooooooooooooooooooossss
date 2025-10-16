@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyProfileCubit extends Cubit<MyProfileState> {
   MyProfileCubit({required this.repository})
-    : super(MyProfileState(numberOfList: 0));
+      : super(MyProfileState(numberOfList: 0));
 
   final MyProfileRepository repository;
 
@@ -35,6 +35,33 @@ class MyProfileCubit extends Cubit<MyProfileState> {
       },
     );
   }
+  //?---------------------------------------------------------------------
+
+  Future<void> deleteAccount(String currentPassword, String reason) async {
+    emit(state.copyWith(
+      statusDeletAccount: ResponseStatusEnum.loading,
+    ));
+
+    final result = await repository.deleteAccountRepo(
+      currentPassword: currentPassword,
+      reason: reason,
+    );
+
+    result.fold(
+      (failure) {
+        emit(state.copyWith(
+          statusDeletAccount: ResponseStatusEnum.failure,
+          errorDeletAccount: failure.message,
+        ));
+      },
+      (message) {
+        emit(state.copyWith(
+          statusDeletAccount: ResponseStatusEnum.success,
+        ));
+      },
+    );
+  }
+
   //?---------------------------------------------------------------------
 
   Future<void> updateAvatar(File avatar) async {
@@ -336,8 +363,6 @@ class MyProfileCubit extends Cubit<MyProfileState> {
       );
     }
   }
-
- 
 
   //?---------------------------------------------------------------------
 }

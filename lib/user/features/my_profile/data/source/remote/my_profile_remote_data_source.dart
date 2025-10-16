@@ -38,8 +38,15 @@ abstract class MyProfileRemoteDataSource {
   Future<Either<Failure, String?>> requestOtpRemote({required String phone});
 
   //* Cancel Phone Number Update OTP
-
   Future<Either<Failure, String?>> cancelPhoneUpdateRemote();
 
   Future<Failure?> updateAvatar(File avatarFile);
+
+  //* Delete Account
+  Future<Either<Failure, String>> deleteAccountRemote({
+    required String currentPassword,
+    required String reason,
+  });
+
+  
 }

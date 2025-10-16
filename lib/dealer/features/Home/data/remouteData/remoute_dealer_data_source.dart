@@ -9,6 +9,9 @@ import 'package:dooss_business_app/dealer/features/Home/data/models/dashboard_in
 import 'package:dooss_business_app/dealer/features/Home/data/models/product_data_model.dart';
 import 'package:dooss_business_app/user/core/network/api_urls.dart';
 import 'package:dooss_business_app/user/core/network/failure.dart';
+import 'package:dooss_business_app/user/core/services/locator_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
+import 'package:dooss_business_app/user/core/services/storage/shared_preferances/shared_preferences_service.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../Core/network/Base_Url.dart';
@@ -22,9 +25,65 @@ class RemouteDealerDataSource {
   final Dio dio;
 
   RemouteDealerDataSource({required this.dio});
+
+  //?----------------------------------------------------------------
+//* Delete Account
+  @override
+  Future<Either<Failure, String>> deleteAccountRemote({
+    required String currentPassword,
+    required String reason,
+  }) async {
+    try {
+      final dealerToken =
+          await appLocator<SharedPreferencesService>().getDealerToken();
+
+      if (dealerToken == null) {
+        return Left(Failure(message: 'No authentication token found'));
+      }
+
+      final response = await dio.delete(
+        ApiUrls.deleteDealerAccount,
+        data: {
+          "current_password": currentPassword,
+          "reason": reason,
+        },
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $dealerToken",
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+
+      // 🔹 التحقق من نجاح العملية
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        String message = "Account deleted successfully";
+        if (response.data is Map && response.data["detail"] != null) {
+          message = response.data["detail"].toString();
+        }
+        return Right(message);
+      } else {
+        return Left(
+          Failure(
+            message:
+                'Failed to delete account. Status code: ${response.statusCode}',
+          ),
+        );
+      }
+    } catch (e) {
+      if (e is DioException) {
+        return Left(Failure.handleError(e));
+      } else {
+        return Left(Failure(message: e.toString()));
+      }
+    }
+  }
+
+//?---------------------------------------------------------------
   Future<Either<Failure, List<productdata>>> getDataProduct() async {
     try {
-         print('________________________${dio.options.headers}________________________');
+      print(
+          '________________________${dio.options.headers}________________________');
       var url = Uri.parse('${ApiUrls.baseURl}/products/');
       var response = await dio.get(
         '${ApiUrls.baseURl}/products/',
@@ -36,7 +95,7 @@ class RemouteDealerDataSource {
       print(responsedata.length);
       return right(responsedata);
     } catch (e) {
-          return Left(Failure.handleError (e as DioException));
+      return Left(Failure.handleError(e as DioException));
     }
   }
 
@@ -130,10 +189,11 @@ class RemouteDealerDataSource {
     //       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYxMTIyMzE5LCJpYXQiOjE3NTg1MzAzMTksImp0aSI6IjVmMzljYzkyOTRjMTQ0YzdiNDk1OTMwODc4NWE0OTIwIiwidXNlcl9pZCI6IjMifQ.XIHFtjThZGYEbPDXRZZB41bw9q0Yrqd1uL-g723gg1A',
     // };
     print(dio.options.headers);
-    Map<String,dynamic> headerAvaailable = Map.from(dio.options.headers);//تعديل
-headerAvaailable.addAll({'Content-Type': 'application/json'});
-  ///////////////////  تعديل
-     print(headerAvaailable);
+    Map<String, dynamic> headerAvaailable =
+        Map.from(dio.options.headers); //تعديل
+    headerAvaailable.addAll({'Content-Type': 'application/json'});
+    ///////////////////  تعديل
+    print(headerAvaailable);
     var url = '${ApiUrls.baseURl}/dealers/products/$id/availability/';
     var data = {"available": currentValue};
     try {
@@ -146,10 +206,8 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
         print('okey!');
         return right(null);
       } else {
-        return left(
-            Failure.handleError( DioException(message: 'error', requestOptions: RequestOptions ()))
-
-        );
+        return left(Failure.handleError(
+            DioException(message: 'error', requestOptions: RequestOptions())));
       }
     } catch (error) {
       print(error.toString());
@@ -173,23 +231,22 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
   }
 
   Future<Either<Failure, bool>> AddCars(
-    String brand,
-    int year,
-    String Model,
-    String price,
-    String milleage,
-    String engineSize,
-    String typeFuel,
-    String Transmissiion,
-    String Drivetrain,
-    int Door,
-    int seats,
-    XFile image,
-    String Status,
-    double lat,
-    double lon,
-    String color
-  ) async {
+      String brand,
+      int year,
+      String Model,
+      String price,
+      String milleage,
+      String engineSize,
+      String typeFuel,
+      String Transmissiion,
+      String Drivetrain,
+      int Door,
+      int seats,
+      XFile image,
+      String Status,
+      double lat,
+      double lon,
+      String color) async {
     print(dio.options.headers);
     var deta = {
       "name": Model, /////تعدييل
@@ -202,7 +259,7 @@ headerAvaailable.addAll({'Content-Type': 'application/json'});
       "transmission": Transmissiion,
       "engine_capacity": engineSize, //////
       "drive_type": Drivetrain,
-      "color": color??'white',///////تعديييييل
+      "color": color ?? 'white', ///////تعديييييل
       "doors_count": Door,
       "seats_count": seats,
       "status": Status,
