@@ -156,7 +156,7 @@ class RemouteDealerDataSource {
       return right(data);
     } catch (error) {
       print(error.toString());
-      return left(error.toString());
+      return left(Failure.handleError(error as DioException).message);
     }
   }
 

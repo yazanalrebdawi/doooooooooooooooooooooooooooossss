@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/edit_Prodect_page.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Appearance_and_colors_widget.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/basic_information_widget.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/spacification_widget.dart';
 import 'package:flutter/material.dart';
 
