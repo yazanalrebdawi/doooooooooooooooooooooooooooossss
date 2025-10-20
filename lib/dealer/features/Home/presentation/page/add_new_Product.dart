@@ -148,7 +148,7 @@ class AddNewProductPage extends StatelessWidget {
                               ontap: () {
                                 if (_form.currentState!.validate()) {
                                   if(image!=null){
- print(image!.path);
+                                     print(image!.path);
                                   BlocProvider.of<HomePageCubit>(
                                     context,
                                   ).addProduct(

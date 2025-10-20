@@ -312,21 +312,23 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
           ),
           SizedBox(height: 24.h),
           _buildActionButton(
-            icon: Icons.comment,
-            label: _formatCount(widget.reel.likesCount),
-            onTap: () => print('Comment on reel ${widget.reel.id}'),
+            icon: Icons.visibility,
+            imageIcon: 'assets/images/seen.png',
+            label: _formatCount(widget.reel.viewsCount),
+            onTap: () => print('Comment on reel ${widget.reel.viewsCount}'),
           ),
-          SizedBox(height: 24.h),
-          _buildActionButton(
-            icon: Icons.share,
-            label: 'Share',
-            onTap: () => print('Share reel ${widget.reel.id}'),
-          ),
+          // SizedBox(height: 24.h),
+          // _buildActionButton(
+          //   icon: Icons.share,
+          //   label: 'Share',
+          //   onTap: () => print('Share reel ${widget.reel.id}'),
+          // ),
           SizedBox(height: 24.h),
           _buildActionButton(
             icon: _isMuted ? Icons.volume_off : Icons.volume_up,
             label: _isMuted ? 'Unmute' : 'Mute',
             onTap: _toggleMute,
+            // imageIcon:  'assets/images/seen.png'
           ),
         ],
       ),
@@ -338,6 +340,7 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     required String label,
     required VoidCallback onTap,
     Color iconColor = Colors.white,
+    String? imageIcon
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -350,7 +353,10 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
               color: AppColors.black.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 24.sp),
+            child: imageIcon!=null? Padding(
+              padding:  EdgeInsets.all(12.r),
+              child:imageIcon==true? Image.asset('assets/images/seen.png',width: 20,): Image.asset(imageIcon,width: 8, color: iconColor),
+            ): Icon(icon, color: iconColor, size: 24.sp),
           ),
           SizedBox(height: 4.h),
           Text(label, style: AppTextStyles.whiteS12W400, textAlign: TextAlign.center),

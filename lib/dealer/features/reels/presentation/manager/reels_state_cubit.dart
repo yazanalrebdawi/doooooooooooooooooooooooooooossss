@@ -39,11 +39,11 @@ class ReelsStateCubit extends Cubit<reelsState> {
     var result = await data.addNewReel(video, title, descraption);
     result.fold(
       (failure) {
-        print(failure.message);
+        print(failure.statusCode);
         if(failure.statusCode==400){
               emit(state.copyWith(error: 'You have reached your monthly reel publishing quota'));
         }else{
-   emit(state.copyWith(error: failure.message));
+         emit(state.copyWith(error: failure.message));
         }
         
      

@@ -153,6 +153,7 @@ class HomePage1 extends StatelessWidget {
                       children: [
                         // Icon(Icons.directions_car, color: AppColors.primary, size: 24),
                         SvgPicture.asset('assets/icons/car.svg'),
+                        // Image.asset('assets/images/seen.png'),
                         SizedBox(width: 12.h),
                         Text(
                           'Dooss',

@@ -86,6 +86,7 @@ class remouteDataReelsSource {
       print(e.toString());
       if (e is DioException ) {
         print(e.response!.data);
+         return left(Failure(message:e.response!.data[0],statusCode: 400));
       }
       // print(e.toString());
 

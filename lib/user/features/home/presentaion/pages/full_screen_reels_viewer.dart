@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_player/video_player.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/services/locator_service.dart' as di;
 import '../manager/reels_playback_cubit.dart';
@@ -37,9 +38,10 @@ class _FullScreenReelsContent extends StatefulWidget {
 class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   late PageController _pageController;
   bool _showControls = false;
-
+//  bool _isMuted = false;
+  VideoPlayerController? _controller;
   @override
-  void initState() {
+  void initState() async {
     super.initState();
 
     final currentIndex = context.read<ReelsPlaybackCubit>().state.currentIndex;
@@ -50,6 +52,7 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReelsPlaybackCubit>().resumeWithSound();
     });
+    //  await _controller!.setVolume(_isMuted ? 0.0 : 1.0);/////////////////////////////  added
   }
 
   @override
@@ -65,12 +68,11 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
     return Scaffold(
       backgroundColor: AppColors.black,
       body: BlocBuilder<ReelsPlaybackCubit, ReelsPlaybackState>(
-        buildWhen:
-            (previous, current) =>
-                previous.reels != current.reels ||
-                previous.currentIndex != current.currentIndex ||
-                previous.isLoading != current.isLoading ||
-                previous.error != current.error,
+        buildWhen: (previous, current) =>
+            previous.reels != current.reels ||
+            previous.currentIndex != current.currentIndex ||
+            previous.isLoading != current.isLoading ||
+            previous.error != current.error,
         builder: (context, state) {
           if (state.isLoading && state.reels.isEmpty) {
             return _buildLoadingState();
@@ -98,8 +100,8 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
           scrollDirection: Axis.vertical,
           itemCount: state.reels.length,
           onPageChanged: (index) => _onPageChanged(context, index),
-          itemBuilder:
-              (context, index) => _buildReelPage(context, state, index),
+          itemBuilder: (context, index) =>
+              _buildReelPage(context, state, index),
         ),
         Positioned(
           top: MediaQuery.of(context).padding.top + 16.h,
@@ -191,6 +193,7 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
         ),
         ReelInfoOverlay(reel: reel),
         ReelActionsOverlay(
+          // isMuted: _isMuted,
           reel: reel,
           onLike: () => _handleLike(context, reel),
           onShare: () => _handleShare(context, reel),
@@ -298,6 +301,14 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
       });
     }
   }
+
+  //   void _toggleMute() {
+  //   if (_controller?.value.isInitialized == true) {
+  //     _isMuted = !_isMuted;
+  //     _controller!.setVolume(_isMuted ? 0.0 : 1.0); // added
+  //     setState(() {});
+  //   }
+  // }
 
   void _handleLike(BuildContext context, reel) =>
       print('🤍 Like reel: ${reel.id}');
