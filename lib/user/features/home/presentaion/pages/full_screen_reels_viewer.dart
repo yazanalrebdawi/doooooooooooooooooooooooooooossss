@@ -65,12 +65,11 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
     return Scaffold(
       backgroundColor: AppColors.black,
       body: BlocBuilder<ReelsPlaybackCubit, ReelsPlaybackState>(
-        buildWhen:
-            (previous, current) =>
-                previous.reels != current.reels ||
-                previous.currentIndex != current.currentIndex ||
-                previous.isLoading != current.isLoading ||
-                previous.error != current.error,
+        buildWhen: (previous, current) =>
+            previous.reels != current.reels ||
+            previous.currentIndex != current.currentIndex ||
+            previous.isLoading != current.isLoading ||
+            previous.error != current.error,
         builder: (context, state) {
           if (state.isLoading && state.reels.isEmpty) {
             return _buildLoadingState();
@@ -98,8 +97,8 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
           scrollDirection: Axis.vertical,
           itemCount: state.reels.length,
           onPageChanged: (index) => _onPageChanged(context, index),
-          itemBuilder:
-              (context, index) => _buildReelPage(context, state, index),
+          itemBuilder: (context, index) =>
+              _buildReelPage(context, state, index),
         ),
         Positioned(
           top: MediaQuery.of(context).padding.top + 16.h,
@@ -299,8 +298,10 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
     }
   }
 
-  void _handleLike(BuildContext context, reel) =>
-      print('🤍 Like reel: ${reel.id}');
+  void _handleLike(BuildContext context, reel) {
+    context.read<ReelsPlaybackCubit>().likeReel(reel.id);
+  }
+
   void _handleShare(BuildContext context, reel) =>
       print('📤 Share reel: ${reel.id}');
   void _handleComment(BuildContext context, reel) =>

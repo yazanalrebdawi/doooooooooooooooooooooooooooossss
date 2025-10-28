@@ -1,5 +1,10 @@
+import 'package:dooss_business_app/user/core/services/locator_service.dart'
+    as di;
+import 'package:dooss_business_app/user/features/home/presentaion/manager/reel_cubit.dart';
+import 'package:dooss_business_app/user/features/home/presentaion/manager/reels_playback_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
@@ -62,59 +67,63 @@ class _ReelsViewerScreenState extends State<ReelsViewerScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: AppColors.black,
-      body: Stack(
-        children: [
-          // Main vertical PageView
-          PageView.builder(
-            scrollDirection: Axis.vertical,
-            controller: _pageController,
-            itemCount: widget.reelsList.length,
-            onPageChanged: _onPageChanged,
-            itemBuilder: (context, index) {
-              final reel = widget.reelsList[index];
-              final isCurrentReel = index == _currentIndex;
+    return BlocProvider.value(
+      value: di.appLocator<ReelCubit>(),
+      child: Scaffold(
+        backgroundColor: AppColors.black,
+        body: Stack(
+          children: [
+            // Main vertical PageView
+            PageView.builder(
+              scrollDirection: Axis.vertical,
+              controller: _pageController,
+              itemCount: widget.reelsList.length,
+              onPageChanged: _onPageChanged,
+              itemBuilder: (context, index) {
+                final reel = widget.reelsList[index];
+                final isCurrentReel = index == _currentIndex;
 
-              return FullScreenReelPlayer(
-                key: Key('reel_${reel.id}'), // Important for disposal when scrolling
-                reel: reel,
-                isCurrentReel: isCurrentReel,
-                onTap: () => print('Tapped reel ${reel.id}'),
-              );
-            },
-          ),
+                return FullScreenReelPlayer(
+                  key: Key(
+                      'reel_${reel.id}'), // Important for disposal when scrolling
+                  reel: reel,
+                  isCurrentReel: isCurrentReel,
+                  onTap: () => print('Tapped reel ${reel.id}'),
+                );
+              },
+            ),
 
-          // Back button (top left)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 16.h,
-            left: 16.w,
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                width: 40.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  color: AppColors.black.withOpacity(0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: AppColors.white,
-                  size: 24.sp,
+            // Back button (top left)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 16.h,
+              left: 16.w,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  width: 40.w,
+                  height: 40.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: AppColors.white,
+                    size: 24.sp,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // Scroll indicator (right edge)
-          Positioned(
-            right: 8.w,
-            top: MediaQuery.of(context).padding.top + 80.h,
-            bottom: 80.h,
-            child: _buildScrollIndicator(isDark),
-          ),
-        ],
+            // Scroll indicator (right edge)
+            Positioned(
+              right: 8.w,
+              top: MediaQuery.of(context).padding.top + 80.h,
+              bottom: 80.h,
+              child: _buildScrollIndicator(isDark),
+            ),
+          ],
+        ),
       ),
     );
   }

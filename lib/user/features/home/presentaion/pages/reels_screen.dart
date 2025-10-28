@@ -15,17 +15,16 @@ class ReelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PageController pageController = PageController();
-    
+
     return BlocProvider(
       create: (_) => di.appLocator<ReelCubit>()..loadReels(),
       child: WillPopScope(
         onWillPop: () async {
-          // تنظيف الموارد قبل الرجوع
           await NativeVideoService.dispose();
           return true;
         },
         child: Scaffold(
-          backgroundColor: Colors.black, // خلفية سوداء للشاشة
+          backgroundColor: Colors.black,
           body: ReelsScreenContent(
             pageController: pageController,
             initialReelId: initialReelId,

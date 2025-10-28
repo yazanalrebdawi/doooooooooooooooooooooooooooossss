@@ -8,4 +8,6 @@ abstract class ReelRemoteDataSource {
     int pageSize = 20,
     String ordering = '-created_at',
   });
+
+  Future<Either<Failure, Unit>> likeReel(int reelId);
 }
