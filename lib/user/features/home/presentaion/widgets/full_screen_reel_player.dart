@@ -319,85 +319,86 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
       ),
     );
   }
+Widget _buildActionsOverlay() {
+  return BlocProvider.value(
+    value: di.appLocator<ReelCubit>(),
+    child: Positioned(
+      right: 16.w,
+      bottom: 100.h,
+      child: Column(
+        children: [
+          BlocBuilder<ReelCubit, ReelState>(
+            builder: (context, state) {
+              // احصل على الريل الحالي مباشرة من state
+              final updatedReel = state.reels.isNotEmpty
+                  ? state.reels[state.currentReelIndex]
+                  : widget.reel;
 
-  Widget _buildActionsOverlay() {
-    return BlocProvider.value(
-      value: di.appLocator<ReelCubit>(),
-      child: Positioned(
-        right: 16.w,
-        bottom: 100.h,
-        child: Column(
-          children: [
-            BlocBuilder<ReelCubit, ReelState>(
-              builder: (context, state) {
-                // احصل على الريل الحالي مباشرة من state
-                final updatedReel = state.reels.isNotEmpty
-                    ? state.reels[state.currentReelIndex]
-                    : widget.reel;
+              return _buildActionButton(
+                icon: updatedReel.liked
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                label: _formatCount(updatedReel.likesCount),
+                onTap: () {
+                  // ✨ تحديث UI فورًا بدون انتظار API
+                  final tempReel = updatedReel.copyWith(
+                    liked: !updatedReel.liked,
+                    likesCount: updatedReel.liked
+                        ? updatedReel.likesCount - 1
+                        : updatedReel.likesCount + 1,
+                  );
 
-                return _buildActionButton(
-                  icon: updatedReel.liked
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  label: _formatCount(updatedReel.likesCount),
-                  onTap: () {
-                    // ✨ تحديث UI فورًا بدون انتظار API
-                    final tempReel = updatedReel.copyWith(
-                      liked: !updatedReel.liked,
-                      likesCount: updatedReel.liked
-                          ? updatedReel.likesCount - 1
-                          : updatedReel.likesCount + 1,
-                    );
+                  final tempReels = state.reels.isNotEmpty
+                      ? List<ReelModel>.from(state.reels)
+                      : [tempReel];
 
-                    final tempReels = state.reels.isNotEmpty
-                        ? List<ReelModel>.from(state.reels)
-                        : [tempReel];
+                  if (state.reels.isNotEmpty) {
+                    tempReels[state.currentReelIndex] = tempReel;
+                  }
 
-                    if (state.reels.isNotEmpty) {
-                      tempReels[state.currentReelIndex] = tempReel;
-                    }
+                  // emit لحظي لتغيير UI
+                  context.read<ReelCubit>().safeEmit(
+                        state.copyWith(reels: tempReels),
+                      );
 
-                    // emit لحظي لتغيير UI
-                    context.read<ReelCubit>().safeEmit(
-                          state.copyWith(reels: tempReels),
-                        );
-
-                    // إرسال طلب الـ API بدون أي تأثير على UI
-                    context.read<ReelCubit>().likeReel(updatedReel.id);
-                  },
-                  iconColor: updatedReel.liked ? Colors.red : AppColors.white,
-                );
-              },
-            ),
-            SizedBox(height: 24.h),
-            _buildActionButton(
-              icon: Icons.comment,
-              label: _formatCount(widget.reel.likesCount),
-              onTap: () => print('Comment on reel ${widget.reel.id}'),
-            ),
-            SizedBox(height: 24.h),
-            _buildActionButton(
-              icon: Icons.share,
-              label: 'Share',
-              onTap: () => print('Share reel ${widget.reel.id}'),
-            ),
-            SizedBox(height: 24.h),
-            _buildActionButton(
-              icon: _isMuted ? Icons.volume_off : Icons.volume_up,
-              label: _isMuted ? 'Unmute' : 'Mute',
-              onTap: _toggleMute,
-            ),
-          ],
-        ),
+                  // إرسال طلب الـ API بدون أي تأثير على UI
+                  context.read<ReelCubit>().likeReel(updatedReel.id);
+                },
+                iconColor: updatedReel.liked ? Colors.red : AppColors.white,
+              );
+            },
+          ),
+          SizedBox(height: 24.h),
+          _buildActionButton(
+            icon: Icons.comment,
+            label: _formatCount(widget.reel.likesCount),
+            onTap: () => print('Comment on reel ${widget.reel.id}'),
+          ),
+          SizedBox(height: 24.h),
+          _buildActionButton(
+            icon: Icons.share,
+            label: 'Share',
+            onTap: () => print('Share reel ${widget.reel.id}'),
+          ),
+          SizedBox(height: 24.h),
+          _buildActionButton(
+            icon: _isMuted ? Icons.volume_off : Icons.volume_up,
+            label: _isMuted ? 'Unmute' : 'Mute',
+            onTap: _toggleMute,
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildActionButton({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
     Color iconColor = Colors.white,
+    String? imageIcon
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -410,7 +411,10 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
               color: AppColors.black.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 24.sp),
+            child: imageIcon!=null? Padding(
+              padding:  EdgeInsets.all(12.r),
+              child:imageIcon==true? Image.asset('assets/images/seen.png',width: 20,): Image.asset(imageIcon,width: 8, color: iconColor),
+            ): Icon(icon, color: iconColor, size: 24.sp),
           ),
           SizedBox(height: 4.h),
           Text(label,

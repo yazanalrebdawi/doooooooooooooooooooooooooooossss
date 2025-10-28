@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -176,10 +177,13 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
                     // ),
                     BottonNavigationOfEditStore(
                       reset: () {
-                        widget.storeName.text = '';
-                        widget.storeDescription.text = '';
-                        widget.phone.text = '';
-                        days = [];
+                        widget.storeName.clear();
+                        widget.storeDescription.clear();
+                        widget.phone.clear();
+                        widget.email.clear();
+                        widget.location.clear();
+                        // days = [];
+                        print('reset');
                       },
                       onTap: () {
                         if (form.currentState!.validate()) {

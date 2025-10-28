@@ -350,6 +350,7 @@ class _MapScreenState extends State<MapScreen> {
           print(markerLocation.longitude);
           widget.lat(markerLocation.latitude.toString());
           widget.lon(markerLocation.longitude.toString());
+          
         },
       ),
     );

@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/Log_in_page.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/dialog_log_out.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
@@ -77,9 +79,15 @@ class HomePage1 extends StatelessWidget {
                           IconButton(
                             onPressed: () {
                               // BlocProvider.of<AppManagerCubit>(context).dealerLogOut();
-                              appLocator<SharedPreferencesService>()
-                                  .removeAll();
-                              context.go(RouteNames.splashScreen);
+                              // appLocator<SharedPreferencesService>()
+                              //     .removeAll();
+                              // context.go(RouteNames.splashScreen);
+                             showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return showDialogLogOut();
+    },
+  );
                             },
                             icon: Icon(Icons.logout,
                                 color: AppColors.silverDark, size: 20),
@@ -145,6 +153,7 @@ class HomePage1 extends StatelessWidget {
                       children: [
                         // Icon(Icons.directions_car, color: AppColors.primary, size: 24),
                         SvgPicture.asset('assets/icons/car.svg'),
+                        // Image.asset('assets/images/seen.png'),
                         SizedBox(width: 12.h),
                         Text(
                           'Dooss',

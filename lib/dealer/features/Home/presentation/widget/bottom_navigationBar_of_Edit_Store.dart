@@ -72,6 +72,7 @@ class _BottonNavigationOfEditStoreState
             children: [
               Expanded(
                 child: GestureDetector(onTap: () {
+                     widget. reset();
                   
                 },
                   child: Container(

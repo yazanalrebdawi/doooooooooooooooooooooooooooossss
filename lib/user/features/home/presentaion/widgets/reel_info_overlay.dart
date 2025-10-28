@@ -81,13 +81,13 @@ class ReelInfoOverlay extends StatelessWidget {
           // Tags or metadata (views and created at)
           Row(
             children: [
-              Icon(Icons.visibility, color: AppColors.white.withOpacity(0.7), size: 16.sp),
-              SizedBox(width: 4.w),
-              Text(
-                _formatCount(reel.viewsCount),
-                style: AppTextStyles.whiteS12W400.copyWith(color: AppColors.white.withOpacity(0.7)),
-              ),
-              SizedBox(width: 16.w),
+              // Icon(Icons.visibility, color: AppColors.white.withOpacity(0.7), size: 16.sp),
+              // SizedBox(width: 4.w),
+              // Text(
+              //   _formatCount(reel.viewsCount),
+              //   style: AppTextStyles.whiteS12W400.copyWith(color: AppColors.white.withOpacity(0.7)),
+              // ),
+              // SizedBox(width: 16.w),
               Icon(Icons.schedule, color: AppColors.white.withOpacity(0.7), size: 16.sp),
               SizedBox(width: 4.w),
               Text(

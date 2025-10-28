@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_player/video_player.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/services/locator_service.dart' as di;
 import '../manager/reels_playback_cubit.dart';
@@ -37,9 +38,10 @@ class _FullScreenReelsContent extends StatefulWidget {
 class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   late PageController _pageController;
   bool _showControls = false;
-
+//  bool _isMuted = false;
+  VideoPlayerController? _controller;
   @override
-  void initState() {
+  void initState() async {
     super.initState();
 
     final currentIndex = context.read<ReelsPlaybackCubit>().state.currentIndex;
@@ -50,6 +52,7 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReelsPlaybackCubit>().resumeWithSound();
     });
+    //  await _controller!.setVolume(_isMuted ? 0.0 : 1.0);/////////////////////////////  added
   }
 
   @override
@@ -190,6 +193,7 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
         ),
         ReelInfoOverlay(reel: reel),
         ReelActionsOverlay(
+          // isMuted: _isMuted,
           reel: reel,
           onLike: () => _handleLike(context, reel),
           onShare: () => _handleShare(context, reel),
@@ -301,6 +305,15 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   void _handleLike(BuildContext context, reel) {
     context.read<ReelsPlaybackCubit>().likeReel(reel.id);
   }
+
+  //   void _toggleMute() {
+  //   if (_controller?.value.isInitialized == true) {
+  //     _isMuted = !_isMuted;
+  //     _controller!.setVolume(_isMuted ? 0.0 : 1.0); // added
+  //     setState(() {});
+  //   }
+  // }
+
 
   void _handleShare(BuildContext context, reel) =>
       print('📤 Share reel: ${reel.id}');

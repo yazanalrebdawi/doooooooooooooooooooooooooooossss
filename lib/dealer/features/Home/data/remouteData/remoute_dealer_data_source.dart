@@ -156,7 +156,7 @@ class RemouteDealerDataSource {
       return right(data);
     } catch (error) {
       print(error.toString());
-      return left(error.toString());
+      return left(Failure.handleError(error as DioException).message);
     }
   }
 
@@ -270,29 +270,29 @@ class RemouteDealerDataSource {
     };
 
     var data = FormData.fromMap({
-      'files': [
+      'image': [
         await MultipartFile.fromFile(image.path, filename: '/path/to/file'),
         // await MultipartFile.fromFile('/path/to/file', filename: '/path/to/file')
       ],
-      'name': 'Model S',
+      'name': '${brand} ${Model}',
       'brand': brand,
-      'model': 2023, //int
+      'model': Model, //int
       'price': price,
       'discount': '0',
       'year': year, //int
-      'kilometers': 0, // int ///
+      'kilometers': milleage, // int ///
       'fuel_type': typeFuel,
       'transmission': Transmissiion,
       'engine_capacity': engineSize,
       'drive_type': Drivetrain,
-      'color': 'White',
+      'color':  color ?? 'white',
       'is_available': 'true',
-      'doors_count': 4, //int//int
-      'seats_count': 5, //int
-      'status': 'new', //تعديل
+      'doors_count': Door, //int//int
+      'seats_count': seats, //int
+      'status': Status, //تعديل
       'license_status': 'licensed',
-      'lat': 25.2048, //int
-      'lon': 55.2708, //int
+      'lat': lat, //int
+      'lon': lon , //int
       'is_main': 'true',
     });
     //    dio.options.headers.addAll({

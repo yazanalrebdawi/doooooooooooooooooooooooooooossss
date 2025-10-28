@@ -77,7 +77,7 @@ class HomePageCubit extends Cubit<HomepageState> {
     var result = await data.getDataProduct();
     result.fold(
       (error) {
-        emit(state.copyWith(error: error.message, isLoadingGetProduct: false));
+        emit(state.copyWith(error: 'failure fetch data', isLoadingGetProduct: false));
         print(error.toString());
       },
       (data) {
