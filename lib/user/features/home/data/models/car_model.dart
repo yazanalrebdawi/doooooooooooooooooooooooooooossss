@@ -76,10 +76,15 @@ class CarModel {
 
     String getImageUrl(dynamic images) {
       if (images is List && images.isNotEmpty) {
-        final firstImage = images.first;
-        if (firstImage is String) return firstImage;
-        if (firstImage is Map && firstImage['image'] != null) {
-          return firstImage['image'].toString();
+        final mainImage = images.firstWhere(
+          (img) => img is Map && img['is_main'] == true,
+          orElse: () => images.first,
+        );
+
+        if (mainImage is Map && mainImage['image'] != null) {
+          String url = mainImage['image'].toString();
+          url = url.replaceAll(RegExp(r'\s+'), ''); // إزالة أي مسافات أو أسطر
+          return url;
         }
       }
       return '';

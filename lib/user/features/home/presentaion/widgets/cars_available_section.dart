@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
@@ -62,13 +64,16 @@ class CarsAvailableSection extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: cars.length,
                 separatorBuilder: (context, index) => SizedBox(height: 12.h),
-                itemBuilder: (context, index) => CarCardWidget(
-                  car: cars[index],
-                  onTap: () {
-                    context.push('/car-details/${cars[index].id}');
-                  },
-                ),
-              ),
+                itemBuilder: (context, index) {
+                  return CarCardWidget(
+                    car: cars[index],
+                    onTap: () {
+                      log('✅ Image URL for: ${cars[index].imageUrl}');
+
+                      context.push('/car-details/${cars[index].id}');
+                    },
+                  );
+                }),
       ],
     );
   }

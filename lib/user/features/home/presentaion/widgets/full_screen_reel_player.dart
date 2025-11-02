@@ -1,5 +1,12 @@
 import 'dart:developer';
+import 'package:dooss_business_app/user/core/services/locator_service.dart'
+    as di;
+import 'package:dooss_business_app/user/features/home/presentaion/manager/reel_cubit.dart';
+import 'package:dooss_business_app/user/features/home/presentaion/manager/reel_state.dart';
+import 'package:dooss_business_app/user/features/home/presentaion/manager/reels_cubit.dart';
+import 'package:dooss_business_app/user/features/home/presentaion/manager/reels_playback_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
@@ -49,7 +56,9 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     super.didUpdateWidget(oldWidget);
 
     // Initialize video if this reel becomes current
-    if (!oldWidget.isCurrentReel && widget.isCurrentReel && _controller == null) {
+    if (!oldWidget.isCurrentReel &&
+        widget.isCurrentReel &&
+        _controller == null) {
       _initializeVideo();
     }
 
@@ -87,7 +96,8 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     if (widget.reel.video.isEmpty) return;
 
     try {
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.reel.video));
+      _controller =
+          VideoPlayerController.networkUrl(Uri.parse(widget.reel.video));
       _controller!.addListener(_onVideoEvent);
       await _controller!.initialize();
       await _controller!.setVolume(_isMuted ? 0.0 : 1.0);
@@ -182,23 +192,26 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        _toggleControls();
-        widget.onTap?.call();
-      },
-      onDoubleTap: _toggleMute,
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: AppColors.black,
-        child: Stack(
-          children: [
-            _buildVideoContent(),
-            _buildReelInfoOverlay(),
-            if (_showControls) _buildControlsOverlay(),
-            _buildActionsOverlay(),
-          ],
+    return BlocProvider.value(
+      value: di.appLocator<ReelCubit>(),
+      child: GestureDetector(
+        onTap: () {
+          _toggleControls();
+          widget.onTap?.call();
+        },
+        onDoubleTap: _toggleMute,
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: AppColors.black,
+          child: Stack(
+            children: [
+              _buildVideoContent(),
+              _buildReelInfoOverlay(),
+              if (_showControls) _buildControlsOverlay(),
+              _buildActionsOverlay(),
+            ],
+          ),
         ),
       ),
     );
@@ -239,7 +252,8 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
           Text('Failed to load reel', style: AppTextStyles.whiteS18W600),
           if (_errorMessage != null) ...[
             SizedBox(height: 8.h),
-            Text(_errorMessage!, style: AppTextStyles.whiteS14W400, textAlign: TextAlign.center),
+            Text(_errorMessage!,
+                style: AppTextStyles.whiteS14W400, textAlign: TextAlign.center),
           ],
           SizedBox(height: 24.h),
           ElevatedButton(
@@ -267,7 +281,8 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
         children: [
           InkWell(
             onTap: () {
-              context.push('/dealer-profile/${widget.reel.dealer.toString()}?handle=${widget.reel.dealerName ?? ''}');
+              context.push(
+                  '/dealer-profile/${widget.reel.dealer.toString()}?handle=${widget.reel.dealerName ?? ''}');
               log("Navigate to dealer profile");
             },
             child: Row(
@@ -283,15 +298,22 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
                   ),
                 ),
                 SizedBox(width: 8.w),
-                Text(widget.reel.dealerName ?? 'Unknown User', style: AppTextStyles.whiteS14W600),
+                Text(widget.reel.dealerName ?? 'Unknown User',
+                    style: AppTextStyles.whiteS14W600),
               ],
             ),
           ),
           SizedBox(height: 12.h),
-          Text(widget.reel.title, style: AppTextStyles.whiteS16W600, maxLines: 2, overflow: TextOverflow.ellipsis),
+          Text(widget.reel.title,
+              style: AppTextStyles.whiteS16W600,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis),
           if (widget.reel.description?.isNotEmpty == true) ...[
             SizedBox(height: 8.h),
-            Text(widget.reel.description!, style: AppTextStyles.whiteS14W400, maxLines: 3, overflow: TextOverflow.ellipsis),
+            Text(widget.reel.description!,
+                style: AppTextStyles.whiteS14W400,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis),
           ],
         ],
       ),
@@ -299,38 +321,74 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
   }
 
   Widget _buildActionsOverlay() {
-    return Positioned(
-      right: 16.w,
-      bottom: 100.h,
-      child: Column(
-        children: [
-          _buildActionButton(
-            icon: widget.reel.liked ? Icons.favorite : Icons.favorite_border,
-            label: _formatCount(widget.reel.likesCount),
-            onTap: () => print('Like reel ${widget.reel.id}'),
-            iconColor: widget.reel.liked ? Colors.red : AppColors.white,
-          ),
-          SizedBox(height: 24.h),
-          _buildActionButton(
-            icon: Icons.visibility,
-            imageIcon: 'assets/images/seen.png',
-            label: _formatCount(widget.reel.viewsCount),
-            onTap: () => print('Comment on reel ${widget.reel.viewsCount}'),
-          ),
-          // SizedBox(height: 24.h),
-          // _buildActionButton(
-          //   icon: Icons.share,
-          //   label: 'Share',
-          //   onTap: () => print('Share reel ${widget.reel.id}'),
-          // ),
-          SizedBox(height: 24.h),
-          _buildActionButton(
-            icon: _isMuted ? Icons.volume_off : Icons.volume_up,
-            label: _isMuted ? 'Unmute' : 'Mute',
-            onTap: _toggleMute,
-            // imageIcon:  'assets/images/seen.png'
-          ),
-        ],
+    return BlocProvider.value(
+      value: di.appLocator<ReelCubit>(),
+      child: Positioned(
+        right: 16.w,
+        bottom: 100.h,
+        child: Column(
+          children: [
+            BlocBuilder<ReelCubit, ReelState>(
+              builder: (context, state) {
+                // احصل على الريل الحالي مباشرة من state
+                final updatedReel = state.reels.isNotEmpty
+                    ? state.reels[state.currentReelIndex]
+                    : widget.reel;
+
+                return _buildActionButton(
+                  icon: updatedReel.liked
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  label: _formatCount(updatedReel.likesCount),
+                  onTap: () {
+                    // ✨ تحديث UI فورًا بدون انتظار API
+                    final tempReel = updatedReel.copyWith(
+                      liked: !updatedReel.liked,
+                      likesCount: updatedReel.liked
+                          ? updatedReel.likesCount - 1
+                          : updatedReel.likesCount + 1,
+                    );
+
+                    final tempReels = state.reels.isNotEmpty
+                        ? List<ReelModel>.from(state.reels)
+                        : [tempReel];
+
+                    if (state.reels.isNotEmpty) {
+                      tempReels[state.currentReelIndex] = tempReel;
+                    }
+
+                    // emit لحظي لتغيير UI
+                    context.read<ReelCubit>().safeEmit(
+                          state.copyWith(reels: tempReels),
+                        );
+
+                    // إرسال طلب الـ API بدون أي تأثير على UI
+                    context.read<ReelCubit>().likeReel(updatedReel.id);
+                  },
+                  iconColor: updatedReel.liked ? Colors.red : AppColors.white,
+                );
+              },
+            ),
+            SizedBox(height: 24.h),
+            _buildActionButton(
+              icon: Icons.comment,
+              label: _formatCount(widget.reel.likesCount),
+              onTap: () => print('Comment on reel ${widget.reel.id}'),
+            ),
+            SizedBox(height: 24.h),
+            _buildActionButton(
+              icon: Icons.share,
+              label: 'Share',
+              onTap: () => print('Share reel ${widget.reel.id}'),
+            ),
+            SizedBox(height: 24.h),
+            _buildActionButton(
+              icon: _isMuted ? Icons.volume_off : Icons.volume_up,
+              label: _isMuted ? 'Unmute' : 'Mute',
+              onTap: _toggleMute,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -340,7 +398,6 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     required String label,
     required VoidCallback onTap,
     Color iconColor = Colors.white,
-    String? imageIcon
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -353,13 +410,11 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
               color: AppColors.black.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
-            child: imageIcon!=null? Padding(
-              padding:  EdgeInsets.all(12.r),
-              child:imageIcon==true? Image.asset('assets/images/seen.png',width: 20,): Image.asset(imageIcon,width: 8, color: iconColor),
-            ): Icon(icon, color: iconColor, size: 24.sp),
+            child: Icon(icon, color: iconColor, size: 24.sp),
           ),
           SizedBox(height: 4.h),
-          Text(label, style: AppTextStyles.whiteS12W400, textAlign: TextAlign.center),
+          Text(label,
+              style: AppTextStyles.whiteS12W400, textAlign: TextAlign.center),
         ],
       ),
     );
@@ -377,7 +432,8 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
             color: AppColors.black.withOpacity(0.6),
             shape: BoxShape.circle,
           ),
-          child: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, color: AppColors.white, size: 40.sp),
+          child: Icon(_isPlaying ? Icons.pause : Icons.play_arrow,
+              color: AppColors.white, size: 40.sp),
         ),
       ),
     );

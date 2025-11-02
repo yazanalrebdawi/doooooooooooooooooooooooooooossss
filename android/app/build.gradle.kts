@@ -37,13 +37,14 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-        }
+    create("release") {
+        keyAlias = "debug"
+        keyPassword = "debug"
+        storeFile = file("${rootProject.projectDir}/../android/app/debug.keystore")
+        storePassword = "android"
     }
+            }
+
 
     buildTypes {
         getByName("release") {

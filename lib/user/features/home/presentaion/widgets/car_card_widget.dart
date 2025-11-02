@@ -50,6 +50,10 @@ class CarCardWidget extends StatelessWidget {
                         width: double.infinity,
                         height: 192.h,
                         fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(child: CircularProgressIndicator());
+                        },
                         errorBuilder: (context, error, stackTrace) {
                           return _placeholderImage(isDark);
                         },
@@ -70,7 +74,9 @@ class CarCardWidget extends StatelessWidget {
                   ),
                   child: Icon(
                     car.isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: car.isFavorite ? Colors.red : (isDark ? Colors.white70 : AppColors.gray),
+                    color: car.isFavorite
+                        ? Colors.red
+                        : (isDark ? Colors.white70 : AppColors.gray),
                     size: 20.sp,
                   ),
                 ),
@@ -152,12 +158,14 @@ class CarCardWidget extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.r),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 8.h),
                         elevation: 0,
                       ),
                       child: Text(
                         'Details',
-                        style: AppTextStyles.s14w500.copyWith(color: AppColors.white),
+                        style: AppTextStyles.s14w500
+                            .copyWith(color: AppColors.white),
                       ),
                     ),
                   ],
