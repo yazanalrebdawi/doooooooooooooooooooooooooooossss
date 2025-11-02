@@ -315,6 +315,11 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
   // }
 
 
+  
+  // void _handleLike(BuildContext context, reel) {
+  //   context.read<ReelsPlaybackCubit>().likeReel(reel.id);
+  // }
+
   void _handleShare(BuildContext context, reel) =>
       print('📤 Share reel: ${reel.id}');
   void _handleComment(BuildContext context, reel) =>

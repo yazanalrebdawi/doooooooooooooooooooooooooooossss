@@ -7,6 +7,7 @@ import 'package:dooss_business_app/user/features/home/data/models/reel_model.dar
 import 'package:dooss_business_app/user/features/home/presentaion/manager/home_cubit.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/manager/reel_cubit.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/manager/reel_state.dart';
+import 'package:dooss_business_app/user/features/home/presentaion/manager/reels_playback_cubit.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/reel_actions_overlay.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/reel_info_overlay.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/reel_video_player.dart';
@@ -212,6 +213,8 @@ class ReelsScreenContent extends StatelessWidget {
 
   void _handleLike(BuildContext context, ReelModel reel) {
     log('🤍 Like reel: ${reel.id}');
+    log('🤍 Like reel  fdfs: ${reel.id}');
+    context.read<ReelCubit>().likeReel(reel.id);
   }
 
   void _handleShare(BuildContext context, ReelModel reel) {
