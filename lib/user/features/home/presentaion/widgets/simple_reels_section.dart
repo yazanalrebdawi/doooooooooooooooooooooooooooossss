@@ -1,3 +1,6 @@
+import 'package:dooss_business_app/user/core/services/locator_service.dart'
+    as di;
+import 'package:dooss_business_app/user/features/home/presentaion/manager/reels_playback_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -197,9 +200,12 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
     // Navigate to full-screen reels viewer, passing the entire list and index
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ReelsViewerScreen(
-          reelsList: reels,
-          initialIndex: index,
+        builder: (_) => BlocProvider.value(
+          value: di.appLocator<ReelCubit>(),
+          child: ReelsViewerScreen(
+            reelsList: reels,
+            initialIndex: index,
+          ),
         ),
       ),
     );

@@ -13,16 +13,50 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   Timer? _progressTimer;
   bool _isDisposed = false;
 
-  ReelsPlaybackCubit({required this.dataSource}) : super(ReelsPlaybackState.initial()) {
+  ReelsPlaybackCubit({required this.dataSource})
+      : super(ReelsPlaybackState.initial()) {
     print('🎬 ReelsPlaybackCubit: Constructor called successfully');
+  }
+
+  /// الإعجاب أو إزالة الإعجاب على ريل معيّن
+  Future<void> likeReel(int reelId) async {
+    print('❤️ ReelsPlaybackCubit: Trying to like reel with ID: $reelId');
+
+    final result = await dataSource.likeReel(reelId);
+
+    result.fold(
+      (failure) {
+        print('❌ ReelsPlaybackCubit: Error liking reel: ${failure.message}');
+        safeEmit(state.copyWith(error: failure.message));
+      },
+      (_) {
+        print('✅ ReelsPlaybackCubit: Successfully liked/unliked reel $reelId');
+
+        // تعديل حالة الريل داخل الليست
+        final updatedReels = state.reels.map((reel) {
+          if (reel.id == reelId) {
+            final newLiked = !reel.liked;
+            final newLikesCount =
+                newLiked ? reel.likesCount + 1 : reel.likesCount - 1;
+            return reel.copyWith(liked: newLiked, likesCount: newLikesCount);
+          }
+          return reel;
+        }).toList();
+
+        safeEmit(state.copyWith(
+          reels: updatedReels,
+          error: null,
+        ));
+      },
+    );
   }
 
   /// Load reels data
   Future<void> loadReels({int page = 1, int pageSize = 20}) async {
     if (_isDisposed) return;
-    
+
     safeEmit(state.copyWith(isLoading: true, error: null));
-    
+
     final result = await dataSource.fetchReels(
       page: page,
       pageSize: pageSize,
@@ -40,12 +74,13 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
         }
       },
       (reelsResponse) {
-        print('✅ ReelsPlaybackCubit: Successfully loaded ${reelsResponse.results.length} reels');
-        
-        final updatedReels = page == 1 
-            ? reelsResponse.results 
+        print(
+            '✅ ReelsPlaybackCubit: Successfully loaded ${reelsResponse.results.length} reels');
+
+        final updatedReels = page == 1
+            ? reelsResponse.results
             : [...state.reels, ...reelsResponse.results];
-        
+
         if (!_isDisposed) {
           safeEmit(state.copyWith(
             reels: updatedReels,
@@ -62,31 +97,32 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   /// Initialize video controller for current reel
   Future<void> initializeCurrentVideo() async {
     if (_isDisposed || state.currentReel == null) return;
-    
+
     final reel = state.currentReel!;
-    if (reel.video.isEmpty) {  
+    if (reel.video.isEmpty) {
       print('❌ ReelsPlaybackCubit: No video URL for reel ${reel.id}');
       return;
     }
 
     print('🎬 ReelsPlaybackCubit: Initializing video for reel ${reel.id}');
-    
+
     // Dispose previous controller
     await _disposeCurrentController();
-    
+
     try {
       safeEmit(state.copyWith(playbackState: ReelPlaybackState.initializing));
-      
-      _currentController = VideoPlayerController.networkUrl(Uri.parse(reel.video));
-      
+
+      _currentController =
+          VideoPlayerController.networkUrl(Uri.parse(reel.video));
+
       // Add listener for video events
       _currentController!.addListener(_onVideoPlayerEvent);
-      
+
       await _currentController!.initialize();
-      
+
       // Set initial volume based on mute state
       await _currentController!.setVolume(state.isMuted ? 0.0 : 1.0);
-      
+
       if (!_isDisposed) {
         safeEmit(state.copyWith(
           controller: _currentController,
@@ -94,13 +130,13 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
           duration: _currentController!.value.duration,
           error: null,
         ));
-        
+
         // Auto-play if should auto play
         if (state.shouldAutoPlay) {
           await play();
         }
       }
-      
+
       print('✅ ReelsPlaybackCubit: Video initialized successfully');
     } catch (e) {
       print('❌ ReelsPlaybackCubit: Error initializing video: $e');
@@ -115,18 +151,20 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
 
   /// Play current video
   Future<void> play() async {
-    if (_isDisposed || _currentController == null || !_currentController!.value.isInitialized) {
+    if (_isDisposed ||
+        _currentController == null ||
+        !_currentController!.value.isInitialized) {
       return;
     }
 
     try {
       await _currentController!.play();
       _startProgressTimer();
-      
+
       if (!_isDisposed) {
         safeEmit(state.copyWith(playbackState: ReelPlaybackState.playing));
       }
-      
+
       print('▶️ ReelsPlaybackCubit: Video playing');
     } catch (e) {
       print('❌ ReelsPlaybackCubit: Error playing video: $e');
@@ -140,14 +178,14 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
     try {
       await _currentController!.pause();
       _stopProgressTimer();
-      
+
       if (!_isDisposed) {
         safeEmit(state.copyWith(
           playbackState: ReelPlaybackState.paused,
           position: _currentController!.value.position,
         ));
       }
-      
+
       print('⏸️ ReelsPlaybackCubit: Video paused');
     } catch (e) {
       print('❌ ReelsPlaybackCubit: Error pausing video: $e');
@@ -157,7 +195,7 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   /// Resume video (muted by default for background play)
   Future<void> resumeMuted() async {
     if (_isDisposed) return;
-    
+
     await setMuted(true);
     await play();
     print('🔇 ReelsPlaybackCubit: Video resumed muted');
@@ -166,7 +204,7 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   /// Resume with sound (for full-screen experience)
   Future<void> resumeWithSound() async {
     if (_isDisposed) return;
-    
+
     await setMuted(false);
     await play();
     print('🔊 ReelsPlaybackCubit: Video resumed with sound');
@@ -178,12 +216,13 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
 
     try {
       await _currentController!.setVolume(muted ? 0.0 : 1.0);
-      
+
       if (!_isDisposed) {
         safeEmit(state.copyWith(isMuted: muted));
       }
-      
-      print('${muted ? '🔇' : '🔊'} ReelsPlaybackCubit: Volume ${muted ? 'muted' : 'unmuted'}');
+
+      print(
+          '${muted ? '🔇' : '🔊'} ReelsPlaybackCubit: Volume ${muted ? 'muted' : 'unmuted'}');
     } catch (e) {
       print('❌ ReelsPlaybackCubit: Error setting volume: $e');
     }
@@ -197,9 +236,9 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   /// Change to specific reel index
   Future<void> changeToIndex(int index) async {
     if (_isDisposed || index < 0 || index >= state.reels.length) return;
-    
+
     print('🔄 ReelsPlaybackCubit: Changing to reel index $index');
-    
+
     safeEmit(state.copyWith(currentIndex: index));
     await initializeCurrentVideo();
   }
@@ -207,7 +246,7 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   /// Move to next reel
   Future<void> nextReel() async {
     if (_isDisposed) return;
-    
+
     final nextIndex = state.currentIndex + 1;
     if (nextIndex < state.reels.length) {
       await changeToIndex(nextIndex);
@@ -220,7 +259,7 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   /// Move to previous reel
   Future<void> previousReel() async {
     if (_isDisposed) return;
-    
+
     final prevIndex = state.currentIndex - 1;
     if (prevIndex >= 0) {
       await changeToIndex(prevIndex);
@@ -230,7 +269,7 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   /// Enter full-screen mode
   void enterFullScreen() {
     if (_isDisposed) return;
-    
+
     safeEmit(state.copyWith(
       isFullScreen: true,
       shouldAutoPlay: true,
@@ -241,7 +280,7 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
   /// Exit full-screen mode
   void exitFullScreen() {
     if (_isDisposed) return;
-    
+
     safeEmit(state.copyWith(
       isFullScreen: false,
       shouldAutoPlay: false,
@@ -278,7 +317,7 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
     if (_isDisposed || _currentController == null) return;
 
     final value = _currentController!.value;
-    
+
     // Update position
     if (!_isDisposed) {
       safeEmit(state.copyWith(position: value.position));
@@ -292,7 +331,8 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
 
     // Handle errors
     if (value.hasError) {
-      print('❌ ReelsPlaybackCubit: Video player error: ${value.errorDescription}');
+      print(
+          '❌ ReelsPlaybackCubit: Video player error: ${value.errorDescription}');
       if (!_isDisposed) {
         safeEmit(state.copyWith(
           error: value.errorDescription ?? 'Video playback error',

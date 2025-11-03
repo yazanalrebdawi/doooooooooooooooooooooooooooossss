@@ -5,8 +5,14 @@ class ApiUrls {
   static const String baseURl = 'https://www.doossapp.com';
     static const String baseURlDealer = 'https://www.doossapp.com/api';
   static const String _baseMediaUrl = 'https://www.doossapp.com';
-  // static const String baseURl = 'http://10.0.2.2:8010';
-  static String media(String path) => '$_baseMediaUrl$path'; // Getter للصور
+
+  static String media(String path) {
+    // إذا كان path يبدأ بسلاش، ندمجه مباشرة
+    if (path.startsWith('/')) {
+      return '$_baseMediaUrl$path';
+    }
+    return '$_baseMediaUrl/$path';
+  }
 
   // 🟢 Auth
   static const String rigester = '$baseURl/api/users/register/';
@@ -43,6 +49,9 @@ class ApiUrls {
 
   // 🟢 Reels
   static const String reels = '$baseURl/api/reels/public/';
+  static String likeReel(String reelId) {
+    return '$baseURl/api/reels/$reelId/like/';
+  }
 
   // 🟢 Dealers
   static const String loginDaelar = '$baseURl/api/dealers/login/';

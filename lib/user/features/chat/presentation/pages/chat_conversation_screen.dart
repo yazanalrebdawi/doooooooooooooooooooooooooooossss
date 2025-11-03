@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dooss_business_app/user/core/services/token_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,10 +75,12 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back,
-                color: isDark ? Colors.white : AppColors.black, size: 24.sp),
-            onPressed: () => Navigator.pop(context),
-          ),
+              icon: Icon(Icons.arrow_back,
+                  color: isDark ? Colors.white : AppColors.black, size: 24.sp),
+              onPressed: () {
+                context.pop();
+                log("pop🫠🫠🫠🫠🫠🫠🫠");
+              }),
           title: Text(
             widget.dealerName,
             style: AppTextStyles.blackS18W700,
