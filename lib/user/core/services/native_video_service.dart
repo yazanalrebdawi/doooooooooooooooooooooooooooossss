@@ -163,6 +163,8 @@ class _NativeVideoWidgetState extends State<NativeVideoWidget> {
       print('❌ NativeVideoWidget: Error initializing video: $e');
       widget.onVideoError?.call();
     }
+
+    
   }
   
   void _disposeController() {

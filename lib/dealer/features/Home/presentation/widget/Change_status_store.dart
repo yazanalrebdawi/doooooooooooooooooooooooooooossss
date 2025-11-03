@@ -7,16 +7,24 @@ import '../../../../Core/style/app_Colors.dart';
 import '../../../../Core/style/app_text_style.dart';
 import '../../../reels/presentation/widget/time_picker.dart';
 
-class changeStatusStoreWidget extends StatelessWidget {
+// ignore: camel_case_types
+class changeStatusStoreWidget extends StatefulWidget {
   const changeStatusStoreWidget({
     super.key,
     required this.openungTime,
     required this.closeTime,
-    required this.day,
+    required this.day, required this.days,
   });
   final Function(String value) openungTime;
   final Function(String value) closeTime;
   final Function(List<String> daysSelected) day;
+  final List<String> days;
+
+  @override
+  State<changeStatusStoreWidget> createState() => _changeStatusStoreWidgetState();
+}
+
+class _changeStatusStoreWidgetState extends State<changeStatusStoreWidget> {
   @override
   Widget build(BuildContext context) {
     final List<String> weekDays = [
@@ -49,7 +57,8 @@ class changeStatusStoreWidget extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12.h),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('working Day', style: AppTextStyle.poppins414BlueDark),
               GestureDetector(
@@ -57,7 +66,7 @@ class changeStatusStoreWidget extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (_) {
-                      List<String> selected = [];
+                      List<String> selected = widget.days;
                       return AlertDialog(
                         title: Text('ٍselect day woork'),
                         content: StatefulBuilder(
@@ -87,7 +96,7 @@ class changeStatusStoreWidget extends StatelessWidget {
                             onPressed: () {
                               Navigator.pop(context);
                               print('الأيام المختارة: $selected');
-                              day(selected);
+                              widget.day(widget.days);
                             },
                           ),
                         ],
@@ -122,7 +131,7 @@ class changeStatusStoreWidget extends StatelessWidget {
                     SizedBox(height: 8.h),
                     TimePickerWidget(
                       editDateValue: (value) {
-                        openungTime(
+                        widget.openungTime(
                           '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}',
                         );
                         print(value);
@@ -139,7 +148,7 @@ class changeStatusStoreWidget extends StatelessWidget {
                     SizedBox(height: 8.h),
                     TimePickerWidget(
                       editDateValue: (value) {
-                        closeTime(
+                        widget.closeTime(
                           '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}',
                         );
                       },

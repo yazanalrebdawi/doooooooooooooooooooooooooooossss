@@ -4,6 +4,7 @@ import 'package:dooss_business_app/dealer/features/Home/presentation/page/edit_P
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Appearance_and_colors_widget.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/basic_information_widget.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/image_media_of_add_car.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/spacification_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -180,30 +181,9 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                     type: 'add car',
                     iconButton: Icons.add,
                     ontap: () {
-                      // print(widget.brand);
-                      // // RemouteDealerDataSource().AddCars();
-                      // print(widget.model.text);
-                      // print(widget.price.text);
-                      // print(widget.Doors);
-                      // print(widget.drivetrain);
-                      // print(widget.typeFuel);
-                      // print(widget.transmission);
-                      // print(widget.image.value!.path);
+
                       print(widget.color.text);
-                      // RemouteDealerDataSource().AddCars(
-                      //   widget.brand,
-                      //   (widget.year).toString(),
-                      //   widget.model.text,
-                      //   widget.price.text,
-                      //   widget.mileage.text,
-                      //   widget.engineSize.text,
-                      //   widget.typeFuel,
-                      //   widget.transmission,
-                      //   widget.drivetrain,
-                      //   widget.Doors,
-                      //   widget.seats,
-                      //   widget.image.value!,
-                      // );
+ 
                       
                         if (formKey.currentState!.validate()){
                                if(widget.image.value!=null){
@@ -255,159 +235,6 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class imageAndMediaOfAddCar extends StatelessWidget {
-  const imageAndMediaOfAddCar({super.key, required this.widget});
-
-  final AddNewCarPage widget;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 16.h),
-      width: 358.w,
-      decoration: BoxDecoration(
-        color: Color(0xffffffff),
-        border: Border.all(color: AppColors.borderColor),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(24, 0, 0, 0),
-            blurRadius: 2,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Icon(Icons.photo, color: AppColors.primary),
-                SizedBox(width: 8.w),
-                Text('images & media', style: AppTextStyle.Poppins718),
-              ],
-            ),
-          ),
-          Divider(color: AppColors.borderColor, height: 1),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ValueListenableBuilder<XFile?>(
-                  builder: (BuildContext context, value, child) {
-                    if (widget.image.value == null) {
-                      return UoloadServicesImageWidget(image: widget.image);
-                    } else
-                      return Container(
-                        height: 170.h,
-                        alignment: Alignment.center,
-
-                        width: 326.w,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.borderColor),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(widget.image.value!.path),
-                            width: double.infinity,
-                            fit: BoxFit.fitWidth,
-                            height: 170.h,
-                          ),
-                        ),
-                      );
-                  },
-                  valueListenable: widget.image,
-                ),
-
-                // SizedBox(height: 16.h),
-                // Text(
-                //   'intro video (Optional)',
-                //   style: AppTextStyle.poppins514BlueDark,
-                // ),
-                // SizedBox(height: 8.h),
-                // Container(
-                //   alignment: Alignment.center,
-                //   padding: EdgeInsets.symmetric(vertical: 26.h),
-                //   width: 326.w,
-                //   decoration: BoxDecoration(
-                //     border: Border.all(color: AppColors.borderColor),
-                //     borderRadius: BorderRadius.circular(8.r),
-                //   ),
-                //   child: Column(
-                //     mainAxisAlignment: MainAxisAlignment.start,
-                //     children: [
-                //       Icon(
-                //         Icons.videocam,
-                //         color: AppColors.silverDark,
-                //         size: 38,
-                //       ),
-                //       Text(
-                //         'MP4 • Max 30MB • 30 seconds max',
-                //         style: TextStyle(
-                //           fontWeight: FontWeight.w400,
-                //           fontSize: 12,
-                //           color: AppColors.silverDark,
-                //           fontFamily: 'poppins',
-                //         ),
-                //       ),
-                //       SizedBox(height: 8.h),
-                //       Text(
-                //         'Add Video',
-                //         style: AppTextStyle.poppins514primaryColor,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class YearDropdown extends StatefulWidget {
-  const YearDropdown({Key? key, required this.CurrentYear}) : super(key: key);
-  final Function(int value) CurrentYear;
-  @override
-  _YearDropdownState createState() => _YearDropdownState();
-}
-
-class _YearDropdownState extends State<YearDropdown> {
-  final List<int> years = List<int>.generate(
-    30, // عدد السنوات (مثال: آخر 30 سنة)
-    (index) => DateTime.now().year - index,
-  );
-
-  int? selectedYear;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButtonFormField<int>(
-      decoration: InputDecoration(
-        labelText: 'select year',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      value: selectedYear,
-      items: years.map((year) {
-        return DropdownMenuItem<int>(value: year, child: Text(year.toString()));
-      }).toList(),
-      onChanged: (value) {
-        setState(() {
-          selectedYear = value;
-          widget.CurrentYear(value!);
-        });
-      },
-      validator: (value) => value == null ? 'enter year ,please' : null,
     );
   }
 }

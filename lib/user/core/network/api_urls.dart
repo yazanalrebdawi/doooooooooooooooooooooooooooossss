@@ -3,8 +3,9 @@ class ApiUrls {
 
   // 🟢 Base URLs
   static const String baseURl = 'https://www.doossapp.com';
+    static const String baseURlDealer = 'https://www.doossapp.com/api';
   static const String _baseMediaUrl = 'https://www.doossapp.com';
-
+  // static const String baseURl = 'http://10.0.2.2:8010';
   static String media(String path) => '$_baseMediaUrl$path'; // Getter للصور
 
   // 🟢 Auth

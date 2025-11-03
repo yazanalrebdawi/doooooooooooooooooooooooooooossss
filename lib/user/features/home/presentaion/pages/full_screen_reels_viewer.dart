@@ -171,7 +171,19 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
     return Stack(
       children: [
         ReelGestureDetector(
-          onTap: () => _toggleControls(),
+          onTap: () {
+            print('🤖 play/resume');
+            final cubit = context.read<ReelsPlaybackCubit>();
+            final currentState = cubit.state; // خد الحالة الحالية مباشرة
+
+            if (currentState.playbackState == ReelPlaybackState.playing) {
+              cubit.pause(); // أوقف الفيديو
+            } else if (currentState.playbackState == ReelPlaybackState.paused ||
+                currentState.playbackState == ReelPlaybackState.error) {
+              cubit.play(); // شغّل الفيديو
+            }
+            _toggleControls(state);
+          },
           child: PerfectVideoPlayer(isCurrentVideo: isCurrentReel),
         ),
         Positioned.fill(
@@ -202,7 +214,7 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
         if (_showControls && isCurrentReel)
           ReelControlsOverlay(
             showControls: _showControls,
-            onToggleControls: _toggleControls,
+            onToggleControls: () => _toggleControls,
           ),
       ],
     );
@@ -292,8 +304,15 @@ class _FullScreenReelsContentState extends State<_FullScreenReelsContent> {
     }
   }
 
-  void _toggleControls() {
-    setState(() => _showControls = !_showControls);
+  void _toggleControls(ReelsPlaybackState state) {
+    setState(() {
+      if (state.playbackState == ReelPlaybackState.error) {
+        context.read<ReelsPlaybackCubit>().initializeCurrentVideo();
+      } else {
+        context.read<ReelsPlaybackCubit>().play();
+      }
+      _showControls = !_showControls;
+    });
 
     if (_showControls) {
       Future.delayed(const Duration(seconds: 3), () {

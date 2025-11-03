@@ -186,7 +186,7 @@ class ReelsScreenContent extends StatelessWidget {
     return Stack(
       children: [
         // Video player
-        ReelVideoPlayer(reel: reel, isCurrentReel: isCurrentReel),
+        ReelVideoPlayer(reel: reel, isCurrentReel: isCurrentReel),//////////////////////////
 
         // Gradient overlay for better text readability
         Positioned.fill(
@@ -243,7 +243,7 @@ class ReelsScreenContent extends StatelessWidget {
         // Actions overlay
         ReelActionsOverlay(
           reel: reel,
-          onLike: () => _handleLike(context, reel),
+          onLike: () => _handleLik(context, reel),
           onShare: () => _handleShare(context, reel),
           onComment: () => _handleComment(context, reel),
         ),
@@ -289,7 +289,7 @@ class ReelsScreenContent extends StatelessWidget {
     );
   }
 
-  void _handleLike(BuildContext context, ReelModel reel) {
+  void _handleLik(BuildContext context, ReelModel reel) {
     print('🤍 Like reel: ${reel.id}');
   }
 

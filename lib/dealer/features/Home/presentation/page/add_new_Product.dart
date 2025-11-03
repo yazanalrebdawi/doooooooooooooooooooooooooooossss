@@ -75,7 +75,7 @@ class AddNewProductPage extends StatelessWidget {
                         child: Container(
                           margin: EdgeInsets.only(top: 24.h, bottom: 16.h),
                           alignment: Alignment.center,
-                          height: 56.h,
+                          height: 58.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
@@ -142,44 +142,46 @@ class AddNewProductPage extends StatelessWidget {
                             }
                           },
                           builder: (context, state) {
-                            return CustomButtonWithIcon(
-                              type: 'add product',
-                              iconButton: Icons.add,
-                              ontap: () {
-                                if (_form.currentState!.validate()) {
-                                  if(image!=null){
-                                     print(image!.path);
-                                  BlocProvider.of<HomePageCubit>(
-                                    context,
-                                  ).addProduct(
-                                    product.text,
-                                    Description.text,
-                                    price.text,
-                                    category,
-                                    quintity.text,
-                                    image,
-                                  );
-                                  }else{
-                                     ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: CustomSnakeBar(
-                      isFailure: true,
-                      text: 'please ,add image product',
-                    ),
-                    backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
-                    elevation: 0,
-                    behavior: SnackBarBehavior.floating,
-                    margin: EdgeInsets.only(
-                      top: 20, // مسافة من الأعلى
-                      left: 10,
-                      right: 10,
-                    ),
-                  ),
-                );
+                            return Padding(
+                              padding: EdgeInsets.only(top: 24.h, bottom: 16.h),
+                              child: CustomButtonWithIcon(
+                                type: 'add product',
+                                iconButton: Icons.add,
+                                ontap: () {
+                                  if (_form.currentState!.validate()) {
+                                    if(image!=null){
+                                       print(image!.path);
+                                    BlocProvider.of<HomePageCubit>(
+                                      context,
+                                    ).addProduct(
+                                      product.text,
+                                      Description.text,
+                                      price.text,
+                                      category,
+                                      quintity.text,
+                                      image,
+                                    );
+                                    }else{
+                                       ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: CustomSnakeBar(
+                                            isFailure: true,
+                                            text: 'please ,add image product',
+                                          ),
+                                          backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                                          elevation: 0,
+                                          behavior: SnackBarBehavior.floating,
+                                          margin: EdgeInsets.only(
+                                            top: 20, // مسافة من الأعلى
+                                            left: 10,
+                                            right: 10,
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   }
-                                 
-                                }
-                              },
+                                },
+                              ),
                             );
                           },
                         ),

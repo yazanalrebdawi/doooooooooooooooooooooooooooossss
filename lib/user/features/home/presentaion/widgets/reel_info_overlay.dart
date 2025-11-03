@@ -20,7 +20,7 @@ class ReelInfoOverlay extends StatelessWidget {
     return Positioned(
       left: 16.w,
       right: 80.w, // Leave space for actions
-      bottom: 100.h,
+      bottom:30.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -154,18 +154,22 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
                       linkGoogle: widget.email,
                     ),
                     // storeTypeSelectWidget(),
-                    changeStatusStoreWidget(
-                      openungTime: (String value) {
-                        start = value;
-                      },
-                      closeTime: (String value) {
-                        close = value;
-                        print(value);
-                      },
-                      day: (daysSelected) {
-                        print(daysSelected);
-                        days = daysSelected;
-                      },
+                    BlocBuilder<HomePageCubit,HomepageState>(
+                      builder: (context,state) {
+                        return changeStatusStoreWidget(days:state.dataStore.workingDays ,
+                          openungTime: (String value) {
+                            start = value;
+                          },
+                          closeTime: (String value) {
+                            close = value;
+                            print(value);
+                          },
+                          day: (daysSelected) {
+                            print(daysSelected);
+                            days = daysSelected;
+                          },
+                        );
+                      }
                     ),
 
                     // selectStoreStatus(

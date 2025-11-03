@@ -25,7 +25,7 @@ class ReelActionsOverlay extends StatelessWidget {
 
     return Positioned(
       right: 16.w,
-      bottom: 100.h,
+      bottom: 30.h,///this is varyyyyy important
       child: Column(
         children: [
           _buildActionButton(

@@ -49,7 +49,9 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     super.didUpdateWidget(oldWidget);
 
     // Initialize video if this reel becomes current
-    if (!oldWidget.isCurrentReel && widget.isCurrentReel && _controller == null) {
+    if (!oldWidget.isCurrentReel &&
+        widget.isCurrentReel &&
+        _controller == null) {
       _initializeVideo();
     }
 
@@ -87,7 +89,8 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     if (widget.reel.video.isEmpty) return;
 
     try {
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.reel.video));
+      _controller =
+          VideoPlayerController.networkUrl(Uri.parse(widget.reel.video));
       _controller!.addListener(_onVideoEvent);
       await _controller!.initialize();
       await _controller!.setVolume(_isMuted ? 0.0 : 1.0);
@@ -127,14 +130,20 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
   void _playVideo() {
     if (_controller?.value.isInitialized == true && !_isPlaying) {
       _controller!.play();
-      setState(() => _isPlaying = true);
+      setState(() {
+        print('😒 call set state3');
+        _isPlaying = true;
+      });
     }
   }
 
   void _pauseVideo() {
     if (_controller?.value.isInitialized == true && _isPlaying) {
       _controller!.pause();
-      setState(() => _isPlaying = false);
+      setState(() {
+        print('😒 call set state2');
+        _isPlaying = false;
+      });
     }
   }
 
@@ -155,9 +164,19 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
   }
 
   void _toggleControls() {
-    setState(() => _showControls = !_showControls);
+    setState(() {
+      print('😒 call set state1');
+      _showControls = !_showControls;
+      if (_isPlaying) {
+        _pauseVideo();
+      } else {
+        _playVideo();
+      }
+      print('🤖 is Success');
+      // _isPlaying = !_isPlaying;
+    });
     if (_showControls) {
-      Future.delayed(const Duration(seconds: 3), () {
+      Future.delayed(const Duration(seconds: 1), () {
         if (mounted) setState(() => _showControls = false);
       });
     }
@@ -239,7 +258,8 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
           Text('Failed to load reel', style: AppTextStyles.whiteS18W600),
           if (_errorMessage != null) ...[
             SizedBox(height: 8.h),
-            Text(_errorMessage!, style: AppTextStyles.whiteS14W400, textAlign: TextAlign.center),
+            Text(_errorMessage!,
+                style: AppTextStyles.whiteS14W400, textAlign: TextAlign.center),
           ],
           SizedBox(height: 24.h),
           ElevatedButton(
@@ -261,13 +281,14 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     return Positioned(
       left: 16.w,
       right: 80.w,
-      bottom: 100.h,
+      bottom: 30.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InkWell(
             onTap: () {
-              context.push('/dealer-profile/${widget.reel.dealer.toString()}?handle=${widget.reel.dealerName ?? ''}');
+              context.push(
+                  '/dealer-profile/${widget.reel.dealer.toString()}?handle=${widget.reel.dealerName ?? ''}');
               log("Navigate to dealer profile");
             },
             child: Row(
@@ -283,15 +304,22 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
                   ),
                 ),
                 SizedBox(width: 8.w),
-                Text(widget.reel.dealerName ?? 'Unknown User', style: AppTextStyles.whiteS14W600),
+                Text(widget.reel.dealerName ?? 'Unknown User',
+                    style: AppTextStyles.whiteS14W600),
               ],
             ),
           ),
           SizedBox(height: 12.h),
-          Text(widget.reel.title, style: AppTextStyles.whiteS16W600, maxLines: 2, overflow: TextOverflow.ellipsis),
+          Text(widget.reel.title,
+              style: AppTextStyles.whiteS16W600,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis),
           if (widget.reel.description?.isNotEmpty == true) ...[
             SizedBox(height: 8.h),
-            Text(widget.reel.description!, style: AppTextStyles.whiteS14W400, maxLines: 3, overflow: TextOverflow.ellipsis),
+            Text(widget.reel.description!,
+                style: AppTextStyles.whiteS14W400,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis),
           ],
         ],
       ),
@@ -301,7 +329,7 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
   Widget _buildActionsOverlay() {
     return Positioned(
       right: 16.w,
-      bottom: 100.h,
+      bottom: 30.h,
       child: Column(
         children: [
           _buildActionButton(
@@ -335,13 +363,12 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     );
   }
 
-  Widget _buildActionButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    Color iconColor = Colors.white,
-    String? imageIcon
-  }) {
+  Widget _buildActionButton(
+      {required IconData icon,
+      required String label,
+      required VoidCallback onTap,
+      Color iconColor = Colors.white,
+      String? imageIcon}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -353,13 +380,21 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
               color: AppColors.black.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
-            child: imageIcon!=null? Padding(
-              padding:  EdgeInsets.all(12.r),
-              child:imageIcon==true? Image.asset('assets/images/seen.png',width: 20,): Image.asset(imageIcon,width: 8, color: iconColor),
-            ): Icon(icon, color: iconColor, size: 24.sp),
+            child: imageIcon != null
+                ? Padding(
+                    padding: EdgeInsets.all(12.r),
+                    child: imageIcon == true
+                        ? Image.asset(
+                            'assets/images/seen.png',
+                            width: 20,
+                          )
+                        : Image.asset(imageIcon, width: 8, color: iconColor),
+                  )
+                : Icon(icon, color: iconColor, size: 24.sp),
           ),
           SizedBox(height: 4.h),
-          Text(label, style: AppTextStyles.whiteS12W400, textAlign: TextAlign.center),
+          Text(label,
+              style: AppTextStyles.whiteS12W400, textAlign: TextAlign.center),
         ],
       ),
     );
@@ -377,7 +412,8 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
             color: AppColors.black.withOpacity(0.6),
             shape: BoxShape.circle,
           ),
-          child: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, color: AppColors.white, size: 40.sp),
+          child: Icon(_isPlaying ? Icons.pause : Icons.play_arrow,
+              color: AppColors.white, size: 40.sp),
         ),
       ),
     );
