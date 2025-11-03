@@ -11,6 +11,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../../data/models/reel_model.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart'
     as di;
+    import 'package:dooss_business_app/user/features/home/presentaion/manager/reels_playback_cubit.dart';
 /// Full-screen Instagram-style reel player
 /// Handles video playback, pause, mute, controls overlay, and lifecycle
 class FullScreenReelPlayer extends StatefulWidget {

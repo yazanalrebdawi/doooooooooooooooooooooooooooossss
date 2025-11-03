@@ -177,7 +177,9 @@ class ReelsScreenContent extends StatelessWidget {
     return Stack(
       children: [
         // Video player
-        ReelVideoPlayer(reel: reel, isCurrentReel: isCurrentReel),//////////////////////////
+        ReelVideoPlayer(
+            reel: reel,
+            isCurrentReel: isCurrentReel), //////////////////////////
 
         // Gradient overlay for better text readability
         Positioned.fill(
@@ -199,7 +201,7 @@ class ReelsScreenContent extends StatelessWidget {
         ),
 
         // Back button
-        ReelVideoPlayer(reel: reel, isCurrentReel: isCurrentReel),
+        // ReelVideoPlayer(reel: reel, isCurrentReel: isCurrentReel),
         Positioned(
           top: MediaQuery.of(context).padding.top + 16.h,
           left: 16.w,
