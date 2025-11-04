@@ -1,3 +1,1 @@
-enum AppLanguageEnum { arabic, english }
-
-
+enum AppLanguageEnum { arabic, english, turkish }

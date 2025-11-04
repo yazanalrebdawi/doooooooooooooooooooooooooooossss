@@ -14,7 +14,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../data/models/reel_model.dart';
 
-/// Full-screen Instagram-style reel player
+///* Full-screen Instagram-style reel player
 /// Handles video playback, pause, mute, controls overlay, and lifecycle
 class FullScreenReelPlayer extends StatefulWidget {
   final ReelModel reel;
@@ -370,17 +370,17 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
               },
             ),
             SizedBox(height: 24.h),
-            _buildActionButton(
-              icon: Icons.comment,
-              label: _formatCount(widget.reel.likesCount),
-              onTap: () => print('Comment on reel ${widget.reel.id}'),
-            ),
-            SizedBox(height: 24.h),
-            _buildActionButton(
-              icon: Icons.share,
-              label: 'Share',
-              onTap: () => print('Share reel ${widget.reel.id}'),
-            ),
+            // _buildActionButton(
+            //   icon: Icons.comment,
+            //   label: _formatCount(widget.reel.likesCount),
+            //   onTap: () => print('Comment on reel ${widget.reel.id}'),
+            // ),
+            // SizedBox(height: 24.h),
+            // _buildActionButton(
+            //   icon: Icons.share,
+            //   label: 'Share',
+            //   onTap: () => print('Share reel ${widget.reel.id}'),
+            // ),
             SizedBox(height: 24.h),
             _buildActionButton(
               icon: _isMuted ? Icons.volume_off : Icons.volume_up,
@@ -407,7 +407,7 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
             width: 48.w,
             height: 48.h,
             decoration: BoxDecoration(
-              color: AppColors.black.withOpacity(0.3),
+              color: AppColors.white.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: iconColor, size: 24.sp),

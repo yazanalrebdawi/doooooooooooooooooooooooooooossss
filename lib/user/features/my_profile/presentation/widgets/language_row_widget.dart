@@ -23,7 +23,6 @@ class LanguageRowWidget extends StatelessWidget {
     required this.iconColor,
     required this.iconData,
     required this.text,
-
     required this.onLanguageChanged,
     this.iconSize = 24,
   });
@@ -83,12 +82,16 @@ class LanguageRowWidget extends StatelessWidget {
                     builder: (context, state) {
                       final Locale lang =
                           context.read<AppManagerCubit>().state.locale;
-                      final String text;
-                      if (lang == Locale("en")) {
+                      late final String text;
+
+                      if (lang == const Locale("en")) {
                         text = "English";
+                      } else if (lang == const Locale("tr")) {
+                        text = "Turkish";
                       } else {
                         text = "Arabic";
                       }
+
                       return Text(
                         AppLocalizations.of(context)?.translate(text) ?? text,
                         style: AppTextStyles.s16w400.copyWith(

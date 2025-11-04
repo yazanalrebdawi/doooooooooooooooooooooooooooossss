@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigotorPage.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/network/app_dio.dart';
@@ -33,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1100),
+      duration: const Duration(milliseconds: 1000),
     );
 
     _scale = Tween<double>(
@@ -83,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
           await appLocator<SharedPreferencesService>().getDealerAuthData();
       final dealerFlag = await storage.getIsDealer();
 
-      if (checkDealer != null ) {
+      if (checkDealer != null) {
         // ✅ Dealer موجود
         appDio.addTokenToHeader(checkDealer.access);
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -213,55 +212,64 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.startGradient, AppColors.endGradient],
+            colors: [
+              AppColors.primary,
+              AppColors.lightGreen
+            ], // ألوان الهوية البصرية
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: Center(
-          child: FadeTransition(
-            opacity: _fade,
-            child: ScaleTransition(
-              scale: _scale,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 110,
-                    height: 110,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 12,
-                          offset: Offset(0, 6),
-                        ),
-                      ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 12,
+                      offset: Offset(0, 6),
                     ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    "assets/icons/applogo.jpg",
+                    fit: BoxFit.contain, // مهم لتجنب القص
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Dooss Business',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'جاري التحقق من الحساب...',
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(height: 20),
+              Text(
+                'Welcome To Dooss',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.6,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Verifying account...',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
+                ),
+              ),
+            ],
           ),
         ),
       ),

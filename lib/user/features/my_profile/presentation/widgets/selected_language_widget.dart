@@ -22,7 +22,7 @@ class SelectedLanguageWidget extends StatelessWidget {
         ContainerBaseWidget(
           margin: EdgeInsets.only(top: 20, left: 10, right: 10),
           width: 358,
-          height: 210,
+          height: 264,
           child: Column(
             children: [
               Column(
@@ -43,9 +43,8 @@ class SelectedLanguageWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppLocalizations.of(
-                                    context,
-                                  )?.translate("Select Language") ??
+                              AppLocalizations.of(context)
+                                      ?.translate("Select Language") ??
                                   "Select Language",
                               style: AppTextStyles.s16w600.copyWith(
                                 color: Color(0xff111827),
@@ -53,8 +52,7 @@ class SelectedLanguageWidget extends StatelessWidget {
                             ),
                             Text(
                               AppLocalizations.of(context)?.translate(
-                                    "Choose your preferred language",
-                                  ) ??
+                                      "Choose your preferred language") ??
                                   "Choose your preferred language",
                               style: AppTextStyles.s14w400.copyWith(
                                 color: AppColors.rating,
@@ -76,6 +74,8 @@ class SelectedLanguageWidget extends StatelessWidget {
                   final AppLanguageEnum appLanguage;
                   if (state == Locale("ar")) {
                     appLanguage = AppLanguageEnum.arabic;
+                  } else if (state == Locale("tr")) {
+                    appLanguage = AppLanguageEnum.turkish;
                   } else {
                     appLanguage = AppLanguageEnum.english;
                   }
@@ -96,12 +96,13 @@ class SelectedLanguageWidget extends StatelessWidget {
           builder: (context, locale) {
             final String appLanguage;
             if (locale.languageCode == "ar") {
-              log(context.read<AppManagerCubit>().state.lastApply.toString());
               appLanguage = "Arabic";
+            } else if (locale.languageCode == "tr") {
+              appLanguage = "Turkish";
             } else {
-              log(context.read<AppManagerCubit>().state.lastApply.toString());
               appLanguage = "English";
             }
+            log(context.read<AppManagerCubit>().state.lastApply.toString());
             return PreviewLanguageWidget(text: appLanguage);
           },
         ),

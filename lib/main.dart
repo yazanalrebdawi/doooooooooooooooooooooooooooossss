@@ -91,7 +91,7 @@ class SimpleReelsApp extends StatelessWidget {
           translationService: appLocator<TranslationService>(),
         );
         cubit.setTheme(initialTheme);
-        cubit.getSavedLocale();
+        cubit.getCurrentLocaleString();
         return cubit;
       },
       child: BlocBuilder<AppManagerCubit, AppManagerState>(
@@ -109,7 +109,11 @@ class SimpleReelsApp extends StatelessWidget {
                   : ThemeMode.dark,
               routerConfig: AppRouter.router,
               locale: state.locale,
-              supportedLocales: const [Locale('en'), Locale('ar')],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+                Locale('tr')
+              ],
               localizationsDelegates: const [
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,

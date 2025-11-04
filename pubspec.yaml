@@ -15,7 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # Splash screen
-  flutter_native_splash: ^2.4.4
+  flutter_native_splash: ^2.4.7
 
   # State management & DI
   flutter_bloc: ^9.1.1
@@ -62,6 +62,7 @@ dependencies:
   toastification: ^3.0.3
   connectivity_plus: ^7.0.0
   hive_flutter: ^1.1.0
+
   shimmer: ^3.0.0
   cached_network_image: ^3.4.1
   flutter_xlider: ^3.5.0
@@ -110,3 +111,12 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/icons/applogo.jpg"
+
+flutter_native_splash:
+  color: "#f7f7f7"
+  image: assets/icons/applogo.jpg
+  android_gravity: center
+  ios_content_mode: center
+  android: true
+  ios: true
+
