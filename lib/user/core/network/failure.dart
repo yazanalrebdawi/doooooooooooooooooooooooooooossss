@@ -26,22 +26,40 @@ class Failure {
       case DioExceptionType.badResponse:
         String errorMessage =
             "An unknown error occurred. Please try again later.";
-        if (exception.response?.data != null) {
-          if (exception.response!.data is Map<String, dynamic>) {
-            Map<String, dynamic> data = exception.response!.data;
-            errorMessage =
-                data['error'] ??
+        final responseData = exception.response?.data;
+
+        if (responseData != null) {
+          if (responseData is Map<String, dynamic>) {
+            Map<String, dynamic> data = responseData;
+
+            // 🧠 أولاً: نحاول نقرأ رسائل السيرفر العادية
+            errorMessage = data['error'] ??
                 data['message'] ??
                 (data['non_field_errors'] != null &&
                         data['non_field_errors'] is List &&
                         data['non_field_errors'].isNotEmpty
                     ? data['non_field_errors'][0].toString()
                     : errorMessage);
-          } else if (exception.response!.data is String) {
-            errorMessage = exception.response!.data;
+
+            if (errorMessage ==
+                "An unknown error occurred. Please try again later.") {
+              final extractedErrors = data.values
+                  .whereType<List>()
+                  .expand((e) => e)
+                  .map((e) => e.toString())
+                  .join('\n');
+
+              if (extractedErrors.isNotEmpty) {
+                errorMessage = extractedErrors;
+              }
+            }
+          } else if (responseData is String) {
+            errorMessage = responseData;
           }
         }
+
         return Failure(message: errorMessage);
+
       case DioExceptionType.cancel:
         return Failure(message: "Request was cancelled. Please try again.");
       case DioExceptionType.connectionError:

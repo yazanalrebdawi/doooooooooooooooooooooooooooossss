@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import '../../../../../core/network/api.dart';
 import '../../../../../core/network/api_request.dart';
 import '../../../../../core/network/api_urls.dart';
@@ -91,7 +92,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
         } catch (e) {
           log('❌ Error creating UserModel: $e');
           log('❌ Response structure: $response');
-          return Left(Failure(message: 'Invalid response format: $e'));
+          return Left(Failure.handleError(e as DioException));
         }
       },
     );
@@ -198,8 +199,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
             log('⚠️ No token found in response');
           }
 
-          final String message =
-              result["status"] ??
+          final String message = result["status"] ??
               result["message"] ??
               "OTP verified successfully";
           return Right(message);
@@ -224,9 +224,8 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
     );
 
     final ApiRequest apiRequest = ApiRequest(
-      url:
-          ApiUrls
-              .verifyForgetPasswordOtp, // استخدام URL الخاص بـ forget password
+      url: ApiUrls
+          .verifyForgetPasswordOtp, // استخدام URL الخاص بـ forget password
       data: {
         "phone": params.phoneNumber,
         "new_password": params.newPassword, // إرسال الـ new_password
@@ -247,8 +246,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       },
       (result) {
         log('✅ Verify OTP for Reset Password successful: $result');
-        final String message =
-            result["status"] ??
+        final String message = result["status"] ??
             result["message"] ??
             "Password reset successfully";
         return Right(message);
@@ -289,8 +287,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       },
       (result) {
         log('✅ Set New Password successful: $result');
-        final String message =
-            result["status"] ??
+        final String message = result["status"] ??
             result["message"] ??
             "Password changed successfully";
         return Right(message);
@@ -325,8 +322,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       (result) {
         log('✅ Logout successful: $result');
         // التعامل مع response كـ Map
-        final String message =
-            result["detail"] ??
+        final String message = result["detail"] ??
             result["status"] ??
             result["message"] ??
             "Logged out successfully";
@@ -361,8 +357,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       },
       (result) {
         log('✅ Resend OTP successful: $result');
-        final String message =
-            result["detail"] ??
+        final String message = result["detail"] ??
             result["status"] ??
             result["message"] ??
             "OTP resent successfully";

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
 
           if (state.checkAuthState == CheckAuthState.error) {
-            print('❌ Register Error: ${state.error}');
+            log('❌ Register Errordsgfdsg: ${state.error}');
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 customAppSnackBar(
