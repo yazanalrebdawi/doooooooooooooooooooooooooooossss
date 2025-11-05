@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -153,18 +154,22 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
                       linkGoogle: widget.email,
                     ),
                     // storeTypeSelectWidget(),
-                    changeStatusStoreWidget(
-                      openungTime: (String value) {
-                        start = value;
-                      },
-                      closeTime: (String value) {
-                        close = value;
-                        print(value);
-                      },
-                      day: (daysSelected) {
-                        print(daysSelected);
-                        days = daysSelected;
-                      },
+                    BlocBuilder<HomePageCubit,HomepageState>(
+                      builder: (context,state) {
+                        return changeStatusStoreWidget(days:state.dataStore.workingDays ,
+                          openungTime: (String value) {
+                            start = value;
+                          },
+                          closeTime: (String value) {
+                            close = value;
+                            print(value);
+                          },
+                          day: (daysSelected) {
+                            print(daysSelected);
+                            days = daysSelected;
+                          },
+                        );
+                      }
                     ),
 
                     // selectStoreStatus(
@@ -176,10 +181,13 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
                     // ),
                     BottonNavigationOfEditStore(
                       reset: () {
-                        widget.storeName.text = '';
-                        widget.storeDescription.text = '';
-                        widget.phone.text = '';
-                        days = [];
+                        widget.storeName.clear();
+                        widget.storeDescription.clear();
+                        widget.phone.clear();
+                        widget.email.clear();
+                        widget.location.clear();
+                        // days = [];
+                        print('reset');
                       },
                       onTap: () {
                         if (form.currentState!.validate()) {

@@ -5,6 +5,8 @@ import 'package:dooss_business_app/user/core/localization/app_localizations.dart
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/edit_Prodect_page.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Appearance_and_colors_widget.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/basic_information_widget.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/image_media_of_add_car.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/spacification_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -192,15 +194,7 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                     type: 'add car',
                     iconButton: Icons.add,
                     ontap: () {
-                      // print(widget.brand);
-                      // // RemouteDealerDataSource().AddCars();
-                      // print(widget.model.text);
-                      // print(widget.price.text);
-                      // print(widget.Doors);
-                      // print(widget.drivetrain);
-                      // print(widget.typeFuel);
-                      // print(widget.transmission);
-                      // print(widget.image.value!.path);
+
                       print(widget.color.text);
                       // RemouteDealerDataSource().AddCars(
                       //   widget.brand,

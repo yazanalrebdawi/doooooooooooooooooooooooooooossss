@@ -17,8 +17,9 @@ class ReelRemoteDataSourceImp implements ReelRemoteDataSource {
     String ordering = '-created_at',
   }) async {
     try {
-      print('🎬 ReelDataSource: Fetching reels (page: $page, pageSize: $pageSize)...');
-      
+      print(
+          '🎬 ReelDataSource: Fetching reels (page: $page, pageSize: $pageSize)...');
+
       final response = await dio.dio.get(
         ApiUrls.reels,
         queryParameters: {
@@ -32,13 +33,30 @@ class ReelRemoteDataSourceImp implements ReelRemoteDataSource {
       print('📊 ReelDataSource: Response data: ${response.data}');
 
       final reelsResponse = ReelsResponseModel.fromJson(response.data);
-      
+
       print('🎬 ReelDataSource: Parsed ${reelsResponse.results.length} reels');
-      
+
       return Right(reelsResponse);
     } catch (e) {
       print('❌ ReelDataSource: Error fetching reels: $e');
       return Left(Failure(message: 'Failed to fetch reels: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> likeReel(int reelId) async {
+    try {
+      print('❤️ ReelDataSource: Sending like for Reel ID: $reelId');
+
+      final response = await dio.dio.post(
+        ApiUrls.likeReel("$reelId"),
+      );
+
+      print('✅ ReelDataSource: Like success → Status: ${response.statusCode}');
+      return const Right(unit);
+    } catch (e) {
+      print('❌ ReelDataSource: Error liking reel: $e');
+      return Left(Failure(message: 'Failed to like reel: ${e.toString()}'));
     }
   }
 }

@@ -155,6 +155,7 @@ class productInfoCard extends StatelessWidget {
                                     context,
                                   ),
                                   child: EditProdectPage(
+                                    desc: TextEditingController(text: ''),
                                     item: item,
                                     productName: TextEditingController(
                                       text: item.name,

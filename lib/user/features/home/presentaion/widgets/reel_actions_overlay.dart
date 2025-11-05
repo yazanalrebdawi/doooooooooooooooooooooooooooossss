@@ -9,13 +9,14 @@ class ReelActionsOverlay extends StatelessWidget {
   final VoidCallback? onLike;
   final VoidCallback? onShare;
   final VoidCallback? onComment;
-
+  final bool? isMuted;
   const ReelActionsOverlay({
     super.key,
     required this.reel,
     this.onLike,
     this.onShare,
-    this.onComment,
+    this.onComment, 
+     this.isMuted =false,
   });
 
   @override
@@ -24,7 +25,7 @@ class ReelActionsOverlay extends StatelessWidget {
 
     return Positioned(
       right: 16.w,
-      bottom: 100.h,
+      bottom: 30.h,///this is varyyyyy important
       child: Column(
         children: [
           _buildActionButton(
@@ -32,26 +33,28 @@ class ReelActionsOverlay extends StatelessWidget {
             icon: reel.liked ? Icons.favorite : Icons.favorite_border,
             label: _formatCount(reel.likesCount),
             onTap: onLike,
-            iconColor:
-                reel.liked
-                    ? Colors.red
-                    : (isDark ? AppColors.white : AppColors.black),
+            iconColor: reel.liked
+                ? Colors.red
+                : (isDark ? AppColors.white : AppColors.black),
           ),
           SizedBox(height: 24.h),
           _buildActionButton(
             isDark: isDark,
-            icon: Icons.comment,
-            label: _formatCount(reel.likesCount),
+            icon: Icons.visibility,
+            label: _formatCount(reel.viewsCount),
             onTap: onComment,
             iconColor: isDark ? AppColors.white : AppColors.black,
+            imageIcon:'assets/images/seen.png'
+            
           ),
           SizedBox(height: 24.h),
           _buildActionButton(
-            icon: Icons.share,
+            // icon: Icons.share,
             isDark: isDark,
-            label: 'Share',
             onTap: onShare,
             iconColor: isDark ? AppColors.white : AppColors.black,
+            icon: isMuted==true ? Icons.volume_off : Icons.volume_up,
+            label: isMuted==true  ? 'Unmute' : 'Mute',
           ),
         ],
       ),
@@ -64,6 +67,7 @@ class ReelActionsOverlay extends StatelessWidget {
     VoidCallback? onTap,
     Color iconColor = Colors.white,
     required bool isDark,
+    String? imageIcon,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -76,15 +80,22 @@ class ReelActionsOverlay extends StatelessWidget {
               color: AppColors.black.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 24.sp),
+            child: imageIcon != null
+                ? Padding(
+                  padding:  EdgeInsets.all(12.r),
+                  child: Image.asset(
+                      imageIcon,
+                      width: 20,
+                    ),
+                )
+                : Icon(icon, color: iconColor, size: 24.sp),
           ),
           SizedBox(height: 4.h),
           Text(
             label,
-            style:
-                isDark
-                    ? AppTextStyles.whiteS12W400
-                    : AppTextStyles.blackS12W400,
+            style: isDark
+                ? AppTextStyles.whiteS12W400
+                : AppTextStyles.blackS12W400,
             textAlign: TextAlign.center,
           ),
         ],

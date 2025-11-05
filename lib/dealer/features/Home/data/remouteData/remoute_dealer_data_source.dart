@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:dooss_business_app/dealer/Core/network/failure.dart';
+import 'package:dooss_business_app/dealer/features/Home/data/models/car_info.dart';
 import 'package:dooss_business_app/dealer/features/Home/data/models/dashboard_info_model.dart';
 import 'package:dooss_business_app/dealer/features/Home/data/models/product_data_model.dart';
 import 'package:dooss_business_app/user/core/network/api_urls.dart';
@@ -84,9 +85,9 @@ class RemouteDealerDataSource {
     try {
       print(
           '________________________${dio.options.headers}________________________');
-      var url = Uri.parse('${ApiUrls.baseURl}/products/');
+      var url = Uri.parse('${ApiUrls.baseURlDealer}/products/');
       var response = await dio.get(
-        '${ApiUrls.baseURl}/products/',
+        '${ApiUrls.baseURlDealer}/products/',
         // options: Options(headers: header),
       );
       List<productdata> responsedata = (response.data as List).map((item) {
@@ -107,7 +108,7 @@ class RemouteDealerDataSource {
     String discount,
     XFile image,
   ) async {
-    var url = Uri.parse('http://10.0.2.2:8010/api/products/');
+    // var url = Uri.parse('http://10.0.2.2:8010/api/products/');
     // var body = {
     //   "name": nameProduct,
     //   "description": description,
@@ -137,7 +138,7 @@ class RemouteDealerDataSource {
     try {
       print(dio.options.headers);
       var response = await dio.post(
-        '${ApiUrls.baseURl}/products/',
+        '${ApiUrls.baseURlDealer}/products/',
         data: dat1a,
         // options: Options(headers: header),
       );
@@ -156,13 +157,13 @@ class RemouteDealerDataSource {
       return right(data);
     } catch (error) {
       print(error.toString());
-      return left(error.toString());
+      return left(Failure.handleError(error as DioException).message);
     }
   }
 
   Future<Either<String, void>> deleteProduct(int id) async {
     try {
-      var url = Uri.parse('${ApiUrls.baseURl}/products/$id/');
+      var url = Uri.parse('${ApiUrls.baseURlDealer}/products/$id/');
       print(dio.options.headers);
       var response = await dio.deleteUri(
         url,
@@ -194,7 +195,7 @@ class RemouteDealerDataSource {
     headerAvaailable.addAll({'Content-Type': 'application/json'});
     ///////////////////  تعديل
     print(headerAvaailable);
-    var url = '${ApiUrls.baseURl}/dealers/products/$id/availability/';
+    var url = '${ApiUrls.baseURlDealer}/dealers/products/$id/availability/';
     var data = {"available": currentValue};
     try {
       var response = await dio.patch(
@@ -216,7 +217,7 @@ class RemouteDealerDataSource {
   }
 
   Future<Either<Failure, DealerDashboardInfo>> getDataDashboard() async {
-    var url = '${ApiUrls.baseURl}/dealers/dashboard/';
+    var url = '${ApiUrls.baseURlDealer}/dealers/dashboard/';
     try {
       var response = await dio.get(
         url,
@@ -270,29 +271,29 @@ class RemouteDealerDataSource {
     };
 
     var data = FormData.fromMap({
-      'files': [
+      'image': [
         await MultipartFile.fromFile(image.path, filename: '/path/to/file'),
         // await MultipartFile.fromFile('/path/to/file', filename: '/path/to/file')
       ],
-      'name': 'Model S',
+      'name': '${brand} ${Model}',
       'brand': brand,
-      'model': 2023, //int
+      'model': Model, //int
       'price': price,
       'discount': '0',
       'year': year, //int
-      'kilometers': 0, // int ///
+      'kilometers': milleage, // int ///
       'fuel_type': typeFuel,
       'transmission': Transmissiion,
       'engine_capacity': engineSize,
       'drive_type': Drivetrain,
-      'color': 'White',
+      'color':  color ?? 'white',
       'is_available': 'true',
-      'doors_count': 4, //int//int
-      'seats_count': 5, //int
-      'status': 'new', //تعديل
+      'doors_count': Door, //int//int
+      'seats_count': seats, //int
+      'status': Status, //تعديل
       'license_status': 'licensed',
-      'lat': 25.2048, //int
-      'lon': 55.2708, //int
+      'lat': lat, //int
+      'lon': lon , //int
       'is_main': 'true',
     });
     //    dio.options.headers.addAll({
@@ -303,7 +304,7 @@ class RemouteDealerDataSource {
     print(Model);
     print(year);
     print(seats);
-    var url = Uri.parse('${ApiUrls.baseURl}/cars/');
+    var url = Uri.parse('${ApiUrls.baseURlDealer}/cars/');
     try {
       var response = await dio.postUri(
         url,
@@ -369,7 +370,7 @@ class RemouteDealerDataSource {
     print(data.fields);
     try {
       var response = await dio.patch(
-        '${ApiUrls.baseURl}/products/$id/',
+        '${ApiUrls.baseURlDealer}/products/$id/',
         data: data,
         // options: Options(headers: header),
       );
@@ -388,7 +389,7 @@ class RemouteDealerDataSource {
   }
 
   Future<Either<Failure, DataProfileModel>> getDataStoreProfile() async {
-    var url = '${ApiUrls.baseURl}/dealers/me/profile/';
+    var url = '${ApiUrls.baseURlDealer}/dealers/me/profile/';
     try {
       var response = await dio.get(
         url,
@@ -414,7 +415,7 @@ class RemouteDealerDataSource {
     List<String> day,
   ) async {
     //
-    var url = '${ApiUrls.baseURl}/dealers/me/profile/';
+    var url = '${ApiUrls.baseURlDealer}/dealers/me/profile/';
     print('-------${dio.options.headers}-----');
     print(OpenTime.runtimeType);
     var data = FormData.fromMap({
@@ -454,266 +455,266 @@ class RemouteDealerDataSource {
   }
 }
 
-class Car {
-  int id;
-  // List<String> images;
-  String name;
-  String brand;
-  String model;
-  String price;
-  String discount;
-  int year;
-  int kilometers;
-  String fuelType;
-  String transmission;
-  String engineCapacity;
-  String driveType;
-  String color;
-  bool isAvailable;
-  int doorsCount;
-  int seatsCount;
-  String status;
-  String licenseStatus;
-  String location;
-  // dynamic video;
+// class Car {
+//   int id;
+//   // List<String> images;
+//   String name;
+//   String brand;
+//   String model;
+//   String price;
+//   String discount;
+//   int year;
+//   int kilometers;
+//   String fuelType;
+//   String transmission;
+//   String engineCapacity;
+//   String driveType;
+//   String color;
+//   bool isAvailable;
+//   int doorsCount;
+//   int seatsCount;
+//   String status;
+//   String licenseStatus;
+//   String location;
+//   // dynamic video;
 
-  int dealer;
+//   int dealer;
 
-  Car({
-    required this.id,
-    // required this.images,
-    required this.name,
-    required this.brand,
-    required this.model,
-    required this.price,
-    required this.discount,
-    required this.year,
-    required this.kilometers,
-    required this.fuelType,
-    required this.transmission,
-    required this.engineCapacity,
-    required this.driveType,
-    required this.color,
-    required this.isAvailable,
-    required this.doorsCount,
-    required this.seatsCount,
-    required this.status,
-    required this.licenseStatus,
-    required this.location,
+//   Car({
+//     required this.id,
+//     // required this.images,
+//     required this.name,
+//     required this.brand,
+//     required this.model,
+//     required this.price,
+//     required this.discount,
+//     required this.year,
+//     required this.kilometers,
+//     required this.fuelType,
+//     required this.transmission,
+//     required this.engineCapacity,
+//     required this.driveType,
+//     required this.color,
+//     required this.isAvailable,
+//     required this.doorsCount,
+//     required this.seatsCount,
+//     required this.status,
+//     required this.licenseStatus,
+//     required this.location,
 
-    // required this.video,
-    required this.dealer,
-  });
+//     // required this.video,
+//     required this.dealer,
+//   });
 
-  /// Deserialize from JSON
-  factory Car.fromJson(Map<String, dynamic> json) {
-    return Car(
-      id: json['id'],
-      // images: json['images'] ?? [],
-      name: json['name'] ?? '',
-      brand: json['brand'] ?? '',
-      model: json['model'] ?? '',
-      price: json['price'] ?? '',
-      discount: json['discount'] ?? '',
-      year: json['year'],
-      kilometers: json['kilometers'],
-      fuelType: json['fuel_type'] ?? '',
-      transmission: json['transmission'] ?? '',
-      engineCapacity: json['engine_capacity'] ?? '',
-      driveType: json['drive_type'] ?? '',
-      color: json['color'] ?? '',
-      isAvailable: json['is_available'],
-      doorsCount: json['doors_count'],
-      seatsCount: json['seats_count'],
-      status: json['status'] ?? '',
-      licenseStatus: json['license_status'] ?? '',
-      location: json['location'] ?? '',
+//   /// Deserialize from JSON
+//   factory Car.fromJson(Map<String, dynamic> json) {
+//     return Car(
+//       id: json['id'],
+//       // images: json['images'] ?? [],
+//       name: json['name'] ?? '',
+//       brand: json['brand'] ?? '',
+//       model: json['model'] ?? '',
+//       price: json['price'] ?? '',
+//       discount: json['discount'] ?? '',
+//       year: json['year'],
+//       kilometers: json['kilometers'],
+//       fuelType: json['fuel_type'] ?? '',
+//       transmission: json['transmission'] ?? '',
+//       engineCapacity: json['engine_capacity'] ?? '',
+//       driveType: json['drive_type'] ?? '',
+//       color: json['color'] ?? '',
+//       isAvailable: json['is_available'],
+//       doorsCount: json['doors_count'],
+//       seatsCount: json['seats_count'],
+//       status: json['status'] ?? '',
+//       licenseStatus: json['license_status'] ?? '',
+//       location: json['location'] ?? '',
 
-      // video: json['video'],
-      dealer: json['dealer'],
-    );
-  }
+//       // video: json['video'],
+//       dealer: json['dealer'],
+//     );
+//   }
 
-  /// Serialize to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      // 'images': images,
-      'name': name,
-      'brand': brand,
-      'model': model,
-      'price': price,
-      'discount': discount,
-      'year': year,
-      'kilometers': kilometers,
-      'fuelType': fuelType,
-      'transmission': transmission,
-      'engineCapacity': engineCapacity,
-      'driveType': driveType,
-      'color': color,
-      'isAvailable': isAvailable,
-      'doorsCount': doorsCount,
-      'seatsCount': seatsCount,
-      'status': status,
-      'licenseStatus': licenseStatus,
-      'location': location,
-      // 'video': video,
-      'dealer': dealer,
-    };
-  }
+//   /// Serialize to JSON
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'id': id,
+//       // 'images': images,
+//       'name': name,
+//       'brand': brand,
+//       'model': model,
+//       'price': price,
+//       'discount': discount,
+//       'year': year,
+//       'kilometers': kilometers,
+//       'fuelType': fuelType,
+//       'transmission': transmission,
+//       'engineCapacity': engineCapacity,
+//       'driveType': driveType,
+//       'color': color,
+//       'isAvailable': isAvailable,
+//       'doorsCount': doorsCount,
+//       'seatsCount': seatsCount,
+//       'status': status,
+//       'licenseStatus': licenseStatus,
+//       'location': location,
+//       // 'video': video,
+//       'dealer': dealer,
+//     };
+//   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'name': name,
-      'brand': brand,
-      'model': model,
-      'price': price,
-      'discount': discount,
-      'year': year,
-      'kilometers': kilometers,
-      'fuelType': fuelType,
-      'transmission': transmission,
-      'engineCapacity': engineCapacity,
-      'driveType': driveType,
-      'color': color,
-      'isAvailable': isAvailable,
-      'doorsCount': doorsCount,
-      'seatsCount': seatsCount,
-      'status': status,
-      'licenseStatus': licenseStatus,
-      'location': location,
-      'dealer': dealer,
-    };
-  }
+//   Map<String, dynamic> toMap() {
+//     return <String, dynamic>{
+//       'id': id,
+//       'name': name,
+//       'brand': brand,
+//       'model': model,
+//       'price': price,
+//       'discount': discount,
+//       'year': year,
+//       'kilometers': kilometers,
+//       'fuelType': fuelType,
+//       'transmission': transmission,
+//       'engineCapacity': engineCapacity,
+//       'driveType': driveType,
+//       'color': color,
+//       'isAvailable': isAvailable,
+//       'doorsCount': doorsCount,
+//       'seatsCount': seatsCount,
+//       'status': status,
+//       'licenseStatus': licenseStatus,
+//       'location': location,
+//       'dealer': dealer,
+//     };
+//   }
 
-  factory Car.fromMap(Map<String, dynamic> map) {
-    return Car(
-      id: map['id'] as int,
-      name: map['name'] as String,
-      brand: map['brand'] as String,
-      model: map['model'] as String,
-      price: map['price'] as String,
-      discount: map['discount'] as String,
-      year: map['year'] as int,
-      kilometers: map['kilometers'] as int,
-      fuelType: map['fuelType'] as String,
-      transmission: map['transmission'] as String,
-      engineCapacity: map['engineCapacity'] as String,
-      driveType: map['driveType'] as String,
-      color: map['color'] as String,
-      isAvailable: map['isAvailable'] as bool,
-      doorsCount: map['doorsCount'] as int,
-      seatsCount: map['seatsCount'] as int,
-      status: map['status'] as String,
-      licenseStatus: map['licenseStatus'] as String,
-      location: map['location'] as String,
-      dealer: map['dealer'] as int,
-    );
-  }
+//   factory Car.fromMap(Map<String, dynamic> map) {
+//     return Car(
+//       id: map['id'] as int,
+//       name: map['name'] as String,
+//       brand: map['brand'] as String,
+//       model: map['model'] as String,
+//       price: map['price'] as String,
+//       discount: map['discount'] as String,
+//       year: map['year'] as int,
+//       kilometers: map['kilometers'] as int,
+//       fuelType: map['fuelType'] as String,
+//       transmission: map['transmission'] as String,
+//       engineCapacity: map['engineCapacity'] as String,
+//       driveType: map['driveType'] as String,
+//       color: map['color'] as String,
+//       isAvailable: map['isAvailable'] as bool,
+//       doorsCount: map['doorsCount'] as int,
+//       seatsCount: map['seatsCount'] as int,
+//       status: map['status'] as String,
+//       licenseStatus: map['licenseStatus'] as String,
+//       location: map['location'] as String,
+//       dealer: map['dealer'] as int,
+//     );
+//   }
 
-  // String toJson() => json.encode(toMap());
+//   // String toJson() => json.encode(toMap());
 
-  // factory Car.fromJson(String source) => Car.fromMap(json.decode(source) as Map<String, dynamic>);
-}
+//   // factory Car.fromJson(String source) => Car.fromMap(json.decode(source) as Map<String, dynamic>);
+// }
 
-class dataresponseEditProduct {
-  final String name;
-  final String description;
-  final String price;
-  final String discount;
-  final int stock;
-  final String condition;
-  final String category;
-  final String material;
-  final String color;
-  final String warranty;
-  final String installationInfo;
-  final bool isAvailable;
+// class dataresponseEditProduct {
+//   final String name;
+//   final String description;
+//   final String price;
+//   final String discount;
+//   final int stock;
+//   final String condition;
+//   final String category;
+//   final String material;
+//   final String color;
+//   final String warranty;
+//   final String installationInfo;
+//   final bool isAvailable;
 
-  dataresponseEditProduct({
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.discount,
-    required this.stock,
-    required this.condition,
-    required this.category,
-    required this.material,
-    required this.color,
-    required this.warranty,
-    required this.installationInfo,
-    required this.isAvailable,
-  });
+//   dataresponseEditProduct({
+//     required this.name,
+//     required this.description,
+//     required this.price,
+//     required this.discount,
+//     required this.stock,
+//     required this.condition,
+//     required this.category,
+//     required this.material,
+//     required this.color,
+//     required this.warranty,
+//     required this.installationInfo,
+//     required this.isAvailable,
+//   });
 
-  dataresponseEditProduct copyWith({
-    String? name,
-    String? description,
-    String? price,
-    String? discount,
-    int? stock,
-    String? condition,
-    String? category,
-    String? material,
-    String? color,
-    String? warranty,
-    String? installationInfo,
-    bool? isAvailable,
-  }) {
-    return dataresponseEditProduct(
-      name: name ?? this.name,
-      description: description ?? this.description,
-      price: price ?? this.price,
-      discount: discount ?? this.discount,
-      stock: stock ?? this.stock,
-      condition: condition ?? this.condition,
-      category: category ?? this.category,
-      material: material ?? this.material,
-      color: color ?? this.color,
-      warranty: warranty ?? this.warranty,
-      installationInfo: installationInfo ?? this.installationInfo,
-      isAvailable: isAvailable ?? this.isAvailable,
-    );
-  }
+//   dataresponseEditProduct copyWith({
+//     String? name,
+//     String? description,
+//     String? price,
+//     String? discount,
+//     int? stock,
+//     String? condition,
+//     String? category,
+//     String? material,
+//     String? color,
+//     String? warranty,
+//     String? installationInfo,
+//     bool? isAvailable,
+//   }) {
+//     return dataresponseEditProduct(
+//       name: name ?? this.name,
+//       description: description ?? this.description,
+//       price: price ?? this.price,
+//       discount: discount ?? this.discount,
+//       stock: stock ?? this.stock,
+//       condition: condition ?? this.condition,
+//       category: category ?? this.category,
+//       material: material ?? this.material,
+//       color: color ?? this.color,
+//       warranty: warranty ?? this.warranty,
+//       installationInfo: installationInfo ?? this.installationInfo,
+//       isAvailable: isAvailable ?? this.isAvailable,
+//     );
+//   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'name': name,
-      'description': description,
-      'price': price,
-      'discount': discount,
-      'stock': stock,
-      'condition': condition,
-      'category': category,
-      'material': material,
-      'color': color,
-      'warranty': warranty,
-      'installationInfo': installationInfo,
-      'isAvailable': isAvailable,
-    };
-  }
+//   Map<String, dynamic> toMap() {
+//     return <String, dynamic>{
+//       'name': name,
+//       'description': description,
+//       'price': price,
+//       'discount': discount,
+//       'stock': stock,
+//       'condition': condition,
+//       'category': category,
+//       'material': material,
+//       'color': color,
+//       'warranty': warranty,
+//       'installationInfo': installationInfo,
+//       'isAvailable': isAvailable,
+//     };
+//   }
 
-  factory dataresponseEditProduct.fromMap(Map<String, dynamic> map) {
-    return dataresponseEditProduct(
-      name: map['name'] as String,
-      description: map['description'] as String,
-      price: map['price'] as String,
-      discount: map['discount'] as String,
-      stock: map['stock'] as int,
-      condition: map['condition'] as String,
-      category: map['category'] as String,
-      material: map['material'] as String,
-      color: map['color'] as String,
-      warranty: map['warranty'] as String,
-      installationInfo: map['installation_info'] as String,
-      isAvailable: map['is_available'] as bool,
-    );
-  }
+//   factory dataresponseEditProduct.fromMap(Map<String, dynamic> map) {
+//     return dataresponseEditProduct(
+//       name: map['name'] as String,
+//       description: map['description'] as String,
+//       price: map['price'] as String,
+//       discount: map['discount'] as String,
+//       stock: map['stock'] as int,
+//       condition: map['condition'] as String,
+//       category: map['category'] as String,
+//       material: map['material'] as String,
+//       color: map['color'] as String,
+//       warranty: map['warranty'] as String,
+//       installationInfo: map['installation_info'] as String,
+//       isAvailable: map['is_available'] as bool,
+//     );
+//   }
 
-  String toJson() => json.encode(toMap());
+//   String toJson() => json.encode(toMap());
 
-  factory dataresponseEditProduct.fromJson(String source) =>
-      dataresponseEditProduct.fromMap(
-        json.decode(source) as Map<String, dynamic>,
-      );
-}
+//   factory dataresponseEditProduct.fromJson(String source) =>
+//       dataresponseEditProduct.fromMap(
+//         json.decode(source) as Map<String, dynamic>,
+//       );
+// }

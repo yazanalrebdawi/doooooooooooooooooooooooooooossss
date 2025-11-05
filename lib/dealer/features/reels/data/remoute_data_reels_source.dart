@@ -27,7 +27,7 @@ class remouteDataReelsSource {
     try {
       print(appLocator<Dio>().options.headers);
       var response = await dio.get(
-        '${ApiUrls.baseURl}/reels/my-reels/',
+        '${ApiUrls.baseURlDealer}/reels/my-reels/',
         // options: Options(headers: header),
       );
       print(response.data);
@@ -35,7 +35,7 @@ class remouteDataReelsSource {
         return ReelDataModel.fromMap(item);
       }).toList();
     print('🔹 LOGIN REQUEST HEADERS: ${dio.options.headers}');
-     print('🔹 LOGIN URL: ${ApiUrls.baseURl}/reels/my-reels/');
+     print('🔹 LOGIN URL: ${ApiUrls.baseURlDealer}/reels/my-reels/');
       return right(dataResponse);
     } catch (error) {
       print(error.toString());
@@ -48,7 +48,7 @@ class remouteDataReelsSource {
     String title,
     String descraption,
   ) async {
-    var url = '${ApiUrls.baseURl}/reels/';
+    var url = '${ApiUrls.baseURlDealer}/reels/';
     Map<String,dynamic> customHeader = Map.from(dio.options.headers);
     customHeader.addAll({'Content-Type': 'application/json'});//////تعديل  ممكن تنحذف
 
@@ -86,6 +86,7 @@ class remouteDataReelsSource {
       print(e.toString());
       if (e is DioException ) {
         print(e.response!.data);
+         return left(Failure(message:e.response!.data[0],statusCode: 400));
       }
       // print(e.toString());
 
@@ -136,7 +137,7 @@ class remouteDataReelsSource {
     //  /
     try {
       var response = await dio.request(
-        '${ApiUrls.baseURl}/reels/$id/',
+        '${ApiUrls.baseURlDealer}/reels/$id/',
         options: Options(
           method: 'PATCH',
           // headers: header
@@ -156,7 +157,7 @@ class remouteDataReelsSource {
   }
 
   Future<Either<Failure, bool>> deleteReel(int id) async {
-    var url = '${ApiUrls.baseURl}/reels/$id/';
+    var url = '${ApiUrls.baseURlDealer}/reels/$id/';
     try {
       var response = await dio.delete(
         url,

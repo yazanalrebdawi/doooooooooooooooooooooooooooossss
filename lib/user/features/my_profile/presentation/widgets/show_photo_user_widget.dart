@@ -14,7 +14,7 @@ class ShowPhotoUserWidget extends StatelessWidget {
     super.key,
     this.trailing,
     required this.isShowedit,
-    this.localImage, 
+    this.localImage,
   });
 
   final Widget? trailing;
@@ -25,7 +25,7 @@ class ShowPhotoUserWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        if (localImage != null) 
+        if (localImage != null)
           CircleAvatar(
             radius: 50.r,
             backgroundColor: Colors.grey[200],
@@ -35,23 +35,26 @@ class ShowPhotoUserWidget extends StatelessWidget {
           BlocSelector<AppManagerCubit, AppManagerState, String?>(
             selector: (state) => state.user?.avatar?.path,
             builder: (context, avatarPath) {
-              if (avatarPath == null) {
-                return CircleAvatar(
-                  radius: 50.r,
-                  backgroundColor: Colors.grey[200],
-                  child: Icon(
-                    Icons.person,
-                    color: AppColors.primary,
-                    size: 95.sp,
-                  ),
-                );
+              if (avatarPath == null || avatarPath.isEmpty) {
+                return _defaultAvatar();
               }
 
               final String fullUrl = ApiUrls.media(avatarPath);
+
               return CircleAvatar(
                 radius: 50.r,
                 backgroundColor: Colors.grey[200],
-                backgroundImage: CachedNetworkImageProvider(fullUrl),
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: fullUrl,
+                    width: 100.r,
+                    height: 100.r,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => _defaultIcon(),
+                  ),
+                ),
               );
             },
           ),
@@ -71,6 +74,22 @@ class ShowPhotoUserWidget extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+
+  Widget _defaultAvatar() {
+    return CircleAvatar(
+      radius: 50.r,
+      backgroundColor: Colors.grey[200],
+      child: _defaultIcon(),
+    );
+  }
+
+  Widget _defaultIcon() {
+    return Icon(
+      Icons.person,
+      color: AppColors.primary,
+      size: 95.sp,
     );
   }
 }
