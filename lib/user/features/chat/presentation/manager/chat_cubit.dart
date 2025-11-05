@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:dooss_business_app/user/core/cubits/optimized_cubit.dart';
 import 'package:dooss_business_app/user/features/chat/data/models/message_model.dart';
 import 'package:dooss_business_app/user/features/chat/data/models/socket_message.dart';
@@ -86,11 +84,10 @@ class ChatCubit extends OptimizedCubit<ChatState> {
       safeEmit(state.copyWith(isWebSocketConnected: false));
     };
 
- _webSocketService.onMessageReceived = (data) {
-  print('📨 ChatCubit: Message received via WebSocket: $data');
-  _handleIncomingMessage(data); // pass the map directly
-};
-
+    _webSocketService.onMessageReceived = (data) {
+      print('📨 ChatCubit: Message received via WebSocket: $data');
+      _handleIncomingMessage(data); // pass the map directly
+    };
 
     _webSocketService.onError = (error) {
       print('❌ ChatCubit: WebSocket error: $error');
@@ -209,67 +206,64 @@ class ChatCubit extends OptimizedCubit<ChatState> {
     }
   }
 
- void _handleIncomingMessage(Map<String, dynamic> decoded) {
-  try {
-    if (decoded['type'] == 'chat.message') {
-      final socketMessage = SocketMessageModel.fromJson(decoded);
+  void _handleIncomingMessage(Map<String, dynamic> decoded) async {
+    try {
+      if (decoded['type'] == 'chat.message') {
+        final socketMessage = SocketMessageModel.fromJson(decoded);
 
-      final updatedMessages = state.messages.map((m) {
-        final isSameText = m.text == socketMessage.text;
-        final isPending = m.status == 'pending';
-        return (isSameText && isPending)
-            ? m.copyWith(
-                id: socketMessage.messageId,
-                status: socketMessage.status,
-                timestamp: socketMessage.timestamp,
-              )
-            : m;
-      }).toList();
+        // Get current user ID to determine if message is from current user
+        final currentUserIdString = await TokenService.getUserId();
+        final currentUserId = int.tryParse(currentUserIdString ?? '0') ?? 0;
+        final isFromCurrentUser = socketMessage.sender == currentUserId;
 
-      final alreadyUpdated = updatedMessages.any(
-        (m) => m.id == socketMessage.messageId,
-      );
+        final updatedMessages = state.messages.map((m) {
+          final isSameText = m.text == socketMessage.text;
+          final isPending = m.status == 'pending';
+          return (isSameText && isPending)
+              ? m.copyWith(
+                  id: socketMessage.messageId,
+                  senderId: socketMessage.sender,
+                  sender: socketMessage.sender.toString(),
+                  status: socketMessage.status,
+                  timestamp: socketMessage.timestamp,
+                  isMine: socketMessage.sender == currentUserId,
+                )
+              : m;
+        }).toList();
 
-      final finalMessages = alreadyUpdated
-          ? updatedMessages
-          : [
-              ...updatedMessages,
-              MessageModel(
-                id: socketMessage.messageId,
-                sender: socketMessage.sender.toString(),
-                senderId: socketMessage.sender,
-                text: socketMessage.text,
-                type: socketMessage.messageType,
-                status: socketMessage.status,
-                imageUrl: socketMessage.imageUrl,
-                fileUrl: socketMessage.fileUrl,
-                fileSize: socketMessage.fileSize?.toString(),
-                timestamp: socketMessage.timestamp,
-                isMine: true,
-              ),
-            ];
+        final alreadyUpdated = updatedMessages.any(
+          (m) => m.id == socketMessage.messageId,
+        );
 
-      finalMessages.sort(
-        (a, b) => DateTime.parse(a.timestamp)
-            .compareTo(DateTime.parse(b.timestamp)),
-      );
+        final finalMessages = alreadyUpdated
+            ? updatedMessages
+            : [
+                ...updatedMessages,
+                MessageModel(
+                  id: socketMessage.messageId,
+                  sender: socketMessage.sender.toString(),
+                  senderId: socketMessage.sender,
+                  text: socketMessage.text,
+                  type: socketMessage.messageType,
+                  status: socketMessage.status,
+                  imageUrl: socketMessage.imageUrl,
+                  fileUrl: socketMessage.fileUrl,
+                  fileSize: socketMessage.fileSize?.toString(),
+                  timestamp: socketMessage.timestamp,
+                  isMine: isFromCurrentUser,
+                ),
+              ];
 
-      safeEmit(state.copyWith(messages: finalMessages));
+        finalMessages.sort(
+          (a, b) => DateTime.parse(a.timestamp)
+              .compareTo(DateTime.parse(b.timestamp)),
+        );
+
+        safeEmit(state.copyWith(messages: finalMessages));
+      }
+    } catch (e) {
+      print('ChatCubit: Error handling incoming message: $e');
     }
-  } catch (e) {
-    print('ChatCubit: Error handling incoming message: $e');
-  }
-}
-
-
-  int? _parseIntSafe(dynamic value) {
-    if (value == null) return null;
-    if (value is int) return value;
-    if (value is String) {
-      return int.tryParse(value);
-    }
-    if (value is double) return value.toInt();
-    return null;
   }
 
   void sendMessageViaWebSocket(String text) {
@@ -320,13 +314,12 @@ class ChatCubit extends OptimizedCubit<ChatState> {
     // Show message immediately
     safeEmit(
       state.copyWith(
-        messages:
-            [...state.messages, tempMessage] // append at end
-              ..sort(
-                (a, b) => DateTime.parse(
-                  a.timestamp,
-                ).compareTo(DateTime.parse(b.timestamp)),
-              ),
+        messages: [...state.messages, tempMessage] // append at end
+          ..sort(
+            (a, b) => DateTime.parse(
+              a.timestamp,
+            ).compareTo(DateTime.parse(b.timestamp)),
+          ),
         pendingMessages: [...state.pendingMessages, tempMessage],
       ),
     );

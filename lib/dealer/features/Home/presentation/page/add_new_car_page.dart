@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/edit_Prodect_page.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Appearance_and_colors_widget.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/basic_information_widget.dart';
@@ -50,7 +52,7 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
   }
 
   final formKey = GlobalKey<FormState>();
-    final form = GlobalKey<FormState>();
+  final form = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,6 +87,17 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
       body: BlocListener<HomePageCubit, HomepageState>(
         listener: (context, state) {
           if (state.isSuccessAddCar == true) {
+            // Show foreground notification with translations
+            LocalNotificationService.instance.showNotification(
+              id: 6,
+              title: AppLocalizations.of(context)
+                      ?.translate('notificationCarAddedTitle') ??
+                  'Car Added',
+              body: AppLocalizations.of(context)
+                      ?.translate('notificationCarAddedBody') ??
+                  'Add Car is Success',
+            );
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: CustomSnakeBar(text: 'Add Car is Success'),
@@ -114,11 +127,11 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
             );
           }
         },
-
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(17.r),
-            child: Form(key: formKey,
+            child: Form(
+              key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -170,11 +183,11 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                     },
                   ),
                   // SizedBox(height: 24.h),
-                      
+
                   // featuresAndOptionsWidget(),
                   imageAndMediaOfAddCar(widget: widget),
                   SizedBox(height: 20.h),
-                      
+
                   CustomButtonWithIcon(
                     type: 'add car',
                     iconButton: Icons.add,
@@ -203,49 +216,46 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                       //   widget.seats,
                       //   widget.image.value!,
                       // );
-                      
-                        if (formKey.currentState!.validate()){
-                               if(widget.image.value!=null){
-                     BlocProvider.of<HomePageCubit>(context).AddNewCar(
-                          widget.brand,
-                          widget.year!,
-                          widget.model.text,
-                          widget.price.text,
-                          widget.mileage.text,
-                          widget.engineSize.text,
-                          widget.typeFuel,
-                          widget.transmission,
-                          widget.drivetrain,
-                          widget.Doors,
-                          widget.seats,
-                          widget.image.value!,
-                          widget.status,
-                          widget.lat,
-                          widget.lon,
-                          widget.color.text
-                        );
-                               }
-                               else if(widget.image.value==null) {
-                    return   ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: CustomSnakeBar(
-                      isFailure: true,
-                      text: 'add image please',
-                    ),
-                    backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
-                    elevation: 0,
-                    behavior: SnackBarBehavior.floating,
-                    margin: EdgeInsets.only(
-                      top: 20, // مسافة من الأعلى
-                      left: 10,
-                      right: 10,
-                    ),
-                  ),
-                );
-                      
-                }     
-                      }   
-                     
+
+                      if (formKey.currentState!.validate()) {
+                        if (widget.image.value != null) {
+                          BlocProvider.of<HomePageCubit>(context).AddNewCar(
+                              widget.brand,
+                              widget.year!,
+                              widget.model.text,
+                              widget.price.text,
+                              widget.mileage.text,
+                              widget.engineSize.text,
+                              widget.typeFuel,
+                              widget.transmission,
+                              widget.drivetrain,
+                              widget.Doors,
+                              widget.seats,
+                              widget.image.value!,
+                              widget.status,
+                              widget.lat,
+                              widget.lon,
+                              widget.color.text);
+                        } else if (widget.image.value == null) {
+                          return ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: CustomSnakeBar(
+                                isFailure: true,
+                                text: 'add image please',
+                              ),
+                              backgroundColor:
+                                  Colors.transparent, // ⬅️ جعل الخلفية شفافة
+                              elevation: 0,
+                              behavior: SnackBarBehavior.floating,
+                              margin: EdgeInsets.only(
+                                top: 20, // مسافة من الأعلى
+                                left: 10,
+                                right: 10,
+                              ),
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                 ],
@@ -306,7 +316,6 @@ class imageAndMediaOfAddCar extends StatelessWidget {
                       return Container(
                         height: 170.h,
                         alignment: Alignment.center,
-
                         width: 326.w,
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.borderColor),

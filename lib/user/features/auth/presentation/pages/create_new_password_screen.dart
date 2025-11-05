@@ -1,3 +1,4 @@
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -52,10 +53,24 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
             previous.success != current.success,
         listener: (context, state) {
           if (state.checkAuthState == CheckAuthState.success) {
+            final successMessage =
+                AppLocalizations.of(context)?.translate('passwordChanged') ??
+                    "Password changed successfully!";
+
+            // Show foreground notification with translations
+            LocalNotificationService.instance.showNotification(
+              id: 4,
+              title: AppLocalizations.of(context)
+                      ?.translate('notificationPasswordChangedTitle') ??
+                  'Password Changed',
+              body: AppLocalizations.of(context)
+                      ?.translate('notificationPasswordChangedBody') ??
+                  successMessage,
+            );
+
             ScaffoldMessenger.of(context).showSnackBar(
               customAppSnackBar(
-                AppLocalizations.of(context)?.translate('passwordChanged') ??
-                    "Password changed successfully!",
+                successMessage,
                 context,
               ),
             );
@@ -70,7 +85,7 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
               customAppSnackBar(
                 state.error ??
                     AppLocalizations.of(context)
-                            ?.translate('operationFailed') ??
+                        ?.translate('operationFailed') ??
                     "Operation failed",
                 context,
               ),
@@ -84,7 +99,6 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
             previous.success != current.success,
         builder: (context, state) {
           return Scaffold(
-           
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -147,7 +161,8 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)?.translate('newPassword') ?? 'New Password',
+          AppLocalizations.of(context)?.translate('newPassword') ??
+              'New Password',
           style: AppTextStyles.lableTextStyleBlackS22W500,
         ),
         SizedBox(height: 8.h),
@@ -156,8 +171,9 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
           focusNode: _newPasswordNode,
           obscureText: _obscureNewPassword,
           decoration: InputDecoration(
-            hintText: AppLocalizations.of(context)?.translate('enterNewPassword') ??
-                'Enter new password',
+            hintText:
+                AppLocalizations.of(context)?.translate('enterNewPassword') ??
+                    'Enter new password',
             hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
@@ -175,7 +191,8 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
               borderSide: const BorderSide(color: Colors.red, width: 1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
             fillColor: AppColors.white,
             suffixIcon: IconButton(
@@ -192,11 +209,13 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return AppLocalizations.of(context)?.translate('passwordRequired') ??
+              return AppLocalizations.of(context)
+                      ?.translate('passwordRequired') ??
                   'Password is required';
             }
             if (value.length < 8) {
-              return AppLocalizations.of(context)?.translate('passwordTooShort') ??
+              return AppLocalizations.of(context)
+                      ?.translate('passwordTooShort') ??
                   'Password must be at least 8 characters';
             }
             return null;
@@ -217,8 +236,9 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
           focusNode: _confirmPasswordNode,
           obscureText: _obscureConfirmPassword,
           decoration: InputDecoration(
-            hintText: AppLocalizations.of(context)?.translate('confirmNewPassword') ??
-                'Confirm new password',
+            hintText:
+                AppLocalizations.of(context)?.translate('confirmNewPassword') ??
+                    'Confirm new password',
             hintStyle: AppTextStyles.hintTextStyleWhiteS20W400,
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
@@ -236,12 +256,15 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
               borderSide: const BorderSide(color: Colors.red, width: 1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
             fillColor: AppColors.white,
             suffixIcon: IconButton(
               icon: Icon(
-                _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                _obscureConfirmPassword
+                    ? Icons.visibility
+                    : Icons.visibility_off,
                 color: AppColors.gray,
               ),
               onPressed: () {
@@ -253,11 +276,13 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return AppLocalizations.of(context)?.translate('confirmPasswordRequired') ??
+              return AppLocalizations.of(context)
+                      ?.translate('confirmPasswordRequired') ??
                   'Please confirm your password';
             }
             if (value != _newPasswordController.text) {
-              return AppLocalizations.of(context)?.translate('passwordsDoNotMatch') ??
+              return AppLocalizations.of(context)
+                      ?.translate('passwordsDoNotMatch') ??
                   'Passwords do not match';
             }
             return null;

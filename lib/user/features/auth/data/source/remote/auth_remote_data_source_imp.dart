@@ -21,15 +21,24 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
 
   @override
   Future<Either<Failure, AuthResponceModel>> signin(SigninParams params) async {
-    log('🔍 Attempting to sign in with username: ${params.email.text}');
+    // Trim whitespace from username and password
+    final username = params.email.text.trim();
+    final password = params.password.text.trim();
+
+    log('🔍 Attempting to sign in with username: $username');
+    log('🔍 Password length: ${password.length}');
+    log('🔍 Password contains special chars: ${password.contains(RegExp(r'[^a-zA-Z0-9]'))}');
 
     final ApiRequest apiRequest = ApiRequest(
       url: ApiUrls.login,
       data: {
-        "username": params.email.text, // تغيير من email إلى username
-        "password": params.password.text,
+        "username": username, // تغيير من email إلى username
+        "password": password,
       },
     );
+
+    log('📤 Login request data: ${apiRequest.data}');
+    log('📤 Login request URL: ${apiRequest.url}');
 
     final respons = await api.post<Map<String, dynamic>>(
       apiRequest: apiRequest,
@@ -38,6 +47,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
     return respons.fold(
       (failure) {
         log('❌ Sign in failed: ${failure.message}');
+        log('❌ Failure status code: ${failure.statusCode}');
         return Left(failure);
       },
       (response) {
@@ -198,8 +208,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
             log('⚠️ No token found in response');
           }
 
-          final String message =
-              result["status"] ??
+          final String message = result["status"] ??
               result["message"] ??
               "OTP verified successfully";
           return Right(message);
@@ -224,9 +233,8 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
     );
 
     final ApiRequest apiRequest = ApiRequest(
-      url:
-          ApiUrls
-              .verifyForgetPasswordOtp, // استخدام URL الخاص بـ forget password
+      url: ApiUrls
+          .verifyForgetPasswordOtp, // استخدام URL الخاص بـ forget password
       data: {
         "phone": params.phoneNumber,
         "new_password": params.newPassword, // إرسال الـ new_password
@@ -247,8 +255,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       },
       (result) {
         log('✅ Verify OTP for Reset Password successful: $result');
-        final String message =
-            result["status"] ??
+        final String message = result["status"] ??
             result["message"] ??
             "Password reset successfully";
         return Right(message);
@@ -289,8 +296,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       },
       (result) {
         log('✅ Set New Password successful: $result');
-        final String message =
-            result["status"] ??
+        final String message = result["status"] ??
             result["message"] ??
             "Password changed successfully";
         return Right(message);
@@ -325,8 +331,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       (result) {
         log('✅ Logout successful: $result');
         // التعامل مع response كـ Map
-        final String message =
-            result["detail"] ??
+        final String message = result["detail"] ??
             result["status"] ??
             result["message"] ??
             "Logged out successfully";
@@ -361,8 +366,7 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       },
       (result) {
         log('✅ Resend OTP successful: $result');
-        final String message =
-            result["detail"] ??
+        final String message = result["detail"] ??
             result["status"] ??
             result["message"] ??
             "OTP resent successfully";

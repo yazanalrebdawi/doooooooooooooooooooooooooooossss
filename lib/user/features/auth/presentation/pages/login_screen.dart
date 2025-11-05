@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:dooss_business_app/dealer/Core/style/app_Colors.dart';
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
@@ -71,11 +71,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (state.checkAuthState == CheckAuthState.signinSuccess) {
             log('✅ Login Success - Navigating to Home');
+            final successMessage =
+                AppLocalizations.of(context)?.translate('signInSuccess') ??
+                    "Sign in Success";
+
+            // Show foreground notification with translations
+            LocalNotificationService.instance.showNotification(
+              id: 1,
+              title: AppLocalizations.of(context)
+                      ?.translate('notificationLoginSuccessTitle') ??
+                  'Login Successful',
+              body: AppLocalizations.of(context)
+                      ?.translate('notificationLoginSuccessBody') ??
+                  successMessage,
+            );
+
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 customAppSnackBar(
-                  AppLocalizations.of(context)?.translate('signInSuccess') ??
-                      "Sign in Success",
+                  successMessage,
                   context,
                 ),
               );
@@ -122,7 +136,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPasswordChanged: (password) {},
                       ),
                       const LoginScreen2OptionsSection(),
-                      LoginScreenButtonsSection(params: _params , code: codeController),
+                      LoginScreenButtonsSection(
+                          params: _params, code: codeController),
                       SizedBox(height: 38.h),
                       const DontHaveAnAccount(),
                       SizedBox(height: 15.h),
@@ -195,3 +210,4 @@ class UserDealerSelector extends StatelessWidget {
     );
   }
 }
+

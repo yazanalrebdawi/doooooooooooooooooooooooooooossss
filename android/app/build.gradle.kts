@@ -20,6 +20,7 @@ android {
     ndkVersion = "27.0.12077973"
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true 
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -71,5 +72,9 @@ dependencies {
     implementation("androidx.media3:media3-common:1.2.1")
 
     // Play Core library to fix missing classes in R8
-    implementation("com.google.android.play:core:1.10.3")
+      implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
+    // - For In-App Reviews:
+    implementation("com.google.android.play:review:2.0.0")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }

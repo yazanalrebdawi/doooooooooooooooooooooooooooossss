@@ -1,3 +1,4 @@
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -65,11 +66,25 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
 
           if (state.checkAuthState == CheckAuthState.success) {
             print('✅ OTP Verification Success');
+            final successMessage =
+                AppLocalizations.of(context)?.translate('otpVerified') ??
+                    "OTP verified successfully!";
+
+            // Show foreground notification with translations
+            LocalNotificationService.instance.showNotification(
+              id: 3,
+              title: AppLocalizations.of(context)
+                      ?.translate('notificationOtpVerifiedTitle') ??
+                  'OTP Verified',
+              body: AppLocalizations.of(context)
+                      ?.translate('notificationOtpVerifiedBody') ??
+                  successMessage,
+            );
+
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 customAppSnackBar(
-                  AppLocalizations.of(context)?.translate('otpVerified') ??
-                      "OTP verified successfully!",
+                  successMessage,
                   context,
                 ),
               );

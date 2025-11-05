@@ -1,3 +1,5 @@
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,6 +55,17 @@ class _EditReelsPageState extends State<EditReelsPage> {
         child: BlocListener<ReelsStateCubit, reelsState>(
           listener: (context, State) {
             if (State.isSuccess == true) {
+              // Show foreground notification with translations
+              LocalNotificationService.instance.showNotification(
+                id: 9,
+                title: AppLocalizations.of(context)
+                        ?.translate('notificationReelEditedTitle') ??
+                    'Reel Edited',
+                body: AppLocalizations.of(context)
+                        ?.translate('notificationReelEditedBody') ??
+                    'Reel has been edited successfully.',
+              );
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: CustomSnakeBar(
@@ -107,10 +120,10 @@ class _EditReelsPageState extends State<EditReelsPage> {
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 child: Divider(height: 1.5, color: AppColors.borderColor),
               ),
-
               replaceVideoWidget(),
-              SizedBox(height: 12.h,),
-
+              SizedBox(
+                height: 12.h,
+              ),
               Center(
                 child: CustomUploadVideoWidget(
                   video: (value) {
@@ -125,16 +138,19 @@ class _EditReelsPageState extends State<EditReelsPage> {
                   },
                 ),
               ),
-              SizedBox(height: 16.h,),
+              SizedBox(
+                height: 16.h,
+              ),
               Center(
                 child: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 16.w,vertical: 10.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                   child: CustomButtonWithIcon(
                     type: 'Save Edits Reel',
                     iconButton: Icons.save,
                     ontap: () {
                       print(video);
-                  
+
                       BlocProvider.of<ReelsStateCubit>(context).EditDataReel(
                         widget.item.id,
                         widget.title.text,

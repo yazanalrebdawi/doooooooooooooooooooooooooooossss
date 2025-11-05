@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
@@ -37,14 +38,13 @@ class LogOutSettingsWidget extends StatelessWidget {
         size: 16.r,
         color: Color(0xff9CA3AF),
       ),
-      onTap:
-          () => showDialog(
-            context: context,
-            builder: (_) {
-              log(context.read<MyProfileCubit>().state.numberOfList.toString());
-              return DialogLogOutWidget();
-            },
-          ),
+      onTap: () => showDialog(
+        context: context,
+        builder: (_) {
+          log(context.read<MyProfileCubit>().state.numberOfList.toString());
+          return DialogLogOutWidget();
+        },
+      ),
     );
   }
 }
@@ -55,30 +55,40 @@ class DialogLogOutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) => AuthLogOutCubit(
-            remote: appLocator<AuthRemoteDataSourceImp>(),
-            secureStorage: appLocator<SecureStorageService>(),
-            sharedPreference: appLocator<SharedPreferencesService>(),
-          ),
+      create: (context) => AuthLogOutCubit(
+        remote: appLocator<AuthRemoteDataSourceImp>(),
+        secureStorage: appLocator<SecureStorageService>(),
+        sharedPreference: appLocator<SharedPreferencesService>(),
+      ),
       child: Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
         insetPadding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 32.h),
         child: BlocConsumer<AuthLogOutCubit, AuthLogOutStete>(
-          listenWhen:
-              (previous, current) =>
-                  previous.logOutStatus != current.logOutStatus,
+          listenWhen: (previous, current) =>
+              previous.logOutStatus != current.logOutStatus,
           listener: (context, state) async {
             if (state.logOutStatus == ResponseStatusEnum.success ||
                 state.logOutStatus == ResponseStatusEnum.failure) {
+              if (state.logOutStatus == ResponseStatusEnum.success) {
+                // Show foreground notification with translations
+                LocalNotificationService.instance.showNotification(
+                  id: 8,
+                  title: AppLocalizations.of(context)
+                          ?.translate('notificationLogoutSuccessTitle') ??
+                      'Logged Out',
+                  body: AppLocalizations.of(context)
+                          ?.translate('notificationLogoutSuccessBody') ??
+                      'You have been logged out successfully.',
+                );
+              }
+
               Future.delayed(const Duration(milliseconds: 500), () {
                 if (context.mounted) {
                   context.go(RouteNames.loginScreen);
                 }
               });
-              
 
               ScaffoldMessenger.of(context).showSnackBar(
                 customAppSnackBar(

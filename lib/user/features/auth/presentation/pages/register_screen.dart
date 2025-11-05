@@ -1,4 +1,4 @@
-import 'package:dooss_business_app/user/core/constants/colors.dart';
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,11 +43,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
           if (state.checkAuthState == CheckAuthState.success) {
             print('✅ Register Success - Navigating to OTP page');
+            final successMessage =
+                AppLocalizations.of(context)?.translate('accountCreated') ??
+                    "Account created successfully!";
+
+            // Show foreground notification with translations
+            LocalNotificationService.instance.showNotification(
+              id: 2,
+              title: AppLocalizations.of(context)
+                      ?.translate('notificationAccountCreatedTitle') ??
+                  'Account Created',
+              body: AppLocalizations.of(context)
+                      ?.translate('notificationAccountCreatedBody') ??
+                  successMessage,
+            );
+
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 customAppSnackBar(
-                  AppLocalizations.of(context)?.translate('accountCreated') ??
-                      "Account created successfully!",
+                  successMessage,
                   context,
                 ),
               );
@@ -69,7 +83,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 customAppSnackBar(
                   state.error ??
-                      AppLocalizations.of(context)?.translate('operationFailed') ??
+                      AppLocalizations.of(context)
+                          ?.translate('operationFailed') ??
                       "Operation failed",
                   context,
                 ),

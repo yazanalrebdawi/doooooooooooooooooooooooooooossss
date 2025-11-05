@@ -1,3 +1,4 @@
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,10 +45,24 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             previous.success != current.success,
         listener: (context, state) {
           if (state.checkAuthState == CheckAuthState.signinSuccess) {
+            final successMessage =
+                AppLocalizations.of(context)?.translate('loginSuccess') ??
+                    "Login successful!";
+
+            // Show foreground notification with translations
+            LocalNotificationService.instance.showNotification(
+              id: 1,
+              title: AppLocalizations.of(context)
+                      ?.translate('notificationLoginSuccessTitle') ??
+                  'Login Successful',
+              body: AppLocalizations.of(context)
+                      ?.translate('notificationLoginSuccessBody') ??
+                  successMessage,
+            );
+
             ScaffoldMessenger.of(context).showSnackBar(
               customAppSnackBar(
-                AppLocalizations.of(context)?.translate('loginSuccess') ??
-                    "Login successful!",
+                successMessage,
                 context,
               ),
             );
@@ -60,7 +75,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               customAppSnackBar(
                 state.error ??
                     AppLocalizations.of(context)
-                            ?.translate('operationFailed') ??
+                        ?.translate('operationFailed') ??
                     "Operation failed",
                 context,
               ),
@@ -101,7 +116,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
       children: [
         Text(
           AppLocalizations.of(context)?.translate('email') ?? 'Email',
-          style: AppTextStyles.lableTextStyleBlackS22W500.withThemeColor(context),
+          style:
+              AppTextStyles.lableTextStyleBlackS22W500.withThemeColor(context),
         ),
         SizedBox(height: 8.h),
         TextFormField(
@@ -111,10 +127,10 @@ class _LogInBodySectionState extends State<LogInBodySection> {
           style: AppTextStyles.s16w400.withThemeColor(context),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.email_outlined, color: AppColors.primary),
-            hintText:
-                AppLocalizations.of(context)?.translate('enterEmail') ??
-                    "Enter your email",
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400.withThemeColor(context),
+            hintText: AppLocalizations.of(context)?.translate('enterEmail') ??
+                "Enter your email",
+            hintStyle:
+                AppTextStyles.hintTextStyleWhiteS20W400.withThemeColor(context),
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.circular(10.r),
@@ -131,7 +147,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               borderSide: const BorderSide(color: Colors.red, width: 1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
             fillColor: isDark ? AppColors.darkCard : AppColors.white,
           ),
@@ -150,7 +167,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
       children: [
         Text(
           AppLocalizations.of(context)?.translate('password') ?? 'Password',
-          style: AppTextStyles.lableTextStyleBlackS22W500.withThemeColor(context),
+          style:
+              AppTextStyles.lableTextStyleBlackS22W500.withThemeColor(context),
         ),
         SizedBox(height: 8.h),
         TextFormField(
@@ -174,7 +192,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             hintText:
                 AppLocalizations.of(context)?.translate('enterPassword') ??
                     "Enter your password",
-            hintStyle: AppTextStyles.hintTextStyleWhiteS20W400.withThemeColor(context),
+            hintStyle:
+                AppTextStyles.hintTextStyleWhiteS20W400.withThemeColor(context),
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.gray, width: 1),
               borderRadius: BorderRadius.circular(10.r),
@@ -191,7 +210,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               borderSide: const BorderSide(color: Colors.red, width: 1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
             filled: true,
             fillColor: isDark ? AppColors.darkCard : AppColors.white,
           ),
@@ -254,7 +274,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
               activeColor: AppColors.primary,
             ),
             Text(
-              AppLocalizations.of(context)?.translate('rememberMe') ?? 'Remember me',
+              AppLocalizations.of(context)?.translate('rememberMe') ??
+                  'Remember me',
               style: AppTextStyles.descriptionS18W400.withThemeColor(context),
             ),
           ],
@@ -264,7 +285,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
             context.go(RouteNames.forgetPasswordPage);
           },
           child: Text(
-            AppLocalizations.of(context)?.translate('forgetPassword') ?? 'Forgot password?',
+            AppLocalizations.of(context)?.translate('forgetPassword') ??
+                'Forgot password?',
             style: AppTextStyles.descriptionS18W400.withThemeColor(context),
           ),
         ),

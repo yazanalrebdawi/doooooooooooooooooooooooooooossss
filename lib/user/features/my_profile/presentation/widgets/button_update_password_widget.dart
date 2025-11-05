@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
@@ -64,118 +65,127 @@ class _ButtonUpdatePasswordWidgetState
   Widget build(BuildContext context) {
     return isValid
         ? BlocProvider.value(
-          value: BlocProvider.of<MyProfileCubit>(context),
-          child: Builder(
-            builder: (context) {
-              return BlocConsumer<MyProfileCubit, MyProfileState>(
-                listenWhen:
-                    (previous, current) =>
-                        previous.statusChangePassword !=
-                        current.statusChangePassword,
-                listener: (context, state) {
-                  if (state.statusChangePassword ==
-                          ResponseStatusEnum.failure &&
-                      state.errorChangePassword != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      customAppSnackBar(
-                        AppLocalizations.of(context)?.translate(
-                              state.errorChangePassword ?? "Error",
-                            ) ??
-                            "Error",
-                        context,
-                      ),
-                    );
-                  } else if (state.statusChangePassword ==
-                      ResponseStatusEnum.success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      customAppSnackBar(
-                        AppLocalizations.of(
-                              context,
-                            )?.translate("password_changed_success") ??
-                            "Password changed successfully",
-                        context,
-                      ),
-                    );
-                    // context.pop();
-                    Navigator.pop(context);
-                  }
-                },
-                buildWhen:
-                    (previous, current) =>
-                        previous.statusChangePassword !=
-                        current.statusChangePassword,
-                builder: (context, state) {
-                  if (state.statusChangePassword ==
-                      ResponseStatusEnum.loading) {
-                    return Center(child: AppLoading.circular());
-                  }
-                  return CustomButtonWidget(
-                    width: 358,
-                    height: 48,
-                    text: "Update Password",
-                    onPressed: () async {
-                      final UserModel? user =
-                          await appLocator<SecureStorageService>()
-                              .getUserModel();
-                      if (user == null) {
-                        return;
-                      }
-                      log("user.phone 😑😑😑😑😑😑 : ${user.phone}");
-                      if (widget.newPasswordController.text.trim() ==
-                          widget.confirmPasswordController.text.trim()) {
-                        context.read<MyProfileCubit>().changePassword(
-                          widget.newPasswordController.text.trim(),
-                          user.phone,
-                        );
-                      } else {
-                        widget.confirmPasswordController.clear();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          customAppSnackBar(
-                            AppLocalizations.of(
-                                  context,
-                                )?.translate("Retype your new password!") ??
-                                "Retype your new password!",
-                            context,
-                          ),
-                        );
-                      }
-                    },
-                  );
-                },
-              );
-            },
-          ),
-        )
-        : SizedBox(
-          width: 358.w,
-          height: 48.h,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xffD1D5DB),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
-                side: BorderSide(color: Color(0xffE5E7EB), width: 1.w),
-              ),
-              elevation: 0,
-            ),
-            onPressed: () {},
-            child: Row(
-              spacing: 5.w,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.lock, color: AppColors.buttonText),
-                Text(
-                  AppLocalizations.of(context)?.translate("Update Password") ??
-                      "Update Password",
-                  style: AppTextStyles.s16w500.copyWith(
-                    fontFamily: AppTextStyles.fontPoppins,
+            value: BlocProvider.of<MyProfileCubit>(context),
+            child: Builder(
+              builder: (context) {
+                return BlocConsumer<MyProfileCubit, MyProfileState>(
+                  listenWhen: (previous, current) =>
+                      previous.statusChangePassword !=
+                      current.statusChangePassword,
+                  listener: (context, state) {
+                    if (state.statusChangePassword ==
+                            ResponseStatusEnum.failure &&
+                        state.errorChangePassword != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        customAppSnackBar(
+                          AppLocalizations.of(context)?.translate(
+                                state.errorChangePassword ?? "Error",
+                              ) ??
+                              "Error",
+                          context,
+                        ),
+                      );
+                    } else if (state.statusChangePassword ==
+                        ResponseStatusEnum.success) {
+                      // Show foreground notification with translations
+                      LocalNotificationService.instance.showNotification(
+                        id: 13,
+                        title: AppLocalizations.of(context)?.translate(
+                                'notificationPasswordChangedProfileTitle') ??
+                            'Password Changed',
+                        body: AppLocalizations.of(context)?.translate(
+                                'notificationPasswordChangedProfileBody') ??
+                            'Your password has been changed successfully.',
+                      );
 
-                    color: AppColors.buttonText,
-                  ),
-                ),
-              ],
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        customAppSnackBar(
+                          AppLocalizations.of(
+                                context,
+                              )?.translate("password_changed_success") ??
+                              "Password changed successfully",
+                          context,
+                        ),
+                      );
+                      // context.pop();
+                      Navigator.pop(context);
+                    }
+                  },
+                  buildWhen: (previous, current) =>
+                      previous.statusChangePassword !=
+                      current.statusChangePassword,
+                  builder: (context, state) {
+                    if (state.statusChangePassword ==
+                        ResponseStatusEnum.loading) {
+                      return Center(child: AppLoading.circular());
+                    }
+                    return CustomButtonWidget(
+                      width: 358,
+                      height: 48,
+                      text: "Update Password",
+                      onPressed: () async {
+                        final UserModel? user =
+                            await appLocator<SecureStorageService>()
+                                .getUserModel();
+                        if (user == null) {
+                          return;
+                        }
+                        log("user.phone 😑😑😑😑😑😑 : ${user.phone}");
+                        if (widget.newPasswordController.text.trim() ==
+                            widget.confirmPasswordController.text.trim()) {
+                          context.read<MyProfileCubit>().changePassword(
+                                widget.newPasswordController.text.trim(),
+                                user.phone,
+                              );
+                        } else {
+                          widget.confirmPasswordController.clear();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            customAppSnackBar(
+                              AppLocalizations.of(
+                                    context,
+                                  )?.translate("Retype your new password!") ??
+                                  "Retype your new password!",
+                              context,
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                );
+              },
             ),
-          ),
-        );
+          )
+        : SizedBox(
+            width: 358.w,
+            height: 48.h,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xffD1D5DB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  side: BorderSide(color: Color(0xffE5E7EB), width: 1.w),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () {},
+              child: Row(
+                spacing: 5.w,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.lock, color: AppColors.buttonText),
+                  Text(
+                    AppLocalizations.of(context)
+                            ?.translate("Update Password") ??
+                        "Update Password",
+                    style: AppTextStyles.s16w500.copyWith(
+                      fontFamily: AppTextStyles.fontPoppins,
+                      color: AppColors.buttonText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
   }
 }

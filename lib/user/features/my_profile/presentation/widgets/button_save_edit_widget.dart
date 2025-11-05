@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:developer';
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
@@ -39,15 +40,24 @@ class _ButtonSaveEditWidgetState extends State<ButtonSaveEditWidget> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MyProfileCubit, MyProfileState>(
-      listenWhen:
-          (previous, current) =>
-              previous.editUser != current.editUser ||
-              previous.statusEdit != current.statusEdit ||
-              previous.statusConfirmPhone != current.statusConfirmPhone,
+      listenWhen: (previous, current) =>
+          previous.editUser != current.editUser ||
+          previous.statusEdit != current.statusEdit ||
+          previous.statusConfirmPhone != current.statusConfirmPhone,
       listener: (context, state) async {
         if (state.statusEdit == ResponseStatusEnum.success) {
-          final snackBarMessage =
-              AppLocalizations.of(
+          // Show foreground notification with translations
+          LocalNotificationService.instance.showNotification(
+            id: 12,
+            title: AppLocalizations.of(context)
+                    ?.translate('notificationProfileUpdatedTitle') ??
+                'Profile Updated',
+            body: AppLocalizations.of(context)
+                    ?.translate('notificationProfileUpdatedBody') ??
+                'Your profile has been updated successfully.',
+          );
+
+          final snackBarMessage = AppLocalizations.of(
                 context,
               )?.translate('Your changes have been saved successfully.') ??
               "Your changes have been saved successfully.";
@@ -95,9 +105,8 @@ class _ButtonSaveEditWidgetState extends State<ButtonSaveEditWidget> {
           }
         }
       },
-
-      buildWhen:
-          (previous, current) => previous.statusEdit != current.statusEdit,
+      buildWhen: (previous, current) =>
+          previous.statusEdit != current.statusEdit,
       builder: (context, state) {
         if (state.statusEdit == ResponseStatusEnum.loading) {
           return Center(child: AppLoading.circular());
@@ -156,9 +165,9 @@ class _ButtonSaveEditWidgetState extends State<ButtonSaveEditWidget> {
 
                 // إرسال البيانات عبر Cubit
                 await context.read<MyProfileCubit>().updateProfile(
-                  name: nameChanged ? newName : null,
-                  phone: phoneChanged ? newPhone : null,
-                );
+                      name: nameChanged ? newName : null,
+                      phone: phoneChanged ? newPhone : null,
+                    );
               },
             ),
           ],

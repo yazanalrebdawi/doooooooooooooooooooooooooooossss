@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remoute_data_Source.dart';
 import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
@@ -29,6 +30,18 @@ Future<void> main() async {
   //* 1. Ensure binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
   log('✅ MAIN: Flutter binding initialized');
+await LocalNotificationService.instance.initialize();
+
+  // await Firebase.initializeApp(
+   
+  // );
+
+  // 3. Initialize EasyLocalization
+
+  // 4. Initialize Notification Service
+  // await NotificationService.instance.initialize();
+
+
 
   //* 2. 🔥 Reset GetIt to clear any stale state
   log('🔥 MAIN: Resetting GetIt to clear stale state...');

@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/services/locator_service.dart' as di;
 import '../manager/chat_cubit.dart';
 import '../manager/chat_state.dart';
 
@@ -42,13 +41,14 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-              final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white :AppColors.black, size: 24.sp),
+          icon: Icon(Icons.arrow_back,
+              color: isDark ? Colors.white : AppColors.black, size: 24.sp),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -67,7 +67,7 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
               ),
             );
           }
-          
+
           // Navigate to chat conversation when chat is created
           if (state.selectedChatId != null && state.isWebSocketConnected) {
             context.go('/chat-conversation/${state.selectedChatId}');
@@ -83,7 +83,8 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                   SizedBox(height: 16.h),
                   Text(
                     'Creating chat...',
-                    style: AppTextStyles.s16w500.copyWith(color: isDark?Colors.white: AppColors.gray),
+                    style: AppTextStyles.s16w500.copyWith(
+                        color: isDark ? Colors.white : AppColors.gray),
                   ),
                 ],
               ),
@@ -103,7 +104,8 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                 SizedBox(height: 16.h),
                 Text(
                   'Starting conversation with',
-                  style: AppTextStyles.s16w500.copyWith(color:isDark ? Colors.white: AppColors.gray),
+                  style: AppTextStyles.s16w500
+                      .copyWith(color: isDark ? Colors.white : AppColors.gray),
                 ),
                 SizedBox(height: 8.h),
                 Text(
@@ -114,7 +116,8 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                 SizedBox(height: 32.h),
                 Text(
                   'Type your first message:',
-                  style: AppTextStyles.s14w400.copyWith(color: isDark ? Colors.white: AppColors.gray),
+                  style: AppTextStyles.s14w400
+                      .copyWith(color: isDark ? Colors.white : AppColors.gray),
                 ),
                 SizedBox(height: 16.h),
                 TextField(
@@ -135,9 +138,10 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: state.isWebSocketConnected && _messageController.text.trim().isNotEmpty
+                    onPressed: _messageController.text.trim().isNotEmpty
                         ? () {
-                            context.read<ChatCubit>().sendMessageViaWebSocket(_messageController.text.trim());
+                            context.read<ChatCubit>().sendMessageOfflineSafe(
+                                _messageController.text.trim());
                             _messageController.clear();
                           }
                         : null,
@@ -150,7 +154,8 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
                     ),
                     child: Text(
                       'Send Message',
-                      style: AppTextStyles.s16w600.copyWith(color: AppColors.white),
+                      style: AppTextStyles.s16w600
+                          .copyWith(color: AppColors.white),
                     ),
                   ),
                 ),

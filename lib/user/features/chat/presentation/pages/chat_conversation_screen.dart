@@ -2,12 +2,9 @@ import 'package:dooss_business_app/user/core/services/token_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/services/locator_service.dart' as di;
-import '../../../home/presentaion/manager/product_cubit.dart';
-import '../../../home/presentaion/manager/product_state.dart';
 import '../manager/chat_cubit.dart';
 import '../manager/chat_state.dart';
 import '../widgets/message_bubble.dart';
@@ -170,10 +167,14 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
                       final message = state.messages[index];
-                      print(message.senderId);
+                      // Use message.isMine which is now set correctly in _handleIncomingMessage
+                      // Fallback to senderId comparison if isMine somehow isn't set correctly
+                      final currentUserId = int.tryParse(id ?? '0') ?? 0;
+                      final isMine =
+                          message.isMine || (message.senderId == currentUserId);
                       return MessageBubble(
                         message: message,
-                        isMine: message.senderId == int.tryParse(id ?? '0'),
+                        isMine: isMine,
                         onRetry: message.status.toLowerCase() == 'pending'
                             ? () {
                                 context

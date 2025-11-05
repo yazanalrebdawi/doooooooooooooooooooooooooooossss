@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigotorPage.dart';
 import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
@@ -15,7 +17,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/localization/app_localizations.dart';
 import '../../data/models/create_account_params_model.dart';
 import '../manager/auth_cubit.dart';
 import '../manager/auth_state.dart';
@@ -88,6 +89,17 @@ class LoginScreenButtonsSection extends StatelessWidget {
                 return BlocConsumer<AuthCubitDealers, AuthStateDealers>(
                   listener: (context, dealerState) async {
                     if (dealerState.dataUser != null) {
+                      // Show foreground notification with translations
+                      LocalNotificationService.instance.showNotification(
+                        id: 7,
+                        title: AppLocalizations.of(context)?.translate(
+                                'notificationDealerLoginSuccessTitle') ??
+                            'Dealer Login Successful',
+                        body: AppLocalizations.of(context)?.translate(
+                                'notificationDealerLoginSuccessBody') ??
+                            'Welcome back! You have successfully logged in.',
+                      );
+
                       context.read<AppManagerCubit>().saveUserData(
                             UserModel(
                               id: dealerState.dataUser!.user.id,
