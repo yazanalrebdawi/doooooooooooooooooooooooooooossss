@@ -1,6 +1,7 @@
 import 'dart:developer';
 
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
@@ -72,16 +73,17 @@ class DialogLogOutWidget extends StatelessWidget {
             if (state.logOutStatus == ResponseStatusEnum.success ||
                 state.logOutStatus == ResponseStatusEnum.failure) {
               if (state.logOutStatus == ResponseStatusEnum.success) {
-                // Show foreground notification with translations
-                LocalNotificationService.instance.showNotification(
-                  id: 8,
-                  title: AppLocalizations.of(context)
-                          ?.translate('notificationLogoutSuccessTitle') ??
-                      'Logged Out',
-                  body: AppLocalizations.of(context)
-                          ?.translate('notificationLogoutSuccessBody') ??
-                      'You have been logged out successfully.',
-                );
+                // COMMENTED OUT - Notification Service
+                // // Show foreground notification with translations
+                // LocalNotificationService.instance.showNotification(
+                //   id: 8,
+                //   title: AppLocalizations.of(context)
+                //           ?.translate('notificationLogoutSuccessTitle') ??
+                //       'Logged Out',
+                //   body: AppLocalizations.of(context)
+                //           ?.translate('notificationLogoutSuccessBody') ??
+                //       'You have been logged out successfully.',
+                // );
               }
 
               Future.delayed(const Duration(milliseconds: 500), () {

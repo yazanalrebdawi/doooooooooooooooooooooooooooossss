@@ -1,5 +1,6 @@
 import 'dart:developer';
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
@@ -87,16 +88,17 @@ class _ButtonUpdatePasswordWidgetState
                       );
                     } else if (state.statusChangePassword ==
                         ResponseStatusEnum.success) {
-                      // Show foreground notification with translations
-                      LocalNotificationService.instance.showNotification(
-                        id: 13,
-                        title: AppLocalizations.of(context)?.translate(
-                                'notificationPasswordChangedProfileTitle') ??
-                            'Password Changed',
-                        body: AppLocalizations.of(context)?.translate(
-                                'notificationPasswordChangedProfileBody') ??
-                            'Your password has been changed successfully.',
-                      );
+                      // COMMENTED OUT - Notification Service
+                      // // Show foreground notification with translations
+                      // LocalNotificationService.instance.showNotification(
+                      //   id: 13,
+                      //   title: AppLocalizations.of(context)?.translate(
+                      //           'notificationPasswordChangedProfileTitle') ??
+                      //       'Password Changed',
+                      //   body: AppLocalizations.of(context)?.translate(
+                      //           'notificationPasswordChangedProfileBody') ??
+                      //       'Your password has been changed successfully.',
+                      // );
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         customAppSnackBar(

@@ -242,6 +242,7 @@
   "Operation canceled": "تم إلغاء العملية",
   "OTP Verification": "التحقق برمز OTP",
   "Resend": "إعادة الإرسال",
+  "didntReceiveCode": "لم تستلم الرمز؟",
   "Click to change your profile picture": "اضغط لتغيير صورة ملفك الشخصي",
   "Something went wrong": "حدث خطأ ما",
   "Select your preferred language": "اختر لغتك المفضلة",

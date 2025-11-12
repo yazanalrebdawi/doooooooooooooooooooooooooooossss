@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -57,16 +58,17 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
                 AppLocalizations.of(context)?.translate('passwordChanged') ??
                     "Password changed successfully!";
 
-            // Show foreground notification with translations
-            LocalNotificationService.instance.showNotification(
-              id: 4,
-              title: AppLocalizations.of(context)
-                      ?.translate('notificationPasswordChangedTitle') ??
-                  'Password Changed',
-              body: AppLocalizations.of(context)
-                      ?.translate('notificationPasswordChangedBody') ??
-                  successMessage,
-            );
+            // COMMENTED OUT - Notification Service
+            // // Show foreground notification with translations
+            // LocalNotificationService.instance.showNotification(
+            //   id: 4,
+            //   title: AppLocalizations.of(context)
+            //           ?.translate('notificationPasswordChangedTitle') ??
+            //       'Password Changed',
+            //   body: AppLocalizations.of(context)
+            //           ?.translate('notificationPasswordChangedBody') ??
+            //       successMessage,
+            // );
 
             ScaffoldMessenger.of(context).showSnackBar(
               customAppSnackBar(

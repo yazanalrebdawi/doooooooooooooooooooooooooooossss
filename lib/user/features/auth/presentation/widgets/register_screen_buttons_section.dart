@@ -1,9 +1,7 @@
-import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/features/auth/presentation/widgets/already_have_an_account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../data/models/create_account_params_model.dart';
@@ -15,14 +13,6 @@ class RegisterScreenButtonsSection extends StatelessWidget {
   final CreateAccountParams params;
 
   const RegisterScreenButtonsSection({super.key, required this.params});
-
-  // 🧩 Check if number starts with local patterns
-  bool isSpecialNumber(String phoneNumber) {
-    final cleaned = phoneNumber.replaceAll(RegExp(r'\s+|-'), '');
-    return cleaned.startsWith('+963') ||
-        cleaned.startsWith('00963') ||
-        cleaned.startsWith('09');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,46 +39,14 @@ class RegisterScreenButtonsSection extends StatelessWidget {
 
                 if (params.formState.currentState?.validate() ?? false) {
                   print('✅ Form validation passed');
+                  print('📞 Full phone number: ${params.fullPhoneNumber}');
+                  print('👤 Username: ${params.userName.text}');
+                  print('🔑 Password: ${params.password.text}');
 
-                  final phone = params.fullPhoneNumber ?? '';
-                  final isSpecial = isSpecialNumber(phone);
-
-                  if (isSpecial) {
-                    print(
-                        '✅ Special number detected → Redirecting to another screen');
-
-                    // ✅ Show success message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "Registration successful",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-
-                    // ✅ Navigate directly to another screen
-                    Future.delayed(const Duration(milliseconds: 700), () {
-                      context.go(RouteNames.homeScreen);
-                    });
-                  } else {
-                    context.read<AuthCubit>().register(params);
-                    print('🌍 Normal number → Continue registration');
-
-                    // ✅ Show success message before registration
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "Registration successful",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-
-                    // Continue normal registration
-                  }
+                  // Always call register for all phone numbers
+                  print('🚀 Calling register method...');
+                  context.read<AuthCubit>().register(params);
+                  print('✅ Register method called successfully');
                 } else {
                   print('❌ Form validation failed');
                 }

@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -79,16 +80,17 @@ class _LogInBodySectionState extends State<LogInBodySection> {
                 AppLocalizations.of(context)?.translate('loginSuccess') ??
                     "Login successful!";
 
-            // Show foreground notification with translations
-            LocalNotificationService.instance.showNotification(
-              id: 1,
-              title: AppLocalizations.of(context)
-                      ?.translate('notificationLoginSuccessTitle') ??
-                  'Login Successful',
-              body: AppLocalizations.of(context)
-                      ?.translate('notificationLoginSuccessBody') ??
-                  successMessage,
-            );
+            // COMMENTED OUT - Notification Service
+            // // Show foreground notification with translations
+            // LocalNotificationService.instance.showNotification(
+            //   id: 1,
+            //   title: AppLocalizations.of(context)
+            //           ?.translate('notificationLoginSuccessTitle') ??
+            //       'Login Successful',
+            //   body: AppLocalizations.of(context)
+            //           ?.translate('notificationLoginSuccessBody') ??
+            //       successMessage,
+            // );
 
             ScaffoldMessenger.of(context).showSnackBar(
               customAppSnackBar(

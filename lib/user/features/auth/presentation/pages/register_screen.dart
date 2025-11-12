@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,16 +50,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 AppLocalizations.of(context)?.translate('accountCreated') ??
                     "Account created successfully!";
 
-            // Show foreground notification with translations
-            LocalNotificationService.instance.showNotification(
-              id: 2,
-              title: AppLocalizations.of(context)
-                      ?.translate('notificationAccountCreatedTitle') ??
-                  'Account Created',
-              body: AppLocalizations.of(context)
-                      ?.translate('notificationAccountCreatedBody') ??
-                  successMessage,
-            );
+            // COMMENTED OUT - Notification Service
+            // // Show foreground notification with translations
+            // LocalNotificationService.instance.showNotification(
+            //   id: 2,
+            //   title: AppLocalizations.of(context)
+            //           ?.translate('notificationAccountCreatedTitle') ??
+            //       'Account Created',
+            //   body: AppLocalizations.of(context)
+            //           ?.translate('notificationAccountCreatedBody') ??
+            //       successMessage,
+            // );
 
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
