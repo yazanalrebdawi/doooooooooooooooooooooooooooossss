@@ -296,7 +296,7 @@ class _LogInBodySectionState extends State<LogInBodySection> {
       children: [
         TextButton(
           onPressed: () {
-            context.go(RouteNames.forgetPasswordPage);
+            context.push(RouteNames.forgetPasswordPage);
           },
           child: Text(
             AppLocalizations.of(context)?.translate('forgetPassword') ??

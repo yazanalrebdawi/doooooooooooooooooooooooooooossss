@@ -16,7 +16,7 @@ class LoginScreen2OptionsSection extends StatelessWidget {
         // ###################### Forgot Password Button ######################
         TextButton(
           onPressed: () {
-            context.go(RouteNames.forgetPasswordPage);
+            context.push(RouteNames.forgetPasswordPage);
           },
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,

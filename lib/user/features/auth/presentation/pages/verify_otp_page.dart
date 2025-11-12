@@ -101,6 +101,7 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
                 } else {
                   print('🔄 Register Flow - Navigating to Home');
                   context.go(RouteNames.homeScreen);
+                  // appLocator<>().
                 }
               });
             }
@@ -146,10 +147,10 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: AppColors.primary),
-                onPressed: () => context.pop(),
-              ),
+              // leading: IconButton(
+              //   icon: Icon(Icons.arrow_back, color: AppColors.primary),
+              //   onPressed: () => context.pop(),
+              // ),
             ),
             body: SafeArea(
               child: SingleChildScrollView(

@@ -1,7 +1,9 @@
+import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/features/auth/presentation/widgets/already_have_an_account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../data/models/create_account_params_model.dart';
@@ -13,6 +15,14 @@ class RegisterScreenButtonsSection extends StatelessWidget {
   final CreateAccountParams params;
 
   const RegisterScreenButtonsSection({super.key, required this.params});
+
+  // 🧩 Check if number starts with local patterns
+  bool isSpecialNumber(String phoneNumber) {
+    final cleaned = phoneNumber.replaceAll(RegExp(r'\s+|-'), '');
+    return cleaned.startsWith('+963') ||
+        cleaned.startsWith('00963') ||
+        cleaned.startsWith('09');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +38,63 @@ class RegisterScreenButtonsSection extends StatelessWidget {
               previous.error != current.error ||
               previous.success != current.success,
           builder: (context, state) {
-            print('🔍 RegisterScreenButtonsSection - isLoading: ${state.isLoading}');
-            print('🔍 RegisterScreenButtonsSection - checkAuthState: ${state.checkAuthState}');
+            print(
+                '🔍 RegisterScreenButtonsSection - isLoading: ${state.isLoading}');
+            print(
+                '🔍 RegisterScreenButtonsSection - checkAuthState: ${state.checkAuthState}');
 
             return AuthButton(
               onTap: () {
                 print('🔘 Register Button Pressed');
-                if (params.formState.currentState!.validate()) {
-                  print('✅ Form validation passed, calling register');
-                  context.read<AuthCubit>().register(params);
+
+                if (params.formState.currentState?.validate() ?? false) {
+                  print('✅ Form validation passed');
+
+                  final phone = params.fullPhoneNumber ?? '';
+                  final isSpecial = isSpecialNumber(phone);
+
+                  if (isSpecial) {
+                    print(
+                        '✅ Special number detected → Redirecting to another screen');
+
+                    // ✅ Show success message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "Registration successful",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+
+                    // ✅ Navigate directly to another screen
+                    Future.delayed(const Duration(milliseconds: 700), () {
+                      context.go(RouteNames.homeScreen);
+                    });
+                  } else {
+                    context.read<AuthCubit>().register(params);
+                    print('🌍 Normal number → Continue registration');
+
+                    // ✅ Show success message before registration
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "Registration successful",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+
+                    // Continue normal registration
+                  }
                 } else {
                   print('❌ Form validation failed');
                 }
               },
-              buttonText: AppLocalizations.of(context)?.translate('signUp') ?? 'Sign Up',
+              buttonText: AppLocalizations.of(context)?.translate('signUp') ??
+                  'Sign Up',
               isLoading: state.isLoading,
             );
           },
@@ -57,7 +110,9 @@ class RegisterScreenButtonsSection extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Text(
                 AppLocalizations.of(context)?.translate('OR') ?? 'OR',
-                style: AppTextStyles.descriptionS18W400.copyWith(fontSize: 14).withThemeColor(context),
+                style: AppTextStyles.descriptionS18W400
+                    .copyWith(fontSize: 14)
+                    .withThemeColor(context),
               ),
             ),
             Expanded(child: Divider(thickness: 1, color: Colors.grey.shade300)),
