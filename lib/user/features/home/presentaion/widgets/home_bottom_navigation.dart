@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
+import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
+import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 
 class HomeBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -17,6 +21,16 @@ class HomeBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // Listen to locale changes to rebuild when language changes
+    return BlocBuilder<AppManagerCubit, AppManagerState>(
+      buildWhen: (previous, current) => previous.locale != current.locale,
+      builder: (context, state) {
+        return _buildNavigation(context, isDark);
+      },
+    );
+  }
+
+  Widget _buildNavigation(BuildContext context, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.black : Colors.white,
@@ -35,11 +49,28 @@ class HomeBottomNavigation extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(context, 0, Icons.home, 'Home'),
-              _buildNavItem(context, 1, Icons.build, 'Services'),
-              _buildNavItem(context, 2, Icons.play_circle_outline, 'Reels'),
-              _buildNavItem(context, 3, Icons.chat_bubble_outline, 'Messages'),
-              _buildNavItem(context, 4, Icons.person_outline, 'Account'),
+              _buildNavItem(context, 0, Icons.home,
+                  AppLocalizations.of(context)?.translate('Home') ?? 'Home'),
+              _buildNavItem(
+                  context,
+                  1,
+                  Icons.build,
+                  AppLocalizations.of(context)?.translate('Services') ??
+                      'Services'),
+              _buildNavItem(context, 2, Icons.play_circle_outline,
+                  AppLocalizations.of(context)?.translate('Reels') ?? 'Reels'),
+              _buildNavItem(
+                  context,
+                  3,
+                  Icons.chat_bubble_outline,
+                  AppLocalizations.of(context)?.translate('Messages') ??
+                      'Messages'),
+              _buildNavItem(
+                  context,
+                  4,
+                  Icons.person_outline,
+                  AppLocalizations.of(context)?.translate('Account') ??
+                      'Account'),
             ],
           ),
         ),
@@ -51,7 +82,9 @@ class HomeBottomNavigation extends StatelessWidget {
       BuildContext context, int index, IconData icon, String label) {
     final isSelected = currentIndex == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final color = isSelected ? AppColors.primary : (isDark ? Colors.white : AppColors.gray);
+    final color = isSelected
+        ? AppColors.primary
+        : (isDark ? Colors.white : AppColors.gray);
 
     return GestureDetector(
       onTap: () => onTap(index),

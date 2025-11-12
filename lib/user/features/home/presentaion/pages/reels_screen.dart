@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../../core/services/native_video_service.dart';
 import '../../../../core/services/locator_service.dart' as di;
 import '../manager/reel_cubit.dart';
 import '../widgets/reels_screen_content.dart';
@@ -20,8 +17,8 @@ class ReelsScreen extends StatelessWidget {
       create: (_) => di.appLocator<ReelCubit>()..loadReels(),
       child: WillPopScope(
         onWillPop: () async {
-          await NativeVideoService.dispose();
-          return true;
+          // Prevent popping - user must use bottom navigation to navigate away
+          return false;
         },
         child: Scaffold(
           backgroundColor: Colors.black,

@@ -24,7 +24,7 @@ class HomePageCubit extends Cubit<HomepageState> {
               phone: '',
               monthlyReelsLimit: 0,
               contactPhone: '',
-              locationAddress: '',
+              locationAddress: 'Syria Damascus',
               googleMapsLink: '',
               workingDays: [],
               openingTime: '',
@@ -77,7 +77,8 @@ class HomePageCubit extends Cubit<HomepageState> {
     var result = await data.getDataProduct();
     result.fold(
       (error) {
-        emit(state.copyWith(error: 'failure fetch data', isLoadingGetProduct: false));
+        emit(state.copyWith(
+            error: 'failure fetch data', isLoadingGetProduct: false));
         print(error.toString());
       },
       (data) {
@@ -216,7 +217,7 @@ class HomePageCubit extends Cubit<HomepageState> {
       String Drivetrain,
       int Door,
       int seats,
-      XFile video,
+      List<XFile> images,
       String status,
       double lat,
       double lon,
@@ -233,7 +234,7 @@ class HomePageCubit extends Cubit<HomepageState> {
         Drivetrain,
         Door,
         seats,
-        video,
+        images,
         status,
         lat,
         lon,

@@ -27,8 +27,8 @@ class ChatModel {
       user: json['user'] ?? '',
       dealer: json['dealer'] ?? '',
       createdAt: json['created_at'] ?? '',
-      lastMessage: json['last_message'] != null 
-          ? LastMessage.fromJson(json['last_message']) 
+      lastMessage: json['last_message'] != null
+          ? LastMessage.fromJson(json['last_message'])
           : null,
       lastMessageText: json['last_message_text'] ?? '',
       lastMessageAt: json['last_message_at'],
@@ -70,8 +70,11 @@ class ChatModel {
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageText: lastMessageText ?? this.lastMessageText,
       lastMessageAt: lastMessageAt ?? this.lastMessageAt,
-      userUnreadCount: userUnreadCount ?? this.userUnreadCount,
-      dealerUnreadCount: dealerUnreadCount ?? this.dealerUnreadCount,
+      userUnreadCount:
+          userUnreadCount != null ? userUnreadCount : this.userUnreadCount,
+      dealerUnreadCount: dealerUnreadCount != null
+          ? dealerUnreadCount
+          : this.dealerUnreadCount,
     );
   }
 }
@@ -134,4 +137,4 @@ class LastMessage {
       'is_mine': isMine,
     };
   }
-} 
+}

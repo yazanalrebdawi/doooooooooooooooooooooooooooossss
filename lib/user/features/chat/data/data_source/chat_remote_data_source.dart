@@ -6,4 +6,6 @@ abstract class ChatRemoteDataSource {
   Future<ChatModel> createChat(int dealerUserId);
   Future<List<MessageModel>> fetchMessages(int chatId);
   Future<MessageModel> sendMessage(int chatId, String content);
+  Future<Map<String, dynamic>?> markMessagesAsRead(
+      int chatId, List<int> messageIds);
 }

@@ -6,32 +6,29 @@ import '../../../../core/constants/text_styles.dart';
 class CategoryFilter extends StatelessWidget {
   final String selectedCategory;
   final Function(String) onCategorySelected;
+  final List<String> categories;
 
   const CategoryFilter({
     super.key,
     required this.selectedCategory,
     required this.onCategorySelected,
+    this.categories = const [],
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final categories = [
-      'All',
-      'Spare Parts',
-      'Electronics',
-      'Tools',
-      'Car Care',
-    ];
+    // Build categories list with 'All' at the beginning
+    final allCategories = ['All', ...categories];
 
     return SizedBox(
       height: 40.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
+        itemCount: allCategories.length,
         itemBuilder: (context, index) {
-          final category = categories[index];
+          final category = allCategories[index];
           final isSelected = selectedCategory == category;
 
           return GestureDetector(
@@ -42,12 +39,16 @@ class CategoryFilter extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.primary
-                    : (isDark ? Colors.white12 : AppColors.gray.withOpacity(0.1)),
+                    : (isDark
+                        ? Colors.white12
+                        : AppColors.gray.withOpacity(0.1)),
                 borderRadius: BorderRadius.circular(20.r),
                 border: Border.all(
                   color: isSelected
                       ? AppColors.primary
-                      : (isDark ? Colors.white24 : AppColors.gray.withOpacity(0.3)),
+                      : (isDark
+                          ? Colors.white24
+                          : AppColors.gray.withOpacity(0.3)),
                   width: 1,
                 ),
               ),

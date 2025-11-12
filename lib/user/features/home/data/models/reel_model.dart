@@ -153,14 +153,19 @@ class ReelsResponseModel {
   }
 
   factory ReelsResponseModel.fromJson(Map<String, dynamic> json) {
+    // Filter out reels where is_active is false
+    final allReels = (json['results'] as List<dynamic>?)
+            ?.map((reel) => ReelModel.fromJson(reel))
+            .toList() ??
+        [];
+
+    final activeReels = allReels.where((reel) => reel.isActive).toList();
+
     return ReelsResponseModel(
       count: json['count'] ?? 0,
       next: json['next'],
       previous: json['previous'],
-      results: (json['results'] as List<dynamic>?)
-              ?.map((reel) => ReelModel.fromJson(reel))
-              .toList() ??
-          [],
+      results: activeReels,
     );
   }
 }

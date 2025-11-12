@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/services/locator_service.dart' as di;
 import '../manager/chat_cubit.dart';
 import '../manager/chat_state.dart';
 import '../widgets/chat_list_item.dart';
@@ -137,11 +136,17 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
         }
 
         print('ChatsListScreen - Showing ${state.chats.length} chats');
+        // Debug: Print unread counts for all chats
+        for (var chat in state.chats) {
+          print(
+              'ChatsListScreen - Chat ${chat.id} (${chat.dealer}): userUnreadCount = ${chat.userUnreadCount}, dealerUnreadCount = ${chat.dealerUnreadCount}');
+        }
         return ListView.builder(
           itemCount: state.chats.length,
           itemBuilder: (context, index) {
             final chat = state.chats[index];
-            print('ChatsListScreen - Building chat item: ${chat.dealer}');
+            print(
+                'ChatsListScreen - Building chat item: ${chat.dealer}, unreadCount: ${chat.userUnreadCount}');
             return ChatListItem(
               chat: chat,
               onTap: () {

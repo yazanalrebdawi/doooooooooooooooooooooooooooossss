@@ -19,13 +19,13 @@ class ChangeLanguageScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 23.h),
+            SizedBox(height: 32.h),
             Center(child: SelectedLanguageWidget()),
-            SizedBox(height: 23.h),
+            SizedBox(height: 32.h),
             InfoToUserWidget(),
-            SizedBox(height: 23.h),
-            Divider(color: AppColors.field, thickness: 1, height: 9.h),
-            SizedBox(height: 5.h),
+            SizedBox(height: 32.h),
+            Divider(color: AppColors.field, thickness: 1, height: 16.h),
+            SizedBox(height: 12.h),
             CustomButtonWidget(
               width: 336,
               height: 50,

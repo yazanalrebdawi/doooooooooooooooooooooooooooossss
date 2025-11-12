@@ -7,7 +7,6 @@ import 'package:dooss_business_app/user/features/home/data/models/reel_model.dar
 import 'package:dooss_business_app/user/features/home/presentaion/manager/home_cubit.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/manager/reel_cubit.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/manager/reel_state.dart';
-import 'package:dooss_business_app/user/features/home/presentaion/manager/reels_playback_cubit.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/reel_actions_overlay.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/reel_info_overlay.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/reel_video_player.dart';
@@ -16,7 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class ReelsScreenContent extends StatelessWidget {
+class ReelsScreenContent extends StatefulWidget {
   final PageController pageController;
   final int? initialReelId;
 
@@ -25,6 +24,19 @@ class ReelsScreenContent extends StatelessWidget {
     required this.pageController,
     this.initialReelId,
   });
+
+  @override
+  State<ReelsScreenContent> createState() => _ReelsScreenContentState();
+}
+
+class _ReelsScreenContentState extends State<ReelsScreenContent> {
+  bool _isMuted = false;
+
+  void _toggleMute() {
+    setState(() {
+      _isMuted = !_isMuted;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +62,11 @@ class ReelsScreenContent extends StatelessWidget {
         }
 
         // Jump to initial reel if provided
-        if (initialReelId != null && state.reels.isNotEmpty) {
+        if (widget.initialReelId != null && state.reels.isNotEmpty) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.read<ReelCubit>().jumpToReelById(initialReelId!);
-            if (pageController.hasClients) {
-              pageController.jumpToPage(state.currentReelIndex);
+            context.read<ReelCubit>().jumpToReelById(widget.initialReelId!);
+            if (widget.pageController.hasClients) {
+              widget.pageController.jumpToPage(state.currentReelIndex);
             }
           });
         }
@@ -150,7 +162,7 @@ class ReelsScreenContent extends StatelessWidget {
 
   Widget _buildReelsView(BuildContext context, ReelState state, bool isDark) {
     return PageView.builder(
-      controller: pageController,
+      controller: widget.pageController,
       scrollDirection: Axis.vertical,
       itemCount: state.reels.length,
       onPageChanged: (index) {
@@ -178,8 +190,7 @@ class ReelsScreenContent extends StatelessWidget {
       children: [
         // Video player
         ReelVideoPlayer(
-            reel: reel,
-            isCurrentReel: isCurrentReel), //////////////////////////
+            reel: reel, isCurrentReel: isCurrentReel, isMuted: _isMuted),
 
         // Gradient overlay for better text readability
         Positioned.fill(
@@ -231,6 +242,8 @@ class ReelsScreenContent extends StatelessWidget {
           onLike: () => _handleLike(context, reel),
           onShare: () => _handleShare(context, reel),
           onComment: () => _handleComment(context, reel),
+          onToggleMute: _toggleMute,
+          isMuted: _isMuted,
         ),
       ],
     );

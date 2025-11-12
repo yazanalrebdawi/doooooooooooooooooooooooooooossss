@@ -24,8 +24,8 @@ class AuthCubitDealers extends Cubit<AuthStateDealers> {
         await data.SignIn(code: code, name: name, password: password);
 
     result.fold((error) {
-      print('❌ Error: $error');
-      emit(state.copyWith(isLoading: false, errorMessage: error.toString()));
+      print('❌ Error: ${error.message}');
+      emit(state.copyWith(isLoading: false, errorMessage: error.message));
     }, (resultData) async {
       final secureStorage = appLocator<SecureStorageService>();
       await secureStorage.saveDealerAuthData(resultData);

@@ -29,7 +29,9 @@ class AllProductsScreen extends StatelessWidget {
               previous.isLoading != current.isLoading ||
               previous.displayedProducts != current.displayedProducts ||
               previous.error != current.error ||
-              previous.isLoadingMore != current.isLoadingMore,
+              previous.isLoadingMore != current.isLoadingMore ||
+              previous.selectedCategory != current.selectedCategory ||
+              previous.categories != current.categories,
           builder: (context, state) {
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -70,7 +72,8 @@ class AllProductsScreen extends StatelessWidget {
               children: [
                 // Product Count
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                   child: Text(
                     '${state.totalProductsCount} products',
                     style: AppTextStyles.s16w500.copyWith(
@@ -81,9 +84,11 @@ class AllProductsScreen extends StatelessWidget {
 
                 // Category Filter
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                   child: CategoryFilter(
                     selectedCategory: state.selectedCategory,
+                    categories: state.categories,
                     onCategorySelected: (category) {
                       context.read<ProductCubit>().filterByCategory(category);
                     },
@@ -97,7 +102,8 @@ class AllProductsScreen extends StatelessWidget {
                       Expanded(
                         child: GridView.builder(
                           padding: EdgeInsets.all(16.w),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             childAspectRatio: 173 / 240,
                             crossAxisSpacing: 12.w,
@@ -145,7 +151,8 @@ class AllProductsScreen extends StatelessWidget {
                                       height: 20.h,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
                                           AppColors.white,
                                         ),
                                       ),

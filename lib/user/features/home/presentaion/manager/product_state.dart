@@ -4,11 +4,13 @@
 import '../../data/models/product_model.dart';
 
 class ProductState {
-  final List<ProductModel> products;      // First 10 products for home screen
-  final List<ProductModel> allProducts;   // All products for "View All" screen
-  final List<ProductModel> filteredProducts; // Filtered products based on category
-  final List<ProductModel> displayedProducts; // Products currently displayed (first 8)
-  final ProductModel? selectedProduct;    // Selected product for details
+  final List<ProductModel> products; // First 10 products for home screen
+  final List<ProductModel> allProducts; // All products for "View All" screen
+  final List<ProductModel>
+      filteredProducts; // Filtered products based on category
+  final List<ProductModel>
+      displayedProducts; // Products currently displayed (first 8)
+  final ProductModel? selectedProduct; // Selected product for details
   final List<ProductModel> relatedProducts; // Related products
   final List<Map<String, dynamic>> productReviews; // Product reviews
   final bool isLoading;
@@ -16,6 +18,7 @@ class ProductState {
   final String selectedCategory; // Selected category filter
   final bool hasMoreProducts; // Whether there are more products to load
   final bool isLoadingMore; // Loading state for pagination
+  final List<String> categories; // Available categories extracted from products
 
   const ProductState({
     this.products = const [],
@@ -30,6 +33,7 @@ class ProductState {
     this.selectedCategory = 'All',
     this.hasMoreProducts = true,
     this.isLoadingMore = false,
+    this.categories = const [],
   });
 
   ProductState copyWith({
@@ -45,6 +49,7 @@ class ProductState {
     String? selectedCategory,
     bool? hasMoreProducts,
     bool? isLoadingMore,
+    List<String>? categories,
   }) {
     return ProductState(
       products: products ?? this.products,
@@ -59,9 +64,9 @@ class ProductState {
       selectedCategory: selectedCategory ?? this.selectedCategory,
       hasMoreProducts: hasMoreProducts ?? this.hasMoreProducts,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      categories: categories ?? this.categories,
     );
   }
 
-  
   int get totalProductsCount => allProducts.length;
 }

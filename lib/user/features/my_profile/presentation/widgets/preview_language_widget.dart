@@ -9,11 +9,15 @@ class PreviewLanguageWidget extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Calculate responsive width: 90% of screen width with min 300 and max 358
+    final responsiveWidth = (screenWidth * 0.9).clamp(300, 358);
+
     return Container(
-      margin: EdgeInsets.only(top: 20.h),
-      width: 358.w,
+      margin: EdgeInsets.only(top: 20.h, left: 10.w, right: 10.w),
+      width: responsiveWidth.w,
       height: 166.h,
-      padding: EdgeInsets.all(15).r,
+      padding: EdgeInsets.all(15.r),
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(12.r),
@@ -42,10 +46,12 @@ class PreviewLanguageWidget extends StatelessWidget {
             spacing: 10.w,
             children: [
               CircleAvatar(
+                radius: 20.r,
                 backgroundColor: Color(0xffEFF6FF),
                 child: Icon(
                   Icons.remove_red_eye_rounded,
                   color: Color(0xff2563EB),
+                  size: 20.r,
                 ),
               ),
               Text(
@@ -59,7 +65,6 @@ class PreviewLanguageWidget extends StatelessWidget {
             child: Column(
               spacing: 5.h,
               crossAxisAlignment: CrossAxisAlignment.start,
-
               children: [
                 Text(
                   AppLocalizations.of(

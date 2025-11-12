@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,7 +14,7 @@ class imageAndMediaWidget extends StatefulWidget {
 }
 
 class _imageAndMediaWidgetState extends State<imageAndMediaWidget> {
-  ValueNotifier<XFile?> image = ValueNotifier<XFile?>(null);
+  ValueNotifier<List<XFile>> images = ValueNotifier<List<XFile>>([]);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,26 +49,31 @@ class _imageAndMediaWidgetState extends State<imageAndMediaWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ValueListenableBuilder<XFile?>(
+                ValueListenableBuilder<List<XFile>>(
                   builder: (BuildContext context, value, child) {
-                    if (image.value == null) {
-                      return UoloadServicesImageWidget(image: image);
+                    if (images.value.isEmpty) {
+                      return UoloadServicesImageWidget(images: images);
                     } else
-                   return   Container(height: 170.h,
+                      return Container(
+                        height: 170.h,
                         alignment: Alignment.center,
-                       
                         width: 326.w,
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.borderColor),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
-                        child: ClipRRect(borderRadius: BorderRadius.circular(8),
-                          child: Image.asset('assets/images/OliFilter.png',width: double.infinity,fit: BoxFit.fitWidth,height: 170.h,)),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              'assets/images/OliFilter.png',
+                              width: double.infinity,
+                              fit: BoxFit.fitWidth,
+                              height: 170.h,
+                            )),
                       );
                   },
-                  valueListenable: image,
+                  valueListenable: images,
                 ),
-
                 SizedBox(height: 16.h),
                 Text(
                   'intro video (Optional)',
@@ -118,11 +122,10 @@ class _imageAndMediaWidgetState extends State<imageAndMediaWidget> {
   }
 }
 
-
 class UoloadServicesImageWidget extends StatelessWidget {
-  const UoloadServicesImageWidget({super.key, required this.image});
+  const UoloadServicesImageWidget({super.key, required this.images});
 
-  final ValueNotifier<XFile?> image;
+  final ValueNotifier<List<XFile>> images;
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +141,7 @@ class UoloadServicesImageWidget extends StatelessWidget {
         children: [
           SvgPicture.asset('assets/icons/cloud.svg'),
           Text(
-            'Upload Service images',
+            'Upload Car images',
             style: TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 14,
@@ -147,7 +150,7 @@ class UoloadServicesImageWidget extends StatelessWidget {
             ),
           ),
           Text(
-            'Up to 5 images • JPG, PNG • Max 5MB each',
+            'Up to 10 images • JPG, PNG • Max 5MB each',
             style: TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 14,
@@ -159,7 +162,12 @@ class UoloadServicesImageWidget extends StatelessWidget {
           InkWell(
             onTap: () async {
               final ImagePicker picker = ImagePicker();
-              image.value = await picker.pickImage(source: ImageSource.gallery);
+              final List<XFile> pickedImages = await picker.pickMultiImage();
+              if (pickedImages.isNotEmpty) {
+                final remainingSlots = 10 - images.value.length;
+                final imagesToAdd = pickedImages.take(remainingSlots).toList();
+                images.value = [...images.value, ...imagesToAdd];
+              }
             },
             child: Container(
               width: 142.w,

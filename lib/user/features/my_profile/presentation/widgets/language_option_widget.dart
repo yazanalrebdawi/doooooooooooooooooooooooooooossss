@@ -38,102 +38,109 @@ class _LanguageOptionWidgetState extends State<LanguageOptionWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children:
-          AppLanguageEnum.values.map((lang) {
-            final info = languageMap[lang]!;
-            final isSelected = _selected == lang;
+      children: AppLanguageEnum.values.map((lang) {
+        final info = languageMap[lang]!;
+        final isSelected = _selected == lang;
 
-            return Column(
-              children: [
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => _onSelect(lang),
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 8.h,
-                        horizontal: 12.w,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Column(
+          children: [
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => _onSelect(lang),
+                borderRadius: BorderRadius.circular(12.r),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 20.h,
+                    horizontal: 20.w,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 40.w,
-                                height: 40.h,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.bottomLeft,
-                                    colors: info.colors,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    info.code,
-                                    style: AppTextStyles.s14w600.copyWith(
-                                      color: AppColors.buttonText,
-                                    ),
-                                  ),
+                          Container(
+                            width: 48.w,
+                            height: 48.h,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: info.colors,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                info.code,
+                                style: AppTextStyles.s14w600.copyWith(
+                                  color: AppColors.buttonText,
                                 ),
                               ),
-                              SizedBox(width: 10.w),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    info.native,
-                                    style: AppTextStyles.s16w500.copyWith(
-                                      color: Color(0xff111827),
-                                    ),
-                                  ),
-                                  Text(
-                                    info.english,
-                                    style: AppTextStyles.s14w400.copyWith(
-                                      color: AppColors.rating,
-                                    ),
-                                  ),
-                                ],
+                            ),
+                          ),
+                          SizedBox(width: 20.w),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                info.native,
+                                style: AppTextStyles.s16w500.copyWith(
+                                  color: Color(0xff111827),
+                                ),
+                              ),
+                              SizedBox(height: 6.h),
+                              Text(
+                                info.english,
+                                style: AppTextStyles.s14w400.copyWith(
+                                  color: AppColors.rating,
+                                ),
                               ),
                             ],
                           ),
-                          Container(
-                            width: 22.w,
-                            height: 22.h,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isSelected ? Colors.blue : Colors.grey,
-                                width: 2.w,
-                              ),
-                              color: Colors.transparent,
-                            ),
-                            child:
-                                isSelected
-                                    ? Center(
-                                      child: Container(
-                                        width: 12.w,
-                                        height: 12.h,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.blue,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                    )
-                                    : null,
-                          ),
                         ],
                       ),
-                    ),
+                      Container(
+                        width: 22.w,
+                        height: 22.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected ? Colors.blue : Colors.grey,
+                            width: 2.w,
+                          ),
+                          color: Colors.transparent,
+                        ),
+                        child: isSelected
+                            ? Center(
+                                child: Container(
+                                  width: 12.w,
+                                  height: 12.h,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.blue,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              )
+                            : null,
+                      ),
+                    ],
                   ),
                 ),
-                Divider(color: AppColors.field, thickness: 1.h, height: 8.h),
-              ],
-            );
-          }).toList(),
+              ),
+            ),
+            if (lang != AppLanguageEnum.values.last)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Divider(
+                  color: AppColors.field,
+                  thickness: 1.h,
+                  height: 8.h,
+                ),
+              ),
+          ],
+        );
+      }).toList(),
     );
   }
 }

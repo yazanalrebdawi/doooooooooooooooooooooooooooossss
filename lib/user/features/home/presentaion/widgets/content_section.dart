@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/cars_available_section.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/products_section.dart';
@@ -70,11 +71,18 @@ class ContentSection extends StatelessWidget {
           previous != current,
       builder: (context, state) {
         if (state.isLoading) {
-          return const LoadingSection(title: 'Cars Available Now');
+          return LoadingSection(
+            title: AppLocalizations.of(context)
+                    ?.translate('carsAvailableNow') ??
+                'Cars Available Now',
+          );
         }
         if (state.error != null) {
           return ErrorSection(
-              title: 'Cars Available Now', message: state.error!);
+            title: AppLocalizations.of(context)?.translate('carsAvailableNow') ??
+                'Cars Available Now',
+            message: state.error!,
+          );
         }
         if (state.cars.isNotEmpty) {
           return CarsAvailableSection(
@@ -84,7 +92,10 @@ class ContentSection extends StatelessWidget {
             //     context.push('/car-details/${state.}'), // Example navigation
           );
         }
-        return const LoadingSection(title: 'Cars Available Now');
+        return LoadingSection(
+          title: AppLocalizations.of(context)?.translate('carsAvailableNow') ??
+              'Cars Available Now',
+        );
       },
     );
   }
@@ -96,14 +107,26 @@ class ContentSection extends StatelessWidget {
           previous.error != current.error ||
           previous != current,
       builder: (context, state) {
-        if (state.isLoading) return const LoadingSection(title: 'Car Products');
+        if (state.isLoading) {
+          return LoadingSection(
+            title: AppLocalizations.of(context)?.translate('carProducts') ??
+                'Car Products',
+          );
+        }
         if (state.error != null) {
-          return ErrorSection(title: 'Car Products', message: state.error!);
+          return ErrorSection(
+            title: AppLocalizations.of(context)?.translate('carProducts') ??
+                'Car Products',
+            message: state.error!,
+          );
         }
         if (state.products.isNotEmpty) {
           return ProductsSection(products: state.products);
         }
-        return const LoadingSection(title: 'Car Products');
+        return LoadingSection(
+          title: AppLocalizations.of(context)?.translate('carProducts') ??
+              'Car Products',
+        );
       },
     );
   }
@@ -116,16 +139,27 @@ class ContentSection extends StatelessWidget {
           previous != current,
       builder: (context, state) {
         if (state.isLoading) {
-          return const LoadingSection(title: 'Nearby Car Services');
+          return LoadingSection(
+            title: AppLocalizations.of(context)
+                    ?.translate('nearbyCarServices') ??
+                'Nearby Car Services',
+          );
         }
         if (state.error != null) {
           return ErrorSection(
-              title: 'Nearby Car Services', message: state.error!);
+            title: AppLocalizations.of(context)
+                    ?.translate('nearbyCarServices') ??
+                'Nearby Car Services',
+            message: state.error!,
+          );
         }
         if (state.services.isNotEmpty) {
           return ServicesSection(services: state.services);
         }
-        return const LoadingSection(title: 'Nearby Car Services');
+        return LoadingSection(
+          title: AppLocalizations.of(context)?.translate('nearbyCarServices') ??
+              'Nearby Car Services',
+        );
       },
     );
   }
@@ -133,11 +167,24 @@ class ContentSection extends StatelessWidget {
   Widget _buildReelsSection(BuildContext context) {
     return BlocBuilder<ReelCubit, ReelState>(
       builder: (context, state) {
-        if (state.isLoading) return const LoadingSection(title: 'Market Reels');
-        if (state.error != null)
-          return ErrorSection(title: 'Market Reels', message: state.error!);
+        if (state.isLoading) {
+          return LoadingSection(
+            title: AppLocalizations.of(context)?.translate('marketReels') ??
+                'Market Reels',
+          );
+        }
+        if (state.error != null) {
+          return ErrorSection(
+            title: AppLocalizations.of(context)?.translate('marketReels') ??
+                'Market Reels',
+            message: state.error!,
+          );
+        }
         if (state.reels.isNotEmpty) return ReelsSection(reels: state.reels);
-        return const LoadingSection(title: 'Market Reels');
+        return LoadingSection(
+          title: AppLocalizations.of(context)?.translate('marketReels') ??
+              'Market Reels',
+        );
       },
     );
   }

@@ -38,13 +38,18 @@ android {
     }
 
     signingConfigs {
-    create("release") {
-        keyAlias = "debug"
-        keyPassword = "debug"
-        storeFile = file("${rootProject.projectDir}/../android/app/debug.keystore")
-        storePassword = "android"
-    }
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                val keystorePath = keystoreProperties["storeFile"] as String
+                // Path in key.properties is relative to android/ directory
+                // build.gradle.kts is in android/app/, so resolve from there
+                storeFile = file(keystorePath.replace("../app/", ""))
+                storePassword = keystoreProperties["storePassword"] as String
             }
+        }
+    }
 
 
     buildTypes {

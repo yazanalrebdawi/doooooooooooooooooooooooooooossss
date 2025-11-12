@@ -116,12 +116,12 @@ class _ReelsViewerScreenState extends State<ReelsViewerScreen> {
             ),
 
             // Scroll indicator (right edge)
-            Positioned(
-              right: 8.w,
-              top: MediaQuery.of(context).padding.top + 80.h,
-              bottom: 80.h,
-              child: _buildScrollIndicator(isDark),
-            ),
+            // Positioned(
+            //   right: 8.w,
+            //   top: MediaQuery.of(context).padding.top + 80.h,
+            //   bottom: 80.h,
+            //   child: _buildScrollIndicator(isDark),
+            // ),
           ],
         ),
       ),

@@ -15,4 +15,7 @@ class CacheKeys {
   static const String userIdKey = 'USER_ID_KEY';
   static const String userToken = 'USER_TOKEN';
   static const String dealerData = 'DEALER_DATA';
+  static const String rememberedEmail = 'REMEMBERED_EMAIL';
+  static const String rememberedPassword = 'REMEMBERED_PASSWORD';
+  static const String isRememberMeEnabled = 'IS_REMEMBER_ME_ENABLED';
 }

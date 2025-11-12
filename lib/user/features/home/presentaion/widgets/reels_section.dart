@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dooss_business_app/user/core/constants/text_styles.dart';
-import 'package:dooss_business_app/user/features/home/presentaion/widgets/reel_card.dart';
+import 'package:flutter/services.dart';
+import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/features/home/presentaion/widgets/empty_section.dart';
+import 'package:dooss_business_app/user/features/home/presentaion/widgets/full_screen_reel_player.dart';
 import 'package:dooss_business_app/user/features/home/data/models/reel_model.dart';
 
-class ReelsSection extends StatelessWidget {
+class ReelsSection extends StatefulWidget {
   final List<ReelModel> reels;
   final VoidCallback? onViewAllPressed;
   final VoidCallback? onReelPressed;
@@ -18,53 +18,64 @@ class ReelsSection extends StatelessWidget {
   });
 
   @override
+  State<ReelsSection> createState() => _ReelsSectionState();
+}
+
+class _ReelsSectionState extends State<ReelsSection> {
+  late PageController _pageController;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    // Set full-screen immersive mode for reels
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
+
+  @override
+  void dispose() {
+    // Restore system UI when leaving reels
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    if (widget.reels.isEmpty) {
+      return const EmptySection(message: 'No reels available');
+    }
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    // Full-screen vertical PageView for reels
+    return Scaffold(
+      backgroundColor: AppColors.black,
+      body: Stack(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Market Reels',
-                style: AppTextStyles.blackS18W700.copyWith(
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              GestureDetector(
-                onTap: onViewAllPressed,
-                child: Text(
-                  'View All',
-                  style: AppTextStyles.primaryS16W600.copyWith(
-                    color: isDark ? Colors.blueAccent : Colors.blue,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
+          // Main vertical PageView
+          PageView.builder(
+            scrollDirection: Axis.vertical,
+            controller: _pageController,
+            itemCount: widget.reels.length,
+            onPageChanged: _onPageChanged,
+            itemBuilder: (context, index) {
+              final reel = widget.reels[index];
+              final isCurrentReel = index == _currentIndex;
 
-          // Reels List
-          if (reels.isEmpty)
-            const EmptySection(message: 'No reels available')
-          else
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: reels
-                    .map(
-                      (reel) => ReelCard(
-                        reel: reel,
-                        onTap: onReelPressed,
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
+              return FullScreenReelPlayer(
+                key: Key('reel_${reel.id}'),
+                reel: reel,
+                isCurrentReel: isCurrentReel,
+                onTap: () => print('Tapped reel ${reel.id}'),
+              );
+            },
+          ),
         ],
       ),
     );

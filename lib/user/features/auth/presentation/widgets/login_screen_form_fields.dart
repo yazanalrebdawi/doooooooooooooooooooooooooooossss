@@ -1,4 +1,3 @@
-import 'package:dooss_business_app/dealer/Core/App_manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:flutter/material.dart';

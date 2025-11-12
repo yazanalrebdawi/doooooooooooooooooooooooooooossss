@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/constants/dimensions.dart';
 import '../../../../core/routes/route_names.dart';
 import 'package:dooss_business_app/user/features/home/data/models/product_model.dart';
@@ -25,7 +26,8 @@ class ProductCard extends StatelessWidget {
         height: AppDimensions.productCardHeight.h,
         decoration: BoxDecoration(
           color: isDark ? AppColors.black : Colors.white,
-          borderRadius: BorderRadius.circular(AppDimensions.defaultBorderRadius.r),
+          borderRadius:
+              BorderRadius.circular(AppDimensions.defaultBorderRadius.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -38,7 +40,7 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildImage(isDark),
-            _buildContent(isDark),
+            _buildContent(context, isDark),
           ],
         ),
       ),
@@ -54,7 +56,9 @@ class ProductCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: AppDimensions.productCardImageHeight.h,
-        color: isDark ? AppColors.gray.withOpacity(0.3) : AppColors.gray.withOpacity(0.2),
+        color: isDark
+            ? AppColors.gray.withOpacity(0.3)
+            : AppColors.gray.withOpacity(0.2),
         child: product.imageUrl.isNotEmpty
             ? Image.network(
                 product.imageUrl,
@@ -76,7 +80,7 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(bool isDark) {
+  Widget _buildContent(BuildContext context, bool isDark) {
     return Container(
       width: AppDimensions.productCardWidth.w,
       height: AppDimensions.productCardContentHeight.h,
@@ -99,7 +103,7 @@ class ProductCard extends StatelessWidget {
             children: [
               _buildPriceAndLocation(isDark),
               SizedBox(height: AppDimensions.defaultPadding2.h),
-              _buildActionButtons(isDark),
+              _buildActionButtons(context, isDark),
             ],
           ),
         ],
@@ -147,7 +151,7 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(bool isDark) {
+  Widget _buildActionButtons(BuildContext context, bool isDark) {
     return Row(
       children: [
         Expanded(
@@ -159,7 +163,8 @@ class ProductCard extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'View Details',
+                AppLocalizations.of(context)?.translate('viewDetails') ??
+                    'View Details',
                 style: AppTextStyles.s14w500.copyWith(color: AppColors.primary),
               ),
             ),
@@ -175,7 +180,8 @@ class ProductCard extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'Contact Seller',
+                AppLocalizations.of(context)?.translate('contact') ??
+                    'Contact Seller',
                 style: AppTextStyles.s14w500.copyWith(
                     color: isDark ? AppColors.black : AppColors.white),
               ),

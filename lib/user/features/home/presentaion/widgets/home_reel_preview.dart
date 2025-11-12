@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/routes/route_names.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../manager/reels_playback_cubit.dart';
 import '../manager/reels_playback_state.dart';
 import 'perfect_video_player.dart';
@@ -86,7 +87,8 @@ class HomeReelPreview extends StatelessWidget {
             ),
 
             // Reel info overlay
-            if (state.currentReel != null) ReelInfoOverlay(reel: state.currentReel!),
+            if (state.currentReel != null)
+              ReelInfoOverlay(reel: state.currentReel!),
 
             // Tap to view all indicator
             Positioned(
@@ -104,7 +106,8 @@ class HomeReelPreview extends StatelessWidget {
                     Icon(Icons.fullscreen, color: AppColors.white, size: 16.sp),
                     SizedBox(width: 4.w),
                     Text(
-                      'Tap to view all',
+                      AppLocalizations.of(context)?.translate('tapToViewAll') ??
+                          'Tap to view all',
                       style: TextStyle(
                         color: AppColors.white,
                         fontSize: 12.sp,
@@ -126,7 +129,8 @@ class HomeReelPreview extends StatelessWidget {
                     color: AppColors.black.withOpacity(0.6),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.play_arrow, color: AppColors.white, size: 30.sp),
+                  child: Icon(Icons.play_arrow,
+                      color: AppColors.white, size: 30.sp),
                 ),
               ),
           ],
@@ -161,7 +165,8 @@ class HomeReelPreview extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.video_library_outlined, color: AppColors.gray, size: 48.sp),
+            Icon(Icons.video_library_outlined,
+                color: AppColors.gray, size: 48.sp),
             SizedBox(height: 8.h),
             Text(
               'No reels available',

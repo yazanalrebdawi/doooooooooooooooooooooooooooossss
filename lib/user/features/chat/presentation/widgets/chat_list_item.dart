@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/services/locator_service.dart' as di;
+import '../../../../core/services/storage/secure_storage/secure_storage_service.dart';
+import '../../../../core/services/storage/shared_preferances/shared_preferences_service.dart';
 import '../../data/models/chat_model.dart';
 
-class ChatListItem extends StatelessWidget {
+class ChatListItem extends StatefulWidget {
   final ChatModel chat;
   final VoidCallback onTap;
 
@@ -15,11 +18,67 @@ class ChatListItem extends StatelessWidget {
   });
 
   @override
+  State<ChatListItem> createState() => _ChatListItemState();
+}
+
+class _ChatListItemState extends State<ChatListItem> {
+  bool _isDealer = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfDealer();
+  }
+
+  Future<void> _checkIfDealer() async {
+    final secureStorage = di.appLocator<SecureStorageService>();
+    final sharedPrefsService = di.appLocator<SharedPreferencesService>();
+    bool isDealer = await secureStorage.getIsDealer();
+    if (!isDealer) {
+      final dealerData = await sharedPrefsService.getDealerAuthData();
+      isDealer = dealerData != null;
+    }
+    if (mounted) {
+      setState(() {
+        _isDealer = isDealer;
+      });
+    }
+  }
+
+  // Extract name from user field (format: "name (+phone) - user")
+  String _extractUserName(String userField) {
+    if (userField.isEmpty) return '';
+    // Extract name before the first "("
+    final nameMatch = RegExp(r'^([^(]+)').firstMatch(userField.trim());
+    if (nameMatch != null) {
+      return nameMatch.group(1)?.trim() ?? '';
+    }
+    return userField;
+  }
+
+  // Get the participant name to display
+  String _getParticipantName() {
+    if (_isDealer) {
+      // If current user is dealer, show the user's name (extracted from user field)
+      final userName = _extractUserName(widget.chat.user);
+      return userName.isNotEmpty ? userName : 'Unknown User';
+    } else {
+      // If current user is regular user, show the dealer's name
+      return widget.chat.dealer.isNotEmpty ? widget.chat.dealer : 'Unknown';
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Get the appropriate unread count based on user type
+    final unreadCount =
+        _isDealer ? widget.chat.dealerUnreadCount : widget.chat.userUnreadCount;
+
+    final participantName = _getParticipantName();
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
         margin: EdgeInsets.only(bottom: 1.h),
@@ -81,9 +140,7 @@ class ChatListItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          (chat.dealer ?? '').isNotEmpty
-                              ? (chat.dealer ?? '')
-                              : 'Unknown',
+                          participantName,
                           style: AppTextStyles.s16w600.copyWith(
                             color: AppColors.black,
                           ),
@@ -92,7 +149,7 @@ class ChatListItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        _formatTimestamp(chat.createdAt ?? ''),
+                        _formatTimestamp(widget.chat.createdAt),
                         style: AppTextStyles.s12w400.copyWith(
                           color: AppColors.gray,
                         ),
@@ -104,8 +161,8 @@ class ChatListItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          chat.lastMessage?.text.isNotEmpty == true
-                              ? chat.lastMessage!.text
+                          widget.chat.lastMessage?.text.isNotEmpty == true
+                              ? widget.chat.lastMessage!.text
                               : 'No messages yet',
                           style: AppTextStyles.s14w400.copyWith(
                             color: AppColors.gray,
@@ -115,7 +172,7 @@ class ChatListItem extends StatelessWidget {
                         ),
                       ),
                       // Unread message indicator
-                      if (chat.userUnreadCount > 0) ...[
+                      if (unreadCount > 0) ...[
                         Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: 6.w, vertical: 2.h),
@@ -124,7 +181,7 @@ class ChatListItem extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                           child: Text(
-                            '${chat.userUnreadCount}',
+                            '$unreadCount',
                             style: AppTextStyles.s12w400.copyWith(
                               color: AppColors.white,
                             ),

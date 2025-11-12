@@ -12,6 +12,9 @@ class imageAndMediaOfAddCar extends StatelessWidget {
 
   final AddNewCarPage widget;
 
+  // Get images from widget
+  ValueNotifier<List<XFile>> get images => widget.images;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -47,35 +50,112 @@ class imageAndMediaOfAddCar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ValueListenableBuilder<XFile?>(
+                ValueListenableBuilder<List<XFile>>(
                   builder: (BuildContext context, value, child) {
-                    if (widget.image.value == null) {
-                      return UoloadServicesImageWidget(image: widget.image);
-                    } else
-                      return Container(
-                        height: 170.h,
-                        alignment: Alignment.center,
-
-                        width: 326.w,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.borderColor),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(widget.image.value!.path),
-                            width: double.infinity,
-                            fit: BoxFit.fitWidth,
-                            height: 170.h,
+                    if (images.value.isEmpty) {
+                      return UoloadServicesImageWidget(images: images);
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
+                            spacing: 8.w,
+                            runSpacing: 8.h,
+                            children: [
+                              ...images.value.map((image) {
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      width: 100.w,
+                                      height: 100.h,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: AppColors.borderColor),
+                                        borderRadius:
+                                            BorderRadius.circular(8.r),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.file(
+                                          File(image.path),
+                                          width: 100.w,
+                                          height: 100.h,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          final currentImages =
+                                              List<XFile>.from(images.value);
+                                          currentImages.remove(image);
+                                          images.value = currentImages;
+                                        },
+                                        child: Container(
+                                          width: 24.w,
+                                          height: 24.h,
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 16.sp,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                              if (images.value.length < 10)
+                                GestureDetector(
+                                  onTap: () async {
+                                    final ImagePicker picker = ImagePicker();
+                                    final List<XFile> pickedImages =
+                                        await picker.pickMultiImage();
+                                    if (pickedImages.isNotEmpty) {
+                                      final currentImages =
+                                          List<XFile>.from(images.value);
+                                      final remainingSlots =
+                                          10 - currentImages.length;
+                                      final imagesToAdd = pickedImages
+                                          .take(remainingSlots)
+                                          .toList();
+                                      currentImages.addAll(imagesToAdd);
+                                      images.value = currentImages;
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 100.w,
+                                    height: 100.h,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: AppColors.borderColor,
+                                          style: BorderStyle.solid),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Icon(
+                                      Icons.add,
+                                      color: AppColors.primary,
+                                      size: 32.sp,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                        ),
+                        ],
                       );
+                    }
                   },
-                  valueListenable: widget.image,
+                  valueListenable: images,
                 ),
 
-  //<--------------------------
+                //<--------------------------
               ],
             ),
           ),

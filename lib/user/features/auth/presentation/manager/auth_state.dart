@@ -54,7 +54,8 @@ class AuthState {
       error: error ?? this.error,
       success: success ?? this.success,
       isObscurePassword: isObscurePassword ?? this.isObscurePassword,
-      isFingerprintAvailable: isFingerprintAvailable ?? this.isFingerprintAvailable,
+      isFingerprintAvailable:
+          isFingerprintAvailable ?? this.isFingerprintAvailable,
       isRememberMe: isRememberMe ?? this.isRememberMe,
       resetCode: resetCode ?? this.resetCode,
     );

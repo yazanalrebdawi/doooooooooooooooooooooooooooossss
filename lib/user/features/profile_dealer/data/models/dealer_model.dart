@@ -5,10 +5,8 @@ class DealerModel {
   final String? profileImage;
   final String? description;
   final int reelsCount;
-  final int followersCount;
-  final int followingCount;
   final bool isVerified;
-  final bool isFollowing;
+  final int? userId; // User ID for creating chats
 
   const DealerModel({
     required this.id,
@@ -17,13 +15,42 @@ class DealerModel {
     this.profileImage,
     this.description,
     required this.reelsCount,
-    required this.followersCount,
-    required this.followingCount,
     this.isVerified = false,
-    this.isFollowing = false,
+    this.userId,
   });
 
   factory DealerModel.fromJson(Map<String, dynamic> json) {
+    // Try to get user_id from various possible fields
+    int? userId;
+
+    // Debug: print all keys to see what's available
+    print('🔍 DealerModel.fromJson: Available keys: ${json.keys.toList()}');
+
+    if (json['user_id'] != null) {
+      print(
+          '🔍 DealerModel.fromJson: Found user_id: ${json['user_id']} (type: ${json['user_id'].runtimeType})');
+      userId = json['user_id'] is int
+          ? json['user_id']
+          : int.tryParse(json['user_id'].toString());
+    } else if (json['user'] != null) {
+      print(
+          '🔍 DealerModel.fromJson: Found user: ${json['user']} (type: ${json['user'].runtimeType})');
+      // If user is an object, get its id
+      if (json['user'] is Map && json['user']['id'] != null) {
+        userId = json['user']['id'] is int
+            ? json['user']['id']
+            : int.tryParse(json['user']['id'].toString());
+      } else if (json['user'] is int) {
+        userId = json['user'];
+      } else if (json['user'] != null) {
+        userId = int.tryParse(json['user'].toString());
+      }
+    } else {
+      print('🔍 DealerModel.fromJson: No user_id or user field found');
+    }
+
+    print('🔍 DealerModel.fromJson: Extracted userId: $userId');
+
     return DealerModel(
       id: json['id'].toString(),
       name: json['name'] ?? '',
@@ -31,10 +58,8 @@ class DealerModel {
       profileImage: json['profile_image'],
       description: json['description'],
       reelsCount: json['reels_count'] ?? 0,
-      followersCount: json['followers_count'] ?? 0,
-      followingCount: json['following_count'] ?? 0,
       isVerified: json['is_verified'] ?? false,
-      isFollowing: json['is_following'] ?? false,
+      userId: userId,
     );
   }
 
@@ -46,10 +71,8 @@ class DealerModel {
       'profile_image': profileImage,
       'description': description,
       'reels_count': reelsCount,
-      'followers_count': followersCount,
-      'following_count': followingCount,
       'is_verified': isVerified,
-      'is_following': isFollowing,
+      'user_id': userId,
     };
   }
 
@@ -60,10 +83,8 @@ class DealerModel {
     String? profileImage,
     String? description,
     int? reelsCount,
-    int? followersCount,
-    int? followingCount,
     bool? isVerified,
-    bool? isFollowing,
+    int? userId,
   }) {
     return DealerModel(
       id: id ?? this.id,
@@ -72,10 +93,8 @@ class DealerModel {
       profileImage: profileImage ?? this.profileImage,
       description: description ?? this.description,
       reelsCount: reelsCount ?? this.reelsCount,
-      followersCount: followersCount ?? this.followersCount,
-      followingCount: followingCount ?? this.followingCount,
       isVerified: isVerified ?? this.isVerified,
-      isFollowing: isFollowing ?? this.isFollowing,
+      userId: userId ?? this.userId,
     );
   }
 
@@ -89,10 +108,8 @@ class DealerModel {
         other.profileImage == profileImage &&
         other.description == description &&
         other.reelsCount == reelsCount &&
-        other.followersCount == followersCount &&
-        other.followingCount == followingCount &&
         other.isVerified == isVerified &&
-        other.isFollowing == isFollowing;
+        other.userId == userId;
   }
 
   @override
@@ -104,10 +121,8 @@ class DealerModel {
       profileImage,
       description,
       reelsCount,
-      followersCount,
-      followingCount,
       isVerified,
-      isFollowing,
+      userId,
     );
   }
 }

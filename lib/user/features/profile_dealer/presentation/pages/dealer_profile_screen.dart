@@ -35,7 +35,7 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _currentTabIndex = _tabController.index;
@@ -111,15 +111,36 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
               // Profile Header
               DealerProfileHeader(
                 dealer: state.dealer,
-                onFollowPressed: () {
-                  context.read<DealerProfileCubit>().toggleFollow();
-                },
                 onMessagePressed: () {
-                  // Navigate to chat conversation
-                  context.push('/create-chat', extra: {
-                    'dealerId': state.dealer?.id,
-                    'dealerName': state.dealer?.name,
-                  });
+                  if (state.dealer != null) {
+                    print('💬 DealerProfile: Message button pressed');
+                    print('💬 DealerProfile: dealer.id = ${state.dealer!.id}');
+                    print(
+                        '💬 DealerProfile: dealer.userId = ${state.dealer!.userId}');
+
+                    // Use user_id instead of dealer profile id for creating chats
+                    final dealerUserId = state.dealer!.userId;
+
+                    if (dealerUserId != null && dealerUserId > 0) {
+                      print(
+                          '💬 DealerProfile: Creating chat with dealer user ID: $dealerUserId');
+                      // Navigate to create chat with dealer user ID
+                      context.push('/create-chat', extra: {
+                        'dealerId': dealerUserId,
+                        'dealerName': state.dealer!.name,
+                      });
+                    } else {
+                      print(
+                          '❌ DealerProfile: Invalid dealer user ID: ${state.dealer!.userId}');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Unable to start chat: Invalid dealer user ID'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
                 },
               ),
               // Tabs
@@ -140,11 +161,6 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                           .read<DealerProfileCubit>()
                           .loadCars(widget.dealerId);
                       break;
-                    case 2:
-                      context
-                          .read<DealerProfileCubit>()
-                          .loadServices(widget.dealerId);
-                      break;
                   }
                 },
               ),
@@ -162,11 +178,6 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
                       contentType: ContentType.cars,
                       content: state.cars,
                       isLoading: state.isLoadingCars,
-                    ),
-                    DealerContentGrid(
-                      contentType: ContentType.services,
-                      content: state.services,
-                      isLoading: state.isLoadingServices,
                     ),
                   ],
                 ),

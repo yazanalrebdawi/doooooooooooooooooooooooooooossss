@@ -77,31 +77,15 @@ class DealerProfileCubit extends Cubit<DealerProfileState> {
   void loadServices(String dealerId) async {
     emit(state.copyWith(isLoadingServices: true));
 
-    // final result = await _dataSource.fetchServices(dealerId);
+    final result = await _dataSource.fetchServices(dealerId);
 
-    // result.fold(
-    //   (failure) {
-    //     emit(state.copyWith(isLoadingServices: false, error: failure.message));
-    //   },
-    //   (services) {
-    //     emit(state.copyWith(isLoadingServices: false, services: services));
-    //   },
-    // );
-  }
-
-  void toggleFollow() async {
-    if (state.dealer == null) return;
-
-    // final result = await _dataSource.toggleFollow(state.dealer!.id);
-
-    // result.fold(
-    //   (failure) {
-    //     emit(state.copyWith(error: failure.message));
-    //   },
-    //   (isFollowing) {
-    //     final updatedDealer = state.dealer!.copyWith(isFollowing: isFollowing);
-    //     emit(state.copyWith(dealer: updatedDealer));
-    //   },
-    // );
+    result.fold(
+      (failure) {
+        emit(state.copyWith(isLoadingServices: false, error: failure.message));
+      },
+      (services) {
+        emit(state.copyWith(isLoadingServices: false, services: services));
+      },
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/user/core/widgets/lazy_loading_widget.dart';
 import 'package:dooss_business_app/user/core/widgets/base/custom_cached_image_widget.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/container_base_widget.dart';
@@ -44,13 +45,12 @@ class FavoriteItemWidget extends StatelessWidget {
                   topRight: Radius.circular(12.r),
                 ),
                 child: LazyLoadingWidget(
-                  builder:
-                      () => CustomCachedImage(
-                        appImage: image,
-                        height: 192,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                  builder: () => CustomCachedImage(
+                    appImage: image,
+                    height: 192,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                   placeholder: Container(
                     height: 192.h,
                     width: double.infinity,
@@ -99,7 +99,7 @@ class FavoriteItemWidget extends StatelessWidget {
                   SizedBox(height: 4.h),
                   Text(
                     "$category  $brand ${model.isNotEmpty ? " $model" : ""
-                            " $model ${brand.isNotEmpty ? " $brand" : ""}"} ",
+                        " $model ${brand.isNotEmpty ? " $brand" : ""}"} ",
                     style: AppTextStyles.s14w400.copyWith(
                       color: const Color(0xff4B5563),
                     ),
@@ -120,7 +120,9 @@ class FavoriteItemWidget extends StatelessWidget {
                           color: AppColors.buttonText,
                         ),
                         height: 40,
-                        text: "View Details",
+                        text: AppLocalizations.of(context)
+                                ?.translate('viewDetails') ??
+                            "View Details",
                         onPressed: onDetails,
                       ),
                     ],

@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/Log_in_page.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/dialog_log_out.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/shared_preferances/shared_preferences_service.dart';
@@ -17,7 +19,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../Core/network/service_locator.dart';
 import '../../../../Core/style/app_Colors.dart';
 import '../../../../Core/style/app_text_style.dart';
 import '../../../reels/presentation/widget/Custom_app_bar.dart';
@@ -69,6 +70,7 @@ class HomePage1 extends StatelessWidget {
                   ],
                 ),
                 child: AppBar(
+                  automaticallyImplyLeading: false,
                   backgroundColor: Color(0xffffffff),
                   shadowColor: Color.fromARGB(38, 0, 0, 0),
                   actions: [
@@ -78,16 +80,17 @@ class HomePage1 extends StatelessWidget {
                         children: [
                           IconButton(
                             onPressed: () {
-                              BlocProvider.of<AppManagerCubit>(context).dealerLogOut();
+                              BlocProvider.of<AppManagerCubit>(context)
+                                  .dealerLogOut();
                               appLocator<SharedPreferencesService>()
                                   .removeAll();
                               // context.go(RouteNames.splashScreen);
-                             showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return showDialogLogOut();
-    },
-  );
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return showDialogLogOut();
+                                },
+                              );
                             },
                             icon: Icon(Icons.logout,
                                 color: AppColors.silverDark, size: 20),
@@ -120,9 +123,7 @@ class HomePage1 extends StatelessWidget {
                           ),
                           SizedBox(width: 10.w),
                           GestureDetector(
-                            onTap: () {
-        
-                            },
+                            onTap: () {},
                             child: CircleAvatar(
                               radius: 18.r,
                               backgroundColor: Colors.grey,
@@ -141,11 +142,14 @@ class HomePage1 extends StatelessWidget {
                         SvgPicture.asset('assets/icons/car.svg'),
                         // Image.asset('assets/images/seen.png'),
                         SizedBox(width: 12.h),
-                        Text(
-                          'Dooss',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'Dooss',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                       ],
@@ -161,6 +165,17 @@ class HomePage1 extends StatelessWidget {
                   BlocConsumer<HomePageCubit, HomepageState>(
                     listener: (context, state) {
                       if (state.isSuccess == true) {
+                        // Show foreground notification with translations
+                        LocalNotificationService.instance.showNotification(
+                          id: 8,
+                          title: AppLocalizations.of(context)?.translate(
+                                  'notificationProfileUpdatedTitle') ??
+                              'Profile Updated',
+                          body: AppLocalizations.of(context)?.translate(
+                                  'notificationProfileUpdatedBody') ??
+                              'Edit profile store is Success',
+                        );
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: CustomSnakeBar(
@@ -191,19 +206,19 @@ class HomePage1 extends StatelessWidget {
                           ),
                           StoreInfoState(
                             icon: 'assets/icons/eye.svg',
-                            labal: 'Store Views',
+                            labal: 'Reel views',
                             value: state.dataDash.reels!.views,
                           ),
-                          StoreInfoState(
-                            icon: 'assets/icons/massage.svg',
-                            labal: 'massages',
-                            value: state.dataDash.messages!.messagesNew,
-                          ),
-                          StoreInfoState(
-                            icon: 'assets/icons/coin.svg',
-                            labal: 'Total Sales',
-                            value: state.dataDash.cars!.sold,
-                          ),
+                          // StoreInfoState(
+                          //   icon: 'assets/icons/massage.svg',
+                          //   labal: 'massages',
+                          //   value: state.dataDash.messages!.messagesNew,
+                          // ),
+                          // StoreInfoState(
+                          //   icon: 'assets/icons/coin.svg',
+                          //   labal: 'Total Sales',
+                          //   value: state.dataDash.cars!.sold,
+                          // ),
                         ],
                       );
                     },

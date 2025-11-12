@@ -1,19 +1,14 @@
-import 'dart:io';
-
 import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/page/edit_Prodect_page.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Appearance_and_colors_widget.dart';
+import 'package:dooss_business_app/dealer/features/Home/presentation/widget/add_images_car_widget.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/basic_information_widget.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
-import 'package:dooss_business_app/dealer/features/Home/presentation/widget/image_media_of_add_car.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/spacification_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../Core/style/app_Colors.dart';
@@ -21,7 +16,6 @@ import '../../../../Core/style/app_text_style.dart';
 import '../../data/remouteData/home_page_state.dart';
 import '../manager/home_page_cubit.dart';
 import '../widget/Custom_Button_With_icon.dart';
-import '../widget/image_and_media_widget.dart';
 
 class AddNewCarPage extends StatefulWidget {
   AddNewCarPage({super.key});
@@ -41,7 +35,7 @@ class AddNewCarPage extends StatefulWidget {
   int seats = 2;
   String status = 'new';
   int? year = 2024;
-  ValueNotifier<XFile?> image = ValueNotifier(null);
+  ValueNotifier<List<XFile>> images = ValueNotifier([]);
   double lat = 33.5138;
   double lon = 36.2765;
 }
@@ -102,7 +96,11 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: CustomSnakeBar(text: 'Add Car is Success'),
+                content: CustomSnakeBar(
+                  text: AppLocalizations.of(context)
+                          ?.translate('addCarSuccess') ??
+                      'Add Car is Success',
+                ),
                 backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
                 elevation: 0,
                 behavior: SnackBarBehavior.floating,
@@ -130,12 +128,19 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
           }
         },
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: EdgeInsets.all(17.r),
+            padding: EdgeInsets.only(
+              left: 17.r,
+              right: 17.r,
+              top: 17.r,
+              bottom: 30.h,
+            ),
             child: Form(
               key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   BasicInformtionWidget(
                     getDataBrand: (value) {
@@ -187,14 +192,53 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                   // SizedBox(height: 24.h),
 
                   // featuresAndOptionsWidget(),
-                  imageAndMediaOfAddCar(widget: widget),
-                  SizedBox(height: 20.h),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 16.h),
+                    width: 358.w,
+                    decoration: BoxDecoration(
+                      color: Color(0xffffffff),
+                      border: Border.all(color: AppColors.borderColor),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromARGB(24, 0, 0, 0),
+                          blurRadius: 2,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              Icon(Icons.photo, color: AppColors.primary),
+                              SizedBox(width: 8.w),
+                              Text('images & media',
+                                  style: AppTextStyle.Poppins718),
+                            ],
+                          ),
+                        ),
+                        Divider(color: AppColors.borderColor, height: 1),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: AddImagesCar(
+                            images: (value) {
+                              widget.images.value = value;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30.h),
 
                   CustomButtonWithIcon(
                     type: 'add car',
                     iconButton: Icons.add,
                     ontap: () {
-
                       print(widget.color.text);
                       // RemouteDealerDataSource().AddCars(
                       //   widget.brand,
@@ -212,7 +256,7 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                       // );
 
                       if (formKey.currentState!.validate()) {
-                        if (widget.image.value != null) {
+                        if (widget.images.value.isNotEmpty) {
                           BlocProvider.of<HomePageCubit>(context).AddNewCar(
                               widget.brand,
                               widget.year!,
@@ -225,12 +269,12 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
                               widget.drivetrain,
                               widget.Doors,
                               widget.seats,
-                              widget.image.value!,
+                              widget.images.value,
                               widget.status,
                               widget.lat,
                               widget.lon,
                               widget.color.text);
-                        } else if (widget.image.value == null) {
+                        } else if (widget.images.value.isEmpty) {
                           return ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: CustomSnakeBar(
@@ -257,121 +301,6 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class imageAndMediaOfAddCar extends StatelessWidget {
-  const imageAndMediaOfAddCar({super.key, required this.widget});
-
-  final AddNewCarPage widget;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 16.h),
-      width: 358.w,
-      decoration: BoxDecoration(
-        color: Color(0xffffffff),
-        border: Border.all(color: AppColors.borderColor),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(24, 0, 0, 0),
-            blurRadius: 2,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Icon(Icons.photo, color: AppColors.primary),
-                SizedBox(width: 8.w),
-                Text('images & media', style: AppTextStyle.Poppins718),
-              ],
-            ),
-          ),
-          Divider(color: AppColors.borderColor, height: 1),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ValueListenableBuilder<XFile?>(
-                  builder: (BuildContext context, value, child) {
-                    if (widget.image.value == null) {
-                      return UoloadServicesImageWidget(image: widget.image);
-                    } else
-                      return Container(
-                        height: 170.h,
-                        alignment: Alignment.center,
-                        width: 326.w,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.borderColor),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(widget.image.value!.path),
-                            width: double.infinity,
-                            fit: BoxFit.fitWidth,
-                            height: 170.h,
-                          ),
-                        ),
-                      );
-                  },
-                  valueListenable: widget.image,
-                ),
-
-                // SizedBox(height: 16.h),
-                // Text(
-                //   'intro video (Optional)',
-                //   style: AppTextStyle.poppins514BlueDark,
-                // ),
-                // SizedBox(height: 8.h),
-                // Container(
-                //   alignment: Alignment.center,
-                //   padding: EdgeInsets.symmetric(vertical: 26.h),
-                //   width: 326.w,
-                //   decoration: BoxDecoration(
-                //     border: Border.all(color: AppColors.borderColor),
-                //     borderRadius: BorderRadius.circular(8.r),
-                //   ),
-                //   child: Column(
-                //     mainAxisAlignment: MainAxisAlignment.start,
-                //     children: [
-                //       Icon(
-                //         Icons.videocam,
-                //         color: AppColors.silverDark,
-                //         size: 38,
-                //       ),
-                //       Text(
-                //         'MP4 • Max 30MB • 30 seconds max',
-                //         style: TextStyle(
-                //           fontWeight: FontWeight.w400,
-                //           fontSize: 12,
-                //           color: AppColors.silverDark,
-                //           fontFamily: 'poppins',
-                //         ),
-                //       ),
-                //       SizedBox(height: 8.h),
-                //       Text(
-                //         'Add Video',
-                //         style: AppTextStyle.poppins514primaryColor,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -7,13 +7,11 @@ import 'stat_item_widget.dart';
 
 class DealerProfileHeader extends StatelessWidget {
   final DealerModel? dealer;
-  final VoidCallback onFollowPressed;
   final VoidCallback onMessagePressed;
 
   const DealerProfileHeader({
     super.key,
     this.dealer,
-    required this.onFollowPressed,
     required this.onMessagePressed,
   });
 
@@ -42,26 +40,25 @@ class DealerProfileHeader extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: AppColors.gray.withOpacity(0.1),
                 ),
-                child:
-                    dealer?.profileImage != null
-                        ? ClipOval(
-                          child: Image.network(
-                            dealer!.profileImage!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Icon(
-                                Icons.person,
-                                size: 40.sp,
-                                color: secondaryTextColor,
-                              );
-                            },
-                          ),
-                        )
-                        : Icon(
-                          Icons.person,
-                          size: 40.sp,
-                          color: secondaryTextColor,
+                child: dealer?.profileImage != null
+                    ? ClipOval(
+                        child: Image.network(
+                          dealer!.profileImage!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.person,
+                              size: 40.sp,
+                              color: secondaryTextColor,
+                            );
+                          },
                         ),
+                      )
+                    : Icon(
+                        Icons.person,
+                        size: 40.sp,
+                        color: secondaryTextColor,
+                      ),
               ),
               SizedBox(width: 16.w),
               // Profile Details
@@ -121,79 +118,48 @@ class DealerProfileHeader extends StatelessWidget {
                 label: 'Reels',
                 value: dealer!.reelsCount.toString(),
               ),
-              SizedBox(width: 40.w),
-              StatItemWidget(
-                label: 'Followers',
-                value: _formatNumber(dealer!.followersCount),
-              ),
-              SizedBox(width: 40.w),
-              StatItemWidget(
-                label: 'Following',
-                value: dealer!.followingCount.toString(),
-              ),
             ],
           ),
-          SizedBox(height: 16.h),
-          // Action Buttons Row
-          Row(
-            children: [
-              // Following Button
-              Expanded(
-                child: GestureDetector(
-                  onTap: onFollowPressed,
-                  child: Container(
-                    height: 40.h,
-                    decoration: BoxDecoration(
-                      color:
-                          dealer!.isFollowing
-                              ? AppColors.gray.withOpacity(0.2)
-                              : AppColors.primary,
-                      borderRadius: BorderRadius.circular(8.r),
+          SizedBox(height: 20.h),
+          // Message Button
+          Center(
+            child: GestureDetector(
+              onTap: onMessagePressed,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
                     ),
-                    child: Center(
-                      child: Text(
-                        dealer!.isFollowing ? 'Following' : 'Follow',
-                        style: AppTextStyles.s14w500.copyWith(
-                          color:
-                              dealer!.isFollowing
-                                  ? AppColors.black
-                                  : AppColors.white,
-                        ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.chat_bubble_outline,
+                      color: AppColors.white,
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'Message',
+                      style: AppTextStyles.s14w600.copyWith(
+                        color: AppColors.white,
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-              SizedBox(width: 12.w),
-              // Message Button
-              GestureDetector(
-                onTap: onMessagePressed,
-                child: Container(
-                  width: 40.w,
-                  height: 40.w,
-                  decoration: BoxDecoration(
-                    color: AppColors.gray.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    Icons.chat_bubble_outline,
-                    color: AppColors.black,
-                    size: 20.sp,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
     );
-  }
-
-  String _formatNumber(int number) {
-    if (number >= 1000) {
-      double k = number / 1000;
-      return '${k.toStringAsFixed(k.truncateToDouble() == k ? 0 : 1)}K';
-    }
-    return number.toString();
   }
 }

@@ -28,4 +28,10 @@ const Map<AppLanguageEnum, LanguageInfoModel> languageMap = {
     english: "English",
     colors: [Color(0xFF2563EB), Color(0xFF3B82F6)],
   ),
+  AppLanguageEnum.turkish: LanguageInfoModel(
+    code: "TR",
+    native: "Türkçe",
+    english: "Turkish",
+    colors: [Color(0xFFDC2626), Color(0xFFEF4444)],
+  ),
 };

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/locator_service.dart' as di;
 import '../../../home/presentaion/manager/product_cubit.dart';
 import '../../../home/presentaion/manager/product_state.dart';
@@ -18,10 +19,11 @@ class ChatProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-              final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocProvider(
-      create: (context) => di.appLocator<ProductCubit>()..loadProductDetails(productId),
+      create: (context) =>
+          di.appLocator<ProductCubit>()..loadProductDetails(productId),
       child: BlocBuilder<ProductCubit, ProductState>(
         builder: (context, productState) {
           final product = productState.selectedProduct;
@@ -59,7 +61,7 @@ class ChatProductCard extends StatelessWidget {
                     child: Text(
                       'Loading product details...',
                       style: AppTextStyles.s14w500.copyWith(
-                          color:isDark ?Colors.white : AppColors.gray,
+                        color: isDark ? Colors.white : AppColors.gray,
                       ),
                     ),
                   ),
@@ -136,7 +138,7 @@ class ChatProductCard extends StatelessWidget {
                       Text(
                         'Location: ${product.locationText.isNotEmpty ? product.locationText : 'Unknown'}',
                         style: AppTextStyles.s12w400.copyWith(
-                          color:isDark ?Colors.white : AppColors.gray,
+                          color: isDark ? Colors.white : AppColors.gray,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -160,7 +162,9 @@ class ChatProductCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16.r),
                         ),
                         child: Text(
-                          'View Details',
+                          AppLocalizations.of(context)
+                                  ?.translate('viewDetails') ??
+                              'View Details',
                           style: AppTextStyles.s12w400.copyWith(
                             color: AppColors.white,
                           ),
@@ -174,7 +178,7 @@ class ChatProductCard extends StatelessWidget {
                       },
                       icon: Icon(
                         Icons.close,
-                          color:isDark ?Colors.white : AppColors.gray,
+                        color: isDark ? Colors.white : AppColors.gray,
                         size: 16.sp,
                       ),
                       padding: EdgeInsets.zero,

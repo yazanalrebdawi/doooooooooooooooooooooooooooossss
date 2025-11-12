@@ -8,8 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../Core/style/app_Colors.dart';
 import '../../../../Core/style/app_text_style.dart';
-import '../../../Home/presentation/page/edit_Prodect_page.dart';
 import '../../../Home/presentation/widget/Custom_Button_With_icon.dart';
+import '../../../Home/presentation/widget/custom_snack_bar.dart';
 import '../../data/remoute_data_reels_source.dart';
 import '../manager/reels_state_cubit.dart';
 import '../widget/add_Reel_Details.dart';
@@ -98,7 +98,9 @@ class AddReelsPage extends StatelessWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: CustomSnakeBar(
-                                  text: 'add reel is success',
+                                  text: AppLocalizations.of(context)
+                                          ?.translate('addReelSuccess') ??
+                                      'add reel is success',
                                 ),
                                 backgroundColor:
                                     Colors.transparent, // ⬅️ جعل الخلفية شفافة
@@ -164,7 +166,10 @@ class AddReelsPage extends StatelessWidget {
                                     SnackBar(
                                       content: CustomSnakeBar(
                                         isFailure: true,
-                                        text: 'upload video , please',
+                                        text: AppLocalizations.of(context)
+                                                ?.translate(
+                                                    'uploadVideoPlease') ??
+                                            'upload video , please',
                                       ),
                                       backgroundColor: Colors
                                           .transparent, // ⬅️ جعل الخلفية شفافة

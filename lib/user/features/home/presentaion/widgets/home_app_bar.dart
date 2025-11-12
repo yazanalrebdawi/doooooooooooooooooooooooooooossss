@@ -6,7 +6,6 @@ import 'package:dooss_business_app/user/features/home/presentaion/manager/home_c
 import 'package:dooss_business_app/user/features/home/presentaion/manager/home_state.dart';
 import 'home_title_widget.dart';
 import 'chats_title_widget.dart';
-import 'home_actions_widget.dart';
 import 'chats_actions_widget.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -33,9 +32,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           title: state.currentIndex == 3
               ? const ChatsTitleWidget()
               : const HomeTitleWidget(),
-          actions: state.currentIndex == 3
-              ? const [ChatsActionsWidget()]
-              : const [HomeActionsWidget()],
+          actions:
+              state.currentIndex == 3 ? const [ChatsActionsWidget()] : null,
         );
       },
     );

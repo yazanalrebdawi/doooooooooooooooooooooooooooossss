@@ -34,16 +34,85 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     print(
       '🎯 ServiceDetails: Widget initialized with service: ${widget.service.name}',
     );
-    _initializeMap();
+    print(
+        '🎯 ServiceDetails: Service data - ID: ${widget.service.id}, Name: ${widget.service.name}, Address: ${widget.service.address}');
+
+    // Set initial marker for service immediately so map shows something
+    _markers = {
+      Marker(
+        markerId: MarkerId('service_${widget.service.id}'),
+        position: LatLng(widget.service.lat, widget.service.lon),
+        infoWindow: InfoWindow(
+          title: widget.service.name,
+          snippet: widget.service.address,
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          widget.service.type.toLowerCase().contains('mechanic')
+              ? BitmapDescriptor.hueRed
+              : BitmapDescriptor.hueGreen,
+        ),
+      ),
+    };
+
+    // Initialize map asynchronously without blocking UI
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeMap();
+    });
   }
 
   Future<void> _initializeMap() async {
-    final userLocation = await LocationService.getCurrentLocation();
-    if (userLocation != null) {
-      setState(() => _userLocation = userLocation);
-      await _loadRoute();
-    } else {
-      print('❌ ServiceDetails: Failed to get user location');
+    try {
+      final userLocation = await LocationService.getCurrentLocation();
+      if (userLocation != null) {
+        if (mounted) {
+          setState(() => _userLocation = userLocation);
+          await _loadRoute();
+        }
+      } else {
+        print('❌ ServiceDetails: Failed to get user location');
+        // Still show the map with just the service location
+        if (mounted) {
+          setState(() {
+            _markers = {
+              Marker(
+                markerId: MarkerId('service_${widget.service.id}'),
+                position: LatLng(widget.service.lat, widget.service.lon),
+                infoWindow: InfoWindow(
+                  title: widget.service.name,
+                  snippet: widget.service.address,
+                ),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                  widget.service.type.toLowerCase().contains('mechanic')
+                      ? BitmapDescriptor.hueRed
+                      : BitmapDescriptor.hueGreen,
+                ),
+              ),
+            };
+          });
+        }
+      }
+    } catch (e) {
+      print('❌ ServiceDetails: Error initializing map: $e');
+      // Still show the map with just the service location
+      if (mounted) {
+        setState(() {
+          _markers = {
+            Marker(
+              markerId: MarkerId('service_${widget.service.id}'),
+              position: LatLng(widget.service.lat, widget.service.lon),
+              infoWindow: InfoWindow(
+                title: widget.service.name,
+                snippet: widget.service.address,
+              ),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                widget.service.type.toLowerCase().contains('mechanic')
+                    ? BitmapDescriptor.hueRed
+                    : BitmapDescriptor.hueGreen,
+              ),
+            ),
+          };
+        });
+      }
     }
   }
 
@@ -78,21 +147,20 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 
       setState(() {
         _markers = markers;
-        _polylines =
-            polyline != null
-                ? {polyline}
-                : {
-                  Polyline(
-                    polylineId: const PolylineId('route'),
-                    points: [
-                      LatLng(_userLocation!.latitude, _userLocation!.longitude),
-                      LatLng(widget.service.lat, widget.service.lon),
-                    ],
-                    color: Colors.blue,
-                    width: 4,
-                    geodesic: true,
-                  ),
-                };
+        _polylines = polyline != null
+            ? {polyline}
+            : {
+                Polyline(
+                  polylineId: const PolylineId('route'),
+                  points: [
+                    LatLng(_userLocation!.latitude, _userLocation!.longitude),
+                    LatLng(widget.service.lat, widget.service.lon),
+                  ],
+                  color: Colors.blue,
+                  width: 4,
+                  geodesic: true,
+                ),
+              };
         _isLoadingRoute = false;
       });
     } catch (e) {
@@ -262,8 +330,9 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
             widget.service.distance != null
                 ? '${(widget.service.distance! / 1000).toStringAsFixed(1)} ${AppLocalizations.of(context)!.translate('kmAway')}'
                 : AppLocalizations.of(
-                  context,
-                )!.translate('distanceNotAvailable'),
+                    context,
+                  )!
+                    .translate('distanceNotAvailable'),
             style: AppTextStyles.secondaryS14W400.copyWith(
               color: AppColors.gray,
             ),
@@ -324,8 +393,9 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
           Text(
             widget.service.open24h
                 ? '24 Hours'
-                : widget.service.openingText ??
-                    '${widget.service.openFrom ?? 'N/A'} - ${widget.service.openTo ?? 'N/A'}',
+                : widget.service.openingText.isNotEmpty
+                    ? widget.service.openingText
+                    : '${widget.service.openFrom ?? 'N/A'} - ${widget.service.openTo ?? 'N/A'}',
             style: AppTextStyles.secondaryS14W400.copyWith(
               color: AppColors.black,
               fontWeight: FontWeight.w500,
@@ -399,8 +469,8 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               GestureDetector(
-                onTap:
-                    () => context.push('/service-map', extra: widget.service),
+                onTap: () =>
+                    context.push('/service-map', extra: widget.service),
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 12.w,
@@ -486,10 +556,9 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                 width: 50.w,
                 height: 50.h,
                 decoration: BoxDecoration(
-                  color:
-                      widget.service.type.toLowerCase().contains('station')
-                          ? Colors.blue
-                          : Colors.green,
+                  color: widget.service.type.toLowerCase().contains('station')
+                      ? Colors.blue
+                      : Colors.green,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -534,32 +603,31 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
           Wrap(
             spacing: 8.w,
             runSpacing: 8.h,
-            children:
-                widget.service.services
-                    .map(
-                      (serviceName) => Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.gray.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: AppColors.gray.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          serviceName,
-                          style: AppTextStyles.secondaryS12W400.copyWith(
-                            color: AppColors.gray,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+            children: widget.service.services
+                .map(
+                  (serviceName) => Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.gray.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(
+                        color: AppColors.gray.withOpacity(0.3),
+                        width: 1,
                       ),
-                    )
-                    .toList(),
+                    ),
+                    child: Text(
+                      serviceName,
+                      style: AppTextStyles.secondaryS12W400.copyWith(
+                        color: AppColors.gray,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),
@@ -570,11 +638,10 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 class MapBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = AppColors.gray.withOpacity(0.1)
-          ..strokeWidth = 1
-          ..style = PaintingStyle.stroke;
+    final paint = Paint()
+      ..color = AppColors.gray.withOpacity(0.1)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
 
     for (int i = 0; i < size.width; i += 30) {
       canvas.drawLine(

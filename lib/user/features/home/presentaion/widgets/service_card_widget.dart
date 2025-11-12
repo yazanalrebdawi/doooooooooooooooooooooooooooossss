@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../data/models/service_model.dart';
 import 'service_placeholder_image_widget.dart';
 import 'service_status_indicator_widget.dart';
@@ -117,7 +118,11 @@ class ServiceCardWidget extends StatelessWidget {
                       child: ElevatedButton.icon(
                         onPressed: onViewDetails,
                         icon: Icon(Icons.visibility, size: 16.sp),
-                        label: const Text('View Details'),
+                        label: Text(
+                          AppLocalizations.of(context)
+                                  ?.translate('viewDetails') ??
+                              'View Details',
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: AppColors.white,
@@ -158,7 +163,8 @@ class ServiceCardWidget extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: onCall,
-                        icon: Icon(Icons.phone, color: AppColors.gray, size: 20.sp),
+                        icon: Icon(Icons.phone,
+                            color: AppColors.gray, size: 20.sp),
                       ),
                     ),
                   ],

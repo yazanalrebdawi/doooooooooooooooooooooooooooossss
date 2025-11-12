@@ -13,25 +13,35 @@ abstract class DealerProfileRemoteDataSource {
   Future<Either<Failure, List<ReelModel>>> fetchReels(String dealerId);
   Future<Either<Failure, List<CarModel>>> fetchCars(String dealerId);
   Future<Either<Failure, List<ServiceModel>>> fetchServices(String dealerId);
-  Future<Either<Failure, bool>> toggleFollow(String dealerId);
 }
 
-class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource {
+class DealerProfileRemoteDataSourceImpl
+    implements DealerProfileRemoteDataSource {
   final AppDio _dio;
 
   DealerProfileRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<Either<Failure, DealerModel>> fetchDealerProfile(String dealerId) async {
+  Future<Either<Failure, DealerModel>> fetchDealerProfile(
+      String dealerId) async {
     try {
       print('🔍 Fetching dealer profile for ID: $dealerId');
       final url = ApiUrls.dealerProfileWithId.replaceAll('{id}', dealerId);
       final response = await _dio.dio.get(url);
 
       print('✅ Dealer profile response: ${response.data}');
+      print(
+          '🔍 Dealer profile response keys: ${response.data is Map ? (response.data as Map).keys.toList() : 'Not a map'}');
+      if (response.data is Map) {
+        final data = response.data as Map;
+        print('🔍 Dealer profile user_id: ${data['user_id']}');
+        print('🔍 Dealer profile user: ${data['user']}');
+        print('🔍 Dealer profile id: ${data['id']}');
+      }
 
       if (response.statusCode == 200) {
         final dealer = DealerModel.fromJson(response.data);
+        print('🔍 Parsed dealer userId: ${dealer.userId}, id: ${dealer.id}');
         return Right(dealer);
       } else {
         return Left(Failure(message: 'Failed to fetch dealer profile'));
@@ -39,8 +49,10 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
     } catch (e) {
       print('❌ DealerProfileRemoteDataSource error: $e');
 
-      if (e.toString().contains('401') || e.toString().contains('Authentication')) {
-        return Left(Failure(message: 'Authentication credentials were not provided.'));
+      if (e.toString().contains('401') ||
+          e.toString().contains('Authentication')) {
+        return Left(
+            Failure(message: 'Authentication credentials were not provided.'));
       }
 
       return Left(Failure.handleError(e as DioException));
@@ -58,7 +70,8 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
 
       if (response.statusCode == 200) {
         try {
-          final List<dynamic> reelsData = response.data['results'] ?? response.data;
+          final List<dynamic> reelsData =
+              response.data['results'] ?? response.data;
           print('🔍 Parsing ${reelsData.length} reels...');
 
           final reels = <ReelModel>[];
@@ -113,8 +126,10 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
     } catch (e) {
       print('❌ DealerProfileRemoteDataSource reels error: $e');
 
-      if (e.toString().contains('401') || e.toString().contains('Authentication')) {
-        return Left(Failure(message: 'Authentication credentials were not provided.'));
+      if (e.toString().contains('401') ||
+          e.toString().contains('Authentication')) {
+        return Left(
+            Failure(message: 'Authentication credentials were not provided.'));
       }
 
       return Left(Failure.handleError(e as DioException));
@@ -132,7 +147,8 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
 
       if (response.statusCode == 200) {
         try {
-          final List<dynamic> carsData = response.data['results'] ?? response.data;
+          final List<dynamic> carsData =
+              response.data['results'] ?? response.data;
           print('🔍 Parsing ${carsData.length} cars...');
 
           final cars = <CarModel>[];
@@ -151,7 +167,8 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
                   id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
                   name: json['name']?.toString() ?? 'Unknown Car',
                   imageUrl: json['image_url']?.toString() ?? '',
-                  price: double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
+                  price:
+                      double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
                   isNew: json['is_new'] ?? false,
                   location: json['location']?.toString() ?? '',
                   mileage: json['mileage']?.toString() ?? '',
@@ -165,7 +182,8 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
                   sellerName: json['seller_name']?.toString() ?? '',
                   sellerType: json['seller_type']?.toString() ?? '',
                   sellerImage: json['seller_image']?.toString() ?? '',
-                  dealerId: int.tryParse(json['dealer_id']?.toString() ?? '0') ?? 0,
+                  dealerId:
+                      int.tryParse(json['dealer_id']?.toString() ?? '0') ?? 0,
                 );
                 cars.add(fallbackCar);
               } catch (fallbackError) {
@@ -205,8 +223,10 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
     } catch (e) {
       print('❌ DealerProfileRemoteDataSource cars error: $e');
 
-      if (e.toString().contains('401') || e.toString().contains('Authentication')) {
-        return Left(Failure(message: 'Authentication credentials were not provided.'));
+      if (e.toString().contains('401') ||
+          e.toString().contains('Authentication')) {
+        return Left(
+            Failure(message: 'Authentication credentials were not provided.'));
       }
 
       return Left(Failure.handleError(e as DioException));
@@ -214,17 +234,20 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
   }
 
   @override
-  Future<Either<Failure, List<ServiceModel>>> fetchServices(String dealerId) async {
+  Future<Either<Failure, List<ServiceModel>>> fetchServices(
+      String dealerId) async {
     try {
       print('🔍 Fetching services for dealer ID: $dealerId');
-      final url = ApiUrls.dealerServices.replaceAll('{id}', dealerId);
+      // Use the same API endpoint as used outside, with dealer_id filter
+      final url = '${ApiUrls.serviceDetails}?dealer_id=$dealerId';
       final response = await _dio.dio.get(url);
 
       print('✅ Services response: ${response.data}');
 
       if (response.statusCode == 200) {
         try {
-          final List<dynamic> servicesData = response.data['results'] ?? response.data;
+          final List<dynamic> servicesData =
+              response.data['results'] ?? response.data;
           print('🔍 Parsing ${servicesData.length} services...');
 
           final services = <ServiceModel>[];
@@ -235,7 +258,8 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
               final service = ServiceModel.fromJson(json);
               services.add(service);
             } catch (e) {
-              print('⚠️ Error parsing service $i: ${servicesData[i]}, error: $e');
+              print(
+                  '⚠️ Error parsing service $i: ${servicesData[i]}, error: $e');
               // Fallback service
               try {
                 final json = servicesData[i];
@@ -245,16 +269,19 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
                   description: json['description']?.toString() ?? '',
                   location: json['location']?.toString() ?? '',
                   status: json['status']?.toString() ?? 'Closed',
-                  rating: double.tryParse(json['rating']?.toString() ?? '0') ?? 0.0,
+                  rating:
+                      double.tryParse(json['rating']?.toString() ?? '0') ?? 0.0,
                   category: json['category']?.toString() ?? '',
-                  categoryColor: json['category_color']?.toString() ?? '#4CAF50',
+                  categoryColor:
+                      json['category_color']?.toString() ?? '#4CAF50',
                   iconColor: json['icon_color']?.toString() ?? '#4CAF50',
                   dealerId: json['dealer_id']?.toString() ?? '0',
                   phoneNumber: json['phone_number']?.toString() ?? '',
                 );
                 services.add(fallbackService);
               } catch (fallbackError) {
-                print('❌ Even fallback service creation failed: $fallbackError');
+                print(
+                    '❌ Even fallback service creation failed: $fallbackError');
 
                 services.add(ServiceModel(
                   id: '0',
@@ -283,33 +310,10 @@ class DealerProfileRemoteDataSourceImpl implements DealerProfileRemoteDataSource
     } catch (e) {
       print('❌ DealerProfileRemoteDataSource services error: $e');
 
-      if (e.toString().contains('401') || e.toString().contains('Authentication')) {
-        return Left(Failure(message: 'Authentication credentials were not provided.'));
-      }
-
-      return Left(Failure.handleError(e as DioException));
-    }
-  }
-
-  @override
-  Future<Either<Failure, bool>> toggleFollow(String dealerId) async {
-    try {
-      print('🔍 Toggling follow for dealer ID: $dealerId');
-      final url = ApiUrls.dealerFollow.replaceAll('{id}', dealerId);
-      final response = await _dio.dio.post(url);
-
-      print('✅ Toggle follow response: ${response.data}');
-
-      if (response.statusCode == 200) {
-        return Right(response.data['is_following'] ?? false);
-      } else {
-        return Left(Failure(message: 'Failed to toggle follow'));
-      }
-    } catch (e) {
-      print('❌ DealerProfileRemoteDataSource toggle follow error: $e');
-
-      if (e.toString().contains('401') || e.toString().contains('Authentication')) {
-        return Left(Failure(message: 'Authentication credentials were not provided.'));
+      if (e.toString().contains('401') ||
+          e.toString().contains('Authentication')) {
+        return Left(
+            Failure(message: 'Authentication credentials were not provided.'));
       }
 
       return Left(Failure.handleError(e as DioException));

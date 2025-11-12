@@ -25,6 +25,36 @@ class LogInBodySection extends StatefulWidget {
 class _LogInBodySectionState extends State<LogInBodySection> {
   final SigninParams _params = SigninParams();
   bool _isPasswordVisible = false;
+  bool _hasLoadedCredentials = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load remembered credentials after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadRememberedCredentials();
+    });
+  }
+
+  Future<void> _loadRememberedCredentials() async {
+    if (_hasLoadedCredentials) return;
+    _hasLoadedCredentials = true;
+
+    try {
+      final cubit = context.read<AuthCubit>();
+      final credentials = await cubit.loadRememberedCredentials();
+
+      if (credentials != null && mounted) {
+        setState(() {
+          _params.email.text = credentials['email'] ?? '';
+          _params.password.text = credentials['password'] ?? '';
+        });
+        print("✅ Loaded remembered credentials");
+      }
+    } catch (e) {
+      print("❌ Error loading remembered credentials: $e");
+    }
+  }
 
   @override
   void dispose() {
@@ -262,24 +292,8 @@ class _LogInBodySectionState extends State<LogInBodySection> {
 
   Widget _buildBottomSection(BuildContext context, AuthState state) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Row(
-          children: [
-            Checkbox(
-              value: state.isRememberMe ?? false,
-              onChanged: (value) {
-                context.read<AuthCubit>().toggleRememberMe();
-              },
-              activeColor: AppColors.primary,
-            ),
-            Text(
-              AppLocalizations.of(context)?.translate('rememberMe') ??
-                  'Remember me',
-              style: AppTextStyles.descriptionS18W400.withThemeColor(context),
-            ),
-          ],
-        ),
         TextButton(
           onPressed: () {
             context.go(RouteNames.forgetPasswordPage);

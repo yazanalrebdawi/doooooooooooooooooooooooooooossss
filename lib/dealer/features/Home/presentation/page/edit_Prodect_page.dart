@@ -471,9 +471,6 @@
 //   }
 // }
 
-
-
-
 // //  ClipRRect(
 // //                     borderRadius:
 // //                         BorderRadius.circular(8.r),
@@ -507,10 +504,8 @@
 // //                     ),
 // //                   );
 
-
-
-
-
+import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -558,9 +553,24 @@ class _EditProdectPageState extends State<EditProdectPage> {
       body: BlocListener<HomePageCubit, HomepageState>(
         listener: (context, state) {
           if (state.isSuccessEditProduct) {
+            // Show foreground notification with translations
+            LocalNotificationService.instance.showNotification(
+              id: 7,
+              title: AppLocalizations.of(context)
+                      ?.translate('notificationProductUpdatedTitle') ??
+                  'Product Updated',
+              body: AppLocalizations.of(context)
+                      ?.translate('notificationProductUpdatedBody') ??
+                  'Product updated successfully',
+            );
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: CustomSnakeBar(text: 'Product updated successfully'),
+                content: CustomSnakeBar(
+                  text: AppLocalizations.of(context)
+                          ?.translate('productUpdatedSuccessfully') ??
+                      'Product updated successfully',
+                ),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 behavior: SnackBarBehavior.floating,
@@ -600,7 +610,6 @@ class _EditProdectPageState extends State<EditProdectPage> {
   }
 }
 
-
 class EditProductAppBar extends StatelessWidget {
   final productdata item;
   const EditProductAppBar({super.key, required this.item});
@@ -639,9 +648,6 @@ class EditProductAppBar extends StatelessWidget {
   }
 }
 
-
-
-
 class EditProductForm extends StatefulWidget {
   final dynamic widget;
   const EditProductForm({super.key, required this.widget});
@@ -678,7 +684,10 @@ class _EditProductFormState extends State<EditProductForm> {
                 ],
               ),
             ),
-          ),SizedBox(height: 12.h,),
+          ),
+          SizedBox(
+            height: 12.h,
+          ),
           CustomButtonWithIcon(
             type: 'save',
             iconButton: Icons.save,

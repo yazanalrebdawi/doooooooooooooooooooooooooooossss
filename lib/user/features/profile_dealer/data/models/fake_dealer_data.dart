@@ -11,12 +11,10 @@ class FakeDealerData {
       name: 'Ahmed Auto Services',
       handle: '@ahmed_auto',
       profileImage: 'https://picsum.photos/200',
-      description: 'Professional car services and sales. We provide the best quality cars and maintenance services.',
+      description:
+          'Professional car services and sales. We provide the best quality cars and maintenance services.',
       reelsCount: 15,
-      followersCount: 1250,
-      followingCount: 89,
       isVerified: true,
-      isFollowing: false,
     );
   }
 
@@ -60,7 +58,7 @@ class FakeDealerData {
 
   static List<CarModel> getFakeCars() {
     return [
-      CarModel( 
+      CarModel(
         id: 1,
         name: 'BMW X5 2023',
         brand: 'BMW',
@@ -108,8 +106,8 @@ class FakeDealerData {
         sellerImage: 'https://picsum.photos/200/300',
         dealerId: 123,
       ),
-      CarModel( 
-        id: 3,  
+      CarModel(
+        id: 3,
         name: 'Audi A4 2023',
         brand: 'Audi',
         // model: 'A4',
@@ -131,7 +129,7 @@ class FakeDealerData {
         sellerType: 'Dealer',
         sellerImage: 'https://picsum.photos/200/300',
         dealerId: 123,
-        ),
+      ),
     ];
   }
 

@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../services/token_service.dart';
 import '../services/auth_service.dart';
 import '../services/navigation_service.dart';
+import '../services/translation/translation_service.dart';
 
 class AppDio {
   // ✅ Singleton instance
@@ -23,18 +25,13 @@ class AppDio {
         contentType: Headers.jsonContentType,
         headers: {
           'Accept-Encoding': 'gzip, deflate, br',
+          // اللغة الافتراضية مؤقتًا لحد ما نحملها فعلياً من التخزين
+          'Accept-Language': 'ar',
         },
       ),
     );
 
-    // Configure HTTP adapter
-    _dio.httpClientAdapter = IOHttpClientAdapter()
-      ..onHttpClientCreate = (client) {
-        client.maxConnectionsPerHost = 6;
-        client.connectionTimeout = const Duration(seconds: 15);
-        return client;
-      };
-
+    // إعدادات أخرى
     _addHeaderToDio();
     _addLogger();
     _addTokenInterceptor();
@@ -42,7 +39,25 @@ class AppDio {
   }
 
   // ---------------------------------------------------------------------------
-  // 🌍 Configuration & Setup
+  // 🌍 Initialize Language Dynamically
+  // ---------------------------------------------------------------------------
+  Future<void> init() async {
+    try {
+      final savedLang =
+          await appLocator<TranslationService>().getSavedLocaleService();
+
+      final languageCode = savedLang ?? 'ar'; // افتراضي عربي إذا ما في شيء محفوظ
+      _dio.options.headers['Accept-Language'] = languageCode;
+
+      print('🌐 Language initialized in Dio: $languageCode');
+    } catch (e) {
+      print('⚠️ Failed to initialize language: $e');
+      _dio.options.headers['Accept-Language'] = 'ar';
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 🔧 Setup & Config
   // ---------------------------------------------------------------------------
 
   _addHeaderToDio() {
@@ -65,11 +80,6 @@ class AppDio {
         compact: true,
         maxWidth: 90,
         enabled: true,
-        filter: (options, args) {
-          // Example: skip certain logs if needed
-          if (options.path.contains('/posts')) return false;
-          return !args.isResponse || !args.hasUint8ListData;
-        },
       ),
     );
   }
@@ -98,61 +108,27 @@ class AppDio {
             final isTokenValid = await AuthService.refreshTokenIfNeeded();
             final token = await TokenService.getToken();
 
-            print('🔍 Interceptor: Token valid? $isTokenValid');
-            print('🔍 Interceptor: Current token: $token');
-
             if (token != null && token.isNotEmpty && isTokenValid) {
               options.headers['Authorization'] = 'Bearer $token';
-              print('✅ Token attached to request');
-            } else {
-              print('⚠️ No valid token available');
             }
-          } else {
-            print('🔓 Auth endpoint, skipping token attachment');
           }
 
           handler.next(options);
         },
         onError: (error, handler) async {
-          // Handle timeout
-          if (error.type == DioExceptionType.connectionTimeout ||
-              error.type == DioExceptionType.receiveTimeout ||
-              error.type == DioExceptionType.sendTimeout) {
-            print('⏰ Timeout error: ${error.message}');
-            print('🔄 Retrying request once...');
-            if (error.requestOptions.extra['retry'] != true) {
-              error.requestOptions.extra['retry'] = true;
-              try {
-                final response = await _dio.fetch(error.requestOptions);
-                handler.resolve(response);
-                return;
-              } catch (retryError) {
-                print('❌ Retry failed: $retryError');
-              }
-            }
-          }
-
-          // Handle 401 (expired token)
           if (error.response?.statusCode == 401) {
-            print('🚨 Token expired - trying to refresh...');
             final refreshSuccess = await AuthService.refreshToken();
 
             if (refreshSuccess) {
-              print('✅ Token refreshed successfully');
               final newToken = await TokenService.getToken();
               if (newToken != null && newToken.isNotEmpty) {
                 error.requestOptions.headers['Authorization'] =
                     'Bearer $newToken';
-                try {
-                  final response = await _dio.fetch(error.requestOptions);
-                  handler.resolve(response);
-                  return;
-                } catch (retryError) {
-                  print('❌ Retried request failed: $retryError');
-                }
+                final response = await _dio.fetch(error.requestOptions);
+                handler.resolve(response);
+                return;
               }
             } else {
-              print('❌ Token refresh failed, clearing session');
               await TokenService.clearToken();
               NavigationService.navigateToLoginFromAnywhere();
             }
@@ -173,13 +149,6 @@ class AppDio {
           }
           handler.next(options);
         },
-        onResponse: (response, handler) {
-          if (response.statusCode == 200) {
-            print(
-                '✅ Network: ${response.requestOptions.method} ${response.requestOptions.path} - ${response.statusCode}');
-          }
-          handler.next(response);
-        },
       ),
     );
   }
@@ -187,6 +156,5 @@ class AppDio {
   // ---------------------------------------------------------------------------
   // 📦 Accessor
   // ---------------------------------------------------------------------------
-
   Dio get dio => _dio;
 }

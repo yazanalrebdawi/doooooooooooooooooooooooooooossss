@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 
 class SellerInfoSection extends StatelessWidget {
   final String sellerName;
@@ -37,7 +38,8 @@ class SellerInfoSection extends StatelessWidget {
         children: [
           // Section Title
           Text(
-            'Seller Information',
+            AppLocalizations.of(context)?.translate('sellerInformation') ??
+                'Seller Information',
             style: AppTextStyles.s18w700.copyWith(color: textColor),
           ),
           SizedBox(height: 16.h),
@@ -104,12 +106,14 @@ class SellerInfoSection extends StatelessWidget {
                         children: [
                           Text(
                             sellerName,
-                            style: AppTextStyles.s16w600.copyWith(color: textColor),
+                            style: AppTextStyles.s16w600
+                                .copyWith(color: textColor),
                           ),
                           SizedBox(height: 4.h),
                           Text(
                             sellerType,
-                            style: AppTextStyles.s14w400.copyWith(color: secondaryTextColor),
+                            style: AppTextStyles.s14w400
+                                .copyWith(color: secondaryTextColor),
                           ),
                         ],
                       ),
@@ -131,8 +135,11 @@ class SellerInfoSection extends StatelessWidget {
                           color: AppColors.white,
                         ),
                         label: Text(
-                          'Call Seller',
-                          style: AppTextStyles.s14w500.copyWith(color: AppColors.white),
+                          AppLocalizations.of(context)
+                                  ?.translate('callSeller') ??
+                              'Call Seller',
+                          style: AppTextStyles.s14w500
+                              .copyWith(color: AppColors.white),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
@@ -157,7 +164,8 @@ class SellerInfoSection extends StatelessWidget {
                         ),
                         label: Text(
                           'Message',
-                          style: AppTextStyles.s14w500.copyWith(color: AppColors.primary),
+                          style: AppTextStyles.s14w500
+                              .copyWith(color: AppColors.primary),
                         ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.primary,

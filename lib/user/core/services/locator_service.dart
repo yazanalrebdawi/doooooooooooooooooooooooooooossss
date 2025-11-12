@@ -25,6 +25,7 @@ import 'package:dooss_business_app/user/core/services/translation/translation_se
 import 'package:dooss_business_app/user/core/services/image/image_services.dart';
 import 'package:dooss_business_app/user/core/services/image/image_services_impl.dart';
 import 'package:dooss_business_app/user/core/services/websocket_service.dart';
+import 'package:dooss_business_app/user/core/services/chat_id_service.dart';
 
 // ------------------- USER APP MANAGER -------------------
 import 'package:dooss_business_app/user/core/app/source/local/app_manager_local_data_source.dart';
@@ -154,11 +155,17 @@ Future<void> init() async {
   }
 
   if (!appLocator.isRegistered<API>()) {
-    appLocator.registerLazySingleton<API>(() => API(dio: appLocator<AppDio>().dio));
+    appLocator
+        .registerLazySingleton<API>(() => API(dio: appLocator<AppDio>().dio));
   }
 
   if (!appLocator.isRegistered<WebSocketService>()) {
-    appLocator.registerLazySingleton<WebSocketService>(() => WebSocketService());
+    appLocator
+        .registerLazySingleton<WebSocketService>(() => WebSocketService());
+  }
+
+  if (!appLocator.isRegistered<ChatIdService>()) {
+    appLocator.registerLazySingleton<ChatIdService>(() => ChatIdService());
   }
 
   // ------------------- Local Data Sources -------------------

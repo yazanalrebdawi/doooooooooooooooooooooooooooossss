@@ -18,11 +18,11 @@ class _StoreInfoCardWidgetState extends State<StoreInfoCardWidget> {
     return Container(
       width: 362.w,
       margin: EdgeInsets.all(16),
-      height: 240.h,
+      height: 150.h,
       padding: EdgeInsets.only(top: 5),
       child: Center(
         child: GridView.builder(
-          itemCount: 4,
+          itemCount: 2,
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -7,7 +7,7 @@ import 'chat_remote_data_source.dart';
 
 class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
   final API api;
-  
+
   ChatRemoteDataSourceImp({required this.api});
 
   @override
@@ -42,13 +42,15 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
   @override
   Future<ChatModel> createChat(int dealerUserId) async {
     try {
-      print('Creating chat with dealer: $dealerUserId');
-      final response = await api.post(
+      print('Creating chat with dealer_user_id: $dealerUserId');
+
+      final response = await api.post<Map<String, dynamic>>(
         apiRequest: ApiRequest(
           url: ApiUrls.chats,
           data: {'dealer_user_id': dealerUserId},
         ),
       );
+
       print('API response: $response');
       return response.fold(
         (failure) {
@@ -124,6 +126,55 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
     } catch (e) {
       print('ChatRemoteDataSource sendMessage error: $e');
       throw Exception('Failed to send message');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> markMessagesAsRead(
+      int chatId, List<int> messageIds) async {
+    try {
+      print(
+          'Marking messages as read for chat: $chatId with ${messageIds.length} message IDs');
+      final url = '${ApiUrls.chats}$chatId/messages/mark-read/';
+      print('Mark read URL: $url');
+
+      // If messageIds is empty, don't send body (mark all as read)
+      // Otherwise, send message_ids in body
+      final ApiRequest apiRequest;
+      if (messageIds.isEmpty) {
+        print('Mark read: Sending empty body to mark ALL messages as read');
+        apiRequest = ApiRequest(
+          url: url,
+          data: null, // No body - mark all as read
+        );
+      } else {
+        print('Mark read data: {message_ids: $messageIds}');
+        apiRequest = ApiRequest(
+          url: url,
+          data: {'message_ids': messageIds},
+        );
+      }
+
+      final response = await api.post(
+        apiRequest: apiRequest,
+      );
+      print('Mark read API response: $response');
+      return response.fold(
+        (failure) {
+          print('Failure marking messages as read: ${failure.message}');
+          return null;
+        },
+        (data) {
+          print('Messages marked as read successfully: $data');
+          if (data is Map<String, dynamic>) {
+            return data;
+          }
+          return null;
+        },
+      );
+    } catch (e) {
+      print('ChatRemoteDataSource markMessagesAsRead error: $e');
+      return null;
     }
   }
 }

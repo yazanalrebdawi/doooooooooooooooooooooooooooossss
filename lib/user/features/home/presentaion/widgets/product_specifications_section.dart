@@ -29,11 +29,17 @@ class ProductSpecificationsSection extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-
-          _buildSpecificationItem('Material', 'ABS Plastic', isDark),
-          _buildSpecificationItem('Color', 'Red/Clear', isDark),
-          _buildSpecificationItem('Size', '45 × 20 × 15 cm', isDark),
-          _buildSpecificationItem('Weight', '1.2 kg', isDark),
+          if (product.material.isNotEmpty)
+            _buildSpecificationItem('Material', product.material, isDark),
+          if (product.color.isNotEmpty)
+            _buildSpecificationItem('Color', product.color, isDark),
+          if (product.warranty.isNotEmpty)
+            _buildSpecificationItem('Warranty', product.warranty, isDark),
+          if (product.installationInfo.isNotEmpty)
+            _buildSpecificationItem(
+                'Installation', product.installationInfo, isDark),
+          if (product.condition.isNotEmpty)
+            _buildSpecificationItem('Condition', product.condition, isDark),
         ],
       ),
     );
@@ -58,7 +64,8 @@ class ProductSpecificationsSection extends StatelessWidget {
             child: Text(
               value,
               style: AppTextStyles.s14w400.copyWith(
-                color: isDark ? AppColors.gray.withOpacity(0.8) : AppColors.gray,
+                color:
+                    isDark ? AppColors.gray.withOpacity(0.8) : AppColors.gray,
               ),
             ),
           ),
@@ -67,4 +74,3 @@ class ProductSpecificationsSection extends StatelessWidget {
     );
   }
 }
-  

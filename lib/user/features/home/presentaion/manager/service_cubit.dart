@@ -7,14 +7,34 @@ import 'package:geolocator/geolocator.dart';
 
 class ServiceCubit extends OptimizedCubit<ServiceState> {
   final ServiceRemoteDataSource dataSource;
+  String? _lastLoadedType; // Track the last loaded type to detect changes
 
   ServiceCubit(this.dataSource) : super(const ServiceState());
 
   //! Done ✅
-  void loadServices({int limit = 5}) async {
-    safeEmit(state.copyWith(isLoading: true, error: null));
+  void loadServices(
+      {int limit = 5,
+      String? type,
+      int radius = 5000,
+      bool forceRefresh = false}) async {
+    // Don't reload if services already exist, same type, and we're not forcing a refresh
+    // But always reload if type parameter changes
+    final currentType = _lastLoadedType;
+    if (!forceRefresh &&
+        state.services.isNotEmpty &&
+        !state.isLoading &&
+        currentType == type) {
+      print(
+          '🔍 ServiceCubit: Services already loaded with same type ($type), skipping...');
+      return;
+    }
+
+    _lastLoadedType = type;
+    safeEmit(
+        state.copyWith(isLoading: true, error: null, hasAttemptedLoad: true));
     try {
-      print('🔍 ServiceCubit: Starting to load services (limit: $limit)...');
+      print(
+          '🔍 ServiceCubit: Starting to load services (limit: $limit, type: $type, radius: $radius)...');
 
       // Check location permission first
       bool hasPermission = await _checkLocationPermission();
@@ -28,17 +48,40 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
         return;
       }
 
-      // Get location with fallback
-      final position = await LocationService.getLocationWithFallback();
+      // Try to get location (with optimized retry - only 1 retry for speed)
+      Position? currentPosition;
+      try {
+        currentPosition = await LocationService.getCurrentLocation();
+        // If first attempt fails, try once more with a short delay
+        if (currentPosition == null) {
+          print('🔄 Retrying location fetch (1 retry only)...');
+          await Future.delayed(Duration(milliseconds: 300));
+          currentPosition = await LocationService.getCurrentLocation();
+        }
+      } catch (e) {
+        print('❌ Error getting location: $e');
+      }
+
+      // Use fallback only if we couldn't get real location
+      final position =
+          currentPosition ?? await LocationService.getLocationWithFallback();
+
       print(
         '📍 Location for services: lat=${position.latitude}, lon=${position.longitude}',
       );
+
+      // Warn if using fallback location
+      if (position.latitude == 25.2048 && position.longitude == 55.2708) {
+        print(
+            '⚠️ WARNING: Using fallback location (Dubai). Real location unavailable.');
+      }
 
       // Load nearby services based on location with pagination
       final services = await dataSource.fetchNearbyServices(
         lat: position.latitude,
         lon: position.longitude,
-        radius: 10000, // 10km radius
+        type: type,
+        radius: radius,
         limit: limit,
         offset: 0,
       );
@@ -46,10 +89,37 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
         '✅ Services loaded successfully: ${services.length} services found',
       );
 
+      // If no services found and we have a type filter, try without type as fallback
+      if (services.isEmpty && type != null && state.services.isEmpty) {
+        print(
+            '⚠️ No services found with type=$type, trying without type filter...');
+        try {
+          final allServices = await dataSource.fetchNearbyServices(
+            lat: position.latitude,
+            lon: position.longitude,
+            type: null, // Try without type
+            radius: radius,
+            limit: limit,
+            offset: 0,
+          );
+          if (allServices.isNotEmpty) {
+            print('✅ Found ${allServices.length} services without type filter');
+            safeEmit(state.copyWith(services: allServices, isLoading: false));
+            await calculateServiceDistances();
+            return;
+          }
+        } catch (e) {
+          print('❌ Error loading services without type: $e');
+        }
+      }
+
+      // Always update with the result, even if empty (for new instances)
       safeEmit(state.copyWith(services: services, isLoading: false));
 
-      // Calculate distances for all services
-      await calculateServiceDistances();
+      // Only calculate distances if we have services
+      if (services.isNotEmpty) {
+        await calculateServiceDistances();
+      }
     } catch (e) {
       print('❌ ServiceCubit error: $e');
       safeEmit(
@@ -118,6 +188,12 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
   /// حساب المسافات لكل الخدمات
   Future<void> calculateServiceDistances() async {
     try {
+      // Don't calculate if services list is empty
+      if (state.services.isEmpty) {
+        print('⚠️ No services to calculate distances for');
+        return;
+      }
+
       final position = await LocationService.getLocationWithFallback();
       final servicesWithDistance = <ServiceModel>[];
 
@@ -133,9 +209,13 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
         servicesWithDistance.add(serviceWithDistance);
       }
 
-      safeEmit(state.copyWith(services: servicesWithDistance));
+      // Only update if we have services
+      if (servicesWithDistance.isNotEmpty) {
+        safeEmit(state.copyWith(services: servicesWithDistance));
+      }
     } catch (e) {
       print('❌ Error calculating distances: $e');
+      // Don't clear services on error, just log it
     }
   }
 

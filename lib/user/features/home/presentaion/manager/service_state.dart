@@ -11,6 +11,7 @@ class ServiceState {
   final bool isLoadingDetails;
   final String? error;
   final String selectedFilter;
+  final bool hasAttemptedLoad; // Track if we've tried to load at least once
 
   const ServiceState({
     this.services = const [],
@@ -20,6 +21,7 @@ class ServiceState {
     this.isLoadingDetails = false,
     this.error,
     this.selectedFilter = 'All',
+    this.hasAttemptedLoad = false,
   });
 
   ServiceState copyWith({
@@ -30,6 +32,7 @@ class ServiceState {
     bool? isLoadingDetails,
     String? error,
     String? selectedFilter,
+    bool? hasAttemptedLoad,
   }) {
     return ServiceState(
       services: services ?? this.services,
@@ -39,6 +42,7 @@ class ServiceState {
       isLoadingDetails: isLoadingDetails ?? this.isLoadingDetails,
       error: error ?? this.error,
       selectedFilter: selectedFilter ?? this.selectedFilter,
+      hasAttemptedLoad: hasAttemptedLoad ?? this.hasAttemptedLoad,
     );
   }
 }

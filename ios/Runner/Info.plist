@@ -46,7 +46,7 @@
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UIStatusBarHidden</key>
-		<false/>
+		<true/>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>This app needs access to location to show nearby services.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -55,5 +55,7 @@
 		<true/>
 		<key>GMSApiKey</key>
 		<string>AIzaSyCvFo9bVexv1f4O4lzdYqjPH7b-yf62k_c</string>
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<false/>
 	</dict>
 </plist>

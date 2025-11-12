@@ -15,12 +15,10 @@ class ReelInfoOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Positioned(
       left: 16.w,
       right: 80.w, // Leave space for actions
-      bottom:30.h,
+      bottom: 30.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -29,7 +27,8 @@ class ReelInfoOverlay extends StatelessWidget {
             onTap: () {
               // Navigate to dealer profile when tapped
               log("Navigating to dealer profile");
-              context.push('/dealer-profile/${reel.dealer.toString()}?handle=${reel.dealerName ?? ''}');
+              context.push(
+                  '/dealer-profile/${reel.dealer.toString()}?handle=${reel.dealerName ?? ''}');
             },
             child: Row(
               children: [
@@ -51,15 +50,6 @@ class ReelInfoOverlay extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 8.w),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(4.r),
-            ),
-            child: Text('Follow', style: AppTextStyles.whiteS12W600),
-          ),
           SizedBox(height: 12.h),
           // Reel title and description
           Text(
@@ -68,7 +58,7 @@ class ReelInfoOverlay extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          if (reel.description?.isNotEmpty == true) ...[
+          if (reel.description != null && reel.description!.isNotEmpty) ...[
             SizedBox(height: 8.h),
             Text(
               reel.description!,
@@ -88,27 +78,19 @@ class ReelInfoOverlay extends StatelessWidget {
               //   style: AppTextStyles.whiteS12W400.copyWith(color: AppColors.white.withOpacity(0.7)),
               // ),
               // SizedBox(width: 16.w),
-              Icon(Icons.schedule, color: AppColors.white.withOpacity(0.7), size: 16.sp),
+              Icon(Icons.schedule,
+                  color: AppColors.white.withOpacity(0.7), size: 16.sp),
               SizedBox(width: 4.w),
               Text(
                 _formatDate(reel.createdAt),
-                style: AppTextStyles.whiteS12W400.copyWith(color: AppColors.white.withOpacity(0.7)),
+                style: AppTextStyles.whiteS12W400
+                    .copyWith(color: AppColors.white.withOpacity(0.7)),
               ),
             ],
           ),
         ],
       ),
     );
-  }
-
-  String _formatCount(int count) {
-    if (count >= 1000000) {
-      return '${(count / 1000000).toStringAsFixed(1)}M views';
-    } else if (count >= 1000) {
-      return '${(count / 1000).toStringAsFixed(1)}K views';
-    } else {
-      return '$count views';
-    }
   }
 
   String _formatDate(String dateString) {

@@ -1,13 +1,10 @@
-import 'dart:developer';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
-import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/manager/my_profile_cubit.dart';
-import 'package:dooss_business_app/user/features/my_profile/presentation/pages/edit_profile_screen.dart';
-import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/custom_button_widget.dart';
+import 'package:dooss_business_app/user/features/my_profile/presentation/manager/my_profile_state.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/show_photo_user_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,61 +65,34 @@ class _ProfileSettingsWidgetState extends State<ProfileSettingsWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ShowPhotoUserWidget(isShowedit: false),
-          BlocBuilder<AppManagerCubit, AppManagerState>(
+          BlocBuilder<MyProfileCubit, MyProfileState>(
             buildWhen: (previous, current) {
               return previous.user != current.user;
             },
             builder: (context, state) {
+              // Prioritize user from MyProfileCubit (most up-to-date from API)
               final user = state.user;
+              // Fallback to AppManagerCubit if MyProfileCubit doesn't have user yet
+              final appManagerCubit = context.read<AppManagerCubit>();
+              final fallbackUser = user ?? appManagerCubit.state.user;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    user?.name ?? "",
+                    fallbackUser?.name ?? "",
                     style: AppTextStyles.blackS20W500.copyWith(
                       fontFamily: AppTextStyles.fontPoppins,
                       color: isDark ? AppColors.white : AppColors.black,
                     ),
                   ),
                   Text(
-                    user?.phone ?? "",
+                    fallbackUser?.phone ?? "",
                     style: AppTextStyles.hintS16W400.copyWith(
                       fontFamily: AppTextStyles.fontPoppins,
                       color: isDark ? AppColors.gray : const Color(0xff6B7280),
                     ),
                   ),
                 ],
-              );
-            },
-          ),
-          CustomButtonWidget(
-            width: 200,
-            height: 50,
-            text: "Edit Profile",
-            onPressed: () {
-              final appmanagerUser = context.read<AppManagerCubit>().state.user;
-
-              if (appmanagerUser != null) {
-                log("🫠 User info:");
-                log("Name: ${appmanagerUser.name}");
-                log("Phone: ${appmanagerUser.phone}");
-                log("Role: ${appmanagerUser.role}");
-                log("Avatar: ${appmanagerUser.avatar?.path ?? 'No avatar'}");
-                log("CreatedAt: ${appmanagerUser.createdAt}");
-                log("ID: ${appmanagerUser.id}");
-                log("Verified: ${appmanagerUser.verified}");
-              } else {
-                log("User is null");
-              }
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider.value(
-                    value: BlocProvider.of<MyProfileCubit>(context),
-                    child: EditProfileScreen(),
-                  ),
-                ),
               );
             },
           ),

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import '../../../../core/routes/route_names.dart';
 import '../manager/reel_cubit.dart';
 import '../manager/reel_state.dart';
@@ -39,7 +40,11 @@ class MarketReelsSectionHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Market Reels', style: AppTextStyles.blackS18W700),
+          Text(
+            AppLocalizations.of(context)?.translate('marketReels') ??
+                'Market Reels',
+            style: AppTextStyles.blackS18W700,
+          ),
           const MarketReelsViewAllButton(),
         ],
       ),
@@ -56,7 +61,10 @@ class MarketReelsViewAllButton extends StatelessWidget {
       onPressed: () {
         context.go(RouteNames.reelsScreen);
       },
-      child: Text('View All', style: AppTextStyles.primaryS14W500),
+      child: Text(
+        AppLocalizations.of(context)?.translate('viewAll') ?? 'View All',
+        style: AppTextStyles.primaryS14W500,
+      ),
     );
   }
 }

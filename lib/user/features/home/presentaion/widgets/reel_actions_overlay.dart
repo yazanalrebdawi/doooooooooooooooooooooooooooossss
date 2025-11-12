@@ -9,14 +9,16 @@ class ReelActionsOverlay extends StatelessWidget {
   final VoidCallback? onLike;
   final VoidCallback? onShare;
   final VoidCallback? onComment;
+  final VoidCallback? onToggleMute;
   final bool? isMuted;
   const ReelActionsOverlay({
     super.key,
     required this.reel,
     this.onLike,
     this.onShare,
-    this.onComment, 
-     this.isMuted =false,
+    this.onComment,
+    this.onToggleMute,
+    this.isMuted = false,
   });
 
   @override
@@ -25,7 +27,7 @@ class ReelActionsOverlay extends StatelessWidget {
 
     return Positioned(
       right: 16.w,
-      bottom: 30.h,///this is varyyyyy important
+      bottom: 100.h,
       child: Column(
         children: [
           _buildActionButton(
@@ -37,24 +39,22 @@ class ReelActionsOverlay extends StatelessWidget {
                 ? Colors.red
                 : (isDark ? AppColors.white : AppColors.black),
           ),
-          SizedBox(height: 24.h),
-          _buildActionButton(
-            isDark: isDark,
-            icon: Icons.visibility,
-            label: _formatCount(reel.viewsCount),
-            onTap: onComment,
-            iconColor: isDark ? AppColors.white : AppColors.black,
-            imageIcon:'assets/images/seen.png'
-            
-          ),
+          // SizedBox(height: 24.h),
+          // _buildActionButton(
+          //     isDark: isDark,
+          //     icon: Icons.visibility,
+          //     label: _formatCount(reel.viewsCount),
+          //     onTap: onComment,
+          //     iconColor: isDark ? AppColors.white : AppColors.black,
+          //     imageIcon: 'assets/images/seen.png'),
           SizedBox(height: 24.h),
           _buildActionButton(
             // icon: Icons.share,
             isDark: isDark,
-            onTap: onShare,
+            onTap: onToggleMute,
             iconColor: isDark ? AppColors.white : AppColors.black,
-            icon: isMuted==true ? Icons.volume_off : Icons.volume_up,
-            label: isMuted==true  ? 'Unmute' : 'Mute',
+            icon: isMuted == true ? Icons.volume_off : Icons.volume_up,
+            label: isMuted == true ? 'Unmute' : 'Mute',
           ),
         ],
       ),
@@ -77,17 +77,17 @@ class ReelActionsOverlay extends StatelessWidget {
             width: 48.w,
             height: 48.h,
             decoration: BoxDecoration(
-              color: AppColors.black.withOpacity(0.3),
+              color: AppColors.white.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
             child: imageIcon != null
                 ? Padding(
-                  padding:  EdgeInsets.all(12.r),
-                  child: Image.asset(
+                    padding: EdgeInsets.all(12.r),
+                    child: Image.asset(
                       imageIcon,
                       width: 20,
                     ),
-                )
+                  )
                 : Icon(icon, color: iconColor, size: 24.sp),
           ),
           SizedBox(height: 4.h),
@@ -95,7 +95,8 @@ class ReelActionsOverlay extends StatelessWidget {
             label,
             style: isDark
                 ? AppTextStyles.whiteS12W400
-                : AppTextStyles.blackS12W400,
+                : AppTextStyles.blackS12W400
+                    .copyWith(color: Colors.white.withOpacity(0.3)),
             textAlign: TextAlign.center,
           ),
         ],

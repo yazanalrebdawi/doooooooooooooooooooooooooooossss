@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../manager/reel_cubit.dart';
 import '../manager/reel_state.dart';
 import '../manager/reels_cubit.dart';
@@ -66,11 +67,19 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Market Reels', style: AppTextStyles.blackS18W700),
+              Text(
+                AppLocalizations.of(context)?.translate('marketReels') ??
+                    'Market Reels',
+                style: AppTextStyles.blackS18W700,
+              ),
               if (widget.onViewAllPressed != null)
                 GestureDetector(
                   onTap: widget.onViewAllPressed,
-                  child: Text('View All', style: AppTextStyles.primaryS16W600),
+                  child: Text(
+                    AppLocalizations.of(context)?.translate('viewAll') ??
+                        'View All',
+                    style: AppTextStyles.primaryS16W600,
+                  ),
                 ),
             ],
           ),
@@ -86,8 +95,10 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
                 previous.isLoading != current.isLoading ||
                 previous.error != current.error,
             builder: (context, state) {
-              if (state.isLoading && state.reels.isEmpty) return _buildLoadingState();
-              if (state.error != null && state.reels.isEmpty) return _buildErrorState(state.error!);
+              if (state.isLoading && state.reels.isEmpty)
+                return _buildLoadingState();
+              if (state.error != null && state.reels.isEmpty)
+                return _buildErrorState(state.error!);
               if (state.reels.isEmpty) return _buildEmptyState();
               return _buildReelsList(state.reels);
             },
@@ -130,8 +141,8 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
                   children: [
                     Text(
                       reel.title,
-                      style: AppTextStyles.blackS14W600,
-                      maxLines: 2,
+                      style: AppTextStyles.blackS14W600.copyWith(fontSize: 13),
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 4.h),
@@ -178,7 +189,8 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
             SizedBox(height: 16.h),
             Text('Failed to load reels', style: AppTextStyles.grayS16W600),
             SizedBox(height: 8.h),
-            Text(error, style: AppTextStyles.grayS12W400, textAlign: TextAlign.center),
+            Text(error,
+                style: AppTextStyles.grayS12W400, textAlign: TextAlign.center),
             SizedBox(height: 16.h),
             ElevatedButton(
               onPressed: () => context.read<ReelCubit>().loadReels(),
@@ -192,11 +204,13 @@ class _HorizontalReelsSectionState extends State<HorizontalReelsSection> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.video_library_outlined, color: AppColors.gray, size: 48.sp),
+            Icon(Icons.video_library_outlined,
+                color: AppColors.gray, size: 48.sp),
             SizedBox(height: 16.h),
             Text('No reels available', style: AppTextStyles.grayS16W600),
             SizedBox(height: 8.h),
-            Text('Check back later for new content', style: AppTextStyles.grayS12W400),
+            Text('Check back later for new content',
+                style: AppTextStyles.grayS12W400),
           ],
         ),
       );

@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../Core/style/app_Colors.dart';
 import '../../../../Core/style/app_text_style.dart';
-import '../../../Home/presentation/page/edit_Prodect_page.dart';
 import '../../../Home/presentation/widget/Custom_Button_With_icon.dart';
+import '../../../Home/presentation/widget/custom_snack_bar.dart';
 import '../../data/models/Reels_data_model.dart';
 import '../manager/reels_state_cubit.dart';
 import '../widget/Custom_app_bar.dart';
@@ -70,7 +69,9 @@ class _EditReelsPageState extends State<EditReelsPage> {
                 SnackBar(
                   content: CustomSnakeBar(
                     // isFailure: true,
-                    text: 'editing reel is success',
+                    text: AppLocalizations.of(context)
+                            ?.translate('editingReelSuccess') ??
+                        'editing reel is success',
                   ),
                   backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
                   elevation: 0,
@@ -90,7 +91,9 @@ class _EditReelsPageState extends State<EditReelsPage> {
                 SnackBar(
                   content: CustomSnakeBar(
                     isFailure: true,
-                    text: 'edit reel .error',
+                    text: AppLocalizations.of(context)
+                            ?.translate('editReelError') ??
+                        'edit reel .error',
                   ),
                   backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
                   elevation: 0,

@@ -1,11 +1,24 @@
 import 'package:dooss_business_app/user/core/cubits/optimized_cubit.dart';
 import 'product_state.dart';
 import 'package:dooss_business_app/user/features/home/data/data_source/product_remote_data_source.dart';
+import 'package:dooss_business_app/user/features/home/data/models/product_filter.dart';
+import 'package:dooss_business_app/user/features/home/data/models/product_model.dart';
 
 class ProductCubit extends OptimizedCubit<ProductState> {
   final ProductRemoteDataSource dataSource;
 
   ProductCubit(this.dataSource) : super(const ProductState());
+
+  /// Extract unique categories from products list
+  List<String> _extractCategories(List<ProductModel> products) {
+    final categoriesSet = <String>{};
+    for (final product in products) {
+      if (product.category.isNotEmpty) {
+        categoriesSet.add(product.category);
+      }
+    }
+    return categoriesSet.toList()..sort();
+  }
 
   /// تحميل المنتجات الرئيسية (أول 10 منتجات)
   void loadProducts() async {
@@ -19,11 +32,13 @@ class ProductCubit extends OptimizedCubit<ProductState> {
       },
       (allProducts) {
         final homeProducts = allProducts.take(10).toList();
+        final categories = _extractCategories(allProducts);
 
         batchEmit(
           (currentState) => currentState.copyWith(
             products: homeProducts,
             allProducts: allProducts,
+            categories: categories,
             isLoading: false,
           ),
         );
@@ -56,6 +71,7 @@ class ProductCubit extends OptimizedCubit<ProductState> {
       },
       (allProducts) {
         final first8Products = allProducts.take(8).toList();
+        final categories = _extractCategories(allProducts);
         batchEmit(
           (currentState) => currentState.copyWith(
             allProducts: allProducts,
@@ -63,6 +79,7 @@ class ProductCubit extends OptimizedCubit<ProductState> {
             displayedProducts: first8Products,
             selectedCategory: 'All',
             hasMoreProducts: allProducts.length > 8,
+            categories: categories,
             isLoading: false,
           ),
         );
@@ -76,34 +93,95 @@ class ProductCubit extends OptimizedCubit<ProductState> {
     emitOptimized(state.copyWith(products: homeProducts));
   }
 
-  /// تصفية المنتجات حسب الفئة
-  void filterByCategory(String category) {
+  /// تصفية المنتجات حسب الفئة (Server-side filtering)
+  void filterByCategory(String category) async {
+    safeEmit(state.copyWith(
+        isLoading: true, error: null, selectedCategory: category));
+
     if (category == 'All') {
-      final first8Products = state.allProducts.take(8).toList();
-      emitOptimized(
-        state.copyWith(
-          filteredProducts: state.allProducts,
-          displayedProducts: first8Products,
-          selectedCategory: category,
-          hasMoreProducts: state.allProducts.length > 8,
-        ),
+      final result = await dataSource.fetchProducts();
+      result.fold(
+        (failure) {
+          safeEmit(state.copyWith(error: failure.message, isLoading: false));
+        },
+        (allProducts) {
+          final first8Products = allProducts.take(8).toList();
+          final categories = _extractCategories(allProducts);
+          safeEmit(
+            state.copyWith(
+              filteredProducts: allProducts,
+              displayedProducts: first8Products,
+              selectedCategory: category,
+              hasMoreProducts: allProducts.length > 8,
+              categories: categories,
+              isLoading: false,
+            ),
+          );
+        },
       );
     } else {
-      final filteredProducts = state.allProducts.where((product) {
-        return product.name.toLowerCase().contains(category.toLowerCase()) ||
-               product.description.toLowerCase().contains(category.toLowerCase());
-      }).toList();
+      final filter = ProductFilter(category: category);
+      final result = await dataSource.fetchFilteredProducts(filter);
 
-      final first8Products = filteredProducts.take(8).toList();
-      emitOptimized(
-        state.copyWith(
-          filteredProducts: filteredProducts,
-          displayedProducts: first8Products,
-          selectedCategory: category,
-          hasMoreProducts: filteredProducts.length > 8,
-        ),
+      result.fold(
+        (failure) {
+          safeEmit(state.copyWith(error: failure.message, isLoading: false));
+        },
+        (filteredProducts) {
+          final first8Products = filteredProducts.take(8).toList();
+          safeEmit(
+            state.copyWith(
+              filteredProducts: filteredProducts,
+              displayedProducts: first8Products,
+              selectedCategory: category,
+              hasMoreProducts: filteredProducts.length > 8,
+              isLoading: false,
+            ),
+          );
+        },
       );
     }
+  }
+
+  /// Filter products with multiple parameters
+  void filterProducts({
+    String? name,
+    double? minPrice,
+    double? maxPrice,
+    String? category,
+    String? condition,
+    String? ordering,
+  }) async {
+    safeEmit(state.copyWith(isLoading: true, error: null));
+
+    final filter = ProductFilter(
+      name: name,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      category: category,
+      condition: condition,
+      ordering: ordering,
+    );
+
+    final result = await dataSource.fetchFilteredProducts(filter);
+
+    result.fold(
+      (failure) {
+        safeEmit(state.copyWith(error: failure.message, isLoading: false));
+      },
+      (filteredProducts) {
+        final first8Products = filteredProducts.take(8).toList();
+        safeEmit(
+          state.copyWith(
+            filteredProducts: filteredProducts,
+            displayedProducts: first8Products,
+            selectedCategory: category ?? state.selectedCategory,
+            hasMoreProducts: filteredProducts.length > 8,
+            isLoading: false,
+          ),
+        );
+      },
+    );
   }
 
   /// تحميل المزيد من المنتجات عند التمرير
@@ -113,13 +191,15 @@ class ProductCubit extends OptimizedCubit<ProductState> {
     safeEmit(state.copyWith(isLoadingMore: true));
 
     final currentDisplayedCount = state.displayedProducts.length;
-    final next8Products = state.filteredProducts.skip(currentDisplayedCount).take(8).toList();
+    final next8Products =
+        state.filteredProducts.skip(currentDisplayedCount).take(8).toList();
     final newDisplayedProducts = [...state.displayedProducts, ...next8Products];
 
     batchEmit(
       (currentState) => currentState.copyWith(
         displayedProducts: newDisplayedProducts,
-        hasMoreProducts: newDisplayedProducts.length < state.filteredProducts.length,
+        hasMoreProducts:
+            newDisplayedProducts.length < state.filteredProducts.length,
         isLoadingMore: false,
       ),
     );
@@ -149,7 +229,8 @@ class ProductCubit extends OptimizedCubit<ProductState> {
 
   /// تحميل البيانات الإضافية للمنتج (منتجات ذات صلة ومراجعات)
   Future<void> _loadAdditionalProductData(int productId) async {
-    final relatedProductsResult = await dataSource.fetchRelatedProducts(productId);
+    final relatedProductsResult =
+        await dataSource.fetchRelatedProducts(productId);
     final reviewsResult = await dataSource.fetchProductReviews(productId);
 
     if (!isClosed) {
@@ -162,7 +243,8 @@ class ProductCubit extends OptimizedCubit<ProductState> {
         },
         (relatedProducts) {
           reviewsResult.fold(
-            (reviewFailure) => safeEmit(state.copyWith(relatedProducts: relatedProducts)),
+            (reviewFailure) =>
+                safeEmit(state.copyWith(relatedProducts: relatedProducts)),
             (reviews) => batchEmit(
               (currentState) => currentState.copyWith(
                 relatedProducts: relatedProducts,

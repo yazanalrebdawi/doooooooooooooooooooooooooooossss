@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/user/features/home/data/models/car_model.dart';
 import 'package:go_router/go_router.dart';
 import 'empty_cars_section_widget.dart';
@@ -35,7 +36,8 @@ class CarsAvailableSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Cars Available Now',
+                AppLocalizations.of(context)?.translate('carsAvailableNow') ??
+                    'Cars Available Now',
                 style: AppTextStyles.blackS18W700.copyWith(
                   color: isDark ? Colors.white : AppColors.black,
                 ),
@@ -43,7 +45,8 @@ class CarsAvailableSection extends StatelessWidget {
               GestureDetector(
                 onTap: onViewAllPressed,
                 child: Text(
-                  'View All',
+                  AppLocalizations.of(context)?.translate('viewAll') ??
+                      'View All',
                   style: AppTextStyles.primaryS16W600.copyWith(
                     color: isDark
                         ? AppColors.primary.withOpacity(0.8)

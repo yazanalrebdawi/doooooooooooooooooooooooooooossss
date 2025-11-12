@@ -33,25 +33,42 @@ class ProductInfoSection extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
 
-          // Price and New Tag
+          // Price and Condition Tag
           Row(
             children: [
-              Text(
-                '\$${product.price.toStringAsFixed(2)}',
-                style: AppTextStyles.s22w500.copyWith(color: AppColors.primary),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (product.discount > 0)
+                    Text(
+                      '\$${product.price.toStringAsFixed(2)}',
+                      style: AppTextStyles.s16w400.copyWith(
+                        color: AppColors.gray,
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                    ),
+                  Text(
+                    '\$${product.finalPrice > 0 ? product.finalPrice.toStringAsFixed(2) : product.price.toStringAsFixed(2)}',
+                    style: AppTextStyles.s22w500
+                        .copyWith(color: AppColors.primary),
+                  ),
+                ],
               ),
-              SizedBox(width: 12.w),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12.r),
+              if (product.condition.isNotEmpty) ...[
+                SizedBox(width: 12.w),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Text(
+                    product.condition,
+                    style: AppTextStyles.s12w400
+                        .copyWith(color: AppColors.primary),
+                  ),
                 ),
-                child: Text(
-                  'New',
-                  style: AppTextStyles.s12w400.copyWith(color: AppColors.primary),
-                ),
-              ),
+              ],
             ],
           ),
           SizedBox(height: 16.h),
@@ -68,33 +85,50 @@ class ProductInfoSection extends StatelessWidget {
                       color: AppColors.primary,
                     ),
                     SizedBox(width: 8.w),
-                    Text(
-                      '5 units available',
-                      style: AppTextStyles.s14w400.copyWith(
-                        color: isDark ? AppColors.gray.withOpacity(0.8) : AppColors.gray,
+                    Flexible(
+                      child: Text(
+                        product.isInStock
+                            ? (product.stock > 0
+                                ? '${product.stock} units available'
+                                : product.availabilityText.isNotEmpty
+                                    ? product.availabilityText
+                                    : 'In Stock')
+                            : 'Out of Stock',
+                        style: AppTextStyles.s14w400.copyWith(
+                          color: isDark
+                              ? AppColors.gray.withOpacity(0.8)
+                              : AppColors.gray,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              Expanded(
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.category,
-                      size: 16.sp,
-                      color: AppColors.primary,
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      'Spare Parts',
-                      style: AppTextStyles.s14w400.copyWith(
-                        color: isDark ? AppColors.gray.withOpacity(0.8) : AppColors.gray,
+              if (product.category.isNotEmpty)
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.category,
+                        size: 16.sp,
+                        color: AppColors.primary,
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Text(
+                          product.category,
+                          style: AppTextStyles.s14w400.copyWith(
+                            color: isDark
+                                ? AppColors.gray.withOpacity(0.8)
+                                : AppColors.gray,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         ],

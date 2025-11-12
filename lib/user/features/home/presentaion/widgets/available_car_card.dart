@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/dimensions.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/constants/app_assets.dart';
 import 'package:dooss_business_app/user/features/home/data/models/car_model.dart';
 
@@ -24,11 +25,13 @@ class AvailableCarCard extends StatelessWidget {
       onTap: onTap,
       child: Card(
         margin: EdgeInsets.zero,
-        shadowColor: isDark ? Colors.black.withOpacity(0.4) : AppColors.cardShadow,
+        shadowColor:
+            isDark ? Colors.black.withOpacity(0.4) : AppColors.cardShadow,
         elevation: 2,
         color: isDark ? const Color(0xFF2A2A2A) : AppColors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.defaultBorderRadius.r),
+          borderRadius:
+              BorderRadius.circular(AppDimensions.defaultBorderRadius.r),
         ),
         child: Column(
           children: [
@@ -88,7 +91,7 @@ class AvailableCarCard extends StatelessWidget {
           ),
           _buildDetails(context, isDark),
           SizedBox(height: AppDimensions.smallPadding.h),
-          _buildViewDetailsButton(),
+          _buildViewDetailsButton(context),
         ],
       ),
     );
@@ -142,7 +145,7 @@ class AvailableCarCard extends StatelessWidget {
     );
   }
 
-  Widget _buildViewDetailsButton() {
+  Widget _buildViewDetailsButton(BuildContext context) {
     return Container(
       width: double.infinity,
       height: 32.h,
@@ -152,7 +155,8 @@ class AvailableCarCard extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          'View Details',
+          AppLocalizations.of(context)?.translate('viewDetails') ??
+              'View Details',
           style: AppTextStyles.s12w400.copyWith(color: AppColors.white),
         ),
       ),

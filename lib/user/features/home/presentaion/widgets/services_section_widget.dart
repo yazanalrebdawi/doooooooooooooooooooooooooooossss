@@ -8,7 +8,6 @@ import '../../../../core/services/location_service.dart';
 import '../manager/service_cubit.dart';
 import '../manager/service_state.dart';
 import 'service_card_widget.dart';
-import 'service_filter_chips_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/localization/app_localizations.dart';
 
@@ -20,13 +19,13 @@ class ServicesSectionWidget extends StatelessWidget {
     return BlocBuilder<ServiceCubit, ServiceState>(
       buildWhen: (previous, current) {
         return previous.services != current.services ||
-            previous.filteredServices != current.filteredServices ||
             previous.isLoading != current.isLoading ||
             previous.error != current.error ||
-            previous.selectedFilter != current.selectedFilter;
+            previous.hasAttemptedLoad != current.hasAttemptedLoad;
       },
       builder: (context, state) {
-        if (state.isLoading) {
+        // Show loading if actively loading OR if we haven't attempted to load yet
+        if (state.isLoading || !state.hasAttemptedLoad) {
           return const Center(
             child: CircularProgressIndicator(color: AppColors.primary),
           );
@@ -34,7 +33,8 @@ class ServicesSectionWidget extends StatelessWidget {
 
         if (state.error != null) {
           // Specific handling for location permission errors
-          if (state.error!.contains('location') || state.error!.contains('permission')) {
+          if (state.error!.contains('location') ||
+              state.error!.contains('permission')) {
             return Center(child: _buildLocationPermissionWidget(context));
           }
 
@@ -55,21 +55,29 @@ class ServicesSectionWidget extends StatelessWidget {
           );
         }
 
-        final services = (state.selectedFilter.toLowerCase() == 'all')
-            ? state.services
-            : state.filteredServices;
+        // Use services directly (no filtering)
+        final services = state.services;
 
+        // Only show "no service available" if truly empty (not loading, has error or explicitly empty)
         if (services.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.local_gas_station_outlined, color: AppColors.gray, size: 64.sp),
+                Icon(Icons.local_gas_station_outlined,
+                    color: AppColors.gray, size: 64.sp),
                 SizedBox(height: 16.h),
-                Text('No services available', style: AppTextStyles.blackS16W600),
+                Text(
+                  AppLocalizations.of(context)
+                          ?.translate('noServiceAvailable') ??
+                      'No services available',
+                  style: AppTextStyles.blackS16W600,
+                ),
                 SizedBox(height: 8.h),
                 Text(
-                  'Check back later for new services',
+                  AppLocalizations.of(context)
+                          ?.translate('checkBackLaterForNewServices') ??
+                      'Check back later for new services',
                   style: AppTextStyles.secondaryS14W400,
                   textAlign: TextAlign.center,
                 ),
@@ -78,47 +86,32 @@ class ServicesSectionWidget extends StatelessWidget {
           );
         }
 
-        return Column(
-          children: [
-            // Filter Chips for filtering services
-            ServiceFilterChipsWidget(
-              selectedFilter: state.selectedFilter,
-              onFilterChanged: (filter) {
-                context.read<ServiceCubit>().filterServices(filter);
+        // List of services
+        return ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          itemCount: services.length,
+          itemBuilder: (context, index) {
+            final service = services[index];
+            return ServiceCardWidget(
+              service: service,
+              onViewDetails: () {
+                print('🔍 Viewing details for service: ${service.name}');
+                context.push('/service-details', extra: service);
               },
-            ),
-            SizedBox(height: 16.h),
-
-            // List of services
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                itemCount: services.length,
-                itemBuilder: (context, index) {
-                  final service = services[index];
-                  return ServiceCardWidget(
-                    service: service,
-                    onViewDetails: () {
-                      print('🔍 Viewing details for service: ${service.name}');
-                      context.push('/service-details', extra: service);
-                    },
-                    onMaps: () async {
-                      final url = service.mapsUrl;
-                      if (await canLaunchUrl(Uri.parse(url))) {
-                        await launchUrl(Uri.parse(url));
-                      }
-                    },
-                    onCall: () async {
-                      final url = service.callUrl;
-                      if (await canLaunchUrl(Uri.parse(url))) {
-                        await launchUrl(Uri.parse(url));
-                      }
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
+              onMaps: () async {
+                final url = service.mapsUrl;
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url));
+                }
+              },
+              onCall: () async {
+                final url = service.callUrl;
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url));
+                }
+              },
+            );
+          },
         );
       },
     );
@@ -133,26 +126,35 @@ class ServicesSectionWidget extends StatelessWidget {
           Icon(Icons.location_off, color: AppColors.gray, size: 64.sp),
           SizedBox(height: 16.h),
           Text(
-            AppLocalizations.of(context)!.translate('locationPermissionRequired'),
+            AppLocalizations.of(context)!
+                .translate('locationPermissionRequired'),
             style: AppTextStyles.blackS18W700,
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 8.h),
           Text(
-            AppLocalizations.of(context)!.translate('locationPermissionMessage'),
+            AppLocalizations.of(context)!
+                .translate('locationPermissionMessage'),
             style: AppTextStyles.secondaryS14W400,
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24.h),
           ElevatedButton(
             onPressed: () async {
-              bool hasPermission = await LocationService.requestLocationPermission();
+              bool hasPermission =
+                  await LocationService.requestLocationPermission();
               if (hasPermission) {
-                context.read<ServiceCubit>().loadServices();
+                context.read<ServiceCubit>().loadServices(
+                      limit: 10,
+                      type: 'station',
+                      radius: 5000,
+                      forceRefresh: true,
+                    );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.translate('locationPermissionMessage')),
+                    content: Text(AppLocalizations.of(context)!
+                        .translate('locationPermissionMessage')),
                     backgroundColor: Colors.orange,
                   ),
                 );

@@ -1,25 +1,18 @@
-import 'dart:developer';
-
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
-import 'package:dooss_business_app/user/core/constants/colors.dart';
-import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/utils/response_status_enum.dart';
 import 'package:dooss_business_app/user/features/my_profile/data/source/repo/my_profile_repository.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/manager/my_profile_cubit.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/manager/my_profile_state.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/account_settings_widget.dart';
-import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/activity_settings_widget.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/custom_app_bar_profile_widget.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/delete_account_settings_widget.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/log_out_settings_widget.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/preferences_settings_widget.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/profile_settings_widget.dart';
-import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/settings_row_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -56,7 +49,6 @@ class ProfileScreen extends StatelessWidget {
                       const ProfileSettingsWidget(),
                       const AccountSettingsWidget(),
                       const PreferencesSettingsWidget(),
-                      const ActivitySettingsWidget(),
                       const LogOutSettingsWidget(),
                       const DeleteAccountSettingsWidget(),
                       SizedBox(height: 10.h),

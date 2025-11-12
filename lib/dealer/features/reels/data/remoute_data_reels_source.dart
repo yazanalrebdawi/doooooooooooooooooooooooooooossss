@@ -12,7 +12,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../Core/network/Base_Url.dart';
 import '../../../Core/network/failure.dart';
-import '../../../Core/network/service_locator.dart';
 import 'models/Reels_data_model.dart';
 
 class remouteDataReelsSource {
@@ -27,15 +26,15 @@ class remouteDataReelsSource {
     try {
       print(appLocator<Dio>().options.headers);
       var response = await dio.get(
-        '${ApiUrls.baseURlDealer}/reels/my-reels/',
+        '${ApiUrls.baseURl}/api/reels/my-reels/',
         // options: Options(headers: header),
       );
       print(response.data);
       List<ReelDataModel> dataResponse = (response.data as List).map((item) {
         return ReelDataModel.fromMap(item);
       }).toList();
-    print('🔹 LOGIN REQUEST HEADERS: ${dio.options.headers}');
-     print('🔹 LOGIN URL: ${ApiUrls.baseURlDealer}/reels/my-reels/');
+      print('🔹 LOGIN REQUEST HEADERS: ${dio.options.headers}');
+      print('🔹 LOGIN URL: ${ApiUrls.baseURl}/api/reels/my-reels/');
       return right(dataResponse);
     } catch (error) {
       print(error.toString());
@@ -48,13 +47,15 @@ class remouteDataReelsSource {
     String title,
     String descraption,
   ) async {
-    var url = '${ApiUrls.baseURlDealer}/reels/';
-    Map<String,dynamic> customHeader = Map.from(dio.options.headers);
-    customHeader.addAll({'Content-Type': 'application/json'});//////تعديل  ممكن تنحذف
+    var url = '${ApiUrls.baseURl}/api/reels/';
+    Map<String, dynamic> customHeader = Map.from(dio.options.headers);
+    customHeader
+        .addAll({'Content-Type': 'application/json'}); //////تعديل  ممكن تنحذف
 
     print('________________________${videoUrl!.path}________________________');
-       print('________________________${customHeader}________________________');
-              print('________________________${dio.options.headers}________________________');
+    print('________________________${customHeader}________________________');
+    print(
+        '________________________${dio.options.headers}________________________');
     var data = FormData.fromMap({
       'video': await MultipartFile.fromFile(
         videoUrl.path,
@@ -68,10 +69,7 @@ class remouteDataReelsSource {
       var response = await dio.request(
         url,
         data: data,
-        options: Options(
-          method: 'POST',
-          headers: customHeader
-        ),
+        options: Options(method: 'POST', headers: customHeader),
       );
       // var response = await dio.post(
       //   url,
@@ -84,9 +82,9 @@ class remouteDataReelsSource {
       return right(true);
     } catch (e) {
       print(e.toString());
-      if (e is DioException ) {
+      if (e is DioException) {
         print(e.response!.data);
-         return left(Failure(message:e.response!.data[0],statusCode: 400));
+        return left(Failure(message: e.response!.data[0], statusCode: 400));
       }
       // print(e.toString());
 
@@ -119,7 +117,7 @@ class remouteDataReelsSource {
     }
     print(data.fields);
 
-    var url = 'http://10.0.2.2:8010/api/reels/$id/';
+    var url = '${ApiUrls.baseURl}/api/reels/$id/';
     // final file = File(video!);
     // var data = FormData.fromMap({'title': title, 'description': descraption});
     // var dataWithVidoe = FormData.fromMap({
@@ -137,7 +135,7 @@ class remouteDataReelsSource {
     //  /
     try {
       var response = await dio.request(
-        '${ApiUrls.baseURlDealer}/reels/$id/',
+        '${ApiUrls.baseURl}/api/reels/$id/',
         options: Options(
           method: 'PATCH',
           // headers: header
@@ -157,7 +155,7 @@ class remouteDataReelsSource {
   }
 
   Future<Either<Failure, bool>> deleteReel(int id) async {
-    var url = '${ApiUrls.baseURlDealer}/reels/$id/';
+    var url = '${ApiUrls.baseURl}/api/reels/$id/';
     try {
       var response = await dio.delete(
         url,
@@ -166,7 +164,7 @@ class remouteDataReelsSource {
       if (response.statusCode == 204) {
         return right(true);
       } else {
-        return left(Failure( message: 'Error Dalete'));
+        return left(Failure(message: 'Error Dalete'));
       }
     } catch (e) {
       print(e.toString());

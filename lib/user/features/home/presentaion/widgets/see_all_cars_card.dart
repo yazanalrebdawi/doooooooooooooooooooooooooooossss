@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../data/models/car_model.dart';
 
 class SeeAllCarsCard extends StatelessWidget {
@@ -54,8 +55,9 @@ class SeeAllCarsCard extends StatelessWidget {
                         return Container(
                           width: double.infinity,
                           height: 192.h,
-                          color:
-                              isDark ? Colors.grey[850] : AppColors.gray.withOpacity(0.2),
+                          color: isDark
+                              ? Colors.grey[850]
+                              : AppColors.gray.withOpacity(0.2),
                           child: Icon(
                             Icons.directions_car,
                             size: 40.sp,
@@ -88,7 +90,8 @@ class SeeAllCarsCard extends StatelessWidget {
                   Text(
                     car.name,
                     style: isDark
-                        ? AppTextStyles.blackS16W600.copyWith(color: Colors.white)
+                        ? AppTextStyles.blackS16W600
+                            .copyWith(color: Colors.white)
                         : AppTextStyles.blackS16W600,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -99,7 +102,8 @@ class SeeAllCarsCard extends StatelessWidget {
                   Text(
                     '\$${car.price.toStringAsFixed(0)}',
                     style: isDark
-                        ? AppTextStyles.primaryS16W700.copyWith(color: AppColors.primary)
+                        ? AppTextStyles.primaryS16W700
+                            .copyWith(color: AppColors.primary)
                         : AppTextStyles.primaryS16W700,
                   ),
                   SizedBox(height: 8.h),
@@ -176,7 +180,9 @@ class SeeAllCarsCard extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          'View Details',
+                          AppLocalizations.of(context)
+                                  ?.translate('viewDetails') ??
+                              'View Details',
                           style: AppTextStyles.buttonS14W500,
                         ),
                       ),

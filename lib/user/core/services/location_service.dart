@@ -1,5 +1,4 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../constants/app_config.dart';
@@ -30,7 +29,7 @@ class LocationService {
         return false;
       }
 
-      if (permission == LocationPermission.whileInUse || 
+      if (permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always) {
         print('✅ LocationService: Permission granted');
         return true;
@@ -52,18 +51,37 @@ class LocationService {
         return null;
       }
 
-      print('✅ LocationService: Permission granted, getting current position...');
-      // Get current position
+      // First try to get last known position (instant, cached)
+      print('📍 LocationService: Trying last known position...');
+      Position? lastPosition = await Geolocator.getLastKnownPosition();
+      if (lastPosition != null) {
+        // Check if last position is recent (within 5 minutes)
+        final age = DateTime.now().difference(lastPosition.timestamp);
+        if (age.inMinutes < 5) {
+          print(
+              '✅ LocationService: Using cached position (${age.inSeconds}s old) - lat: ${lastPosition.latitude}, lon: ${lastPosition.longitude}');
+          return lastPosition;
+        } else {
+          print(
+              '⚠️ LocationService: Cached position too old (${age.inMinutes}m), fetching new...');
+        }
+      }
+
+      print(
+          '✅ LocationService: Permission granted, getting current position...');
+      // Get current position with faster settings
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium, // Use medium accuracy for faster response
-        timeLimit: Duration(seconds: 5), // Reduce timeout
+        desiredAccuracy:
+            LocationAccuracy.low, // Use low accuracy for fastest response
+        timeLimit: Duration(seconds: 3), // Reduced timeout to 3 seconds
       );
 
-      print('📍 LocationService: Position obtained - lat: ${position.latitude}, lon: ${position.longitude}');
+      print(
+          '📍 LocationService: Position obtained - lat: ${position.latitude}, lon: ${position.longitude}');
       return position;
     } catch (e) {
       print('❌ LocationService Error getting location: $e');
-      
+
       // Handle specific plugin errors
       if (e.toString().contains('MissingPluginException')) {
         print('❌ LocationService: Plugin not properly configured');
@@ -72,7 +90,7 @@ class LocationService {
       } else if (e.toString().contains('LocationServiceDisabled')) {
         print('❌ LocationService: Location service is disabled');
       }
-      
+
       return null;
     }
   }
@@ -91,11 +109,11 @@ class LocationService {
         endLatitude: endLatitude,
         endLongitude: endLongitude,
       );
-      
+
       if (routeDistance > 0) {
         return routeDistance;
       }
-      
+
       // Fallback to straight line distance
       double distanceInMeters = Geolocator.distanceBetween(
         startLatitude,
@@ -124,17 +142,17 @@ class LocationService {
           'origin=$startLatitude,$startLongitude&'
           'destination=$endLatitude,$endLongitude&'
           'key=${AppConfig.googleMapsApiKey}';
-      
+
       print('🗺️ Requesting route from Google Directions API...');
       final response = await http.get(Uri.parse(url));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        
+
         if (data['status'] == 'OK' && data['routes'].isNotEmpty) {
           final route = data['routes'][0];
           final legs = route['legs'];
-          
+
           if (legs.isNotEmpty) {
             final distance = legs[0]['distance']['value']; // Distance in meters
             print('✅ Real road distance: ${distance}m');
@@ -146,7 +164,7 @@ class LocationService {
       } else {
         print('❌ HTTP error: ${response.statusCode}');
       }
-      
+
       // Fallback to approximated road distance
       double straightLineDistance = Geolocator.distanceBetween(
         startLatitude,
@@ -154,10 +172,11 @@ class LocationService {
         endLatitude,
         endLongitude,
       );
-      
+
       // Apply a factor to approximate road distance
       double roadDistance = straightLineDistance * 1.3;
-      print('📍 Fallback: Approximated road distance: ${roadDistance.toStringAsFixed(0)}m');
+      print(
+          '📍 Fallback: Approximated road distance: ${roadDistance.toStringAsFixed(0)}m');
       return roadDistance;
     } catch (e) {
       print('Error getting route distance: $e');
@@ -201,7 +220,8 @@ class LocationService {
         return getDefaultLocation();
       }
     } catch (e) {
-      print('🔄 LocationService: Error occurred, using fallback location (Dubai)');
+      print(
+          '🔄 LocationService: Error occurred, using fallback location (Dubai)');
       return getDefaultLocation();
     }
   }

@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../../../Core/network/service_locator.dart';
 import '../../../../Core/style/app_Colors.dart';
 import '../../data/remoute_data_reels_source.dart';
 import '../manager/reels_state_cubit.dart';
@@ -51,9 +50,9 @@ class MyReelsPage extends StatelessWidget {
                     child: BlocConsumer<ReelsStateCubit, reelsState>(
                       listener: (context, state) {
                         if (state.isSuccess == true) {
-                           BlocProvider.of<ReelsStateCubit>(
-                              context,
-                            ).getDataReels();
+                          BlocProvider.of<ReelsStateCubit>(
+                            context,
+                          ).getDataReels();
                           // ScaffoldMessenger.of(context).showSnackBar(
                           //   SnackBar(
                           //     content: CustomSnakeBar(
@@ -146,7 +145,6 @@ class MyReelsPage extends StatelessWidget {
                   bottom: 30.h,
                   child: FloatingActionButton(
                     backgroundColor: Colors.transparent,
-
                     onPressed: () {
                       Navigator.push(
                         context,

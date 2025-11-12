@@ -70,21 +70,6 @@ class DealerProfileTabs extends StatelessWidget {
               ],
             ),
           ),
-          // Services Tab
-          Tab(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.build_outlined,
-                  size: 20.sp,
-                  color: currentIndex == 2 ? primaryColor : unselectedColor,
-                ),
-                SizedBox(width: 8.w),
-                const Text('Services'),
-              ],
-            ),
-          ),
         ],
       ),
     );

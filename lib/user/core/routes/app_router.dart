@@ -27,7 +27,6 @@ import 'package:dooss_business_app/user/features/my_profile/presentation/pages/o
 import 'package:dooss_business_app/user/features/my_profile/presentation/pages/profile_screen.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/pages/saved_items_screen.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/pages/settings_notifications_screen.dart';
-import 'package:dooss_business_app/user/features/my_profile/presentation/pages/theme_settings_screen.dart';
 import 'package:dooss_business_app/user/features/profile_dealer/presentation/pages/dealer_profile_screen.dart';
 import 'package:dooss_business_app/user/features/profile_dealer/presentation/manager/dealer_profile_cubit.dart';
 import 'package:dooss_business_app/user/features/chat/presentation/pages/chats_list_screen.dart';
@@ -230,19 +229,28 @@ class AppRouter {
       builder: (context, state) {
         final chatId = int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
 
-        final productId = (state.extra is int)
-            ? state.extra as int
-            : (state.extra is String
-                ? int.tryParse(state.extra as String)
-                : null);
+        // Handle both old format (int/String) and new format (Map)
+        int? productId;
+        String dealerName = '';
+
+        if (state.extra is Map<String, dynamic>) {
+          final extra = state.extra as Map<String, dynamic>;
+          productId = extra['productId'] as int?;
+          dealerName = extra['dealerName'] as String? ?? '';
+        } else if (state.extra is int) {
+          productId = state.extra as int;
+        } else if (state.extra is String) {
+          productId = int.tryParse(state.extra as String);
+        }
 
         return BlocProvider(
           create: (_) => di.appLocator<ChatCubit>(),
           child: ChatConversationScreen(
             chatId: chatId,
-            participantName: 'Chat $chatId',
+            participantName:
+                dealerName.isNotEmpty ? dealerName : 'Chat $chatId',
             productId: productId,
-            dealerName: "",
+            dealerName: dealerName.isNotEmpty ? dealerName : '',
           ),
         );
       },
@@ -259,11 +267,16 @@ class AppRouter {
 
         final dealerName = args?['dealerName'] as String? ?? 'Dealer';
 
+        final productId = args?['productId'] is String
+            ? int.tryParse(args?['productId'])
+            : args?['productId'] as int?;
+
         return BlocProvider(
           create: (_) => di.appLocator<ChatCubit>(),
           child: CreateChatScreen(
             dealerId: dealerId ?? 0,
             dealerName: dealerName,
+            productId: productId,
           ),
         );
       },
@@ -463,11 +476,6 @@ class AppRouter {
     GoRoute(
       path: RouteNames.settingsNotificationsScreen,
       builder: (context, state) => SettingsNotificationsScreen(),
-    ),
-
-    GoRoute(
-      path: RouteNames.themeSettingsScreen,
-      builder: (context, state) => ThemeSettingsScreen(),
     ),
 
     GoRoute(

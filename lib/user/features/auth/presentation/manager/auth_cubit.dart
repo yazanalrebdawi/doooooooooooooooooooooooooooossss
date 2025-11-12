@@ -5,6 +5,7 @@ import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/shared_preferances/shared_preferences_service.dart';
 import 'package:dooss_business_app/user/core/utils/response_status_enum.dart';
+import '../../../../core/constants/cache_keys.dart';
 import '../../../../core/network/app_dio.dart';
 import '../../../../core/network/failure.dart';
 import '../../../../core/services/token_service.dart';
@@ -42,6 +43,59 @@ class AuthCubit extends OptimizedCubit<AuthState> {
     emitOptimized(state.copyWith(isRememberMe: !(state.isRememberMe ?? false)));
   }
 
+  /// Load saved credentials if remember me was enabled
+  Future<Map<String, String>?> loadRememberedCredentials() async {
+    try {
+      final isRememberMeEnabled = await sharedPreference.storagePreferences
+          .getBool(CacheKeys.isRememberMeEnabled);
+
+      if (isRememberMeEnabled == true) {
+        final savedEmail = await sharedPreference.storagePreferences
+            .getString(CacheKeys.rememberedEmail);
+        final savedPassword =
+            await secureStorage.storage.read(key: CacheKeys.rememberedPassword);
+
+        if (savedEmail != null && savedPassword != null) {
+          safeEmit(state.copyWith(isRememberMe: true));
+          log("✅ Loaded remembered credentials");
+          return {'email': savedEmail, 'password': savedPassword};
+        }
+      }
+    } catch (e) {
+      log("❌ Error loading remembered credentials: $e");
+    }
+    return null;
+  }
+
+  /// Save credentials if remember me is enabled
+  Future<void> saveCredentialsIfRemembered(
+      String email, String password) async {
+    try {
+      if (state.isRememberMe == true) {
+        // Save email in SharedPreferences (non-sensitive)
+        await sharedPreference.storagePreferences
+            .setString(CacheKeys.rememberedEmail, email);
+        // Save password in SecureStorage (sensitive)
+        await secureStorage.storage
+            .write(key: CacheKeys.rememberedPassword, value: password);
+        // Save remember me flag
+        await sharedPreference.storagePreferences
+            .setBool(CacheKeys.isRememberMeEnabled, true);
+        log("✅ Credentials saved (remember me enabled)");
+      } else {
+        // Clear saved credentials if remember me is disabled
+        await sharedPreference.storagePreferences
+            .remove(CacheKeys.rememberedEmail);
+        await secureStorage.storage.delete(key: CacheKeys.rememberedPassword);
+        await sharedPreference.storagePreferences
+            .setBool(CacheKeys.isRememberMeEnabled, false);
+        log("✅ Credentials cleared (remember me disabled)");
+      }
+    } catch (e) {
+      log("❌ Error saving credentials: $e");
+    }
+  }
+
   Future<void> signIn(SigninParams params) async {
     log("🚀 AuthCubit - Starting sign in process");
     safeEmit(state.copyWith(isLoading: true));
@@ -77,7 +131,14 @@ class AuthCubit extends OptimizedCubit<AuthState> {
 
         if (authResponse.user != null) {
           await secureStorage.saveAuthModel(authResponse);
+          // Save user ID to TokenService so it can be retrieved later for message differentiation
+          TokenService.saveUserId(authResponse.user.id.toString());
+          log("✅ User ID saved in AuthCubit: ${authResponse.user.id}");
         }
+
+        // Save credentials if remember me is enabled
+        await saveCredentialsIfRemembered(
+            params.email.text, params.password.text);
 
         safeEmit(state.copyWith(
           isLoading: false,

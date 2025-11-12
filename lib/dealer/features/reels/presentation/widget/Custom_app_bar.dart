@@ -40,37 +40,51 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: const Color.fromARGB(255, 40, 39, 39),
-            ),
-            onPressed: () {
-              ontap();
-              Navigator.pop(context); // وظيفة السهم
-            },
-          ),
-          SizedBox(width: 8),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: AppTextStyle.poppins616blueDark),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                  color: const Color.fromARGB(179, 0, 0, 0),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'poppins',
-                ),
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: const Color.fromARGB(255, 40, 39, 39),
               ),
-            ],
-          ),
-        ],
+              onPressed: () {
+                ontap();
+                Navigator.pop(context); // وظيفة السهم
+              },
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyle.poppins616blueDark,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: const Color.fromARGB(179, 0, 0, 0),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'poppins',
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

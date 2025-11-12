@@ -6,11 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import '../../../../core/constants/app_config.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/routes/route_names.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/locator_service.dart' as di;
 import '../../../../core/services/location_service.dart';
 import '../manager/car_cubit.dart';
@@ -35,6 +36,9 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
   Position? _userLocation;
   bool _isLoadingRoute = false;
   LatLng? _carCoordinates;
+  GoogleMapController? _mapController;
+  final ScrollController _scrollController = ScrollController();
+  bool _isMapInteracting = false;
 
   @override
   void initState() {
@@ -57,18 +61,79 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     }
   }
 
-  Future<void> _loadCarCoordinates(String location) async {
-    if (location.isNotEmpty) {
-      final coords = await _getCarCoordinates(location);
-      setState(() {
-        _carCoordinates = coords;
-      });
-    }
-  }
-
   Future<LatLng> _getCarCoordinates(String location) async {
-    if (location.isEmpty) return const LatLng(25.2048, 55.2708);
+    if (location.isEmpty) {
+      print('⚠️ CarDetails: Location is empty, using fallback');
+      return const LatLng(25.2048, 55.2708);
+    }
 
+    print('🗺️ CarDetails: Parsing location: $location');
+
+    // Check if location is already in PostGIS format (with or without SRID)
+    if (location.contains('POINT')) {
+      final coordsMatch = RegExp(r'POINT\s*\(([^)]+)\)').firstMatch(location);
+      if (coordsMatch != null) {
+        final coordsStr = coordsMatch.group(1)?.trim() ?? '';
+        // Split by space or comma
+        final coords = coordsStr
+            .split(RegExp(r'[\s,]+'))
+            .where((s) => s.isNotEmpty)
+            .toList();
+        if (coords.length >= 2) {
+          final lng = double.tryParse(coords[0]) ?? 0.0;
+          final lat = double.tryParse(coords[1]) ?? 0.0;
+          if (lat != 0.0 &&
+              lng != 0.0 &&
+              lat >= -90 &&
+              lat <= 90 &&
+              lng >= -180 &&
+              lng <= 180) {
+            print('✅ CarDetails: Parsed PostGIS coordinates: $lat, $lng');
+            return LatLng(lat, lng);
+          } else {
+            print('⚠️ CarDetails: Invalid PostGIS coordinates: $lat, $lng');
+          }
+        }
+      }
+    }
+
+    // Check if location is in "lat, lng" or "lng, lat" format (from parsed PostGIS)
+    final coordMatch =
+        RegExp(r'^([\d.+\-]+)[,\s]+([\d.+\-]+)$').firstMatch(location.trim());
+    if (coordMatch != null) {
+      final first = double.tryParse(coordMatch.group(1)?.trim() ?? '') ?? 0.0;
+      final second = double.tryParse(coordMatch.group(2)?.trim() ?? '') ?? 0.0;
+
+      // Determine which is lat and which is lng based on value ranges
+      double lat, lng;
+      if (first.abs() <= 90 && second.abs() <= 180) {
+        // First is likely lat, second is lng
+        lat = first;
+        lng = second;
+      } else if (first.abs() <= 180 && second.abs() <= 90) {
+        // First is likely lng, second is lat
+        lng = first;
+        lat = second;
+      } else {
+        // Try both combinations
+        lat = first;
+        lng = second;
+      }
+
+      if (lat != 0.0 &&
+          lng != 0.0 &&
+          lat >= -90 &&
+          lat <= 90 &&
+          lng >= -180 &&
+          lng <= 180) {
+        print('✅ CarDetails: Parsed coordinate string: $lat, $lng');
+        return LatLng(lat, lng);
+      } else {
+        print('⚠️ CarDetails: Invalid coordinate string: $lat, $lng');
+      }
+    }
+
+    // Fallback to geocoding if it's an address string
     try {
       final encodedLocation = Uri.encodeComponent(location);
       final url =
@@ -98,7 +163,11 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
   }
 
   Future<void> _loadRoute(double carLat, double carLon) async {
-    if (_userLocation == null) return;
+    if (_userLocation == null) {
+      print('❌ CarDetails: Cannot load route - user location is null');
+      return;
+    }
+    print('🗺️ CarDetails: Starting route load...');
     setState(() => _isLoadingRoute = true);
 
     try {
@@ -139,6 +208,11 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
         }
         _isLoadingRoute = false;
       });
+
+      // Update camera to fit both markers
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateCameraToFitRoute(carLat, carLon);
+      });
     } catch (e) {
       print('❌ CarDetails: Error loading route: $e');
       setState(() => _isLoadingRoute = false);
@@ -146,22 +220,34 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
   }
 
   Future<Polyline?> _getRoutePolyline(double carLat, double carLon) async {
-    if (_userLocation == null) return null;
+    if (_userLocation == null) {
+      print('❌ CarDetails: Cannot get route polyline - user location is null');
+      return null;
+    }
 
     try {
       final url =
           'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=$carLat,$carLon&mode=driving&key=${AppConfig.googleMapsApiKey}';
+      print('🗺️ CarDetails: Requesting route from Google Directions API...');
+      print(
+          '🗺️ CarDetails: Origin: ${_userLocation!.latitude}, ${_userLocation!.longitude}');
+      print('🗺️ CarDetails: Destination: $carLat, $carLon');
       final response = await http.get(Uri.parse(url));
+      print('🗺️ CarDetails: Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print(
+            '🗺️ CarDetails: Directions API response status: ${data['status']}');
         if (data['status'] == 'OK' &&
             data['routes'] != null &&
             data['routes'].isNotEmpty) {
           final polylineEncoded =
               data['routes'][0]['overview_polyline']['points'];
           final points = _decodePolyline(polylineEncoded);
+          print('🗺️ CarDetails: Decoded ${points.length} route points');
           if (points.isNotEmpty) {
+            print('✅ CarDetails: Route polyline created successfully');
             return Polyline(
               polylineId: const PolylineId('route'),
               points: points,
@@ -171,11 +257,23 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
               patterns: [PatternItem.dot, PatternItem.gap(10)],
               visible: true,
             );
+          } else {
+            print('⚠️ CarDetails: No points in decoded polyline');
+          }
+        } else {
+          print(
+              '⚠️ CarDetails: Directions API returned status: ${data['status']}');
+          if (data['error_message'] != null) {
+            print('⚠️ CarDetails: Error message: ${data['error_message']}');
           }
         }
+      } else {
+        print('❌ CarDetails: HTTP error: ${response.statusCode}');
+        print('❌ CarDetails: Response body: ${response.body}');
       }
     } catch (e) {
       print('❌ CarDetails: Error getting route polyline: $e');
+      print('❌ CarDetails: Stack trace: ${StackTrace.current}');
     }
 
     return null;
@@ -211,21 +309,75 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     return poly;
   }
 
+  void _updateCameraToFitRoute(double carLat, double carLon) {
+    if (_mapController == null || _userLocation == null) {
+      print(
+          '⚠️ CarDetails: Cannot update camera - map controller or user location is null');
+      return;
+    }
+
+    try {
+      // Calculate bounds to include both user location and car location
+      final userLat = _userLocation!.latitude;
+      final userLng = _userLocation!.longitude;
+
+      final minLat = userLat < carLat ? userLat : carLat;
+      final maxLat = userLat > carLat ? userLat : carLat;
+      final minLng = userLng < carLon ? userLng : carLon;
+      final maxLng = userLng > carLon ? userLng : carLon;
+
+      // Calculate center point
+      final centerLat = (minLat + maxLat) / 2;
+      final centerLng = (minLng + maxLng) / 2;
+
+      // Calculate zoom level based on distance
+      final latDiff = maxLat - minLat;
+      final lngDiff = maxLng - minLng;
+      final maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
+
+      double zoom;
+      if (maxDiff < 0.01) {
+        zoom = 15.0;
+      } else if (maxDiff < 0.05) {
+        zoom = 13.0;
+      } else if (maxDiff < 0.1) {
+        zoom = 11.0;
+      } else if (maxDiff < 0.5) {
+        zoom = 9.0;
+      } else {
+        zoom = 7.0;
+      }
+
+      print(
+          '🗺️ CarDetails: Updating camera to center: $centerLat, $centerLng, zoom: $zoom');
+
+      _mapController!.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(centerLat, centerLng),
+            zoom: zoom,
+          ),
+        ),
+      );
+    } catch (e) {
+      print('❌ CarDetails: Error updating camera: $e');
+    }
+  }
+
   @override
   widget.Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return BlocProvider(
-      create:
-          (_) => di.appLocator<CarCubit>()..loadCarDetails(this.widget.carId),
+      create: (_) =>
+          di.appLocator<CarCubit>()..loadCarDetails(this.widget.carId),
       child: Scaffold(
         backgroundColor: AppColors.white,
         body: BlocBuilder<CarCubit, CarState>(
-          buildWhen:
-              (previous, current) =>
-                  previous.selectedCar != current.selectedCar ||
-                  previous.isLoading != current.isLoading ||
-                  previous.error != current.error,
+          buildWhen: (previous, current) =>
+              previous.selectedCar != current.selectedCar ||
+              previous.isLoading != current.isLoading ||
+              previous.error != current.error,
           builder: (context, state) {
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -267,15 +419,27 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
             final car = state.selectedCar!;
 
+            // Load car coordinates if not already loaded
             if (_carCoordinates == null && car.location.isNotEmpty) {
               WidgetsBinding.instance.addPostFrameCallback(
-                (_) => _loadCarCoordinates(car.location),
+                (_) async {
+                  final coords = await _getCarCoordinates(car.location);
+                  if (mounted) {
+                    setState(() {
+                      _carCoordinates = coords;
+                    });
+                  }
+                },
               );
             }
 
             return Stack(
               children: [
                 SingleChildScrollView(
+                  controller: _scrollController,
+                  physics: _isMapInteracting
+                      ? const NeverScrollableScrollPhysics()
+                      : const ClampingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -283,6 +447,8 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                         imageUrl: car.imageUrl,
                         carName: car.name,
                       ),
+                      // Seller Name Row
+
                       CarOverviewSection(
                         carName: car.name,
                         price: car.price,
@@ -303,12 +469,52 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                         sellerName: car.sellerName,
                         sellerType: car.sellerType,
                         sellerImage: car.sellerImage,
-                        onCallPressed: () => print('Call seller'),
-                        onMessagePressed:
-                            () => context.go(
-                              '${RouteNames.chatConversationScreen}/${car.dealerId}',
-                              extra: this.widget.carId,
-                            ),
+                        onCallPressed: () async {
+                          final phone = car.seller['phone']?.toString() ??
+                              car.seller['contact_phone']?.toString() ??
+                              car.seller['phone_number']?.toString();
+                          if (phone != null && phone.isNotEmpty) {
+                            final phoneUrl = 'tel:$phone';
+                            if (await canLaunchUrl(Uri.parse(phoneUrl))) {
+                              await launchUrl(Uri.parse(phoneUrl));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(context)
+                                            ?.translate('cannotMakeCall') ??
+                                        'Cannot make call',
+                                  ),
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context)?.translate(
+                                          'phoneNumberNotAvailable') ??
+                                      'Phone number not available',
+                                ),
+                                backgroundColor: Colors.orange,
+                              ),
+                            );
+                          }
+                        },
+                        onMessagePressed: () {
+                          // Navigate to CreateChatScreen first to create chat and connect WebSocket
+                          // Use seller id if available, otherwise fallback to dealerId
+                          final sellerId = (car.seller['id'] is int
+                                  ? car.seller['id']
+                                  : int.tryParse(
+                                      car.seller['id']?.toString() ?? '')) ??
+                              car.dealerId;
+                          context.push('/create-chat', extra: {
+                            'dealerId': sellerId,
+                            'dealerName': car.sellerName,
+                          });
+                        },
                       ),
                       Container(
                         padding: EdgeInsets.all(16.w),
@@ -338,13 +544,66 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                   ),
                                 GestureDetector(
                                   onTap: () async {
-                                    final coords = await _getCarCoordinates(
-                                      car.location,
-                                    );
-                                    _loadRoute(
+                                    print(
+                                        '🗺️ CarDetails: View Route button tapped');
+                                    print(
+                                        '🗺️ CarDetails: Car location string: ${car.location}');
+
+                                    if (_userLocation == null) {
+                                      print(
+                                          '⚠️ CarDetails: User location is null, requesting...');
+                                      // Try to get location again
+                                      final userLocation = await LocationService
+                                          .getCurrentLocation();
+                                      if (userLocation == null) {
+                                        print(
+                                            '❌ CarDetails: Failed to get user location');
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              AppLocalizations.of(context)
+                                                      ?.translate(
+                                                          'locationPermissionRequired') ??
+                                                  'Location permission is required to view route',
+                                            ),
+                                            backgroundColor: Colors.orange,
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      setState(() {
+                                        _userLocation = userLocation;
+                                      });
+                                      print(
+                                          '✅ CarDetails: User location obtained: ${userLocation.latitude}, ${userLocation.longitude}');
+                                    }
+
+                                    // Use existing coordinates if available, otherwise parse
+                                    LatLng coords;
+                                    if (_carCoordinates != null) {
+                                      coords = _carCoordinates!;
+                                      print(
+                                          '🗺️ CarDetails: Using existing car coordinates: ${coords.latitude}, ${coords.longitude}');
+                                    } else {
+                                      print(
+                                          '🗺️ CarDetails: Getting car coordinates...');
+                                      coords = await _getCarCoordinates(
+                                          car.location);
+                                      setState(() {
+                                        _carCoordinates = coords;
+                                      });
+                                      print(
+                                          '🗺️ CarDetails: Parsed car coordinates: ${coords.latitude}, ${coords.longitude}');
+                                    }
+
+                                    print(
+                                        '🗺️ CarDetails: Loading route from user (${_userLocation!.latitude}, ${_userLocation!.longitude}) to car (${coords.latitude}, ${coords.longitude})');
+                                    await _loadRoute(
                                       coords.latitude,
                                       coords.longitude,
                                     );
+                                    print('✅ CarDetails: Route loaded');
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
@@ -395,24 +654,63 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12.r),
-                                child: GoogleMap(
-                                  initialCameraPosition: CameraPosition(
-                                    target:
-                                        _carCoordinates ??
-                                        const LatLng(25.2048, 55.2708),
-                                    zoom: 15.0,
+                                child: Listener(
+                                  onPointerDown: (_) {
+                                    setState(() {
+                                      _isMapInteracting = true;
+                                    });
+                                  },
+                                  onPointerUp: (_) {
+                                    Future.delayed(
+                                        const Duration(milliseconds: 150), () {
+                                      if (mounted) {
+                                        setState(() {
+                                          _isMapInteracting = false;
+                                        });
+                                      }
+                                    });
+                                  },
+                                  onPointerCancel: (_) {
+                                    setState(() {
+                                      _isMapInteracting = false;
+                                    });
+                                  },
+                                  child: GoogleMap(
+                                    initialCameraPosition: CameraPosition(
+                                      target: _carCoordinates ??
+                                          const LatLng(25.2048, 55.2708),
+                                      zoom: 15.0,
+                                    ),
+                                    markers: _markers,
+                                    polylines: _polylines,
+                                    myLocationEnabled: true,
+                                    myLocationButtonEnabled: false,
+                                    zoomControlsEnabled: true,
+                                    mapToolbarEnabled: false,
+                                    compassEnabled: true,
+                                    scrollGesturesEnabled: true,
+                                    zoomGesturesEnabled: true,
+                                    tiltGesturesEnabled: true,
+                                    rotateGesturesEnabled: true,
+                                    liteModeEnabled: false,
+                                    onMapCreated:
+                                        (GoogleMapController controller) {
+                                      _mapController = controller;
+                                      print(
+                                          '🗺️ CarDetails: Map controller created');
+                                      // Update camera if we have both locations
+                                      if (_userLocation != null &&
+                                          _carCoordinates != null) {
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          _updateCameraToFitRoute(
+                                            _carCoordinates!.latitude,
+                                            _carCoordinates!.longitude,
+                                          );
+                                        });
+                                      }
+                                    },
                                   ),
-                                  markers: _markers,
-                                  polylines: _polylines,
-                                  myLocationEnabled: true,
-                                  myLocationButtonEnabled: false,
-                                  zoomControlsEnabled: false,
-                                  mapToolbarEnabled: false,
-                                  compassEnabled: true,
-                                  onMapCreated:
-                                      (GoogleMapController controller) => print(
-                                        '🗺️ CarDetails: Map controller created',
-                                      ),
                                 ),
                               ),
                             ),

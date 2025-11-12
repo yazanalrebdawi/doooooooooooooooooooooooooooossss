@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 
 class SellerNotesSection extends StatelessWidget {
   final String notes;
@@ -16,8 +17,10 @@ class SellerNotesSection extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final backgroundColor = isDark ? Colors.grey[900]! : AppColors.white;
-    final cardColor = isDark ? Colors.grey[800]! : AppColors.gray.withOpacity(0.05);
-    final borderColor = isDark ? Colors.grey[700]! : AppColors.gray.withOpacity(0.1);
+    final cardColor =
+        isDark ? Colors.grey[800]! : AppColors.gray.withOpacity(0.05);
+    final borderColor =
+        isDark ? Colors.grey[700]! : AppColors.gray.withOpacity(0.1);
     final textColor = isDark ? Colors.white : AppColors.black;
 
     return Container(
@@ -28,7 +31,8 @@ class SellerNotesSection extends StatelessWidget {
         children: [
           // Section Title
           Text(
-            'Seller Notes',
+            AppLocalizations.of(context)?.translate('sellerNotes') ??
+                'Seller Notes',
             style: AppTextStyles.s18w700.copyWith(color: textColor),
           ),
           SizedBox(height: 12.h),
@@ -46,7 +50,11 @@ class SellerNotesSection extends StatelessWidget {
               ),
             ),
             child: Text(
-              notes.isNotEmpty ? notes : 'No seller notes available.',
+              notes.isNotEmpty
+                  ? notes
+                  : (AppLocalizations.of(context)
+                          ?.translate('noSellerNotesAvailable') ??
+                      'No seller notes available.'),
               style: AppTextStyles.s14w400.copyWith(
                 color: textColor,
                 height: 1.5,

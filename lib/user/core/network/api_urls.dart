@@ -3,7 +3,6 @@ class ApiUrls {
 
   // 🟢 Base URLs
   static const String baseURl = 'https://www.doossapp.com';
-    static const String baseURlDealer = 'https://www.doossapp.com/api';
   static const String _baseMediaUrl = 'https://www.doossapp.com';
 
   static String media(String path) {
@@ -61,7 +60,6 @@ class ApiUrls {
   static const String dealerReels = '$baseURl/api/dealers/{id}/reels/';
   static const String dealerCars = '$baseURl/api/dealers/{id}/cars/';
   static const String dealerServices = '$baseURl/api/dealers/{id}/services/';
-  static const String dealerFollow = '$baseURl/api/dealers/{id}/follow/';
   static const String deleteDealerAccount =
       '$baseURl/api/users/dealers/delete-account/';
 

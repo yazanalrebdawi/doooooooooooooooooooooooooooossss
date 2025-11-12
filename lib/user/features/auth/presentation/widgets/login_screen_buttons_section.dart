@@ -87,7 +87,26 @@ class LoginScreenButtonsSection extends StatelessWidget {
                 log("🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️");
 
                 return BlocConsumer<AuthCubitDealers, AuthStateDealers>(
+                  listenWhen: (previous, current) =>
+                      previous.errorMessage != current.errorMessage ||
+                      previous.dataUser != current.dataUser ||
+                      previous.isLoading != current.isLoading,
                   listener: (context, dealerState) async {
+                    // Handle error case - show error message and stop loading
+                    if (dealerState.errorMessage != null &&
+                        !dealerState.isLoading) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        customAppSnackBar(
+                          dealerState.errorMessage ??
+                              AppLocalizations.of(context)
+                                  ?.translate('operationFailed') ??
+                              'Operation failed',
+                          context,
+                        ),
+                      );
+                    }
+
+                    // Handle success case
                     if (dealerState.dataUser != null) {
                       // Show foreground notification with translations
                       LocalNotificationService.instance.showNotification(

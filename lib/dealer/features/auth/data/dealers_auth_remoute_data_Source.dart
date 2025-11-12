@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:dooss_business_app/user/core/network/api_urls.dart';
 import 'package:dooss_business_app/user/core/network/failure.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
@@ -34,7 +33,24 @@ class DealersAuthRemouteDataSource {
         options: Options(validateStatus: (status) => true), // <– add this
       );
       print(response.data);
-      log("🧠 Dealer auth saved: ${response.data}");
+      log("🧠 Dealer auth response status: ${response.statusCode}");
+      log("🧠 Dealer auth response data: ${response.data}");
+
+      // Check if response is successful (200 or 201)
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        // Extract error message from response
+        String errorMessage = 'Login failed';
+        if (response.data is Map) {
+          final responseData = response.data as Map<String, dynamic>;
+          errorMessage = responseData['detail']?.toString() ??
+              responseData['message']?.toString() ??
+              responseData['error']?.toString() ??
+              'Login failed';
+        }
+        print(
+            '❌ Dealer login error: $errorMessage (Status: ${response.statusCode})');
+        return left(Failure(message: errorMessage));
+      }
 
       AuthDataResponse dataResponse = AuthDataResponse.fromMap(response.data);
       await secureStorage.saveDealerAuthData(dataResponse);
@@ -54,8 +70,22 @@ class DealersAuthRemouteDataSource {
 
       return right(dataResponse);
     } catch (error) {
-      print(error.toString());
-      return left(Failure.handleError(error as DioException));
+      print('❌ Dealer login exception: ${error.toString()}');
+      // If it's a DioException, handle it properly
+      if (error is DioException) {
+        // Try to extract error message from response
+        if (error.response != null && error.response!.data is Map) {
+          final responseData = error.response!.data as Map<String, dynamic>;
+          final errorMessage = responseData['detail']?.toString() ??
+              responseData['message']?.toString() ??
+              responseData['error']?.toString() ??
+              error.message ??
+              'Login failed';
+          return left(Failure(message: errorMessage));
+        }
+        return left(Failure.handleError(error));
+      }
+      return left(Failure(message: error.toString()));
     }
   }
 }

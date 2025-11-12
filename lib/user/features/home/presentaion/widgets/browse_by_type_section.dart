@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dooss_business_app/user/core/constants/colors.dart';
 import 'package:dooss_business_app/user/core/constants/text_styles.dart';
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 
 class BrowseByTypeSection extends StatelessWidget {
   final int selectedIndex;
@@ -24,7 +25,8 @@ class BrowseByTypeSection extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
-            'Browse by Type',
+            AppLocalizations.of(context)?.translate('browseByType') ??
+                'Browse by Type',
             style: AppTextStyles.blackS18W700.copyWith(
               color: isDark ? Colors.white : AppColors.black,
             ),
@@ -36,11 +38,37 @@ class BrowseByTypeSection extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Row(
             children: [
-              Expanded(child: _buildTypeButton(context, 'Cars', Icons.directions_car, 0, isDark)),
+              Expanded(
+                child: _buildTypeButton(
+                  context,
+                  AppLocalizations.of(context)?.translate('cars') ?? 'Cars',
+                  Icons.directions_car,
+                  0,
+                  isDark,
+                ),
+              ),
               SizedBox(width: 12.w),
-              Expanded(child: _buildTypeButton(context, 'Products', Icons.shopping_bag, 1, isDark)),
+              Expanded(
+                child: _buildTypeButton(
+                  context,
+                  AppLocalizations.of(context)?.translate('products') ??
+                      'Products',
+                  Icons.shopping_bag,
+                  1,
+                  isDark,
+                ),
+              ),
               SizedBox(width: 12.w),
-              Expanded(child: _buildTypeButton(context, 'Services', Icons.build, 2, isDark)),
+              Expanded(
+                child: _buildTypeButton(
+                  context,
+                  AppLocalizations.of(context)?.translate('services') ??
+                      'Services',
+                  Icons.build,
+                  2,
+                  isDark,
+                ),
+              ),
             ],
           ),
         ),

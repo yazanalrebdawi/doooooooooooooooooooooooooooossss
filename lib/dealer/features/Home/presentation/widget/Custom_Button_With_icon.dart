@@ -20,7 +20,6 @@ class CustomButtonWithIcon extends StatelessWidget {
         ontap();
       },
       child: Container(
-    
         width: 358.w,
         height: 60.h,
         decoration: BoxDecoration(
@@ -29,15 +28,21 @@ class CustomButtonWithIcon extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(iconButton, color: Colors.white, size: 20),
             SizedBox(width: 4.w),
-            Text(
-              type,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 15.sp,
-                color: Colors.white,
+            Flexible(
+              child: Text(
+                type,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15.sp,
+                  color: Colors.white,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: false,
               ),
             ),
           ],

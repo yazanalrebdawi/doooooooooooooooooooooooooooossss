@@ -43,6 +43,8 @@ class CarModel {
   final String brand;
   @HiveField(19)
   final bool isFavorite;
+  @HiveField(20)
+  final Map<String, dynamic> seller;
 
   const CarModel({
     required this.id,
@@ -65,6 +67,7 @@ class CarModel {
     required this.dealerId,
     this.brand = '',
     this.isFavorite = false,
+    this.seller = const {},
   });
 
   factory CarModel.fromJson(Map<String, dynamic> json) {
@@ -120,12 +123,19 @@ class CarModel {
       color: json['color'] ?? '',
       doors: json['doors_count'] ?? 0,
       sellerNotes: json['license_status'] ?? '',
-      sellerName: '',
-      sellerType: '',
-      sellerImage: '',
+      sellerName: json['seller'] != null && json['seller'] is Map
+          ? (json['seller']['name']?.toString() ?? '')
+          : '',
+      sellerType: json['seller'] != null && json['seller'] is Map
+          ? (json['seller']['dealer_id'] != null ? 'Dealer' : 'Individual')
+          : '',
+      sellerImage: json['seller'] != null && json['seller'] is Map
+          ? (json['seller']['profile_image']?.toString() ?? '')
+          : '',
       dealerId: json['dealer'] ?? 0,
       brand: json['brand'] ?? '',
       isFavorite: json['isFavorite'] ?? false,
+      seller: json['seller'] ?? {},
     );
   }
 
@@ -151,6 +161,7 @@ class CarModel {
       'dealer_id': dealerId,
       'brand': brand,
       'isFavorite': isFavorite,
+      'seller': seller,
     };
   }
 
@@ -175,6 +186,7 @@ class CarModel {
     int? dealerId,
     String? brand,
     bool? isFavorite,
+    Map<String, dynamic>? seller,
   }) {
     return CarModel(
       id: id ?? this.id,
@@ -197,6 +209,7 @@ class CarModel {
       dealerId: dealerId ?? this.dealerId,
       brand: brand ?? this.brand,
       isFavorite: isFavorite ?? this.isFavorite,
+      seller: seller ?? this.seller,
     );
   }
 }

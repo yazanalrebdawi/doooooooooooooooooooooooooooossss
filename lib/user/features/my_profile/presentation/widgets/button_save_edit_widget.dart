@@ -156,10 +156,16 @@ class _ButtonSaveEditWidgetState extends State<ButtonSaveEditWidget> {
                 }
 
                 if (!nameChanged && !phoneChanged) {
-                  log("⚠️ لا يوجد تغييرات");
+                  log("⚠️ No changes");
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(customAppSnackBar("لا يوجد تغييرات", context));
+                  ).showSnackBar(
+                    customAppSnackBar(
+                      AppLocalizations.of(context)?.translate('noChanges') ??
+                          'No changes',
+                      context,
+                    ),
+                  );
                   return;
                 }
 

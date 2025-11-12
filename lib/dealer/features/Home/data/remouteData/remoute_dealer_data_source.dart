@@ -85,9 +85,9 @@ class RemouteDealerDataSource {
     try {
       print(
           '________________________${dio.options.headers}________________________');
-      var url = Uri.parse('${ApiUrls.baseURlDealer}/products/');
+      var url = Uri.parse('${ApiUrls.baseURl}/api/products/');
       var response = await dio.get(
-        '${ApiUrls.baseURlDealer}/products/',
+        '${ApiUrls.baseURl}/api/products/',
         // options: Options(headers: header),
       );
       List<productdata> responsedata = (response.data as List).map((item) {
@@ -138,7 +138,7 @@ class RemouteDealerDataSource {
     try {
       print(dio.options.headers);
       var response = await dio.post(
-        '${ApiUrls.baseURlDealer}/products/',
+        '${ApiUrls.baseURl}/api/products/',
         data: dat1a,
         // options: Options(headers: header),
       );
@@ -163,7 +163,7 @@ class RemouteDealerDataSource {
 
   Future<Either<String, void>> deleteProduct(int id) async {
     try {
-      var url = Uri.parse('${ApiUrls.baseURlDealer}/products/$id/');
+      var url = Uri.parse('${ApiUrls.baseURl}/api/products/$id/');
       print(dio.options.headers);
       var response = await dio.deleteUri(
         url,
@@ -195,7 +195,7 @@ class RemouteDealerDataSource {
     headerAvaailable.addAll({'Content-Type': 'application/json'});
     ///////////////////  تعديل
     print(headerAvaailable);
-    var url = '${ApiUrls.baseURlDealer}/dealers/products/$id/availability/';
+    var url = '${ApiUrls.baseURl}/api/dealers/products/$id/availability/';
     var data = {"available": currentValue};
     try {
       var response = await dio.patch(
@@ -217,7 +217,7 @@ class RemouteDealerDataSource {
   }
 
   Future<Either<Failure, DealerDashboardInfo>> getDataDashboard() async {
-    var url = '${ApiUrls.baseURlDealer}/dealers/dashboard/';
+    var url = '${ApiUrls.baseURl}/api/dealers/dashboard/';
     try {
       var response = await dio.get(
         url,
@@ -243,7 +243,7 @@ class RemouteDealerDataSource {
       String Drivetrain,
       int Door,
       int seats,
-      XFile image,
+      List<XFile> images,
       String Status,
       double lat,
       double lon,
@@ -270,11 +270,19 @@ class RemouteDealerDataSource {
       "lon": 36.276,
     };
 
+    // Convert all images to MultipartFile
+    List<MultipartFile> multipartImages = [];
+    for (var img in images) {
+      multipartImages.add(
+        await MultipartFile.fromFile(
+          img.path,
+          filename: img.name,
+        ),
+      );
+    }
+
     var data = FormData.fromMap({
-      'image': [
-        await MultipartFile.fromFile(image.path, filename: '/path/to/file'),
-        // await MultipartFile.fromFile('/path/to/file', filename: '/path/to/file')
-      ],
+      'images': multipartImages,
       'name': '${brand} ${Model}',
       'brand': brand,
       'model': Model, //int
@@ -286,14 +294,14 @@ class RemouteDealerDataSource {
       'transmission': Transmissiion,
       'engine_capacity': engineSize,
       'drive_type': Drivetrain,
-      'color':  color ?? 'white',
+      'color': color ?? 'white',
       'is_available': 'true',
       'doors_count': Door, //int//int
       'seats_count': seats, //int
       'status': Status, //تعديل
       'license_status': 'licensed',
       'lat': lat, //int
-      'lon': lon , //int
+      'lon': lon, //int
       'is_main': 'true',
     });
     //    dio.options.headers.addAll({
@@ -304,7 +312,7 @@ class RemouteDealerDataSource {
     print(Model);
     print(year);
     print(seats);
-    var url = Uri.parse('${ApiUrls.baseURlDealer}/cars/');
+    var url = Uri.parse('${ApiUrls.baseURl}/api/cars/');
     try {
       var response = await dio.postUri(
         url,
@@ -370,7 +378,7 @@ class RemouteDealerDataSource {
     print(data.fields);
     try {
       var response = await dio.patch(
-        '${ApiUrls.baseURlDealer}/products/$id/',
+        '${ApiUrls.baseURl}/api/products/$id/',
         data: data,
         // options: Options(headers: header),
       );
@@ -389,7 +397,7 @@ class RemouteDealerDataSource {
   }
 
   Future<Either<Failure, DataProfileModel>> getDataStoreProfile() async {
-    var url = '${ApiUrls.baseURlDealer}/dealers/me/profile/';
+    var url = '${ApiUrls.baseURl}/api/dealers/me/profile/';
     try {
       var response = await dio.get(
         url,
@@ -415,7 +423,7 @@ class RemouteDealerDataSource {
     List<String> day,
   ) async {
     //
-    var url = '${ApiUrls.baseURlDealer}/dealers/me/profile/';
+    var url = '${ApiUrls.baseURl}/api/dealers/me/profile/';
     print('-------${dio.options.headers}-----');
     print(OpenTime.runtimeType);
     var data = FormData.fromMap({

@@ -18,7 +18,7 @@ class DeleteAccountSettingsWidget extends StatelessWidget {
         iconColor: Color(0xffDC2626),
         iconData: Icons.delete_forever,
         isWidgetLogOut: true,
-        text: "Delete Account",
+        text: 'deleteAccountTitle',
         trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16.r,

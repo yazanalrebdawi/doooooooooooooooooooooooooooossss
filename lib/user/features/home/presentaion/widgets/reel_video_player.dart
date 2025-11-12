@@ -7,11 +7,13 @@ import '../../data/models/reel_model.dart';
 class ReelVideoPlayer extends StatelessWidget {
   final ReelModel reel;
   final bool isCurrentReel;
+  final bool isMuted;
 
   const ReelVideoPlayer({
     super.key,
     required this.reel,
     required this.isCurrentReel,
+    this.isMuted = false,
   });
 
   @override
@@ -27,7 +29,7 @@ class ReelVideoPlayer extends StatelessWidget {
               videoUrl: reel.video,
               width: 1.sw,
               height: 1.sh,
-              muted: false,
+              muted: isMuted,
               loop: true,
             )
           : _buildPlaceholder(isDark),

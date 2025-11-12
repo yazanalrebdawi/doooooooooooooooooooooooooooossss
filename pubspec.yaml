@@ -2,7 +2,7 @@ name: dooss_business_app
 description: "A new Flutter project."
 publish_to: "none"
 
-version: 2.0.0+2 
+version: 2.0.0+7 
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -112,3 +112,10 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/icons/applogo.jpg"
+flutter_native_splash:
+  color: "#f7f7f7"
+  image: assets/icons/applogo.jpg
+  android_gravity: center
+  ios_content_mode: center
+  android: true
+  ios: true

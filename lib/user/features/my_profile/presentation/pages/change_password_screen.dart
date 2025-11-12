@@ -36,18 +36,16 @@ class ChangePasswordScreen extends StatelessWidget {
               children: [
                 SecurityNoticeWidget(),
                 SizedBox(height: 10.h),
-                
+
                 // New Password Field
                 NewPasswordFieldWidget(
                   controller: newPasswordController,
-    
                 ),
                 SizedBox(height: 10.h),
 
                 // Confirm New Password Label
                 InputLabelWidget(
                   label: "Confirm New Password",
-               
                 ),
                 SizedBox(height: 5.h),
 
@@ -55,7 +53,6 @@ class ChangePasswordScreen extends StatelessWidget {
                 InputPassowrdWidget(
                   controller: confirmNewPasswordController,
                   hintText: "Confirm new password",
-        
                 ),
                 SizedBox(height: 15.h),
 
@@ -64,7 +61,36 @@ class ChangePasswordScreen extends StatelessWidget {
                   newPasswordController: newPasswordController,
                   confirmPasswordController: confirmNewPasswordController,
                   formState: formState,
-                  
+                ),
+                SizedBox(height: 10.h),
+
+                // Cancel Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 48.h,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: isDark
+                            ? AppColors.white.withOpacity(0.3)
+                            : AppColors.gray,
+                        width: 1,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)?.translate("cancel") ??
+                          "Cancel",
+                      style: AppTextStyles.s16w500.copyWith(
+                        color: isDark ? AppColors.white : AppColors.black,
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20.h),
 
@@ -74,7 +100,8 @@ class ChangePasswordScreen extends StatelessWidget {
                     Icon(Icons.lightbulb, color: Color(0xffEAB308)),
                     SizedBox(width: 5.w),
                     Text(
-                      AppLocalizations.of(context)?.translate("Password Tips") ??
+                      AppLocalizations.of(context)
+                              ?.translate("Password Tips") ??
                           "Password Tips",
                       style: AppTextStyles.s16w500.copyWith(
                         color: isDark ? AppColors.white : AppColors.black,
@@ -87,15 +114,12 @@ class ChangePasswordScreen extends StatelessWidget {
                 // Tips List
                 RowTipsPasswordWidget(
                   title: "At least 8 characters",
-                  
                 ),
                 RowTipsPasswordWidget(
                   title: "Mix uppercase, lowercase, numbers and symbols",
-                  
                 ),
                 RowTipsPasswordWidget(
                   title: "Avoid personal information like names or dates",
-                  
                 ),
               ],
             ),

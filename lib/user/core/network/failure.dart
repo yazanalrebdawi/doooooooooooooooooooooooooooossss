@@ -26,56 +26,40 @@ class Failure {
       case DioExceptionType.badResponse:
         String errorMessage =
             "An unknown error occurred. Please try again later.";
-        if (exception.response?.data != null) {
-          if (exception.response!.data is Map<String, dynamic>) {
-            Map<String, dynamic> data = exception.response!.data;
+        final responseData = exception.response?.data;
 
-            // Try multiple possible error message keys
-            String? extractedMessage = data['error'] ??
+        if (responseData != null) {
+          if (responseData is Map<String, dynamic>) {
+            Map<String, dynamic> data = responseData;
+
+            // 🧠 أولاً: نحاول نقرأ رسائل السيرفر العادية
+            errorMessage = data['error'] ??
                 data['message'] ??
-                data['detail'] ??
-                data['error_message'] ??
-                data['errors']?['message']?.toString() ??
-                data['errors']?['detail']?.toString();
+                (data['non_field_errors'] != null &&
+                        data['non_field_errors'] is List &&
+                        data['non_field_errors'].isNotEmpty
+                    ? data['non_field_errors'][0].toString()
+                    : errorMessage);
 
-            // Check for field-specific errors (like password, username)
-            if (extractedMessage == null || extractedMessage.isEmpty) {
-              if (data['password'] != null) {
-                if (data['password'] is List &&
-                    (data['password'] as List).isNotEmpty) {
-                  extractedMessage = data['password'][0].toString();
-                } else if (data['password'] is String) {
-                  extractedMessage = data['password'];
-                }
-              } else if (data['username'] != null) {
-                if (data['username'] is List &&
-                    (data['username'] as List).isNotEmpty) {
-                  extractedMessage = data['username'][0].toString();
-                } else if (data['username'] is String) {
-                  extractedMessage = data['username'];
-                }
+            if (errorMessage ==
+                "An unknown error occurred. Please try again later.") {
+              final extractedErrors = data.values
+                  .whereType<List>()
+                  .expand((e) => e)
+                  .map((e) => e.toString())
+                  .join('\n');
+
+              if (extractedErrors.isNotEmpty) {
+                errorMessage = extractedErrors;
               }
             }
-
-            // Check for non_field_errors (common in Django REST framework)
-            if (extractedMessage == null || extractedMessage.isEmpty) {
-              if (data['non_field_errors'] != null &&
-                  data['non_field_errors'] is List &&
-                  (data['non_field_errors'] as List).isNotEmpty) {
-                extractedMessage = data['non_field_errors'][0].toString();
-              }
-            }
-
-            // Use extracted message if found, otherwise use default
-            errorMessage = extractedMessage ?? errorMessage;
-          } else if (exception.response!.data is String) {
-            errorMessage = exception.response!.data;
+          } else if (responseData is String) {
+            errorMessage = responseData;
           }
         }
-        return Failure(
-          statusCode: exception.response?.statusCode,
-          message: errorMessage,
-        );
+
+        return Failure(message: errorMessage);
+
       case DioExceptionType.cancel:
         return Failure(message: "Request was cancelled. Please try again.");
       case DioExceptionType.connectionError:

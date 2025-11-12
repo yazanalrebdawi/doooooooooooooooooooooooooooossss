@@ -90,14 +90,18 @@ class _NearbyServicesScreenState extends State<NearbyServicesScreen> {
                   Text(
                     AppLocalizations.of(
                       context,
-                    )!.translate('noNearbyServicesMessage'),
+                    )!
+                        .translate('noNearbyServicesMessage'),
                     style: AppTextStyles.secondaryS14W400,
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 16.h),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<ServiceCubit>().loadServices();
+                      context.read<ServiceCubit>().loadServices(
+                            limit: 10,
+                            forceRefresh: true,
+                          );
                     },
                     child: Text(
                       AppLocalizations.of(context)!.translate('retry'),
@@ -166,7 +170,10 @@ class _NearbyServicesScreenState extends State<NearbyServicesScreen> {
         IconButton(
           icon: Icon(Icons.my_location, color: AppColors.primary, size: 24.sp),
           onPressed: () {
-            context.read<ServiceCubit>().loadServices();
+            context.read<ServiceCubit>().loadServices(
+                  limit: 10,
+                  forceRefresh: true,
+                );
           },
         ),
         IconButton(
@@ -193,7 +200,8 @@ class _NearbyServicesScreenState extends State<NearbyServicesScreen> {
           Text(
             AppLocalizations.of(
               context,
-            )!.translate('locationPermissionRequired'),
+            )!
+                .translate('locationPermissionRequired'),
             style: AppTextStyles.blackS18W700,
             textAlign: TextAlign.center,
           ),
@@ -201,7 +209,8 @@ class _NearbyServicesScreenState extends State<NearbyServicesScreen> {
           Text(
             AppLocalizations.of(
               context,
-            )!.translate('locationPermissionMessage'),
+            )!
+                .translate('locationPermissionMessage'),
             style: AppTextStyles.secondaryS14W400,
             textAlign: TextAlign.center,
           ),
@@ -211,14 +220,18 @@ class _NearbyServicesScreenState extends State<NearbyServicesScreen> {
               bool hasPermission =
                   await LocationService.requestLocationPermission();
               if (hasPermission) {
-                context.read<ServiceCubit>().loadServices(limit: 10);
+                context.read<ServiceCubit>().loadServices(
+                      limit: 10,
+                      forceRefresh: true,
+                    );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
                       AppLocalizations.of(
                         context,
-                      )!.translate('locationPermissionMessage'),
+                      )!
+                          .translate('locationPermissionMessage'),
                     ),
                     backgroundColor: Colors.orange,
                   ),

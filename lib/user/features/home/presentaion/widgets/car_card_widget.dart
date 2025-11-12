@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../data/models/car_model.dart';
 import 'car_spec_item_widget.dart';
 
@@ -36,52 +37,27 @@ class CarCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Car Image with Favorite Icon
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.r),
-                  topRight: Radius.circular(16.r),
-                ),
-                child: car.imageUrl.isNotEmpty
-                    ? Image.network(
-                        car.imageUrl,
-                        width: double.infinity,
-                        height: 192.h,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(child: CircularProgressIndicator());
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return _placeholderImage(isDark);
-                        },
-                      )
-                    : _placeholderImage(isDark),
-              ),
-              // Favorite Icon
-              Positioned(
-                top: 8.h,
-                right: 8.w,
-                child: Container(
-                  padding: EdgeInsets.all(4.w),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.white.withOpacity(0.9),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    car.isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: car.isFavorite
-                        ? Colors.red
-                        : (isDark ? Colors.white70 : AppColors.gray),
-                    size: 20.sp,
-                  ),
-                ),
-              ),
-            ],
+          // Car Image
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.r),
+              topRight: Radius.circular(16.r),
+            ),
+            child: car.imageUrl.isNotEmpty
+                ? Image.network(
+                    car.imageUrl,
+                    width: double.infinity,
+                    height: 192.h,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(child: CircularProgressIndicator());
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return _placeholderImage(isDark);
+                    },
+                  )
+                : _placeholderImage(isDark),
           ),
           // Car Details
           Padding(
@@ -163,7 +139,8 @@ class CarCardWidget extends StatelessWidget {
                         elevation: 0,
                       ),
                       child: Text(
-                        'Details',
+                        AppLocalizations.of(context)?.translate('details') ??
+                            'Details',
                         style: AppTextStyles.s14w500
                             .copyWith(color: AppColors.white),
                       ),

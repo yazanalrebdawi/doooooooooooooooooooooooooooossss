@@ -23,7 +23,9 @@ class CardSettingsWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: 20.h),
       width: 358.w,
-      height: height.h,
+      constraints: BoxConstraints(
+        minHeight: height.h,
+      ),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.background,
         borderRadius: BorderRadius.circular(12.r),
@@ -46,6 +48,7 @@ class CardSettingsWidget extends StatelessWidget {
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Column(
             spacing: 5.h,
@@ -64,7 +67,8 @@ class CardSettingsWidget extends StatelessWidget {
               Divider(color: AppColors.field, thickness: 1, height: 8.h),
             ],
           ),
-          widget ?? SizedBox(),
+          if (widget != null) widget!,
+          SizedBox(height: 8.h), // Add bottom padding to prevent overflow
         ],
       ),
     );

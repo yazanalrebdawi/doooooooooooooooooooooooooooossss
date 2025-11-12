@@ -1,6 +1,5 @@
 import 'package:dooss_business_app/user/core/services/locator_service.dart'
     as di;
-import 'package:dooss_business_app/user/features/home/presentaion/manager/reels_playback_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -197,16 +196,26 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
     print(
         '🎬 SimpleReelsSection: Tapped reel ${reels[index].title} at index $index');
 
-    // Navigate to full-screen reels viewer, passing the entire list and index
+    // Navigate to full-screen reels viewer with full-screen route
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            BlocProvider.value(
           value: di.appLocator<ReelCubit>(),
           child: ReelsViewerScreen(
             reelsList: reels,
             initialIndex: index,
           ),
         ),
+        transitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        fullscreenDialog: true, // This ensures full-screen mode
+        opaque: true,
       ),
     );
   }

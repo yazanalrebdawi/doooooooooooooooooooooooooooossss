@@ -45,7 +45,6 @@ class RouteNames {
   static const String navigatorPage = '/navigatorPage';
   static const String settingsNotificationsScreen =
       '/settingsNotificationsScreen';
-  static const String themeSettingsScreen = '/themeSettingsScreen';
   static const String otpVerificationPhoneScreen =
       '/otpVerificationPhoneScreen';
 }

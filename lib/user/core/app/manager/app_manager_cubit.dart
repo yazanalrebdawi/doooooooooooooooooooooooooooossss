@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dooss_business_app/dealer/features/auth/data/dealers_auth_remoute_data_Source.dart';
-import 'package:dooss_business_app/user/core/app/source/local/user_storage_service.dart';
 import 'package:dooss_business_app/user/core/models/enums/app_language_enum.dart';
 import 'package:dooss_business_app/user/core/models/enums/app_them_enum.dart';
 import 'package:dooss_business_app/user/core/services/image/image_services.dart';
@@ -100,8 +99,7 @@ class AppManagerCubit extends Cubit<AppManagerState> {
   //* حفظ بيانات الديلر بعد تسجيل الدخول
   Future<void> saveDealerData(AuthDataResponse dealerAuth) async {
     await secureStorage.saveDealerAuthData(dealerAuth);
-     await appLocator<SharedPreferencesService>()
-          .saveDealerAuthData(dealerAuth);
+    await appLocator<SharedPreferencesService>().saveDealerAuthData(dealerAuth);
     await secureStorage.setIsDealer(true);
     emit(state.copyWith(isDealer: true, dealer: dealerAuth));
     log("✅ Dealer data saved successfully");
@@ -151,15 +149,34 @@ class AppManagerCubit extends Cubit<AppManagerState> {
 
   //?-------  Locale  ---------------------------------------------------------------------------
 
+  //* Load Locale From Cache
+  Future<void> loadLocaleFromCache() async {
+    final savedLocaleCode = await sharedPreference.getSavedLocaleInCache();
+
+    if (savedLocaleCode != null) {
+      final newLocale = Locale(savedLocaleCode);
+      await translationService.changeLocaleService(newLocale);
+      emit(state.copyWith(locale: newLocale));
+    } else {
+      // Default to English if no saved locale
+      final defaultLocale = const Locale('en');
+      await translationService.changeLocaleService(defaultLocale);
+      emit(state.copyWith(locale: defaultLocale));
+    }
+  }
+
   //*  Change
   Future<void> changeLocale(AppLanguageEnum language) async {
     Locale newLocale;
     switch (language) {
       case AppLanguageEnum.arabic:
-        newLocale = Locale('ar');
+        newLocale = const Locale('ar');
         break;
       case AppLanguageEnum.english:
-        newLocale = Locale('en');
+        newLocale = const Locale('en');
+        break;
+      case AppLanguageEnum.turkish:
+        newLocale = const Locale('tr');
         break;
     }
     await translationService.changeLocaleService(newLocale);
@@ -167,20 +184,36 @@ class AppManagerCubit extends Cubit<AppManagerState> {
     emit(state.copyWith(locale: newLocale, lastApply: null));
   }
 
-  //* Toggle
+  ///* Toggle Language (cycles between Arabic → English → Turkish)
   Future<void> toggleLanguage() async {
-    final newLocale =
-        state.locale.languageCode == 'ar' ? Locale('en') : Locale('ar');
+    String current = state.locale.languageCode;
+    late Locale newLocale;
+
+    if (current == 'ar') {
+      newLocale = const Locale('en');
+    } else if (current == 'en') {
+      newLocale = const Locale('tr');
+    } else {
+      newLocale = const Locale('ar');
+    }
+
     await translationService.changeLocaleService(newLocale);
     await sharedPreference.saveLocaleInCache(newLocale.languageCode);
     emit(state.copyWith(locale: newLocale));
   }
 
-  //* Get Locale
-  Future<void> getSavedLocale() async {
-    final savedLangCode = await sharedPreference.getSavedLocaleInCache();
-    if (savedLangCode != null) {
-      emit(state.copyWith(locale: Locale(savedLangCode)));
+  ///* Get saved language name
+  String getCurrentLocaleString() {
+    final code = state.locale.languageCode;
+    switch (code) {
+      case 'ar':
+        return 'Arabic';
+      case 'en':
+        return 'English';
+      case 'tr':
+        return 'Turkish';
+      default:
+        return 'English';
     }
   }
 
@@ -193,14 +226,6 @@ class AppManagerCubit extends Cubit<AppManagerState> {
   //* Save Change Temp
   Future<void> saveChanegTemp(AppLanguageEnum? language) async {
     emit(state.copyWith(lastApply: language));
-  }
-
-  String getCurrentLocaleString() {
-    if (state.locale == Locale("en")) {
-      return "English";
-    } else {
-      return "Arabic";
-    }
   }
 
   //* Save Image

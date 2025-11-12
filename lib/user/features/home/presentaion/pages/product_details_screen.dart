@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 
+import '../../../../core/constants/app_config.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/routes/route_names.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/locator_service.dart' as di;
 import '../../../../core/services/location_service.dart';
 import '../manager/product_cubit.dart';
@@ -37,6 +39,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Set<Marker> _markers = {};
   Position? _userLocation;
   bool _isLoadingRoute = false;
+  final ScrollController _scrollController = ScrollController();
+  bool _isMapInteracting = false;
 
   @override
   void initState() {
@@ -50,7 +54,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       setState(() {
         _userLocation = userLocation;
       });
-      print('✅ User location: ${userLocation.latitude}, ${userLocation.longitude}');
+      print(
+          '✅ User location: ${userLocation.latitude}, ${userLocation.longitude}');
     } else {
       print('❌ Failed to get user location');
     }
@@ -58,8 +63,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   LatLng _getProductCoordinates(ProductModel product) {
     if (product.locationCoords != null) {
-      final lat = product.locationCoords!['lat'] ?? product.locationCoords!['latitude'];
-      final lng = product.locationCoords!['lng'] ?? product.locationCoords!['longitude'];
+      final lat =
+          product.locationCoords!['lat'] ?? product.locationCoords!['latitude'];
+      final lng = product.locationCoords!['lng'] ??
+          product.locationCoords!['longitude'];
 
       if (lat != null && lng != null) {
         final latDouble = lat is String ? double.tryParse(lat) : lat.toDouble();
@@ -90,7 +97,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           markerId: const MarkerId('product_location'),
           position: LatLng(productLat, productLon),
           infoWindow: const InfoWindow(title: 'Product Location'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         ),
       };
 
@@ -120,19 +128,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
   }
 
-  Future<Polyline?> _getRoutePolyline(double productLat, double productLon) async {
+  Future<Polyline?> _getRoutePolyline(
+      double productLat, double productLon) async {
     if (_userLocation == null) return null;
 
     try {
-      const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
       final url =
-          'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=$productLat,$productLon&mode=driving&key=$apiKey';
+          'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=$productLat,$productLon&mode=driving&key=${AppConfig.googleMapsApiKey}';
 
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        if (data['status'] == 'OK' && data['routes'] != null && data['routes'].isNotEmpty) {
-          final points = _decodePolyline(data['routes'][0]['overview_polyline']['points']);
+        if (data['status'] == 'OK' &&
+            data['routes'] != null &&
+            data['routes'].isNotEmpty) {
+          final points =
+              _decodePolyline(data['routes'][0]['overview_polyline']['points']);
           if (points.isNotEmpty) {
             return Polyline(
               polylineId: const PolylineId('route'),
@@ -182,10 +193,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentProductId = widget.productId;
-
     return BlocProvider(
-      create: (_) => di.appLocator<ProductCubit>()..loadProductDetails(widget.productId),
+      create: (_) =>
+          di.appLocator<ProductCubit>()..loadProductDetails(widget.productId),
       child: Scaffold(
         backgroundColor: AppColors.white,
         appBar: null,
@@ -206,13 +216,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.error_outline, size: 64.sp, color: AppColors.gray),
+                        Icon(Icons.error_outline,
+                            size: 64.sp, color: AppColors.gray),
                         SizedBox(height: 16.h),
                         Text('Error loading product details',
-                            style: AppTextStyles.s16w500.copyWith(color: AppColors.gray)),
+                            style: AppTextStyles.s16w500
+                                .copyWith(color: AppColors.gray)),
                         SizedBox(height: 8.h),
                         Text(state.error!,
-                            style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
+                            style: AppTextStyles.s14w400
+                                .copyWith(color: AppColors.gray),
                             textAlign: TextAlign.center),
                       ],
                     ),
@@ -226,22 +239,131 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 final product = state.selectedProduct!;
 
                 return SingleChildScrollView(
+                  controller: _scrollController,
+                  physics: _isMapInteracting
+                      ? const NeverScrollableScrollPhysics()
+                      : const ClampingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProductImageGallery(images: product.images, mainImage: product.imageUrl),
+                      ProductImageGallery(
+                          images: product.images, mainImage: product.imageUrl),
                       ProductInfoSection(product: product),
-                      ProductDescriptionSection(description: product.description),
+                      ProductDescriptionSection(
+                          description: product.description),
                       ProductSpecificationsSection(product: product),
                       SellerInfoSection(
-                        sellerName: 'AutoParts Store',
-                        sellerType: 'Store',
-                        sellerImage: 'assets/images/seller_avatar.png',
-                        onCallPressed: () => print('Call seller'),
+                        sellerName: product.seller['name']?.toString() ??
+                            product.seller['seller_name']?.toString() ??
+                            product.seller['store_name']?.toString() ??
+                            'Dealer',
+                        sellerType: product.seller['type']?.toString() ??
+                            product.seller['seller_type']?.toString() ??
+                            'Store',
+                        sellerImage: product.seller['image']?.toString() ??
+                            product.seller['logo']?.toString() ??
+                            product.seller['avatar']?.toString() ??
+                            '',
+                        onCallPressed: () async {
+                          final phone = product.seller['phone']?.toString() ??
+                              product.seller['contact_phone']?.toString() ??
+                              product.seller['phone_number']?.toString();
+                          if (phone != null && phone.isNotEmpty) {
+                            final phoneUrl = 'tel:$phone';
+                            if (await canLaunchUrl(Uri.parse(phoneUrl))) {
+                              await launchUrl(Uri.parse(phoneUrl));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(context)
+                                            ?.translate('cannotMakeCall') ??
+                                        'Cannot make call',
+                                  ),
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context)?.translate(
+                                          'phoneNumberNotAvailable') ??
+                                      'Phone number not available',
+                                ),
+                                backgroundColor: Colors.orange,
+                              ),
+                            );
+                          }
+                        },
                         onMessagePressed: () {
-                          final dealerId = product.dealer;
-                          context.go('${RouteNames.chatConversationScreen}/$dealerId',
-                              extra: currentProductId);
+                          print('🔵 ProductDetails: Message button pressed');
+                          print(
+                              '🔵 ProductDetails: product.seller = ${product.seller}');
+                          print(
+                              '🔵 ProductDetails: product.dealer = ${product.dealer}');
+
+                          // Use seller id if available, otherwise fallback to dealer
+                          int? sellerId;
+
+                          // Try to get seller id from seller object
+                          if (product.seller.isNotEmpty &&
+                              product.seller.containsKey('id')) {
+                            final sellerIdValue = product.seller['id'];
+                            print(
+                                '🔵 ProductDetails: Found seller id: $sellerIdValue (type: ${sellerIdValue.runtimeType})');
+
+                            if (sellerIdValue is int) {
+                              sellerId = sellerIdValue;
+                            } else if (sellerIdValue != null) {
+                              sellerId = int.tryParse(sellerIdValue.toString());
+                            }
+                          } else {
+                            print(
+                                '🔵 ProductDetails: Seller object empty or no id found');
+                          }
+
+                          // Fallback to dealer if seller id is not available
+                          if (sellerId == null || sellerId <= 0) {
+                            print(
+                                '🔵 ProductDetails: Using dealer as fallback: ${product.dealer}');
+                            sellerId = product.dealer;
+                          }
+
+                          print('🔵 ProductDetails: Final sellerId: $sellerId');
+
+                          // Validate that we have a valid id
+                          if (sellerId <= 0) {
+                            print(
+                                '❌ ProductDetails: Invalid sellerId: $sellerId');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context)
+                                          ?.translate('unableToStartChat') ??
+                                      'Unable to start chat: Invalid seller information',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+
+                          final dealerName =
+                              product.seller['name']?.toString() ??
+                                  product.seller['seller_name']?.toString() ??
+                                  'Dealer';
+
+                          print(
+                              '🔵 ProductDetails: Navigating to create chat with sellerId: $sellerId, dealerName: $dealerName');
+
+                          // Navigate to CreateChatScreen first to create chat and connect WebSocket
+                          context.push('/create-chat', extra: {
+                            'dealerId': sellerId,
+                            'dealerName': dealerName,
+                            'productId': product.id,
+                          });
                         },
                       ),
                       Container(
@@ -251,37 +373,72 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.location_on, color: AppColors.gray, size: 20.sp),
+                                Icon(Icons.location_on,
+                                    color: AppColors.gray, size: 20.sp),
                                 SizedBox(width: 8.w),
-                                Text('Product Location', style: AppTextStyles.blackS16W600),
+                                Text('Product Location',
+                                    style: AppTextStyles.blackS16W600),
                                 const Spacer(),
                                 if (_isLoadingRoute)
                                   SizedBox(
                                       width: 16.w,
                                       height: 16.w,
-                                      child: CircularProgressIndicator(strokeWidth: 2)),
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2)),
                                 GestureDetector(
-                                  onTap: () {
-                                    final coords = _getProductCoordinates(product);
-                                    _loadRoute(coords.latitude, coords.longitude);
+                                  onTap: () async {
+                                    if (_userLocation == null) {
+                                      // Try to get location again
+                                      final userLocation = await LocationService
+                                          .getCurrentLocation();
+                                      if (userLocation == null) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              AppLocalizations.of(context)
+                                                      ?.translate(
+                                                          'locationPermissionRequired') ??
+                                                  'Location permission is required to view route',
+                                            ),
+                                            backgroundColor: Colors.orange,
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      setState(() {
+                                        _userLocation = userLocation;
+                                      });
+                                    }
+                                    final coords =
+                                        _getProductCoordinates(product);
+                                    _loadRoute(
+                                        coords.latitude, coords.longitude);
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w, vertical: 6.h),
                                     decoration: BoxDecoration(
                                       color: AppColors.primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(16.r),
                                       border: Border.all(
-                                          color: AppColors.primary.withOpacity(0.3), width: 1),
+                                          color: AppColors.primary
+                                              .withOpacity(0.3),
+                                          width: 1),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.map, color: AppColors.primary, size: 16.sp),
+                                        Icon(Icons.map,
+                                            color: AppColors.primary,
+                                            size: 16.sp),
                                         SizedBox(width: 4.w),
                                         Text('View Route',
-                                            style: AppTextStyles.s12w400.copyWith(
-                                                color: AppColors.primary,
-                                                fontWeight: FontWeight.w500)),
+                                            style: AppTextStyles.s12w400
+                                                .copyWith(
+                                                    color: AppColors.primary,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
                                       ],
                                     ),
                                   ),
@@ -293,28 +450,62 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               height: 200.h,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12.r),
-                                  border: Border.all(color: AppColors.gray.withOpacity(0.2), width: 1)),
+                                  border: Border.all(
+                                      color: AppColors.gray.withOpacity(0.2),
+                                      width: 1)),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12.r),
-                                child: GoogleMap(
-                                  initialCameraPosition: CameraPosition(
-                                    target: _getProductCoordinates(product),
-                                    zoom: 15,
+                                child: Listener(
+                                  onPointerDown: (_) {
+                                    setState(() {
+                                      _isMapInteracting = true;
+                                    });
+                                  },
+                                  onPointerUp: (_) {
+                                    Future.delayed(
+                                        const Duration(milliseconds: 150), () {
+                                      if (mounted) {
+                                        setState(() {
+                                          _isMapInteracting = false;
+                                        });
+                                      }
+                                    });
+                                  },
+                                  onPointerCancel: (_) {
+                                    setState(() {
+                                      _isMapInteracting = false;
+                                    });
+                                  },
+                                  child: GoogleMap(
+                                    initialCameraPosition: CameraPosition(
+                                      target: _getProductCoordinates(product),
+                                      zoom: 15,
+                                    ),
+                                    markers: _markers,
+                                    polylines: _polylines,
+                                    myLocationEnabled: true,
+                                    myLocationButtonEnabled: false,
+                                    zoomControlsEnabled: true,
+                                    mapToolbarEnabled: false,
+                                    compassEnabled: true,
+                                    scrollGesturesEnabled: true,
+                                    zoomGesturesEnabled: true,
+                                    tiltGesturesEnabled: true,
+                                    rotateGesturesEnabled: true,
+                                    liteModeEnabled: false,
                                   ),
-                                  markers: _markers,
-                                  polylines: _polylines,
-                                  myLocationEnabled: true,
-                                  myLocationButtonEnabled: false,
-                                  zoomControlsEnabled: false,
-                                  mapToolbarEnabled: false,
-                                  compassEnabled: true,
                                 ),
                               ),
                             ),
                             SizedBox(height: 8.h),
                             Text(
-                              product.location.isNotEmpty ? product.location : 'Dubai, UAE',
-                              style: AppTextStyles.s14w400.copyWith(color: AppColors.gray),
+                              product.locationText.isNotEmpty
+                                  ? product.locationText
+                                  : (product.location.isNotEmpty
+                                      ? product.location
+                                      : 'Location not available'),
+                              style: AppTextStyles.s14w400
+                                  .copyWith(color: AppColors.gray),
                             ),
                           ],
                         ),
@@ -331,9 +522,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               left: 16.w,
               child: Container(
                 margin: EdgeInsets.all(8.w),
-                decoration: const BoxDecoration(color: Color(0xFFE0E0E0), shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                    color: Color(0xFFE0E0E0), shape: BoxShape.circle),
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back, color: AppColors.black, size: 20.sp),
+                  icon: Icon(Icons.arrow_back,
+                      color: AppColors.black, size: 20.sp),
                   onPressed: () => context.pop(),
                 ),
               ),
@@ -344,10 +537,110 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           builder: (context) => BlocBuilder<ProductCubit, ProductState>(
             builder: (context, state) => ProductDetailsBottomBar(
               onChatPressed: () {
-                final dealerId = state.selectedProduct?.dealer ?? 1;
-                context.go('${RouteNames.chatConversationScreen}/$dealerId', extra: currentProductId);
+                final product = state.selectedProduct;
+                if (product != null) {
+                  print('🔵 ProductDetails: Bottom bar chat button pressed');
+                  print(
+                      '🔵 ProductDetails: product.seller = ${product.seller}');
+                  print(
+                      '🔵 ProductDetails: product.dealer = ${product.dealer}');
+
+                  // Use seller id if available, otherwise fallback to dealer
+                  int? sellerId;
+
+                  // Try to get seller id from seller object
+                  if (product.seller.isNotEmpty &&
+                      product.seller.containsKey('id')) {
+                    final sellerIdValue = product.seller['id'];
+                    print(
+                        '🔵 ProductDetails: Found seller id: $sellerIdValue (type: ${sellerIdValue.runtimeType})');
+
+                    if (sellerIdValue is int) {
+                      sellerId = sellerIdValue;
+                    } else if (sellerIdValue != null) {
+                      sellerId = int.tryParse(sellerIdValue.toString());
+                    }
+                  } else {
+                    print(
+                        '🔵 ProductDetails: Seller object empty or no id found');
+                  }
+
+                  // Fallback to dealer if seller id is not available
+                  if (sellerId == null || sellerId <= 0) {
+                    print(
+                        '🔵 ProductDetails: Using dealer as fallback: ${product.dealer}');
+                    sellerId = product.dealer;
+                  }
+
+                  print('🔵 ProductDetails: Final sellerId: $sellerId');
+
+                  // Validate that we have a valid id
+                  if (sellerId <= 0) {
+                    print('❌ ProductDetails: Invalid sellerId: $sellerId');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)
+                                  ?.translate('unableToStartChat') ??
+                              'Unable to start chat: Invalid seller information',
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  final dealerName = product.seller['name']?.toString() ??
+                      product.seller['seller_name']?.toString() ??
+                      'Dealer';
+
+                  print(
+                      '🔵 ProductDetails: Navigating to create chat with sellerId: $sellerId, dealerName: $dealerName');
+
+                  // Navigate to CreateChatScreen first to create chat and connect WebSocket
+                  context.push('/create-chat', extra: {
+                    'dealerId': sellerId,
+                    'dealerName': dealerName,
+                    'productId': product.id,
+                  });
+                }
               },
-              onCallPressed: () => print('Call seller'),
+              onCallPressed: () async {
+                final product = state.selectedProduct;
+                if (product != null) {
+                  final phone = product.seller['phone']?.toString() ??
+                      product.seller['contact_phone']?.toString() ??
+                      product.seller['phone_number']?.toString();
+                  if (phone != null && phone.isNotEmpty) {
+                    final phoneUrl = 'tel:$phone';
+                    if (await canLaunchUrl(Uri.parse(phoneUrl))) {
+                      await launchUrl(Uri.parse(phoneUrl));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(context)
+                                    ?.translate('cannotMakeCall') ??
+                                'Cannot make call',
+                          ),
+                          backgroundColor: Colors.orange,
+                        ),
+                      );
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)
+                                  ?.translate('phoneNumberNotAvailable') ??
+                              'Phone number not available',
+                        ),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
+                  }
+                }
+              },
             ),
           ),
         ),
