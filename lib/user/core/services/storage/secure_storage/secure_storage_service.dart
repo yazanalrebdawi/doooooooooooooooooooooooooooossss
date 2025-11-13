@@ -87,20 +87,29 @@ class SecureStorageService {
   }) async {
     try {
       final auth = await getAuthModel();
-      if (auth == null) return;
+      if (auth == null) {
+        log('⚠️ updateUserDataModel: No existing AuthModel found, cannot update');
+        return;
+      }
+
+      log('🔍 updateUserDataModel - Before: Name: "${auth.user.name}", Phone: "${auth.user.phone}"');
+      log('🔍 updateUserDataModel - Updating with: Name: "$name", Phone: "$phone", ID: $id');
 
       final updated = auth.copyWith(
         user: auth.user.copyWith(
           id: id ?? auth.user.id,
-          name: name ?? auth.user.name,
-          phone: phone ?? auth.user.phone,
+          name: name != null && name.isNotEmpty ? name : auth.user.name,
+          phone: phone != null && phone.isNotEmpty ? phone : auth.user.phone,
           role: role ?? auth.user.role,
           verified: verified ?? auth.user.verified,
         ),
       );
 
+      log('🔍 updateUserDataModel - After: Name: "${updated.user.name}", Phone: "${updated.user.phone}"');
       await saveAuthModel(updated);
+      log('✅ updateUserDataModel - AuthModel updated successfully');
     } catch (e) {
+      log('❌ updateUserDataModel - Error: $e');
       rethrow;
     }
   }

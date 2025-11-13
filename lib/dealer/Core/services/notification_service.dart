@@ -1,3 +1,5 @@
+// COMMENTED OUT - Notification Service
+/*
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -157,3 +159,4 @@ class LocalNotificationService {
     // Handle navigation or actions based on payload
   }
 }
+*/

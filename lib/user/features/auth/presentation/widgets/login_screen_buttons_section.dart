@@ -1,5 +1,6 @@
 import 'dart:developer';
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigotorPage.dart';
 import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
@@ -108,16 +109,17 @@ class LoginScreenButtonsSection extends StatelessWidget {
 
                     // Handle success case
                     if (dealerState.dataUser != null) {
-                      // Show foreground notification with translations
-                      LocalNotificationService.instance.showNotification(
-                        id: 7,
-                        title: AppLocalizations.of(context)?.translate(
-                                'notificationDealerLoginSuccessTitle') ??
-                            'Dealer Login Successful',
-                        body: AppLocalizations.of(context)?.translate(
-                                'notificationDealerLoginSuccessBody') ??
-                            'Welcome back! You have successfully logged in.',
-                      );
+                      // COMMENTED OUT - Notification Service
+                      // // Show foreground notification with translations
+                      // LocalNotificationService.instance.showNotification(
+                      //   id: 7,
+                      //   title: AppLocalizations.of(context)?.translate(
+                      //           'notificationDealerLoginSuccessTitle') ??
+                      //       'Dealer Login Successful',
+                      //   body: AppLocalizations.of(context)?.translate(
+                      //           'notificationDealerLoginSuccessBody') ??
+                      //       'Welcome back! You have successfully logged in.',
+                      // );
 
                       context.read<AppManagerCubit>().saveUserData(
                             UserModel(

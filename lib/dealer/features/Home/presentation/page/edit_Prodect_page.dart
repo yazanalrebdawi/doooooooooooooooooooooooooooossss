@@ -504,7 +504,8 @@
 // //                     ),
 // //                   );
 
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -553,16 +554,17 @@ class _EditProdectPageState extends State<EditProdectPage> {
       body: BlocListener<HomePageCubit, HomepageState>(
         listener: (context, state) {
           if (state.isSuccessEditProduct) {
-            // Show foreground notification with translations
-            LocalNotificationService.instance.showNotification(
-              id: 7,
-              title: AppLocalizations.of(context)
-                      ?.translate('notificationProductUpdatedTitle') ??
-                  'Product Updated',
-              body: AppLocalizations.of(context)
-                      ?.translate('notificationProductUpdatedBody') ??
-                  'Product updated successfully',
-            );
+            // COMMENTED OUT - Notification Service
+            // // Show foreground notification with translations
+            // LocalNotificationService.instance.showNotification(
+            //   id: 7,
+            //   title: AppLocalizations.of(context)
+            //           ?.translate('notificationProductUpdatedTitle') ??
+            //       'Product Updated',
+            //   body: AppLocalizations.of(context)
+            //           ?.translate('notificationProductUpdatedBody') ??
+            //       'Product updated successfully',
+            // );
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

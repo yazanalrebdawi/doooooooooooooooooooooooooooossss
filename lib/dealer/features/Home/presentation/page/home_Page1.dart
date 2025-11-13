@@ -1,6 +1,7 @@
 import 'dart:developer';
 
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/Log_in_page.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/custom_snack_bar.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/dialog_log_out.dart';
@@ -165,16 +166,17 @@ class HomePage1 extends StatelessWidget {
                   BlocConsumer<HomePageCubit, HomepageState>(
                     listener: (context, state) {
                       if (state.isSuccess == true) {
-                        // Show foreground notification with translations
-                        LocalNotificationService.instance.showNotification(
-                          id: 8,
-                          title: AppLocalizations.of(context)?.translate(
-                                  'notificationProfileUpdatedTitle') ??
-                              'Profile Updated',
-                          body: AppLocalizations.of(context)?.translate(
-                                  'notificationProfileUpdatedBody') ??
-                              'Edit profile store is Success',
-                        );
+                        // COMMENTED OUT - Notification Service
+                        // // Show foreground notification with translations
+                        // LocalNotificationService.instance.showNotification(
+                        //   id: 8,
+                        //   title: AppLocalizations.of(context)?.translate(
+                        //           'notificationProfileUpdatedTitle') ??
+                        //       'Profile Updated',
+                        //   body: AppLocalizations.of(context)?.translate(
+                        //           'notificationProfileUpdatedBody') ??
+                        //       'Edit profile store is Success',
+                        // );
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

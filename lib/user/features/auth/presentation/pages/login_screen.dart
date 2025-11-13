@@ -1,5 +1,6 @@
 import 'dart:developer';
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_cubit.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
@@ -75,16 +76,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 AppLocalizations.of(context)?.translate('signInSuccess') ??
                     "Sign in Success";
 
-            // Show foreground notification with translations
-            LocalNotificationService.instance.showNotification(
-              id: 1,
-              title: AppLocalizations.of(context)
-                      ?.translate('notificationLoginSuccessTitle') ??
-                  'Login Successful',
-              body: AppLocalizations.of(context)
-                      ?.translate('notificationLoginSuccessBody') ??
-                  successMessage,
-            );
+            // COMMENTED OUT - Notification Service
+            // // Show foreground notification with translations
+            // LocalNotificationService.instance.showNotification(
+            //   id: 1,
+            //   title: AppLocalizations.of(context)
+            //           ?.translate('notificationLoginSuccessTitle') ??
+            //       'Login Successful',
+            //   body: AppLocalizations.of(context)
+            //           ?.translate('notificationLoginSuccessBody') ??
+            //       successMessage,
+            // );
 
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(

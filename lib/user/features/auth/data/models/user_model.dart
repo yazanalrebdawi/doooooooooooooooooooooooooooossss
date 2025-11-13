@@ -65,10 +65,13 @@ class UserModel {
   }
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
+    // Handle both 'name' and 'username' fields (API might return either)
+    final name = map['name'] ?? map['username'] ?? '';
+    
     return UserModel(
       id: map['id'] ?? 0,
       dealerId: map['dealer_id'] ?? 0,
-      name: map['name'] ?? '',
+      name: name,
       phone: map['phone'] ?? '',
       role: map['role'] ?? '',
       verified: map['verified'] ?? false,

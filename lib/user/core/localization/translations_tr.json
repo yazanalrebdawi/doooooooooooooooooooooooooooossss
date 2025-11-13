@@ -244,6 +244,7 @@
     "Operation canceled": "İşlem iptal edildi",
     "OTP Verification": "OTP Doğrulaması",
     "Resend": "Tekrar gönder",
+    "didntReceiveCode": "Kodu almadınız mı?",
     "Click to change your profile picture": "Profil resmini değiştirmek için tıklayın",
     "Something went wrong": "Bir şeyler ters gitti",
     "Select your preferred language": "Tercih ettiğiniz dili seçin",

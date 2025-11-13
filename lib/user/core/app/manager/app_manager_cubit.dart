@@ -48,8 +48,8 @@ class AppManagerCubit extends Cubit<AppManagerState> {
   }
 
   //* Save Data ( UserModel )
-  void saveUserData(UserModel user) {
-    secureStorage.updateUserDataModel(
+  Future<void> saveUserData(UserModel user) async {
+    await secureStorage.updateUserDataModel(
       id: user.id,
       name: user.name,
       phone: user.phone,

@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,14 +23,15 @@ class AccountScreen extends StatelessWidget {
       child: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state.checkAuthState == CheckAuthState.logoutSuccess) {
-            // Show foreground notification with translations
-            LocalNotificationService.instance.showNotification(
-              id: 8,
-              title: AppLocalizations.of(context)?.translate('notificationLogoutSuccessTitle') ??
-                  'Logged Out',
-              body: AppLocalizations.of(context)?.translate('notificationLogoutSuccessBody') ??
-                  'You have been logged out successfully.',
-            );
+            // COMMENTED OUT - Notification Service
+            // // Show foreground notification with translations
+            // LocalNotificationService.instance.showNotification(
+            //   id: 8,
+            //   title: AppLocalizations.of(context)?.translate('notificationLogoutSuccessTitle') ??
+            //       'Logged Out',
+            //   body: AppLocalizations.of(context)?.translate('notificationLogoutSuccessBody') ??
+            //       'You have been logged out successfully.',
+            // );
             
             appLocator<ToastNotification>().showSuccessMessage(
               context,

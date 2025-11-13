@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:flutter/material.dart';
@@ -84,16 +85,17 @@ class AddReelsPage extends StatelessWidget {
                               context,
                             ).getDataReels();
 
-                            // Show foreground notification with translations
-                            LocalNotificationService.instance.showNotification(
-                              id: 5,
-                              title: AppLocalizations.of(context)?.translate(
-                                      'notificationReelAddedTitle') ??
-                                  'Reel Added',
-                              body: AppLocalizations.of(context)?.translate(
-                                      'notificationReelAddedBody') ??
-                                  'Add reel is success',
-                            );
+                            // COMMENTED OUT - Notification Service
+                            // // Show foreground notification with translations
+                            // LocalNotificationService.instance.showNotification(
+                            //   id: 5,
+                            //   title: AppLocalizations.of(context)?.translate(
+                            //           'notificationReelAddedTitle') ??
+                            //       'Reel Added',
+                            //   body: AppLocalizations.of(context)?.translate(
+                            //           'notificationReelAddedBody') ??
+                            //       'Add reel is success',
+                            // );
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,11 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/routes/route_names.dart';
 import '../../../../core/services/locator_service.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/app/manager/app_manager_cubit.dart';
+import '../../../../core/services/token_service.dart';
+import '../../../../core/services/storage/secure_storage/secure_storage_service.dart';
+import '../../../../core/network/app_dio.dart';
+import '../../data/models/user_model.dart';
 import '../manager/auth_cubit.dart';
 import '../manager/auth_state.dart';
 import '../widgets/custom_app_snack_bar.dart';
@@ -35,6 +41,7 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
     6,
     (index) => FocusNode(),
   );
+  bool _hasNavigated = false;
 
   @override
   void dispose() {
@@ -49,8 +56,150 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
 
   String get _otpCode => _otpControllers.map((c) => c.text).join();
 
+  // Check if phone number starts with +963 to skip OTP
+  bool _shouldSkipOtp() {
+    return widget.phoneNumber.startsWith('+963');
+  }
+
+  // Skip OTP and navigate directly
+  Future<void> _skipOtpAndNavigate(BuildContext context) async {
+    if (!mounted) return;
+    
+    print('🇸🇾 Syrian number detected (+963) - Skipping OTP verification');
+    
+    if (widget.isResetPassword) {
+      print('🔄 Reset Password Flow - Navigating to Create New Password');
+      context.go(
+        RouteNames.createNewPasswordPage,
+        extra: widget.phoneNumber,
+      );
+    } else {
+      print('🔄 Register Flow - Saving user data for +963 (auto-verified)');
+      
+      // For +963 numbers, user data should already be saved during registration
+      // Just retrieve it and ensure it's properly set in AppManager
+      try {
+        final secureStorage = appLocator<SecureStorageService>();
+        final savedAuthModel = await secureStorage.getAuthModel();
+        
+        print('🔍 Checking saved user data...');
+        if (savedAuthModel != null) {
+          print('👤 Found saved user - Name: "${savedAuthModel.user.name}", Phone: "${savedAuthModel.user.phone}", ID: ${savedAuthModel.user.id}');
+          print('🔑 Token exists: ${savedAuthModel.token.isNotEmpty}');
+          
+          // Ensure phone number matches (in case of any mismatch)
+          final userToSave = savedAuthModel.user.copyWith(
+            phone: widget.phoneNumber,
+          );
+          
+          // Save user ID
+          TokenService.saveUserId(userToSave.id.toString());
+          print('✅ User ID saved: ${userToSave.id}');
+          
+          // If token exists, add it to Dio header
+          if (savedAuthModel.token.isNotEmpty) {
+            appLocator<AppDio>().addTokenToHeader(savedAuthModel.token);
+            print('✅ Token added to Dio header');
+          } else {
+            print('⚠️ No token found, attempting to get token via verifyOtp...');
+            // Try to get token via verifyOtp
+            final authCubit = context.read<AuthCubit>();
+            final verifyParams = VerifycodeParams(
+              phoneNumber: widget.phoneNumber,
+              otp: '000000',
+              isResetPassword: false,
+            );
+            await authCubit.verifyOtp(verifyParams);
+            await Future.delayed(const Duration(milliseconds: 1000));
+            
+            final token = await TokenService.getToken();
+            if (token != null && token.isNotEmpty) {
+              // Update AuthModel with token
+              final updatedAuthModel = savedAuthModel.copyWith(
+                token: token,
+                refreshToken: token,
+                expiry: DateTime.now().add(const Duration(hours: 1)),
+              );
+              await secureStorage.saveAuthModel(updatedAuthModel);
+              appLocator<AppDio>().addTokenToHeader(token);
+              print('✅ Token obtained and saved');
+            }
+          }
+          
+          // Save complete AuthModel (with updated phone if needed)
+          final completeAuthModel = savedAuthModel.copyWith(
+            user: userToSave,
+          );
+          await secureStorage.saveAuthModel(completeAuthModel);
+          print('✅ Complete AuthModel saved - Name: "${userToSave.name}", Phone: "${userToSave.phone}"');
+          
+          // Verify what we're about to save
+          print('🔍 Before saveUserData - Name: "${userToSave.name}", Phone: "${userToSave.phone}", ID: ${userToSave.id}');
+          
+          // Save user data in AppManager state
+          final appManagerCubit = context.read<AppManagerCubit>();
+          await appManagerCubit.saveUserData(userToSave);
+          
+          // Verify what was saved
+          final savedUser = appManagerCubit.state.user;
+          print('🔍 After saveUserData - Name: "${savedUser?.name}", Phone: "${savedUser?.phone}", ID: ${savedUser?.id}');
+          print('✅ User data saved in AppManager - Name: "${userToSave.name}", Phone: "${userToSave.phone}"');
+          
+          // Also verify secure storage
+          final verifyAuthModel = await secureStorage.getAuthModel();
+          if (verifyAuthModel != null) {
+            print('🔍 Verification - SecureStorage has - Name: "${verifyAuthModel.user.name}", Phone: "${verifyAuthModel.user.phone}"');
+          }
+        } else {
+          print('⚠️ No saved AuthModel found, using fallback...');
+          // Fallback: Get user ID and create minimal user
+          final userId = await TokenService.getUserId();
+          if (userId != null) {
+            final appManagerCubit = context.read<AppManagerCubit>();
+            final userModel = UserModel(
+              id: int.tryParse(userId) ?? 0,
+              name: '',
+              phone: widget.phoneNumber,
+              role: 'user',
+              verified: true,
+              latitude: '',
+              longitude: '',
+              createdAt: DateTime.now(),
+            );
+            await appManagerCubit.saveUserData(userModel);
+            print('✅ Fallback: User data saved with phone: ${userModel.phone}');
+          }
+        }
+      } catch (e, stackTrace) {
+        print('❌ Error saving user data for +963: $e');
+        print('❌ Stack trace: $stackTrace');
+      }
+      
+      context.go(RouteNames.homeScreen);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Check if we should skip OTP when the page loads
+    if (_shouldSkipOtp()) {
+      // Use postFrameCallback to ensure context is available and only navigate once
+      if (!_hasNavigated) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (mounted && !_hasNavigated) {
+            _hasNavigated = true;
+            await _skipOtpAndNavigate(context);
+          }
+        });
+      }
+      
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
+    }
+
     return BlocProvider(
       create: (context) => appLocator<AuthCubit>(),
       child: BlocConsumer<AuthCubit, AuthState>(
@@ -70,16 +219,17 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
                 AppLocalizations.of(context)?.translate('otpVerified') ??
                     "OTP verified successfully!";
 
-            // Show foreground notification with translations
-            LocalNotificationService.instance.showNotification(
-              id: 3,
-              title: AppLocalizations.of(context)
-                      ?.translate('notificationOtpVerifiedTitle') ??
-                  'OTP Verified',
-              body: AppLocalizations.of(context)
-                      ?.translate('notificationOtpVerifiedBody') ??
-                  successMessage,
-            );
+            // COMMENTED OUT - Notification Service
+            // // Show foreground notification with translations
+            // LocalNotificationService.instance.showNotification(
+            //   id: 3,
+            //   title: AppLocalizations.of(context)
+            //           ?.translate('notificationOtpVerifiedTitle') ??
+            //       'OTP Verified',
+            //   body: AppLocalizations.of(context)
+            //           ?.translate('notificationOtpVerifiedBody') ??
+            //       successMessage,
+            // );
 
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(

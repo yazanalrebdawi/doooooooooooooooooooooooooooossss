@@ -94,9 +94,37 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
       },
       (response) {
         log('✅ Registration successful: $response');
+        log('✅ Registration response keys: ${response.keys.toList()}');
         try {
-          UserModel user = UserModel.fromJson(response);
-          log('✅ UserModel created successfully: ${user.name}');
+          // Check if response has user data directly or nested
+          Map<String, dynamic> userData;
+          if (response.containsKey('user') && response['user'] is Map) {
+            userData = response['user'] as Map<String, dynamic>;
+          } else {
+            userData = response;
+          }
+          
+          UserModel user = UserModel.fromJson(userData);
+          log('✅ UserModel created successfully: ${user.name}, Phone: ${user.phone}');
+          
+          // Check if token is in the response (for +963 auto-verified accounts)
+          String? token;
+          if (response.containsKey('token')) {
+            token = response['token'];
+          } else if (response.containsKey('access')) {
+            token = response['access'];
+          } else if (response.containsKey('access_token')) {
+            token = response['access_token'];
+          }
+          
+          if (token != null && token.isNotEmpty) {
+            log('🔑 Token found in registration response: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
+            TokenService.saveToken(token);
+            log('💾 Token saved from registration response');
+          } else {
+            log('⚠️ No token in registration response');
+          }
+          
           return Right(user);
         } catch (e) {
           log('❌ Error creating UserModel: $e');
@@ -155,12 +183,32 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
   Future<Either<Failure, String>> verifyOtp(VerifycodeParams params) async {
     log('🔍 Verify OTP - Phone: ${params.phoneNumber}');
     log('🔍 Verify OTP - Code: ${params.otp}');
+    log('🔍 Verify OTP - Code length: ${params.otp.length}');
     log('🔍 Verify OTP - Is Reset Password: ${params.isResetPassword}');
+
+    // Validate OTP code
+    if (params.otp.isEmpty || params.otp.trim().isEmpty) {
+      log('❌ OTP code is empty');
+      return Left(Failure(message: 'OTP code cannot be empty'));
+    }
+
+    // Clean and validate OTP code (remove any whitespace)
+    final cleanOtp = params.otp.trim();
+    if (cleanOtp.length != 6) {
+      log('❌ Invalid OTP code length: ${cleanOtp.length}');
+      return Left(Failure(message: 'Invalid OTP code. Please enter a 6-digit code'));
+    }
+
+    // Validate phone number
+    if (params.phoneNumber.isEmpty || params.phoneNumber.trim().isEmpty) {
+      log('❌ Phone number is empty');
+      return Left(Failure(message: 'Phone number cannot be empty'));
+    }
 
     // تحديد نوع الـ flow من خلال الـ parameter
     Map<String, dynamic> requestData = {
-      "phone": params.phoneNumber,
-      "code": params.otp,
+      "phone": params.phoneNumber.trim(),
+      "code": cleanOtp,
     };
 
     // اختيار الـ URL الصحيح حسب نوع الـ flow
@@ -185,10 +233,25 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
     return response.fold(
       (failure) {
         log('❌ Verify OTP failed: ${failure.message}');
-        return Left(failure);
+        log('❌ Verify OTP failure status code: ${failure.statusCode}');
+        
+        // Try to extract more detailed error message
+        String errorMessage = failure.message;
+        if (errorMessage == "An unknown error occurred. Please try again later.") {
+          // Check if we can get more details from the failure
+          errorMessage = "Invalid OTP code. Please check and try again.";
+        }
+        
+        return Left(Failure(
+          statusCode: failure.statusCode,
+          message: errorMessage,
+        ));
       },
       (result) {
         log('✅ Verify OTP successful: $result');
+        log('✅ Verify OTP response type: ${result.runtimeType}');
+        log('✅ Verify OTP response keys: ${result.keys.toList()}');
+        
         try {
           // محاولة استخراج الـ token من الـ response
           String? token;
@@ -200,20 +263,27 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
             token = result['access_token'];
           }
 
-          if (token != null) {
-            log('🔑 Token found: $token');
+          if (token != null && token.isNotEmpty) {
+            log('🔑 Token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
             TokenService.saveToken(token);
-            log('💾 Token save operation initiated');
+            log('💾 Token saved successfully');
           } else {
             log('⚠️ No token found in response');
           }
 
+          // Extract success message from various possible fields
           final String message = result["status"] ??
               result["message"] ??
+              result["success"] ??
+              result["detail"] ??
               "OTP verified successfully";
+          
+          log('✅ Success message: $message');
           return Right(message);
-        } catch (e) {
+        } catch (e, stackTrace) {
           log('❌ Error parsing verify OTP response: $e');
+          log('❌ Stack trace: $stackTrace');
+          log('❌ Response data: $result');
           return Left(Failure(message: 'Invalid response format: $e'));
         }
       },

@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -54,16 +55,17 @@ class _EditReelsPageState extends State<EditReelsPage> {
         child: BlocListener<ReelsStateCubit, reelsState>(
           listener: (context, State) {
             if (State.isSuccess == true) {
-              // Show foreground notification with translations
-              LocalNotificationService.instance.showNotification(
-                id: 9,
-                title: AppLocalizations.of(context)
-                        ?.translate('notificationReelEditedTitle') ??
-                    'Reel Edited',
-                body: AppLocalizations.of(context)
-                        ?.translate('notificationReelEditedBody') ??
-                    'Reel has been edited successfully.',
-              );
+              // COMMENTED OUT - Notification Service
+              // // Show foreground notification with translations
+              // LocalNotificationService.instance.showNotification(
+              //   id: 9,
+              //   title: AppLocalizations.of(context)
+              //           ?.translate('notificationReelEditedTitle') ??
+              //       'Reel Edited',
+              //   body: AppLocalizations.of(context)
+              //           ?.translate('notificationReelEditedBody') ??
+              //       'Reel has been edited successfully.',
+              // );
 
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

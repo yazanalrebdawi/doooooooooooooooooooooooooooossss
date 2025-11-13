@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/Appearance_and_colors_widget.dart';
 import 'package:dooss_business_app/dealer/features/Home/presentation/widget/add_images_car_widget.dart';
@@ -83,16 +84,17 @@ class _AddNewCarPageState extends State<AddNewCarPage> {
       body: BlocListener<HomePageCubit, HomepageState>(
         listener: (context, state) {
           if (state.isSuccessAddCar == true) {
-            // Show foreground notification with translations
-            LocalNotificationService.instance.showNotification(
-              id: 6,
-              title: AppLocalizations.of(context)
-                      ?.translate('notificationCarAddedTitle') ??
-                  'Car Added',
-              body: AppLocalizations.of(context)
-                      ?.translate('notificationCarAddedBody') ??
-                  'Add Car is Success',
-            );
+            // COMMENTED OUT - Notification Service
+            // // Show foreground notification with translations
+            // LocalNotificationService.instance.showNotification(
+            //   id: 6,
+            //   title: AppLocalizations.of(context)
+            //           ?.translate('notificationCarAddedTitle') ??
+            //       'Car Added',
+            //   body: AppLocalizations.of(context)
+            //           ?.translate('notificationCarAddedBody') ??
+            //       'Add Car is Success',
+            // );
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

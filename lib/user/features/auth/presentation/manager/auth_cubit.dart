@@ -9,7 +9,6 @@ import '../../../../core/constants/cache_keys.dart';
 import '../../../../core/network/app_dio.dart';
 import '../../../../core/network/failure.dart';
 import '../../../../core/services/token_service.dart';
-import '../../../../core/services/auth_service.dart';
 import '../../../../core/services/user_preferences_service.dart';
 import '../../data/models/create_account_params_model.dart';
 import '../../data/models/auth_response_model.dart';
@@ -129,12 +128,10 @@ class AuthCubit extends OptimizedCubit<AuthState> {
           saveAuthRespnseModel(authResponse);
         }
 
-        if (authResponse.user != null) {
-          await secureStorage.saveAuthModel(authResponse);
-          // Save user ID to TokenService so it can be retrieved later for message differentiation
-          TokenService.saveUserId(authResponse.user.id.toString());
-          log("✅ User ID saved in AuthCubit: ${authResponse.user.id}");
-        }
+        await secureStorage.saveAuthModel(authResponse);
+        // Save user ID to TokenService so it can be retrieved later for message differentiation
+        TokenService.saveUserId(authResponse.user.id.toString());
+        log("✅ User ID saved in AuthCubit: ${authResponse.user.id}");
 
         // Save credentials if remember me is enabled
         await saveCredentialsIfRemembered(
@@ -164,13 +161,84 @@ class AuthCubit extends OptimizedCubit<AuthState> {
           checkAuthState: CheckAuthState.error,
         ));
       },
-      (userModel) {
+      (userModel) async {
         log("✅ AuthCubit - Register successful");
+        log("✅ AuthCubit - User ID: ${userModel.id}, Name: '${userModel.name}', Phone: '${userModel.phone}'");
+        log("✅ AuthCubit - UserModel details - ID: ${userModel.id}, Name length: ${userModel.name.length}, Phone length: ${userModel.phone.length}");
+        
+        // If name is empty, use username from params
+        UserModel finalUserModel = userModel;
+        if (userModel.name.isEmpty && params.userName.text.isNotEmpty) {
+          log("⚠️ Name is empty in response, using username from params: ${params.userName.text}");
+          finalUserModel = userModel.copyWith(name: params.userName.text);
+          log("✅ Updated UserModel with name: '${finalUserModel.name}'");
+        }
+        
+        // Ensure phone number is correct
+        if (finalUserModel.phone != params.fullPhoneNumber) {
+          log("⚠️ Phone mismatch - Model: '${finalUserModel.phone}', Params: '${params.fullPhoneNumber}'");
+          finalUserModel = finalUserModel.copyWith(phone: params.fullPhoneNumber);
+          log("✅ Updated UserModel with phone: '${finalUserModel.phone}'");
+        }
+        
+        // Check if this is a +963 number (auto-verified)
+        final isSyrianNumber = params.fullPhoneNumber.startsWith('+963');
+        log("🔍 Is Syrian number (+963): $isSyrianNumber");
+        
+        // Save user ID for later use
+        TokenService.saveUserId(finalUserModel.id.toString());
+        log("✅ User ID saved in AuthCubit: ${finalUserModel.id}");
+        
+        // Check if token was already saved from registration response
+        final savedToken = await TokenService.getToken();
+        log("🔍 Saved token exists: ${savedToken != null && savedToken.isNotEmpty}");
+        
+        // Save UserModel in secure storage
+        // For +963 numbers, save complete AuthModel with token if available
+        try {
+          final token = savedToken ?? '';
+          final message = isSyrianNumber 
+              ? "Account created and auto-verified (Syrian number)."
+              : "Account created successfully! Please verify your phone number.";
+          
+          log("🔍 Creating AuthModel - Name: '${finalUserModel.name}', Phone: '${finalUserModel.phone}', Token: ${token.isNotEmpty ? 'exists' : 'empty'}");
+          
+          final authModel = AuthResponceModel(
+            message: message,
+            user: finalUserModel,
+            token: token,
+            refreshToken: token.isNotEmpty ? token : '',
+            expiry: token.isNotEmpty ? DateTime.now().add(const Duration(hours: 1)) : null,
+          );
+          
+          await secureStorage.saveAuthModel(authModel);
+          log("✅ AuthModel saved successfully");
+          log("✅ AuthModel details - Name: '${authModel.user.name}', Phone: '${authModel.user.phone}', ID: ${authModel.user.id}, Has Token: ${authModel.token.isNotEmpty}");
+          
+          // Verify what was saved
+          final verifyAuth = await secureStorage.getAuthModel();
+          if (verifyAuth != null) {
+            log("✅ Verification - Saved AuthModel has - Name: '${verifyAuth.user.name}', Phone: '${verifyAuth.user.phone}', ID: ${verifyAuth.user.id}");
+          } else {
+            log("❌ Verification - No AuthModel found after saving!");
+          }
+          
+          // If token exists, add it to Dio header
+          if (token.isNotEmpty) {
+            appLocator<AppDio>().addTokenToHeader(token);
+            log("✅ Token added to Dio header");
+          }
+        } catch (e, stackTrace) {
+          log("❌ Error saving AuthModel: $e");
+          log("❌ Stack trace: $stackTrace");
+        }
+        
         safeEmit(state.copyWith(
           isLoading: false,
           checkAuthState: CheckAuthState.success,
-          success:
-              "Account created successfully! Please verify your phone number.",
+          success: isSyrianNumber
+              ? "Account created and auto-verified!"
+              : "Account created successfully! Please verify your phone number.",
         ));
       },
     );

@@ -1,4 +1,5 @@
-import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
+// COMMENTED OUT - Notification Service
+// import 'package:dooss_business_app/dealer/Core/services/notification_service.dart';
 import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_Cubit_dealers.dart';
 import 'package:dooss_business_app/dealer/features/auth/presentation/manager/auth_state_dealers.dart';
@@ -25,16 +26,17 @@ class LogInPage extends StatelessWidget {
           child: BlocListener<AuthCubitDealers, AuthStateDealers>(
             listener: (context, state) {
               if (state.dataUser != null) {
-                // Show foreground notification with translations
-                LocalNotificationService.instance.showNotification(
-                  id: 7,
-                  title: AppLocalizations.of(context)
-                          ?.translate('notificationDealerLoginSuccessTitle') ??
-                      'Dealer Login Successful',
-                  body: AppLocalizations.of(context)
-                          ?.translate('notificationDealerLoginSuccessBody') ??
-                      'Welcome back! You have successfully logged in.',
-                );
+                // COMMENTED OUT - Notification Service
+                // // Show foreground notification with translations
+                // LocalNotificationService.instance.showNotification(
+                //   id: 7,
+                //   title: AppLocalizations.of(context)
+                //           ?.translate('notificationDealerLoginSuccessTitle') ??
+                //       'Dealer Login Successful',
+                //   body: AppLocalizations.of(context)
+                //           ?.translate('notificationDealerLoginSuccessBody') ??
+                //       'Welcome back! You have successfully logged in.',
+                // );
 
                 Navigator.pushReplacement(
                   context,
