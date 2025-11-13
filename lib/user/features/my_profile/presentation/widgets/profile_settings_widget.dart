@@ -5,6 +5,7 @@ import 'package:dooss_business_app/user/core/services/locator_service.dart';
 import 'package:dooss_business_app/user/core/services/storage/secure_storage/secure_storage_service.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/manager/my_profile_cubit.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/manager/my_profile_state.dart';
+import 'package:dooss_business_app/user/features/my_profile/presentation/pages/edit_profile_screen.dart';
 import 'package:dooss_business_app/user/features/my_profile/presentation/widgets/show_photo_user_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,7 +65,8 @@ class _ProfileSettingsWidgetState extends State<ProfileSettingsWidget> {
         spacing: 10.h,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ShowPhotoUserWidget(isShowedit: false),
+          // ShowPhotoUserWidget(isShowedit: true),
+          AvatarEditWidget(isEditable: true),
           BlocBuilder<MyProfileCubit, MyProfileState>(
             buildWhen: (previous, current) {
               return previous.user != current.user;

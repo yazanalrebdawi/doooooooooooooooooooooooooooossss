@@ -39,14 +39,14 @@ class _HeaderEditScreenState extends State<HeaderEditScreen> {
                 icon: Icon(Icons.edit, color: AppColors.buttonText, size: 16.r),
               ),
             ),
-            SizedBox(height: 10.h),
-            Text(
-              AppLocalizations.of(
-                    context,
-                  )?.translate("Click to change your profile picture") ??
-                  "Click to change your profile picture",
-              style: AppTextStyles.s14w400.copyWith(color: Color(0xff4B5563)),
-            ),
+            // SizedBox(height: 10.h),
+            // Text(
+            //   AppLocalizations.of(
+            //         context,
+            //       )?.translate("Click to change your profile picture") ??
+            //       "Click to change your profile picture",
+            //   style: AppTextStyles.s14w400.copyWith(color: Color(0xff4B5563)),
+            // ),
           ],
         ),
       ),
