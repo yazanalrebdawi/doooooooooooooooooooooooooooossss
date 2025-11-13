@@ -30,8 +30,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
