@@ -37,10 +37,13 @@ class showDialogLogOut extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
           ),
-          onPressed: () {
-              appLocator<SharedPreferencesService>().removeAll();
-                 context.go(RouteNames.splashScreen);
-            Navigator.of(context).pop(); // إغلاق الحوار
+          onPressed: () async {
+            // Use removeAllExceptPrivacyPolicy to preserve privacy policy acceptance
+            await appLocator<SharedPreferencesService>().removeAllExceptPrivacyPolicy();
+            if (context.mounted) {
+              context.go(RouteNames.splashScreen);
+              Navigator.of(context).pop(); // إغلاق الحوار
+            }
             // أضف هنا منطق تسجيل الخروج
             print('تم تسجيل الخروج');
           },

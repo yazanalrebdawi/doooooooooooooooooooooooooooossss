@@ -24,8 +24,7 @@ class NearbyServiceCardWidget extends StatelessWidget {
         service.name.toLowerCase().contains('repair');
 
     return Container(
-      height: 140.h,
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -40,9 +39,13 @@ class NearbyServiceCardWidget extends StatelessWidget {
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 56.w,
@@ -61,6 +64,8 @@ class NearbyServiceCardWidget extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       service.name,
@@ -78,6 +83,8 @@ class NearbyServiceCardWidget extends StatelessWidget {
                         color: AppColors.gray,
                         fontSize: 14.sp,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 2.h),
                     Text(
@@ -86,86 +93,116 @@ class NearbyServiceCardWidget extends StatelessWidget {
                         color: AppColors.gray,
                         fontSize: 12.sp,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-              Column(
-                children: [
-                  Text(
-                    service.openNow
-                        ? AppLocalizations.of(context)!.translate('open')
-                        : AppLocalizations.of(context)!.translate('closed'),
-                    style: AppTextStyles.secondaryS12W400.copyWith(
-                      color: service.openNow ? Colors.green : Colors.red,
-                      fontSize: 12.sp,
+              SizedBox(width: 8.w),
+              Flexible(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      service.openNow
+                          ? AppLocalizations.of(context)!.translate('open')
+                          : AppLocalizations.of(context)!.translate('closed'),
+                      style: AppTextStyles.secondaryS12W400.copyWith(
+                        color: service.openNow ? Colors.green : Colors.red,
+                        fontSize: 12.sp,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Container(
-                    width: 8.w,
-                    height: 8.h,
-                    decoration: BoxDecoration(
-                      color: service.openNow ? Colors.green : Colors.red,
-                      shape: BoxShape.circle,
+                    SizedBox(height: 4.h),
+                    Container(
+                      width: 8.w,
+                      height: 8.h,
+                      decoration: BoxDecoration(
+                        color: service.openNow ? Colors.green : Colors.red,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
-          Spacer(),
+          SizedBox(height: 12.h),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SizedBox(
-                width: 120.w,
-                height: 35.h,
-                child: ElevatedButton(
-                  onPressed: onShowOnMap,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    padding: EdgeInsets.zero,
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.translate('showOnMap'),
-                    style: AppTextStyles.secondaryS12W400.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.sp,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 4.w),
+                  child: SizedBox(
+                    height: 35.h,
+                    child: ElevatedButton(
+                      onPressed: onShowOnMap,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        elevation: 0,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          AppLocalizations.of(context)!.translate('showOnMap'),
+                          style: AppTextStyles.secondaryS12W400.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
               SizedBox(width: 8.w),
-              SizedBox(
-                width: 120.w,
-                height: 35.h,
-                child: OutlinedButton(
-                  onPressed: onMoreDetails,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.black,
-                    side: BorderSide(
-                      color: AppColors.gray.withOpacity(0.3),
-                      width: 1,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    padding: EdgeInsets.zero,
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.translate('moreDetails'),
-                    style: AppTextStyles.secondaryS12W400.copyWith(
-                      color: AppColors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.sp,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 4.w),
+                  child: SizedBox(
+                    height: 35.h,
+                    child: OutlinedButton(
+                      onPressed: onMoreDetails,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.black,
+                        side: BorderSide(
+                          color: AppColors.gray.withOpacity(0.3),
+                          width: 1,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        elevation: 0,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          AppLocalizations.of(context)!
+                              .translate('moreDetails'),
+                          style: AppTextStyles.secondaryS12W400.copyWith(
+                            color: AppColors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
                   ),
                 ),

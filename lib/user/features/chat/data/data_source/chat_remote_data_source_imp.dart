@@ -71,31 +71,65 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
   @override
   Future<List<MessageModel>> fetchMessages(int chatId) async {
     try {
-      print('Fetching messages from API...');
-      final url = '${ApiUrls.chats}$chatId/messages/';
-      print('Constructed URL: $url');
-      final response = await api.get(
-        apiRequest: ApiRequest(url: url),
-      );
-      print('API response: $response');
-      return response.fold(
-        (failure) {
-          print('Failure: ${failure.message}');
-          return <MessageModel>[];
-        },
-        (data) {
-          print('Data received: $data');
-          if (data is Map && data['results'] is List) {
-            final results = data['results'] as List;
-            return results.map((e) => MessageModel.fromJson(e)).toList();
-          } else if (data is List) {
-            return data.map((e) => MessageModel.fromJson(e)).toList();
-          } else {
-            print('Invalid data format received from API');
+      print('Fetching messages from API with pagination...');
+      final allMessages = <MessageModel>[];
+      String? nextUrl = '${ApiUrls.chats}$chatId/messages/';
+      int pageCount = 0;
+
+      while (nextUrl != null) {
+        pageCount++;
+        final currentUrl = nextUrl!; // Safe to use ! since we checked != null
+        print('Fetching page $pageCount: $currentUrl');
+        
+        final response = await api.get(
+          apiRequest: ApiRequest(url: currentUrl),
+        );
+        
+        final result = response.fold(
+          (failure) {
+            print('Failure on page $pageCount: ${failure.message}');
             return <MessageModel>[];
-          }
-        },
-      );
+          },
+          (data) {
+            if (data is Map<String, dynamic>) {
+              // Handle paginated response
+              if (data['results'] is List) {
+                final results = data['results'] as List;
+                final pageMessages = results.map((e) => MessageModel.fromJson(e)).toList();
+                print('Page $pageCount: Loaded ${pageMessages.length} messages');
+                
+                // Get next page URL
+                nextUrl = data['next'] as String?;
+                if (nextUrl != null) {
+                  print('Next page URL: $nextUrl');
+                } else {
+                  print('No more pages. Total messages loaded: ${allMessages.length + pageMessages.length}');
+                }
+                
+                return pageMessages;
+              } else {
+                print('Invalid data format: results is not a List');
+                nextUrl = null;
+                return <MessageModel>[];
+              }
+            } else if (data is List) {
+              // Handle non-paginated response (fallback)
+              print('Non-paginated response: ${data.length} messages');
+              nextUrl = null;
+              return data.map((e) => MessageModel.fromJson(e)).toList();
+            } else {
+              print('Invalid data format received from API');
+              nextUrl = null;
+              return <MessageModel>[];
+            }
+          },
+        );
+        
+        allMessages.addAll(result);
+      }
+      
+      print('✅ Fetched all messages: ${allMessages.length} total messages from $pageCount page(s)');
+      return allMessages;
     } catch (e) {
       print('ChatRemoteDataSource fetchMessages error: $e');
       return <MessageModel>[];

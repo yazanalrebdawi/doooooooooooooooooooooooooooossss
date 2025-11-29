@@ -35,6 +35,7 @@ class RouteNames {
   static const String dealerProfileWithId = '/dealer-profile/:id';
   static const String deleteAccountDealer = '/delete-account-dealer';
   static const String privacyPolicy = '/privacy-policy';
+  static const String privacyPolicyAcceptance = '/privacy-policy-acceptance';
 
   // my profile & settings
   static const String changeLanguageScreen = '/changeLanguageScreen';

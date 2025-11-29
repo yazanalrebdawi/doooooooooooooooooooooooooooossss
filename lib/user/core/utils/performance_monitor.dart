@@ -29,9 +29,10 @@ class PerformanceMonitor {
         _frameTimes.removeAt(0);
       }
       
-      // Log performance warnings
-      if (frameTime > 16.67) { // 60 FPS threshold
-        debugPrint('⚠️ Performance Warning: Frame took ${frameTime.toStringAsFixed(2)}ms');
+      // Log performance warnings only for frames that actually impact user experience
+      // Only warn if frame takes > 33ms (30 FPS) - frames between 16-33ms are still smooth
+      if (frameTime > 33.0) {
+        debugPrint('⚠️ Performance Warning: Frame took ${frameTime.toStringAsFixed(2)}ms (${(1000/frameTime).toStringAsFixed(1)} FPS)');
       }
     }
   }

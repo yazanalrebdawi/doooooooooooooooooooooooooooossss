@@ -1,4 +1,5 @@
-import 'dart:developer';
+import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart'
     as di;
 import 'package:dooss_business_app/user/features/home/presentaion/manager/reel_cubit.dart';
@@ -44,8 +45,47 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    if (widget.isCurrentReel && widget.reel.video.isNotEmpty) {
-      _initializeVideo();
+    print('🎬 FullScreenReelPlayer: initState for reel ${widget.reel.id}, isCurrentReel: ${widget.isCurrentReel}');
+    // Only initialize if this is the current reel AND video URL is valid
+    if (widget.isCurrentReel) {
+      final videoUrl = widget.reel.video.trim();
+      print('🎬 FullScreenReelPlayer: Initializing video for reel ${widget.reel.id}, URL: ${videoUrl.substring(0, videoUrl.length > 50 ? 50 : videoUrl.length)}...');
+      if (videoUrl.isNotEmpty && _isValidVideoUrl(videoUrl)) {
+        _initializeVideo();
+      } else {
+        print('❌ FullScreenReelPlayer: Invalid video URL for reel ${widget.reel.id}');
+        // Set error state immediately if video is invalid
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _hasError = true;
+              _errorMessage = videoUrl.isEmpty 
+                  ? 'Video URL is empty' 
+                  : 'Invalid video URL format';
+              _isInitialized = false;
+            });
+          }
+        });
+      }
+    } else {
+      print('⏸️ FullScreenReelPlayer: Skipping initialization - not current reel');
+    }
+  }
+
+  /// Helper method to validate video URL format
+  bool _isValidVideoUrl(String url) {
+    if (url.isEmpty || url.trim().isEmpty) return false;
+    try {
+      final uri = Uri.parse(url.trim());
+      // Must have scheme, host, and valid format
+      if (!uri.hasScheme || !uri.scheme.startsWith('http')) return false;
+      if (uri.host.isEmpty) return false;
+      // Ensure the full URI string is valid
+      final uriString = uri.toString();
+      if (uriString.isEmpty || uriString == ':' || uriString == 'http:' || uriString == 'https:') return false;
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
@@ -57,19 +97,44 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     if (!oldWidget.isCurrentReel &&
         widget.isCurrentReel &&
         _controller == null) {
-      _initializeVideo();
+      print('🎬 FullScreenReelPlayer: Reel ${widget.reel.id} became current - initializing');
+      final videoUrl = widget.reel.video.trim();
+      if (videoUrl.isNotEmpty && _isValidVideoUrl(videoUrl)) {
+        _initializeVideo();
+      } else {
+        print('❌ FullScreenReelPlayer: Invalid video URL for reel ${widget.reel.id}');
+        // Set error state if video is invalid
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _hasError = true;
+              _errorMessage = videoUrl.isEmpty 
+                  ? 'Video URL is empty' 
+                  : 'Invalid video URL format';
+              _isInitialized = false;
+            });
+          }
+        });
+      }
     }
 
     // Dispose video if this reel is no longer current
     if (oldWidget.isCurrentReel && !widget.isCurrentReel) {
+      print('⏸️ FullScreenReelPlayer: Reel ${widget.reel.id} no longer current - disposing');
       _disposeController();
     }
 
     // Play/pause based on current reel status
     if (widget.isCurrentReel && _isInitialized) {
-      if (!_isPlaying) _playVideo();
+      if (!_isPlaying) {
+        print('▶️ FullScreenReelPlayer: Reel ${widget.reel.id} is current and initialized - playing');
+        _playVideo();
+      }
     } else {
-      if (_isPlaying) _pauseVideo();
+      if (_isPlaying) {
+        print('⏸️ FullScreenReelPlayer: Reel ${widget.reel.id} is not current - pausing');
+        _pauseVideo();
+      }
     }
   }
 
@@ -91,32 +156,101 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
   }
 
   Future<void> _initializeVideo() async {
-    if (widget.reel.video.isEmpty) return;
-
-    try {
-      _controller =
-          VideoPlayerController.networkUrl(Uri.parse(widget.reel.video));
-      _controller!.addListener(_onVideoEvent);
-      await _controller!.initialize();
-      await _controller!.setVolume(_isMuted ? 0.0 : 1.0);
-      await _controller!.setLooping(true);
-
+    print('🎬 FullScreenReelPlayer: _initializeVideo() called for reel ${widget.reel.id}');
+    // Validate video URL before attempting to initialize
+    final videoUrl = widget.reel.video.trim();
+    if (videoUrl.isEmpty) {
       if (mounted) {
         setState(() {
-          _isInitialized = true;
-          _hasError = false;
-          _errorMessage = null;
+          _hasError = true;
+          _errorMessage = 'Video URL is empty';
+          _isInitialized = false;
         });
-        if (widget.isCurrentReel) _playVideo();
+      }
+      return;
+    }
+
+    // Validate URL format - strict validation
+    Uri? uri;
+    try {
+      uri = Uri.parse(videoUrl);
+      // Must have scheme, host, and valid format
+      if (!uri.hasScheme || !uri.scheme.startsWith('http')) {
+        throw FormatException('Invalid video URL scheme');
+      }
+      if (uri.host.isEmpty) {
+        throw FormatException('Video URL missing host');
+      }
+      // Ensure the full URI string is valid
+      final uriString = uri.toString();
+      if (uriString.isEmpty || uriString == ':' || uriString == 'http:' || uriString == 'https:') {
+        throw FormatException('Invalid video URL format');
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _hasError = true;
-          _errorMessage = e.toString();
+          _errorMessage = 'Invalid video URL format';
           _isInitialized = false;
         });
       }
+      return;
+    }
+
+    try {
+      _controller = VideoPlayerController.networkUrl(uri);
+      _controller!.addListener(_onVideoEvent);
+      
+      // Add timeout for initialization (important for older devices)
+      await _controller!.initialize().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw TimeoutException('Video initialization timed out after 15 seconds');
+        },
+      );
+      
+      // Check if controller is still valid after initialization
+      if (!_controller!.value.isInitialized) {
+        throw Exception('Video controller failed to initialize');
+      }
+      
+      await _controller!.setVolume(_isMuted ? 0.0 : 1.0);
+      await _controller!.setLooping(true);
+
+      if (mounted) {
+        print('✅ FullScreenReelPlayer: Video initialized successfully for reel ${widget.reel.id}');
+        setState(() {
+          _isInitialized = true;
+          _hasError = false;
+          _errorMessage = null;
+        });
+        if (widget.isCurrentReel) {
+          print('▶️ FullScreenReelPlayer: Auto-playing reel ${widget.reel.id}');
+          _playVideo();
+        } else {
+          print('⏸️ FullScreenReelPlayer: Reel ${widget.reel.id} initialized but not current - not auto-playing');
+        }
+      }
+    } catch (e) {
+      print('❌ FullScreenReelPlayer: Error initializing video: $e');
+      // Check if it's a codec/device compatibility issue
+      final errorString = e.toString().toLowerCase();
+      final isCodecError = errorString.contains('codec') || 
+                          errorString.contains('decoder') ||
+                          errorString.contains('format') ||
+                          errorString.contains('unsupported');
+      
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _errorMessage = isCodecError 
+              ? 'Video format not supported on this device'
+              : 'Failed to load video. Please try again.';
+          _isInitialized = false;
+        });
+      }
+      // Dispose controller on error to prevent memory leaks
+      _disposeController();
     }
   }
 
@@ -124,25 +258,57 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     if (_controller == null || !mounted) return;
     final value = _controller!.value;
     if (value.hasError) {
-      setState(() {
-        _hasError = true;
-        _errorMessage = value.errorDescription;
-        _isPlaying = false;
+      // Use post-frame callback to avoid build during frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _controller != null) {
+          final errorDesc = value.errorDescription ?? 'Video playback error';
+          final errorString = errorDesc.toLowerCase();
+          final isCodecError = errorString.contains('codec') || 
+                              errorString.contains('decoder') ||
+                              errorString.contains('format') ||
+                              errorString.contains('unsupported') ||
+                              errorString.contains('corrupted');
+          
+          setState(() {
+            _hasError = true;
+            _errorMessage = isCodecError 
+                ? 'Video format not supported on this device'
+                : errorDesc;
+            _isPlaying = false;
+          });
+        }
       });
     }
   }
 
   void _playVideo() {
     if (_controller?.value.isInitialized == true && !_isPlaying) {
-      _controller!.play();
-      setState(() => _isPlaying = true);
+      print('▶️ FullScreenReelPlayer: Calling play() for reel ${widget.reel.id}');
+      _controller!.play().then((_) {
+        print('✅ FullScreenReelPlayer: Play() completed for reel ${widget.reel.id}');
+      }).catchError((e) {
+        print('❌ FullScreenReelPlayer: Error playing video for reel ${widget.reel.id}: $e');
+      });
+      // Use post-frame callback to avoid build during frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _isPlaying = true);
+        }
+      });
+    } else {
+      print('⚠️ FullScreenReelPlayer: Cannot play reel ${widget.reel.id} - controller: ${_controller != null}, initialized: ${_controller?.value.isInitialized}, isPlaying: $_isPlaying');
     }
   }
 
   void _pauseVideo() {
     if (_controller?.value.isInitialized == true && _isPlaying) {
       _controller!.pause();
-      setState(() => _isPlaying = false);
+      // Use post-frame callback to avoid build during frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _isPlaying = false);
+        }
+      });
     }
   }
 
@@ -158,7 +324,12 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
     if (_controller?.value.isInitialized == true) {
       _isMuted = !_isMuted;
       _controller!.setVolume(_isMuted ? 0.0 : 1.0);
-      setState(() {});
+      // Use post-frame callback to avoid build during frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {});
+        }
+      });
     }
   }
 
@@ -246,32 +417,100 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
   }
 
   Widget _buildErrorState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, color: AppColors.white, size: 64.sp),
-          SizedBox(height: 16.h),
-          Text('Failed to load reel', style: AppTextStyles.whiteS18W600),
-          if (_errorMessage != null) ...[
-            SizedBox(height: 8.h),
-            Text(_errorMessage!,
-                style: AppTextStyles.whiteS14W400, textAlign: TextAlign.center),
-          ],
-          SizedBox(height: 24.h),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _hasError = false;
-                _errorMessage = null;
-              });
-              _initializeVideo();
-            },
-            child: Text('Retry'),
+    // Show thumbnail as fallback if available
+    final hasThumbnail = widget.reel.thumbnail.isNotEmpty && 
+                        _isValidImageUrl(widget.reel.thumbnail);
+    
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Show thumbnail as background if available
+        if (hasThumbnail)
+          Positioned.fill(
+            child: CachedNetworkImage(
+              imageUrl: widget.reel.thumbnail,
+              fit: BoxFit.cover,
+              memCacheWidth: 720,
+              memCacheHeight: 1280,
+              errorWidget: (context, url, error) => Container(
+                color: AppColors.black,
+              ),
+              placeholder: (context, url) => Container(
+                color: AppColors.black,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            ),
+          )
+        else
+          Container(color: AppColors.black),
+        
+        // Error message overlay
+        Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+            margin: EdgeInsets.symmetric(horizontal: 32.w),
+            decoration: BoxDecoration(
+              color: AppColors.black.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, color: AppColors.white, size: 48.sp),
+                SizedBox(height: 12.h),
+                Text(
+                  'Unable to play video',
+                  style: AppTextStyles.whiteS18W600,
+                  textAlign: TextAlign.center,
+                ),
+                if (_errorMessage != null) ...[
+                  SizedBox(height: 8.h),
+                  Text(
+                    _errorMessage!,
+                    style: AppTextStyles.whiteS14W400,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+                SizedBox(height: 16.h),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _hasError = false;
+                      _errorMessage = null;
+                    });
+                    _initializeVideo();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.white,
+                  ),
+                  child: Text('Retry'),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
+  }
+  
+  /// Helper to validate image URL
+  bool _isValidImageUrl(String url) {
+    if (url.isEmpty || url.trim().isEmpty) return false;
+    try {
+      final uri = Uri.parse(url.trim());
+      if (!uri.hasScheme || !uri.scheme.startsWith('http')) return false;
+      if (uri.host.isEmpty) return false;
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Widget _buildReelInfoOverlay() {
@@ -284,9 +523,15 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
         children: [
           InkWell(
             onTap: () {
-              context.push(
-                  '/dealer-profile/${widget.reel.dealer.toString()}?handle=${widget.reel.dealerName ?? ''}');
-              log("Navigate to dealer profile");
+              // Pause video immediately before navigating
+              _pauseVideo();
+              // Navigate after a brief delay to ensure video is paused
+              Future.microtask(() {
+                if (mounted) {
+                  context.push(
+                      '/dealer-profile/${widget.reel.dealer.toString()}?handle=${widget.reel.dealerName ?? ''}');
+                }
+              });
             },
             child: Row(
               children: [
@@ -311,9 +556,9 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
               style: AppTextStyles.whiteS16W600,
               maxLines: 2,
               overflow: TextOverflow.ellipsis),
-          if (widget.reel.description?.isNotEmpty == true) ...[
+          if (widget.reel.description.isNotEmpty) ...[
             SizedBox(height: 8.h),
-            Text(widget.reel.description!,
+            Text(widget.reel.description,
                 style: AppTextStyles.whiteS14W400,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis),
@@ -333,10 +578,21 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
           children: [
             BlocBuilder<ReelCubit, ReelState>(
               builder: (context, state) {
-                // احصل على الريل الحالي مباشرة من state
-                final updatedReel = state.reels.isNotEmpty
-                    ? state.reels[state.currentReelIndex]
-                    : widget.reel;
+                // Get the current reel - use widget.reel as base, but check if it's updated in state
+                ReelModel updatedReel = widget.reel;
+                
+                // Try to find the reel in state by ID (more reliable than index)
+                if (state.reels.isNotEmpty) {
+                  try {
+                    final reelInState = state.reels.firstWhere(
+                      (r) => r.id == widget.reel.id,
+                    );
+                    updatedReel = reelInState;
+                  } catch (e) {
+                    // Reel not found in state, use widget.reel
+                    updatedReel = widget.reel;
+                  }
+                }
 
                 return _buildActionButton(
                   icon: updatedReel.liked
@@ -344,29 +600,60 @@ class _FullScreenReelPlayerState extends State<FullScreenReelPlayer>
                       : Icons.favorite_border,
                   label: _formatCount(updatedReel.likesCount),
                   onTap: () {
-                    // تحديث UI فورًا بدون انتظار API
+                    print('❤️ FullScreenReelPlayer: Like button tapped for reel ${updatedReel.id}');
+                    print('❤️ Current liked status: ${updatedReel.liked}, likes count: ${updatedReel.likesCount}');
+                    
+                    // Store original values BEFORE updating (for error handling)
+                    final originalLikedStatus = updatedReel.liked;
+                    final originalLikesCount = updatedReel.likesCount;
+                    
+                    // Calculate new values
+                    final newLikedStatus = !updatedReel.liked;
+                    final newLikesCount = updatedReel.liked
+                        ? updatedReel.likesCount - 1
+                        : updatedReel.likesCount + 1;
+                    
+                    print('❤️ New liked status: $newLikedStatus, new likes count: $newLikesCount');
+                    
+                    // Update UI immediately
                     final tempReel = updatedReel.copyWith(
-                      liked: !updatedReel.liked,
-                      likesCount: updatedReel.liked
-                          ? updatedReel.likesCount - 1
-                          : updatedReel.likesCount + 1,
+                      liked: newLikedStatus,
+                      likesCount: newLikesCount,
                     );
 
-                    final tempReels = state.reels.isNotEmpty
-                        ? List<ReelModel>.from(state.reels)
-                        : [tempReel];
-
+                    // Update the reel in state - ensure we have a list to work with
+                    List<ReelModel> tempReels;
                     if (state.reels.isNotEmpty) {
-                      tempReels[state.currentReelIndex] = tempReel;
+                      tempReels = List<ReelModel>.from(state.reels);
+                    } else {
+                      // If state is empty, create a list with the updated reel
+                      tempReels = [tempReel];
                     }
 
-                    // Emit لحظي لتغيير UI
+                    // Find and update the reel by ID (more reliable)
+                    final reelIndex = tempReels.indexWhere((r) => r.id == updatedReel.id);
+                    if (reelIndex != -1) {
+                      print('❤️ Found reel at index $reelIndex, updating...');
+                      tempReels[reelIndex] = tempReel;
+                    } else {
+                      print('❤️ Reel not found in state, adding it...');
+                      // If not found, add it
+                      tempReels.add(tempReel);
+                    }
+
+                    print('❤️ Emitting state with ${tempReels.length} reels');
+                    // Emit immediately to update UI
                     context.read<ReelCubit>().safeEmit(
                           state.copyWith(reels: tempReels),
                         );
 
-                    // إرسال طلب الـ API بدون أي تأثير على UI
-                    context.read<ReelCubit>().likeReel(updatedReel.id);
+                    // Send API request with original values for error handling
+                    print('❤️ Calling likeReel API for reel ${updatedReel.id}');
+                    context.read<ReelCubit>().likeReel(
+                      updatedReel.id,
+                      originalLikedStatus: originalLikedStatus,
+                      originalLikesCount: originalLikesCount,
+                    );
                   },
                   iconColor: updatedReel.liked ? Colors.red : AppColors.white,
                 );

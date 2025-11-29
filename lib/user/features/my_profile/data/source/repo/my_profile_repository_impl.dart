@@ -89,12 +89,13 @@ class MyProfileRepositoryImpl implements MyProfileRepository {
 
   @override
   Future<Either<Failure, String>> changePasswordRepo(
+    String oldPassword,
     String newPassword,
     String phone,
   ) async {
     try {
       if (await network.isConnected) {
-        final result = await remote.changePasswordRemote(newPassword, phone);
+        final result = await remote.changePasswordRemote(oldPassword, newPassword, phone);
         return result.fold(
           (failure) => Left(failure),
           (message) => Right(message),

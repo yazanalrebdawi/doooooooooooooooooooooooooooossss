@@ -1,10 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart' as permission_handler;
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import '../localization/app_localizations.dart';
+import 'location_disclosure_screen.dart';
 
 class LocationPermissionDialog extends StatelessWidget {
   final VoidCallback? onPermissionGranted;
@@ -31,7 +33,8 @@ class LocationPermissionDialog extends StatelessWidget {
           ),
           SizedBox(width: 8.w),
           Text(
-            AppLocalizations.of(context)!.translate('locationPermissionRequired'),
+            AppLocalizations.of(context)!
+                .translate('locationPermissionRequired'),
             style: AppTextStyles.blackS18W700,
           ),
         ],
@@ -41,12 +44,14 @@ class LocationPermissionDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppLocalizations.of(context)!.translate('locationPermissionMessage'),
+            AppLocalizations.of(context)!
+                .translate('locationPermissionMessage'),
             style: AppTextStyles.secondaryS14W400,
           ),
           SizedBox(height: 16.h),
           Text(
-            '• سيتم استخدام موقعك فقط لعرض الخدمات القريبة\n• لن يتم مشاركة موقعك مع أي طرف ثالث\n• يمكنك إلغاء الإذن في أي وقت',
+            AppLocalizations.of(context)!
+                .translate('locationPermissionBenefits'),
             style: AppTextStyles.secondaryS12W400.copyWith(
               color: AppColors.gray,
             ),
@@ -60,16 +65,21 @@ class LocationPermissionDialog extends StatelessWidget {
             onPermissionDenied?.call();
           },
           child: Text(
-            'إلغاء',
+            AppLocalizations.of(context)!.translate('cancel'),
             style: AppTextStyles.secondaryS14W400.copyWith(
               color: AppColors.gray,
             ),
           ),
         ),
         ElevatedButton(
-          onPressed: () async {
+          onPressed: () {
             Navigator.of(context).pop();
-            await _requestLocationPermission(context);
+            // Show prominent full-screen disclosure first (Google Play requirement)
+            showLocationDisclosureScreen(
+              context,
+              onPermissionGranted: onPermissionGranted,
+              onPermissionDenied: onPermissionDenied,
+            );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
@@ -93,32 +103,50 @@ class LocationPermissionDialog extends StatelessWidget {
   Future<void> _requestLocationPermission(BuildContext context) async {
     try {
       // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      
+      // Wrap in try-catch to handle Google Play services disconnection
+      bool serviceEnabled = false;
+      try {
+        serviceEnabled = await Geolocator.isLocationServiceEnabled()
+            .timeout(const Duration(seconds: 3), onTimeout: () {
+          print(
+              '⚠️ LocationPermissionDialog: Timeout checking location service status');
+          return false;
+        });
+      } catch (e) {
+        print(
+            '❌ LocationPermissionDialog: Error checking location service status: $e');
+        // If we can't check, assume it's disabled to be safe
+        serviceEnabled = false;
+      }
+
       if (!serviceEnabled) {
         _showEnableLocationServicesDialog(context);
         return;
       }
 
-      // Request location permission
-      LocationPermission permission = await Geolocator.checkPermission();
-      
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
+      // Use permission_handler to request ONLY "while in use" permission
+      // This prevents the system from showing "Allow all the time" option
+      permission_handler.PermissionStatus permissionStatus = await permission_handler.Permission.locationWhenInUse.status;
+
+      if (permissionStatus.isDenied) {
+        // Request ONLY "while in use" permission (never shows "always" option)
+        permissionStatus = await permission_handler.Permission.locationWhenInUse.request();
       }
-      
-      if (permission == LocationPermission.deniedForever) {
+
+      // If permission is permanently denied, show settings dialog
+      if (permissionStatus.isPermanentlyDenied) {
         _showOpenSettingsDialog(context);
         return;
       }
-      
-      if (permission == LocationPermission.whileInUse || 
-          permission == LocationPermission.always) {
+
+      // Check if permission was granted
+      if (permissionStatus.isGranted) {
         try {
           Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high,
           );
-          print('✅ Location permission granted: lat=${position.latitude}, lon=${position.longitude}');
+          print(
+              '✅ Location permission granted: lat=${position.latitude}, lon=${position.longitude}');
           onPermissionGranted?.call();
         } catch (e) {
           print('❌ Error getting location: $e');
@@ -237,7 +265,7 @@ class LocationPermissionDialog extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               Navigator.of(context).pop();
-              await openAppSettings();
+              await permission_handler.openAppSettings();
               await Future.delayed(const Duration(seconds: 2));
               await _requestLocationPermission(context);
             },
@@ -311,4 +339,20 @@ class LocationPermissionDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Helper function to show the location permission dialog
+void showLocationPermissionDialog(
+  BuildContext context, {
+  VoidCallback? onPermissionGranted,
+  VoidCallback? onPermissionDenied,
+}) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => LocationPermissionDialog(
+      onPermissionGranted: onPermissionGranted,
+      onPermissionDenied: onPermissionDenied,
+    ),
+  );
 }

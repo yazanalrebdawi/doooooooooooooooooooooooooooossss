@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
-import '../services/location_service.dart';
+import '../localization/app_localizations.dart';
+import 'location_disclosure_screen.dart';
 
 class LocationPermissionWidget extends StatelessWidget {
   final VoidCallback? onPermissionGranted;
@@ -16,6 +17,8 @@ class LocationPermissionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Container(
       padding: EdgeInsets.all(24.w),
       child: Column(
@@ -35,27 +38,27 @@ class LocationPermissionWidget extends StatelessWidget {
               size: 40.sp,
             ),
           ),
-          
+
           SizedBox(height: 24.h),
-          
+
           // Title
           Text(
-            'Location Permission Required',
+            localizations.translate('locationPermissionRequired'),
             style: AppTextStyles.blackS16W600,
             textAlign: TextAlign.center,
           ),
-          
+
           SizedBox(height: 12.h),
-          
+
           // Description
           Text(
-            'We need access to your location to show you nearby services like petrol stations and mechanics.',
+            localizations.translate('locationPermissionMessage'),
             style: AppTextStyles.secondaryS14W400,
             textAlign: TextAlign.center,
           ),
-          
+
           SizedBox(height: 32.h),
-          
+
           // Buttons
           Row(
             children: [
@@ -73,25 +76,25 @@ class LocationPermissionWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                   ),
-                                     child: Text(
-                     'Not Now',
-                     style: AppTextStyles.secondaryS14W400,
-                   ),
+                  child: Text(
+                    localizations.translate('dontAllow'),
+                    style: AppTextStyles.secondaryS14W400,
+                  ),
                 ),
               ),
-              
+
               SizedBox(width: 16.w),
-              
+
               // Allow Button
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () async {
-                    bool hasPermission = await LocationService.requestLocationPermission();
-                    if (hasPermission) {
-                      onPermissionGranted?.call();
-                    } else {
-                      onPermissionDenied?.call();
-                    }
+                  onPressed: () {
+                    // Show prominent full-screen disclosure (Google Play requirement)
+                    showLocationDisclosureScreen(
+                      context,
+                      onPermissionGranted: onPermissionGranted,
+                      onPermissionDenied: onPermissionDenied,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -102,7 +105,7 @@ class LocationPermissionWidget extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Allow',
+                    localizations.translate('allow'),
                     style: AppTextStyles.buttonS14W500,
                   ),
                 ),

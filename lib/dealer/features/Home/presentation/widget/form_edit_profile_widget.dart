@@ -19,13 +19,23 @@ class formEditProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-          width: 358.w,
-          // height: 124.h,
-          decoration: BoxDecoration(
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Use responsive width - full width minus padding, max 600px
+        final containerWidth = constraints.maxWidth > 0 
+            ? constraints.maxWidth 
+            : (isSmallScreen ? screenWidth - 32.w : 358.w);
+        
+        return Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+              width: containerWidth,
+              constraints: BoxConstraints(maxWidth: 600),
+              decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: AppColors.borderColor, width: 0.5),
             color: Color(0xffffffff),
@@ -53,7 +63,7 @@ class formEditProfileWidget extends StatelessWidget {
               ),
               SizedBox(height: 17.h),
               SizedBox(
-                width: 324.w,
+                width: double.infinity,
                 height: 70.h,
                 child: TextFormField(validator: (value) => Validator.notNullValidation(value),
                   controller: storeName,
@@ -66,11 +76,11 @@ class formEditProfileWidget extends StatelessWidget {
             ],
           ),
         ),
-          SizedBox(height: 16.h,),
-               Container(
+            SizedBox(height: 16.h,),
+            Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-              width: 358.w,
-              // height: 124.h,
+              width: containerWidth,
+              constraints: BoxConstraints(maxWidth: 600),
               decoration: BoxDecoration(
     borderRadius: BorderRadius.circular(12.r),
     border: Border.all(color: AppColors.borderColor, width: 0.5),
@@ -98,8 +108,7 @@ class formEditProfileWidget extends StatelessWidget {
       ),
       SizedBox(height: 17.h),
       SizedBox(
-        width: 324.w,
-        // height: 50.h,
+        width: double.infinity,
         child: TextFormField(maxLines: 4,
         validator: (value) => Validator.notNullValidation(value),
           controller: storeDescription,
@@ -111,7 +120,9 @@ class formEditProfileWidget extends StatelessWidget {
     ],
               ),
             ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

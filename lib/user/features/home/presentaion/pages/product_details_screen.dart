@@ -45,19 +45,39 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeMap();
+    // Defer location initialization to avoid blocking the initial build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _initializeMap();
+      }
+    });
   }
 
   Future<void> _initializeMap() async {
-    final userLocation = await LocationService.getCurrentLocation();
-    if (userLocation != null) {
-      setState(() {
-        _userLocation = userLocation;
-      });
-      print(
-          '✅ User location: ${userLocation.latitude}, ${userLocation.longitude}');
-    } else {
-      print('❌ Failed to get user location');
+    // Add a small delay to ensure the screen is fully rendered
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    if (!mounted) return;
+    
+    try {
+      final userLocation = await LocationService.getCurrentLocation();
+      if (userLocation != null && mounted) {
+        // Use post-frame callback to avoid build during frame
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _userLocation = userLocation;
+            });
+          }
+        });
+        print(
+            '✅ User location: ${userLocation.latitude}, ${userLocation.longitude}');
+      } else {
+        print('⚠️ LocationService: Could not get user location (will work without it)');
+      }
+    } catch (e) {
+      print('❌ LocationService: Error initializing map location: $e');
+      // Don't crash - app can work without location
     }
   }
 
@@ -83,7 +103,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Future<void> _loadRoute(double productLat, double productLon) async {
     if (_userLocation == null) return;
 
-    setState(() => _isLoadingRoute = true);
+    // Use post-frame callback to avoid build during frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() => _isLoadingRoute = true);
+      }
+    });
 
     try {
       final markers = <Marker>{
@@ -104,60 +129,249 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
       final polyline = await _getRoutePolyline(productLat, productLon);
 
-      setState(() {
-        _markers = markers;
-        _polylines = polyline != null
-            ? {polyline}
-            : {
-                Polyline(
-                  polylineId: const PolylineId('route'),
-                  points: [
-                    LatLng(_userLocation!.latitude, _userLocation!.longitude),
-                    LatLng(productLat, productLon),
-                  ],
-                  color: Colors.blue,
-                  width: 4,
-                  geodesic: true,
-                ),
-              };
-        _isLoadingRoute = false;
+      // Use post-frame callback to avoid build during frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _markers = markers;
+            // Only set polyline if we got a real route from Directions API
+            // Don't fallback to straight line - show error or retry instead
+            if (polyline != null) {
+              _polylines = {polyline};
+              print('✅ ProductDetails: Real route polyline added to map');
+            } else {
+              // Clear polylines if route failed - don't show straight line
+              _polylines = {};
+              print('⚠️ ProductDetails: Route not available - no polyline shown');
+            }
+            _isLoadingRoute = false;
+          });
+        }
       });
     } catch (e) {
       print('❌ Error loading route: $e');
-      setState(() => _isLoadingRoute = false);
+      // Use post-frame callback to avoid build during frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _isLoadingRoute = false);
+        }
+      });
     }
   }
 
   Future<Polyline?> _getRoutePolyline(
       double productLat, double productLon) async {
-    if (_userLocation == null) return null;
+    if (_userLocation == null) {
+      print('❌ ProductDetails: Cannot get route polyline - user location is null');
+      return null;
+    }
 
     try {
+      // Use the exact format: origin=LAT1,LNG1&destination=LAT2,LNG2&key=YOUR_KEY
+      final originLat = _userLocation!.latitude;
+      final originLng = _userLocation!.longitude;
       final url =
-          'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=$productLat,$productLon&mode=driving&key=${AppConfig.googleMapsApiKey}';
-
+          'https://maps.googleapis.com/maps/api/directions/json?origin=$originLat,$originLng&destination=$productLat,$productLon&mode=driving&key=${AppConfig.googleMapsApiKey}';
+      
+      print('🗺️ ProductDetails: Requesting route from Google Directions API...');
+      print('🗺️ ProductDetails: Origin: $originLat, $originLng');
+      print('🗺️ ProductDetails: Destination: $productLat, $productLon');
+      
       final response = await http.get(Uri.parse(url));
+      print('🗺️ ProductDetails: Response status: ${response.statusCode}');
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('🗺️ ProductDetails: Directions API response status: ${data['status']}');
+        
         if (data['status'] == 'OK' &&
             data['routes'] != null &&
             data['routes'].isNotEmpty) {
-          final points =
-              _decodePolyline(data['routes'][0]['overview_polyline']['points']);
-          if (points.isNotEmpty) {
-            return Polyline(
-              polylineId: const PolylineId('route'),
-              points: points,
-              color: Colors.blue,
-              width: 8,
-              geodesic: true,
-            );
+          // Get the overview_polyline from the route
+          final route = data['routes'][0];
+          final overviewPolyline = route['overview_polyline'];
+          
+          if (overviewPolyline != null && overviewPolyline['points'] != null) {
+            final polylineEncoded = overviewPolyline['points'] as String;
+            print('🗺️ ProductDetails: Got encoded polyline: ${polylineEncoded.substring(0, polylineEncoded.length > 50 ? 50 : polylineEncoded.length)}...');
+            
+            // Decode the polyline to get LatLng list
+            final points = _decodePolyline(polylineEncoded);
+            print('🗺️ ProductDetails: Decoded ${points.length} route points');
+            
+            if (points.isNotEmpty) {
+              print('✅ ProductDetails: Route polyline created successfully');
+              print('✅ ProductDetails: First point: ${points.first}');
+              print('✅ ProductDetails: Last point: ${points.last}');
+              
+              // Create and return the Polyline
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points, // List<LatLng> from decoded polyline
+                color: const Color(0xFF2196F3), // Bright blue
+                width: 8, // Thicker line for better visibility
+                geodesic: false, // Set to false for accurate street-level routing
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            } else {
+              print('⚠️ ProductDetails: Decoded polyline has no points');
+            }
+          } else {
+            print('⚠️ ProductDetails: No overview_polyline in route response');
+          }
+        } else {
+          print('⚠️ ProductDetails: Directions API returned status: ${data['status']}');
+          if (data['error_message'] != null) {
+            print('⚠️ ProductDetails: Error message: ${data['error_message']}');
+          }
+          
+          // If Google API failed due to billing, try OpenRouteService as fallback
+          if (data['status'] == 'REQUEST_DENIED' || data['status'] == 'OVER_QUERY_LIMIT') {
+            print('🔄 ProductDetails: Google API unavailable, trying OpenRouteService fallback...');
+            return await _getRouteFromOpenRouteService(productLat, productLon);
           }
         }
+      } else {
+        print('❌ ProductDetails: HTTP error: ${response.statusCode}');
+        print('❌ ProductDetails: Response body: ${response.body}');
+        // Try OpenRouteService as fallback
+        print('🔄 ProductDetails: Trying OpenRouteService fallback...');
+        return await _getRouteFromOpenRouteService(productLat, productLon);
       }
     } catch (e) {
-      print('❌ Error getting route polyline: $e');
+      print('❌ ProductDetails: Error getting route polyline: $e');
+      print('❌ ProductDetails: Stack trace: ${StackTrace.current}');
+      // Try OpenRouteService as fallback
+      print('🔄 ProductDetails: Trying OpenRouteService fallback...');
+      try {
+        return await _getRouteFromOpenRouteService(productLat, productLon);
+      } catch (fallbackError) {
+        print('❌ ProductDetails: OpenRouteService also failed: $fallbackError');
+      }
     }
+
+    return null;
+  }
+
+  /// Fallback route using OpenRouteService (free alternative)
+  Future<Polyline?> _getRouteFromOpenRouteService(double productLat, double productLon) async {
+    if (_userLocation == null) return null;
+
+    try {
+      // OpenRouteService - API key should be in Authorization header with "Bearer" prefix
+      // Or use it as query parameter: ?api_key=...
+      final url =
+          'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248&start=${_userLocation!.longitude},${_userLocation!.latitude}&end=$productLon,$productLat';
+      
+      print('🗺️ ProductDetails: Requesting route from OpenRouteService...');
+      print('🗺️ ProductDetails: OpenRouteService URL: $url');
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'application/json, application/geo+json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['features'] != null && data['features'].isNotEmpty) {
+          final geometry = data['features'][0]['geometry'];
+          if (geometry != null && geometry['coordinates'] != null) {
+            // OpenRouteService returns coordinates as [lon, lat] pairs
+            final coordinates = geometry['coordinates'] as List;
+            final points = coordinates.map((coord) {
+              return LatLng(coord[1] as double, coord[0] as double);
+            }).toList();
+
+            if (points.isNotEmpty) {
+              print('✅ ProductDetails: OpenRouteService route created with ${points.length} points');
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points,
+                color: const Color(0xFF2196F3),
+                width: 8,
+                geodesic: false,
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            }
+          }
+        }
+      } else {
+        print('⚠️ ProductDetails: OpenRouteService HTTP error: ${response.statusCode}');
+        print('⚠️ ProductDetails: OpenRouteService response: ${response.body}');
+        // Try OSRM as another free alternative
+        print('🔄 ProductDetails: Trying OSRM as alternative...');
+        return await _getRouteFromOSRM(productLat, productLon);
+      }
+    } catch (e) {
+      print('❌ ProductDetails: OpenRouteService error: $e');
+      // Try OSRM as another free alternative
+      print('🔄 ProductDetails: Trying OSRM as alternative...');
+      try {
+        return await _getRouteFromOSRM(productLat, productLon);
+      } catch (osrmError) {
+        print('❌ ProductDetails: OSRM also failed: $osrmError');
+      }
+    }
+
+    return null;
+  }
+
+  /// Free routing service - OSRM (Open Source Routing Machine)
+  Future<Polyline?> _getRouteFromOSRM(double productLat, double productLon) async {
+    if (_userLocation == null) return null;
+
+    try {
+      // OSRM is a free, open-source routing service (no API key needed)
+      // Format: /route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=full&geometries=geojson
+      final url =
+          'https://router.project-osrm.org/route/v1/driving/${_userLocation!.longitude},${_userLocation!.latitude};$productLon,$productLat?overview=full&geometries=geojson';
+      
+      print('🗺️ ProductDetails: Requesting route from OSRM...');
+      print('🗺️ ProductDetails: OSRM URL: $url');
+      
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['code'] == 'Ok' && data['routes'] != null && data['routes'].isNotEmpty) {
+          final route = data['routes'][0];
+          final geometry = route['geometry'];
+          
+          if (geometry != null && geometry['coordinates'] != null) {
+            // OSRM returns coordinates as [lon, lat] pairs in GeoJSON format
+            final coordinates = geometry['coordinates'] as List;
+            final points = coordinates.map((coord) {
+              return LatLng(coord[1] as double, coord[0] as double);
+            }).toList();
+
+            if (points.isNotEmpty) {
+              print('✅ ProductDetails: OSRM route created with ${points.length} points');
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points,
+                color: const Color(0xFF2196F3),
+                width: 8,
+                geodesic: false,
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            }
+          }
+        } else {
+          print('⚠️ ProductDetails: OSRM returned code: ${data['code']}');
+        }
+      } else {
+        print('⚠️ ProductDetails: OSRM HTTP error: ${response.statusCode}');
+        print('⚠️ ProductDetails: OSRM response: ${response.body}');
+      }
+    } catch (e) {
+      print('❌ ProductDetails: OSRM error: $e');
+    }
+
     return null;
   }
 
@@ -194,8 +408,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          di.appLocator<ProductCubit>()..loadProductDetails(widget.productId),
+      create: (_) {
+        final cubit = di.appLocator<ProductCubit>();
+        // Defer loading to avoid blocking the initial build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          cubit.loadProductDetails(widget.productId);
+        });
+        return cubit;
+      },
       child: Scaffold(
         backgroundColor: AppColors.white,
         appBar: null,
@@ -406,8 +626,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         );
                                         return;
                                       }
-                                      setState(() {
-                                        _userLocation = userLocation;
+                                      // Use post-frame callback to avoid build during frame
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        if (mounted) {
+                                          setState(() {
+                                            _userLocation = userLocation;
+                                          });
+                                        }
                                       });
                                     }
                                     final coords =
@@ -457,23 +682,38 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 borderRadius: BorderRadius.circular(12.r),
                                 child: Listener(
                                   onPointerDown: (_) {
-                                    setState(() {
-                                      _isMapInteracting = true;
+                                    // Use post-frame callback to avoid build during frame
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (mounted) {
+                                        setState(() {
+                                          _isMapInteracting = true;
+                                        });
+                                      }
                                     });
                                   },
                                   onPointerUp: (_) {
                                     Future.delayed(
                                         const Duration(milliseconds: 150), () {
                                       if (mounted) {
-                                        setState(() {
-                                          _isMapInteracting = false;
+                                        // Use post-frame callback to avoid build during frame
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          if (mounted) {
+                                            setState(() {
+                                              _isMapInteracting = false;
+                                            });
+                                          }
                                         });
                                       }
                                     });
                                   },
                                   onPointerCancel: (_) {
-                                    setState(() {
-                                      _isMapInteracting = false;
+                                    // Use post-frame callback to avoid build during frame
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (mounted) {
+                                        setState(() {
+                                          _isMapInteracting = false;
+                                        });
+                                      }
                                     });
                                   },
                                   child: GoogleMap(
@@ -483,7 +723,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     ),
                                     markers: _markers,
                                     polylines: _polylines,
-                                    myLocationEnabled: true,
+                                    myLocationEnabled: _userLocation != null,
                                     myLocationButtonEnabled: false,
                                     zoomControlsEnabled: true,
                                     mapToolbarEnabled: false,
@@ -493,6 +733,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     tiltGesturesEnabled: true,
                                     rotateGesturesEnabled: true,
                                     liteModeEnabled: false,
+                                    onMapCreated: (GoogleMapController controller) {
+                                      // Map is ready, can perform additional setup if needed
+                                    },
                                   ),
                                 ),
                               ),

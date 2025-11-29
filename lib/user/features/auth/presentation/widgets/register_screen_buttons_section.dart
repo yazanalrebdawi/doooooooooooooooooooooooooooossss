@@ -8,11 +8,17 @@ import '../../data/models/create_account_params_model.dart';
 import '../manager/auth_cubit.dart';
 import '../manager/auth_state.dart';
 import 'auth_button.dart';
+import 'custom_app_snack_bar.dart';
 
 class RegisterScreenButtonsSection extends StatelessWidget {
   final CreateAccountParams params;
+  final bool termsAccepted;
 
-  const RegisterScreenButtonsSection({super.key, required this.params});
+  const RegisterScreenButtonsSection({
+    super.key,
+    required this.params,
+    this.termsAccepted = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +42,18 @@ class RegisterScreenButtonsSection extends StatelessWidget {
             return AuthButton(
               onTap: () {
                 print('🔘 Register Button Pressed');
+
+                if (!termsAccepted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customAppSnackBar(
+                      AppLocalizations.of(context)
+                              ?.translate('pleaseAcceptTermsAndConditions') ??
+                          'Please accept the terms and conditions to continue',
+                      context,
+                    ),
+                  );
+                  return;
+                }
 
                 if (params.formState.currentState?.validate() ?? false) {
                   print('✅ Form validation passed');

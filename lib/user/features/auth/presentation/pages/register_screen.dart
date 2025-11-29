@@ -13,6 +13,7 @@ import '../widgets/custom_app_snack_bar.dart';
 import '../widgets/register_screen_header_section.dart';
 import '../widgets/register_screen_form_fields.dart';
 import '../widgets/register_screen_buttons_section.dart';
+import '../widgets/terms_and_conditions_checkbox.dart';
 import '../../data/models/create_account_params_model.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final CreateAccountParams _params = CreateAccountParams();
+  bool _termsAccepted = false;
 
   @override
   void dispose() {
@@ -118,7 +120,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           onConfirmPasswordChanged: (confirmPassword) {},
                         ),
                         SizedBox(height: 18.h),
-                        RegisterScreenButtonsSection(params: _params),
+                        TermsAndConditionsCheckbox(
+                          initialValue: _termsAccepted,
+                          onChanged: (value) {
+                            setState(() {
+                              _termsAccepted = value;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 18.h),
+                        RegisterScreenButtonsSection(
+                          params: _params,
+                          termsAccepted: _termsAccepted,
+                        ),
                       ],
                     ),
                   ),

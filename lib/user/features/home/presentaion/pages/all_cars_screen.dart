@@ -96,6 +96,7 @@ class AllCarsScreen extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
+                    cacheExtent: 500, // Limit cache extent for memory
                     itemCount: state.cars.length + (state.hasMoreCars ? 1 : 0),
                     itemBuilder: (context, index) {
                       // Load More Item

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
@@ -31,16 +32,22 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
           height: 300.h,
           color: AppColors.gray.withOpacity(0.1),
           child: allImages.isNotEmpty
-              ? Image.network(
-                  allImages[selectedImageIndex],
+              ? CachedNetworkImage(
+                  imageUrl: allImages[selectedImageIndex],
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(
-                      Icons.image,
-                      color: AppColors.gray,
-                      size: 64.sp,
-                    );
-                  },
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.image,
+                    color: AppColors.gray,
+                    size: 64.sp,
+                  ),
+                  memCacheWidth: 800,
+                  memCacheHeight: 600,
                 )
               : Icon(
                   Icons.image,
@@ -79,19 +86,32 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(6.r),
-                      child: Image.network(
-                        allImages[index],
+                      child: CachedNetworkImage(
+                        imageUrl: allImages[index],
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: AppColors.gray.withOpacity(0.2),
-                            child: Icon(
-                              Icons.image,
-                              color: AppColors.gray,
-                              size: 24.sp,
+                        placeholder: (context, url) => Container(
+                          color: AppColors.gray.withOpacity(0.2),
+                          child: Center(
+                            child: SizedBox(
+                              width: 16.w,
+                              height: 16.w,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.primary,
+                              ),
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: AppColors.gray.withOpacity(0.2),
+                          child: Icon(
+                            Icons.image,
+                            color: AppColors.gray,
+                            size: 24.sp,
+                          ),
+                        ),
+                        memCacheWidth: 200,
+                        memCacheHeight: 200,
                       ),
                     ),
                   ),

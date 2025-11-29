@@ -33,6 +33,7 @@ class ServiceState {
     String? error,
     String? selectedFilter,
     bool? hasAttemptedLoad,
+    bool clearError = false, // Flag to explicitly clear error
   }) {
     return ServiceState(
       services: services ?? this.services,
@@ -40,7 +41,7 @@ class ServiceState {
       selectedService: selectedService ?? this.selectedService,
       isLoading: isLoading ?? this.isLoading,
       isLoadingDetails: isLoadingDetails ?? this.isLoadingDetails,
-      error: error ?? this.error,
+      error: clearError ? null : (error ?? this.error), // Clear error if flag is set
       selectedFilter: selectedFilter ?? this.selectedFilter,
       hasAttemptedLoad: hasAttemptedLoad ?? this.hasAttemptedLoad,
     );

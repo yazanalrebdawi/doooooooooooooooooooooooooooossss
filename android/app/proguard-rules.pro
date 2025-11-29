@@ -7,9 +7,31 @@
 -keep class io.flutter.view.** { *; }
 -keep class io.flutter.** { *; }
 
-# Keep ExoPlayer classes for video playback
+# Keep Media3 ExoPlayer classes for video playback
+# The app uses androidx.media3 (not the old com.google.android.exoplayer2)
 -keep class androidx.media3.** { *; }
 -keep interface androidx.media3.** { *; }
+-keepclassmembers class androidx.media3.** {
+    *;
+}
+# Keep Media3 ExoPlayer internal classes
+-keep class androidx.media3.exoplayer.** { *; }
+-keep interface androidx.media3.exoplayer.** { *; }
+# Keep Media3 decoder classes
+-keep class androidx.media3.decoder.** { *; }
+-keep interface androidx.media3.decoder.** { *; }
+# Keep Media3 UI classes
+-keep class androidx.media3.ui.** { *; }
+-keep interface androidx.media3.ui.** { *; }
+# Keep Media3 common classes
+-keep class androidx.media3.common.** { *; }
+-keep interface androidx.media3.common.** { *; }
+
+# Keep codec-related classes for video playback on older devices
+-keep class android.media.** { *; }
+-keep class android.media.MediaCodec { *; }
+-keep class android.media.MediaCodecInfo { *; }
+-keep class android.media.MediaFormat { *; }
 
 # Keep Dio and network-related classes
 -keep class dio.** { *; }

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:dooss_business_app/user/core/app/manager/app_manager_state.dart';
 import 'package:dooss_business_app/user/core/services/translation/translation_service.dart';
 import 'package:dooss_business_app/user/features/auth/data/models/user_model.dart';
+import 'package:dooss_business_app/user/features/chat/presentation/manager/chat_cubit.dart';
 
 class AppManagerCubit extends Cubit<AppManagerState> {
   final TranslationService translationService;
@@ -94,6 +95,15 @@ class AppManagerCubit extends Cubit<AppManagerState> {
       secureStorage.removeAll(),
     ]);
     await hive.clearAllInCache();
+
+    // Reset ChatCubit state to clear unread counts and update UI
+    try {
+      final chatCubit = appLocator<ChatCubit>();
+      chatCubit.resetChatState();
+      log("✅ AppManagerCubit - ChatCubit state reset successfully");
+    } catch (e) {
+      log("⚠️ AppManagerCubit - Could not reset ChatCubit: $e");
+    }
   }
 
   //* حفظ بيانات الديلر بعد تسجيل الدخول
@@ -107,10 +117,23 @@ class AppManagerCubit extends Cubit<AppManagerState> {
 
   //* تسجيل خروج الديلر فقط
   Future<void> dealerLogOut() async {
-    await secureStorage.removeAll();
-    await secureStorage.removeAll();
+    // Clear both secure storage and shared preferences (like logOut does)
+    await Future.wait([
+      sharedPreference
+          .removeAllExceptPrivacyPolicy(), // Preserve privacy policy acceptance
+      secureStorage.removeAll(),
+    ]);
     emit(state.copyWith(isDealer: false, user: null));
-    log("🚪 Dealer logged out and secure storage cleared");
+    log("🚪 Dealer logged out and storage cleared");
+
+    // Reset ChatCubit state to clear unread counts and update UI
+    try {
+      final chatCubit = appLocator<ChatCubit>();
+      chatCubit.resetChatState();
+      log("✅ AppManagerCubit - ChatCubit state reset successfully (dealer logout)");
+    } catch (e) {
+      log("⚠️ AppManagerCubit - Could not reset ChatCubit: $e");
+    }
   }
 
   //?-------  Them  ---------------------------------------------------------------------------

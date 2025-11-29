@@ -66,6 +66,8 @@ class NearbyServicesFilterWidget extends StatelessWidget {
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       fontSize: 14.sp,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ),

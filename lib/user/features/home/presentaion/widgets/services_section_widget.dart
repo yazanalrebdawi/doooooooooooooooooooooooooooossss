@@ -5,36 +5,67 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/services/location_service.dart';
+import '../../../../core/widgets/location_disclosure_screen.dart';
 import '../manager/service_cubit.dart';
 import '../manager/service_state.dart';
 import 'service_card_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/localization/app_localizations.dart';
 
-class ServicesSectionWidget extends StatelessWidget {
+class ServicesSectionWidget extends StatefulWidget {
   const ServicesSectionWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ServiceCubit, ServiceState>(
-      buildWhen: (previous, current) {
-        return previous.services != current.services ||
-            previous.isLoading != current.isLoading ||
-            previous.error != current.error ||
-            previous.hasAttemptedLoad != current.hasAttemptedLoad;
-      },
-      builder: (context, state) {
-        // Show loading if actively loading OR if we haven't attempted to load yet
-        if (state.isLoading || !state.hasAttemptedLoad) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          );
-        }
+  State<ServicesSectionWidget> createState() => _ServicesSectionWidgetState();
+}
 
+class _ServicesSectionWidgetState extends State<ServicesSectionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<ServiceCubit, ServiceState>(
+      listenWhen: (previous, current) => 
+          previous.error != current.error && 
+          previous.error != null && 
+          current.error == null,
+      listener: (context, state) {
+        // Error was cleared - reload services
+        Future.microtask(() {
+          if (mounted) {
+            context.read<ServiceCubit>().loadServicesWithoutPermissionCheck(
+              limit: 10,
+              type: 'station',
+              radius: 5000,
+            );
+          }
+        });
+      },
+      child: BlocBuilder<ServiceCubit, ServiceState>(
+        buildWhen: (previous, current) {
+          return previous.services != current.services ||
+              previous.isLoading != current.isLoading ||
+              previous.error != current.error ||
+              previous.hasAttemptedLoad != current.hasAttemptedLoad;
+        },
+        builder: (context, state) {
+        // Priority 1: Show error if present (don't show loading if there's an error)
         if (state.error != null) {
           // Specific handling for location permission errors
           if (state.error!.contains('location') ||
               state.error!.contains('permission')) {
+            // Check permission again - it might have been granted
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              final hasPermission = await LocationService.checkLocationPermission(forceRefresh: true);
+              if (hasPermission && context.mounted) {
+                // Permission is now granted, reload services
+                context.read<ServiceCubit>().clearError();
+                context.read<ServiceCubit>().loadServices(
+                  limit: 10,
+                  type: 'station',
+                  radius: 5000,
+                  forceRefresh: true,
+                );
+              }
+            });
             return Center(child: _buildLocationPermissionWidget(context));
           }
 
@@ -52,6 +83,21 @@ class ServicesSectionWidget extends StatelessWidget {
                 ),
               ],
             ),
+          );
+        }
+
+        // Priority 2: Show loading ONLY if actively loading AND no error
+        // Don't show loading if we have an error (even if isLoading is true)
+        if (state.isLoading && state.error == null) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          );
+        }
+        
+        // If we haven't attempted to load yet and there's no error, show loading
+        if (!state.hasAttemptedLoad && state.error == null) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
@@ -113,7 +159,8 @@ class ServicesSectionWidget extends StatelessWidget {
             );
           },
         );
-      },
+        },
+      ),
     );
   }
 
@@ -140,25 +187,40 @@ class ServicesSectionWidget extends StatelessWidget {
           ),
           SizedBox(height: 24.h),
           ElevatedButton(
-            onPressed: () async {
-              bool hasPermission =
-                  await LocationService.requestLocationPermission();
-              if (hasPermission) {
-                context.read<ServiceCubit>().loadServices(
-                      limit: 10,
-                      type: 'station',
-                      radius: 5000,
-                      forceRefresh: true,
-                    );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(AppLocalizations.of(context)!
-                        .translate('locationPermissionMessage')),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-              }
+            onPressed: () {
+              // Show prominent full-screen disclosure first (Google Play requirement)
+              showLocationDisclosureScreen(
+                context,
+                onPermissionGranted: () {
+                  // Permission granted - use setState to force rebuild
+                  // This will trigger the BlocBuilder to rebuild and check state again
+                  if (context.mounted) {
+                    // Clear error and reload immediately
+                    final cubit = context.read<ServiceCubit>();
+                    cubit.clearError();
+                    
+                    // Use Future.microtask to ensure state is cleared first
+                    Future.microtask(() {
+                      if (context.mounted) {
+                        cubit.loadServicesWithoutPermissionCheck(
+                          limit: 10,
+                          type: 'station',
+                          radius: 5000,
+                        );
+                      }
+                    });
+                  }
+                },
+                onPermissionDenied: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!
+                          .translate('locationPermissionMessage')),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                },
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,

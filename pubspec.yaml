@@ -2,7 +2,7 @@ name: dooss_business_app
 description: "A new Flutter project."
 publish_to: "none"
 
-version: 2.0.0+7 
+version: 2.0.0+13
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -46,6 +46,7 @@ dependencies:
 
   # Device APIs
   image_picker: ^1.1.2
+  location: ^7.0.0
   geolocator: ^11.0.0
   permission_handler: ^11.3.1
   url_launcher: ^6.2.5

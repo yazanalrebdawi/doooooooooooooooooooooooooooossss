@@ -19,6 +19,7 @@ import '../widgets/login_screen_header_section.dart';
 import '../widgets/login_screen_form_fields.dart';
 import '../widgets/login_screen_options_section.dart';
 import '../widgets/login_screen_buttons_section.dart';
+import '../widgets/terms_and_conditions_checkbox.dart';
 import '../../data/models/create_account_params_model.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -31,6 +32,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final CreateAccountParams _params = CreateAccountParams();
   final TextEditingController codeController = TextEditingController();
+  bool _termsAccepted = false;
 
   @override
   void initState() {
@@ -76,6 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 AppLocalizations.of(context)?.translate('signInSuccess') ??
                     "Sign in Success";
 
+            // Clear form fields after successful login
+            _params.userName.clear();
+            _params.password.clear();
+            codeController.clear();
+
             // COMMENTED OUT - Notification Service
             // // Show foreground notification with translations
             // LocalNotificationService.instance.showNotification(
@@ -105,11 +112,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (state.checkAuthState == CheckAuthState.error) {
             log('❌ Login Error: ${state.error}');
+            // Don't display "Token has wrong type" error to the user
+            final errorMessage = state.error ?? '';
+            print('🔍 Login Error Message: $errorMessage');
+            if (errorMessage.toLowerCase().contains('token has wrong type')) {
+              log('⚠️ Skipping display of "Token has wrong type" error');
+              return;
+            }
+            
             if (context.mounted) {
+                          log('❌ Login Error: ${state.error}');
+
               ScaffoldMessenger.of(context).showSnackBar(
                 customAppSnackBar(
-                  state.error ??
-                      AppLocalizations.of(context)
+                  errorMessage.isNotEmpty
+                      ? errorMessage
+                      : AppLocalizations.of(context)
                           ?.translate('operationFailed') ??
                       "Operation failed",
                   context,
@@ -120,33 +138,65 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         child: Scaffold(
           body: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Form(
-                  key: _params.formState,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 106.h),
-                      const LoginScreenHeaderSection(),
-                      UserDealerSelector(),
-                      SizedBox(height: 27.h),
-                      LoginScreenFormFields(
-                        codeController: codeController,
-                        params: _params,
-                        onEmailChanged: (email) {},
-                        onPasswordChanged: (password) {},
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Form(
+                      key: _params.formState,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 106.h),
+                          const LoginScreenHeaderSection(),
+                          UserDealerSelector(),
+                          SizedBox(height: 27.h),
+                          LoginScreenFormFields(
+                            codeController: codeController,
+                            params: _params,
+                            onEmailChanged: (email) {},
+                            onPasswordChanged: (password) {},
+                          ),
+                          const LoginScreen2OptionsSection(),
+                          SizedBox(height: 12.h),
+                          TermsAndConditionsCheckbox(
+                            initialValue: _termsAccepted,
+                            onChanged: (value) {
+                              setState(() {
+                                _termsAccepted = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          LoginScreenButtonsSection(
+                              params: _params,
+                              code: codeController,
+                              termsAccepted: _termsAccepted),
+                          SizedBox(height: 38.h),
+                          const DontHaveAnAccount(),
+                          SizedBox(height: 15.h),
+                        ],
                       ),
-                      const LoginScreen2OptionsSection(),
-                      LoginScreenButtonsSection(
-                          params: _params, code: codeController),
-                      SizedBox(height: 38.h),
-                      const DontHaveAnAccount(),
-                      SizedBox(height: 15.h),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+                Positioned(
+                  top: 16.h,
+                  right: 16.w,
+                  child: IconButton(
+                    onPressed: () {
+                      context.push(RouteNames.changeLanguageScreen);
+                    },
+                    icon: Icon(
+                      Icons.language,
+                      size: 28.sp,
+                    ),
+                    tooltip: AppLocalizations.of(context)
+                            ?.translate('changeLanguage') ??
+                        'Change Language',
+                  ),
+                ),
+              ],
             ),
           ),
         ),

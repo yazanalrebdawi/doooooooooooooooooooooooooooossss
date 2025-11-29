@@ -172,15 +172,24 @@ class _NavigatorPageState extends State<NavigatorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _controller,
-        onPageChanged: _onPageChanged,
-        children: [
-                   MyReelsPage(),
-          HomePage1(),
-       BlocProvider(create: (context) => ChatCubit(appLocator<ChatRemoteDataSource>()),
-        child: ChatsListScreen())
+    return PopScope(
+      canPop: false, // Prevent default back button behavior
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          // When back button is pressed, do nothing or show exit dialog
+          // This prevents going back to login screen
+          // You can add a dialog here if you want to confirm exit
+        }
+      },
+      child: Scaffold(
+        body: PageView(
+          controller: _controller,
+          onPageChanged: _onPageChanged,
+          children: [
+                     MyReelsPage(),
+            HomePage1(),
+         BlocProvider(create: (context) => ChatCubit(appLocator<ChatRemoteDataSource>()),
+          child: ChatsListScreen())
 
  
 
@@ -228,6 +237,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
           ),
         ],
       ),
+    ),
     );
   }
 }

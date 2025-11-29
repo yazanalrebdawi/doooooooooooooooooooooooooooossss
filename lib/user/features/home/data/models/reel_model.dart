@@ -95,23 +95,27 @@ class ReelModel {
   }
 
   factory ReelModel.fromJson(Map<String, dynamic> json) {
+    // Try to get video from 'video' field, fallback to 'video_url'
+    final videoValue = json['video'] ?? json['video_url'];
+    final video = (videoValue?.toString().trim() ?? '');
+    
     return ReelModel(
       id: json['id'] ?? 0,
       liked: json['liked'] ?? false,
-      video: json['video'] ?? '',
-      thumbnail: json['thumbnail'] ?? '',
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
+      video: video,
+      thumbnail: json['thumbnail']?.toString().trim() ?? '',
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
       isActive: json['is_active'] ?? false,
       viewsCount: json['views_count'] ?? 0,
       likesCount: json['likes_count'] ?? 0,
-      createdAt: json['created_at'] ?? '',
-      deletedAt: json['deleted_at'],
+      createdAt: json['created_at']?.toString() ?? '',
+      deletedAt: json['deleted_at']?.toString(),
       dealer: json['dealer'] ?? 0,
-      dealerName: json['dealer_name'],
-      dealerUsername: json['dealer_username'],
-      location: json['location'],
-      audioTitle: json['audio_title'],
+      dealerName: json['dealer_name']?.toString(),
+      dealerUsername: json['dealer_username']?.toString(),
+      location: json['location']?.toString(),
+      audioTitle: json['audio_title']?.toString(),
     );
   }
 }
@@ -153,13 +157,30 @@ class ReelsResponseModel {
   }
 
   factory ReelsResponseModel.fromJson(Map<String, dynamic> json) {
-    // Filter out reels where is_active is false
+    // Filter out reels where is_active is false or video URL is invalid
     final allReels = (json['results'] as List<dynamic>?)
             ?.map((reel) => ReelModel.fromJson(reel))
             .toList() ??
         [];
 
-    final activeReels = allReels.where((reel) => reel.isActive).toList();
+    // Filter: only active reels with valid video URLs (strict validation)
+    final activeReels = allReels.where((reel) {
+      if (!reel.isActive) return false;
+      final videoUrl = reel.video.trim();
+      if (videoUrl.isEmpty) return false;
+      try {
+        final uri = Uri.parse(videoUrl);
+        // Must have scheme, host, and valid format
+        if (!uri.hasScheme || !uri.scheme.startsWith('http')) return false;
+        if (uri.host.isEmpty) return false;
+        // Ensure the full URI string is valid
+        final uriString = uri.toString();
+        if (uriString.isEmpty || uriString == ':' || uriString == 'http:' || uriString == 'https:') return false;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }).toList();
 
     return ReelsResponseModel(
       count: json['count'] ?? 0,

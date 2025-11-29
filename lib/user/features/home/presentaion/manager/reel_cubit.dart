@@ -82,7 +82,12 @@ class ReelCubit extends OptimizedCubit<ReelState> {
   }
 
   /// الإعجاب أو إزالة الإعجاب على ريل معيّن
-  void likeReel(int reelId) async {
+  /// [originalLikedStatus] and [originalLikesCount] are used to revert UI on error
+  void likeReel(
+    int reelId, {
+    bool? originalLikedStatus,
+    int? originalLikesCount,
+  }) async {
     print('❤️ ReelCubit: Trying to like reel with ID: $reelId');
 
     final result = await dataSource.likeReel(reelId);
@@ -90,24 +95,31 @@ class ReelCubit extends OptimizedCubit<ReelState> {
     result.fold(
       (failure) {
         print('❌ ReelCubit: Error liking reel: ${failure.message}');
-        safeEmit(state.copyWith(error: failure.message));
+        // Revert the UI update on error if we have the original state
+        if (originalLikedStatus != null && originalLikesCount != null) {
+          final revertedReels = state.reels.map((reel) {
+            if (reel.id == reelId) {
+              return reel.copyWith(
+                liked: originalLikedStatus, // Revert to original
+                likesCount: originalLikesCount, // Revert to original
+              );
+            }
+            return reel;
+          }).toList();
+          safeEmit(state.copyWith(reels: revertedReels, error: failure.message));
+          print('🔄 ReelCubit: Reverted UI to original state due to error');
+        } else {
+          // Just set error if we can't revert
+          safeEmit(state.copyWith(error: failure.message));
+        }
       },
       (_) {
         print('✅ ReelCubit: Successfully liked/unliked reel $reelId');
-
-        // ✅ تعديل حالة الريل داخل الليست (مثلاً تبديل isLiked أو زيادة عدد اللايكات)
-        final updatedReels = state.reels.map((reel) {
-          if (reel.id == reelId) {
-            return reel.copyWith(
-              liked: !reel.liked,
-              likesCount:
-                  reel.liked ? (reel.likesCount - 1) : (reel.likesCount + 1),
-            );
-          }
-          return reel;
-        }).toList();
-
-        safeEmit(state.copyWith(reels: updatedReels, error: null));
+        // Don't update state here - it's already been updated in the UI immediately
+        // Just clear any errors
+        if (state.error != null) {
+          safeEmit(state.copyWith(error: null));
+        }
       },
     );
   }

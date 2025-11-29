@@ -20,11 +20,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ButtonUpdatePasswordWidget extends StatefulWidget {
   const ButtonUpdatePasswordWidget({
     super.key,
+    required this.oldPasswordController,
     required this.newPasswordController,
     required this.confirmPasswordController,
     required this.formState,
   });
 
+  final TextEditingController oldPasswordController;
   final TextEditingController newPasswordController;
   final TextEditingController confirmPasswordController;
   final GlobalKey<FormState> formState;
@@ -51,12 +53,14 @@ class _ButtonUpdatePasswordWidgetState
   void initState() {
     super.initState();
 
+    widget.oldPasswordController.addListener(_updateValidity);
     widget.newPasswordController.addListener(_updateValidity);
     widget.confirmPasswordController.addListener(_updateValidity);
   }
 
   @override
   void dispose() {
+    widget.oldPasswordController.removeListener(_updateValidity);
     widget.newPasswordController.removeListener(_updateValidity);
     widget.confirmPasswordController.removeListener(_updateValidity);
     super.dispose();
@@ -133,11 +137,22 @@ class _ButtonUpdatePasswordWidgetState
                           return;
                         }
                         log("user.phone 😑😑😑😑😑😑 : ${user.phone}");
-                        if (widget.newPasswordController.text.trim() ==
+                        if (widget.oldPasswordController.text.trim().isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            customAppSnackBar(
+                              AppLocalizations.of(context)
+                                      ?.translate("Please enter your old password") ??
+                                  "Please enter your old password",
+                              context,
+                            ),
+                          );
+                        } else if (widget.newPasswordController.text.trim() ==
                             widget.confirmPasswordController.text.trim()) {
+                          // Call changePassword with oldPassword, newPassword, and phone (3 parameters)
                           context.read<MyProfileCubit>().changePassword(
-                                widget.newPasswordController.text.trim(),
-                                user.phone,
+                                widget.oldPasswordController.text.trim(), // oldPassword
+                                widget.newPasswordController.text.trim(), // newPassword
+                                user.phone, // phone
                               );
                         } else {
                           widget.confirmPasswordController.clear();

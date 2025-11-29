@@ -16,10 +16,10 @@ class MyProfileCubit extends Cubit<MyProfileState> {
 
   //?---------------------------------------------------------------------
   //* Change Password
-  Future<void> changePassword(String newPassword, String phone) async {
+  Future<void> changePassword(String oldPassword, String newPassword, String phone) async {
     emit(state.copyWith(statusChangePassword: ResponseStatusEnum.loading));
 
-    final result = await repository.changePasswordRepo(newPassword, phone);
+    final result = await repository.changePasswordRepo(oldPassword, newPassword, phone);
 
     result.fold(
       (failure) {

@@ -1,0 +1,20 @@
+# Android Keystore Properties
+# Copy this file to key.properties and fill in your actual values
+# DO NOT commit key.properties to version control!
+
+# Path to your keystore file (relative to android/ directory)
+storeFile=../app/upload-keystore.jks
+
+# Keystore password
+storePassword=YOUR_STORE_PASSWORD
+
+# Key alias name
+keyAlias=upload
+
+# Key password (usually same as storePassword)
+keyPassword=YOUR_KEY_PASSWORD
+
+
+
+
+

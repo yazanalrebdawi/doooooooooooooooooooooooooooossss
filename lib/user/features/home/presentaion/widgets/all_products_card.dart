@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
@@ -50,16 +51,22 @@ class AllProductsCard extends StatelessWidget {
             ? Colors.white.withOpacity(0.08)
             : AppColors.gray.withOpacity(0.2),
         child: product.imageUrl.isNotEmpty
-            ? Image.network(
-                product.imageUrl,
+            ? CachedNetworkImage(
+                imageUrl: product.imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    Icons.image,
-                    color: isDark ? Colors.white70 : AppColors.gray,
-                    size: 48.sp,
-                  );
-                },
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primary,
+                  ),
+                ),
+                errorWidget: (context, url, error) => Icon(
+                  Icons.image,
+                  color: isDark ? Colors.white70 : AppColors.gray,
+                  size: 48.sp,
+                ),
+                memCacheWidth: 350, // Limit image resolution for memory
+                memCacheHeight: 350,
               )
             : Icon(
                 Icons.image,

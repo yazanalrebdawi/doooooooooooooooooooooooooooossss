@@ -110,11 +110,29 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
           // Check if token is in the response (for +963 auto-verified accounts)
           String? token;
           if (response.containsKey('token')) {
-            token = response['token'];
+            final tokenValue = response['token'];
+            if (tokenValue is String) {
+              token = tokenValue;
+            } else if (tokenValue != null) {
+              log('⚠️ Registration - token is not a String, type: ${tokenValue.runtimeType}');
+              token = tokenValue.toString();
+            }
           } else if (response.containsKey('access')) {
-            token = response['access'];
+            final accessValue = response['access'];
+            if (accessValue is String) {
+              token = accessValue;
+            } else if (accessValue != null) {
+              log('⚠️ Registration - access token is not a String, type: ${accessValue.runtimeType}');
+              token = accessValue.toString();
+            }
           } else if (response.containsKey('access_token')) {
-            token = response['access_token'];
+            final accessTokenValue = response['access_token'];
+            if (accessTokenValue is String) {
+              token = accessTokenValue;
+            } else if (accessTokenValue != null) {
+              log('⚠️ Registration - access_token is not a String, type: ${accessTokenValue.runtimeType}');
+              token = accessTokenValue.toString();
+            }
           }
           
           if (token != null && token.isNotEmpty) {
@@ -256,11 +274,29 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
           // محاولة استخراج الـ token من الـ response
           String? token;
           if (result.containsKey('token')) {
-            token = result['token'];
+            final tokenValue = result['token'];
+            if (tokenValue is String) {
+              token = tokenValue;
+            } else if (tokenValue != null) {
+              log('⚠️ Verify OTP - token is not a String, type: ${tokenValue.runtimeType}');
+              token = tokenValue.toString();
+            }
           } else if (result.containsKey('access')) {
-            token = result['access'];
+            final accessValue = result['access'];
+            if (accessValue is String) {
+              token = accessValue;
+            } else if (accessValue != null) {
+              log('⚠️ Verify OTP - access token is not a String, type: ${accessValue.runtimeType}');
+              token = accessValue.toString();
+            }
           } else if (result.containsKey('access_token')) {
-            token = result['access_token'];
+            final accessTokenValue = result['access_token'];
+            if (accessTokenValue is String) {
+              token = accessTokenValue;
+            } else if (accessTokenValue != null) {
+              log('⚠️ Verify OTP - access_token is not a String, type: ${accessTokenValue.runtimeType}');
+              token = accessTokenValue.toString();
+            }
           }
 
           if (token != null && token.isNotEmpty) {
@@ -379,15 +415,23 @@ class AuthRemoteDataSourceImp implements AuthRemoteDataSource {
   //* logOut
   @override
   Future<Either<Failure, String>> logout(String refreshToken) async {
-    log('🔍 Logout - Refresh Token: $refreshToken');
+    log('🔍 Logout - Refresh Token type: ${refreshToken.runtimeType}');
+    log('🔍 Logout - Refresh Token length: ${refreshToken.length}');
+    log('🔍 Logout - Refresh Token preview: ${refreshToken.length > 20 ? "${refreshToken.substring(0, 20)}..." : refreshToken}');
+
+    // Ensure the body format is exactly: {"refresh": "token"}
+    // The access token will be added to Authorization header by the interceptor
+    final Map<String, dynamic> requestBody = {
+      "refresh": refreshToken,
+    };
 
     final ApiRequest apiRequest = ApiRequest(
       url: ApiUrls.logout,
-      data: {"refresh": refreshToken},
+      data: requestBody,
     );
 
     log('📤 API Request URL: ${apiRequest.url}');
-    log('📤 API Request data: ${apiRequest.data}');
+    log('📤 API Request body: $requestBody');
 
     final response = await api.post<Map<String, dynamic>>(
       apiRequest: apiRequest,

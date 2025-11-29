@@ -1,3 +1,4 @@
+import 'package:dooss_business_app/user/core/localization/app_localizations.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart'
     as di;
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReelCubit>().loadReels();
     });
+    
   }
 
   @override
@@ -40,7 +42,7 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
-            'Market Reels',
+              AppLocalizations.of(context)?.translate('marketReels') ?? 'Market Reels',
             style: AppTextStyles.blackS18W700,
           ),
         ),
@@ -86,7 +88,7 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
         return Container(
           margin: EdgeInsets.only(right: 16.w),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Reel preview card with exact dimensions
               GestureDetector(
@@ -100,13 +102,15 @@ class _SimpleReelsSectionState extends State<SimpleReelsSection> {
               SizedBox(height: 8.h),
 
               // Reel title (under the card)
-              SizedBox(
-                width: 120.w,
-                child: Text(
-                  reel.title,
-                  style: AppTextStyles.blackS12W600,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+              Center(
+                child: SizedBox(
+                  width: 120.w,
+                  child: Text(textAlign: TextAlign.center,
+                    reel.title,
+                    style: AppTextStyles.blackS12W600,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
             ],

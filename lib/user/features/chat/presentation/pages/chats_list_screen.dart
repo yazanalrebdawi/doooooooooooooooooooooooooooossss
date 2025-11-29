@@ -15,24 +15,136 @@ class ChatsListScreen extends StatefulWidget {
   State<ChatsListScreen> createState() => _ChatsListScreenState();
 }
 
-class _ChatsListScreenState extends State<ChatsListScreen> {
+class _ChatsListScreenState extends State<ChatsListScreen> with WidgetsBindingObserver {
+  int _forceRebuildCounter = 0; // Counter to force rebuild
+  
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Load chats when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ChatCubit>().loadChats();
     });
+  }
+  
+  void _forceSetState() {
+    if (mounted) {
+      _forceRebuildCounter++; // Increment counter to force rebuild
+      print('🔄 ChatsListScreen - FORCING setState directly (bypassing state management), counter: $_forceRebuildCounter');
+      setState(() {
+        // Force rebuild by changing counter
+        _forceRebuildCounter = _forceRebuildCounter;
+      });
+      // Force multiple setState calls to ensure it sticks
+      Future.microtask(() {
+        if (mounted) {
+          _forceRebuildCounter++;
+          setState(() {});
+        }
+      });
+      Future.delayed(const Duration(milliseconds: 10), () {
+        if (mounted) {
+          _forceRebuildCounter++;
+          setState(() {});
+        }
+      });
+      Future.delayed(const Duration(milliseconds: 50), () {
+        if (mounted) {
+          _forceRebuildCounter++;
+          setState(() {});
+        }
+      });
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          _forceRebuildCounter++;
+          setState(() {});
+        }
+      });
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (mounted) {
+          _forceRebuildCounter++;
+          setState(() {});
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Force refresh when app resumes
+      _forceRefresh();
+    }
+  }
+
+  void _forceRefresh() {
+    if (mounted) {
+      print('🔄 ChatsListScreen - Force refreshing chat list');
+      context.read<ChatCubit>().loadChats();
+      setState(() {});
+    }
+  }
+
+  bool _hasInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Only refresh if we've already initialized (to avoid double loading on first build)
+    if (_hasInitialized) {
+      // Force refresh every time the screen is entered (when dependencies change)
+      // This ensures unread counts are updated when popping back from chat
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (mounted) {
+          print('🔄 ChatsListScreen - Screen re-entered, calling API to refresh chat list');
+          final cubit = context.read<ChatCubit>();
+          // Force API call to get fresh data
+          print('📡 ChatsListScreen - Calling loadChats()');
+          await cubit.loadChats();
+          print('✅ ChatsListScreen - API call completed');
+          // FORCE setState multiple times after API call
+          _forceSetState();
+        }
+      });
+    } else {
+      _hasInitialized = true;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return BlocBuilder<ChatCubit, ChatState>(
-      builder: (context, state) {
-        print(
-            'ChatsListScreen - State: isLoading=${state.isLoading}, chatsCount=${state.chats.length}, error=${state.error}');
+    return BlocListener<ChatCubit, ChatState>(
+      listenWhen: (previous, current) {
+        // Always listen to all state changes
+        return true;
+      },
+      listener: (context, state) {
+        // CRITICAL: Force rebuild IMMEDIATELY when state changes
+        print('🔄 ChatsListScreen - Chat state changed, forcing rebuild with setState');
+        print('📊 ChatsListScreen - Current state: ${state.chats.length} chats, isLoading: ${state.isLoading}');
+        // Force setState multiple times to ensure UI updates
+        if (mounted) {
+          _forceSetState();
+        }
+      },
+      child: Builder(
+        key: ValueKey('force_rebuild_$_forceRebuildCounter'),
+        builder: (context) {
+          // CRITICAL: Force read state directly from cubit instead of relying on BlocBuilder
+          final cubit = context.read<ChatCubit>();
+          final state = cubit.state;
+          
+          print(
+              'ChatsListScreen - BUILDING: isLoading=${state.isLoading}, chatsCount=${state.chats.length}, error=${state.error}, forceRebuildCounter=$_forceRebuildCounter');
 
         if (state.isLoading) {
           print('ChatsListScreen - Showing loading indicator');
@@ -141,22 +253,33 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
           print(
               'ChatsListScreen - Chat ${chat.id} (${chat.dealer}): userUnreadCount = ${chat.userUnreadCount}, dealerUnreadCount = ${chat.dealerUnreadCount}');
         }
-        return ListView.builder(
-          itemCount: state.chats.length,
-          itemBuilder: (context, index) {
-            final chat = state.chats[index];
-            print(
-                'ChatsListScreen - Building chat item: ${chat.dealer}, unreadCount: ${chat.userUnreadCount}');
-            return ChatListItem(
-              chat: chat,
-              onTap: () {
-                print('ChatsListScreen - Tapped on chat: ${chat.dealer}');
-                context.push('/chat/${chat.id}', extra: chat.dealer);
-              },
-            );
-          },
+        
+        // CRITICAL: Create a unique key that changes with force rebuild counter to force rebuild
+        final listKey = ValueKey('chats_list_${_forceRebuildCounter}_${state.chats.length}_${state.chats.map((c) => '${c.id}_${c.userUnreadCount}_${c.dealerUnreadCount}').join('_')}');
+        
+        return Scaffold(
+          key: ValueKey('scaffold_$_forceRebuildCounter'),
+          body: ListView.builder(
+            key: listKey,
+            itemCount: state.chats.length,
+            itemBuilder: (context, index) {
+              final chat = state.chats[index];
+              print(
+                  'ChatsListScreen - Building chat item: ${chat.dealer}, unreadCount: ${chat.userUnreadCount}, dealerUnread: ${chat.dealerUnreadCount}, forceCounter: $_forceRebuildCounter');
+              // CRITICAL: Create unique key with force rebuild counter to force rebuild
+              return ChatListItem(
+                key: ValueKey('chat_${_forceRebuildCounter}_${chat.id}_${chat.userUnreadCount}_${chat.dealerUnreadCount}'),
+                chat: chat,
+                onTap: () {
+                  print('ChatsListScreen - Tapped on chat: ${chat.dealer}');
+                  context.push('/chat/${chat.id}', extra: chat.dealer);
+                },
+              );
+            },
+          ),
         );
-      },
+        },
+      ),
     );
   }
 }

@@ -134,18 +134,54 @@ class _ProductsSectionState extends State<ProductsSection> {
               ),
             ),
             SizedBox(height: 16.h),
-            // Products List
+            // Products List - Responsive layout
             displayProducts.isEmpty
                 ? _buildEmptySection(context, isDark)
-                : ListView.separated(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: displayProducts.length,
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: 12.h),
-                    itemBuilder: (context, index) =>
-                        ProductCard(product: displayProducts[index]),
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      final screenWidth = MediaQuery.of(context).size.width;
+                      final isSmallScreen = screenWidth < 400;
+                      
+                      // On small screens, use vertical list; on larger screens, use horizontal scroll
+                      if (isSmallScreen) {
+                        // Vertical list for small screens
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          itemCount: displayProducts.length,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 12.h),
+                          itemBuilder: (context, index) =>
+                              ProductCard(product: displayProducts[index]),
+                        );
+                      } else {
+                        // Horizontal scroll for larger screens
+                        // Calculate responsive card width
+                        final cardWidth = screenWidth < 600
+                            ? 280.w
+                            : 330.w;
+                        
+                        // Calculate responsive card height (matches ProductCard calculation)
+                        final cardHeight = cardWidth * 1.12;
+                        
+                        // Set list height to card height + some padding
+                        final listHeight = cardHeight + 20.h;
+                        
+                        return SizedBox(
+                          height: listHeight,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            itemCount: displayProducts.length,
+                            separatorBuilder: (context, index) =>
+                                SizedBox(width: 12.w),
+                            itemBuilder: (context, index) =>
+                                ProductCard(product: displayProducts[index]),
+                          ),
+                        );
+                      }
+                    },
                   ),
           ],
         );

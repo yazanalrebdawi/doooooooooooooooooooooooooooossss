@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -55,19 +56,67 @@ class _ReelCardPlayerState extends State<ReelCardPlayer> {
   }
 
   Future<void> _initializeVideo() async {
-    if (widget.reelUrl.isEmpty) {
+    // Validate video URL before attempting to initialize
+    final videoUrl = widget.reelUrl.trim();
+    if (videoUrl.isEmpty) {
       print('❌ ReelCardPlayer: Empty video URL for reel ${widget.reelId}');
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _errorMessage = 'Video URL is empty';
+          _isInitialized = false;
+        });
+      }
+      return;
+    }
+
+    // Validate URL format - strict validation
+    Uri? uri;
+    try {
+      uri = Uri.parse(videoUrl);
+      // Must have scheme, host, and valid format
+      if (!uri.hasScheme || !uri.scheme.startsWith('http')) {
+        throw FormatException('Invalid video URL scheme');
+      }
+      if (uri.host.isEmpty) {
+        throw FormatException('Video URL missing host');
+      }
+      // Ensure the full URI string is valid
+      final uriString = uri.toString();
+      if (uriString.isEmpty || uriString == ':' || uriString == 'http:' || uriString == 'https:') {
+        throw FormatException('Invalid video URL format');
+      }
+    } catch (e) {
+      print('❌ ReelCardPlayer: Invalid video URL format: $videoUrl');
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _errorMessage = 'Invalid video URL format';
+          _isInitialized = false;
+        });
+      }
       return;
     }
 
     try {
-      print('🎬 ReelCardPlayer: Creating controller for ${widget.reelUrl}');
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.reelUrl));
+      print('🎬 ReelCardPlayer: Creating controller for $videoUrl');
+      _controller = VideoPlayerController.networkUrl(uri);
 
       // Add listener for video events
       _controller!.addListener(_onVideoEvent);
 
-      await _controller!.initialize();
+      // Add timeout for initialization (important for older devices)
+      await _controller!.initialize().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw TimeoutException('Video initialization timed out after 15 seconds');
+        },
+      );
+      
+      // Check if controller is still valid after initialization
+      if (!_controller!.value.isInitialized) {
+        throw Exception('Video controller failed to initialize');
+      }
 
       // Set volume to 0 initially for background playback
       await _controller!.setVolume(0.0);
@@ -85,10 +134,12 @@ class _ReelCardPlayerState extends State<ReelCardPlayer> {
       if (mounted) {
         setState(() {
           _hasError = true;
-          _errorMessage = e.toString();
+          _errorMessage = 'Failed to load video. Please try again.';
           _isInitialized = false;
         });
       }
+      // Dispose controller on error to prevent memory leaks
+      _disposeController();
     }
   }
 

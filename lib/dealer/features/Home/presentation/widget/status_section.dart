@@ -98,7 +98,7 @@ bool isNowInSchedule({
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        state.dataStore!.name ?? "Auto Parts Store",
+                        (state.dataStore.name.isEmpty) ? "Auto Parts Store" : state.dataStore.name,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
@@ -111,15 +111,19 @@ bool isNowInSchedule({
                             alignment: Alignment.center,
                             height: 28.h,
                             decoration: BoxDecoration(
-                              color:state.dataStore.isStoreOpen? AppColors.lightGreen:AppColors.redLight,
+                              color: state.dataStore.isStoreOpen 
+                                  ? AppColors.lightGreen 
+                                  : AppColors.redLight,
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            child: Text(isNowInSchedule(daysList: state.dataStore.workingDays,startTime: state.dataStore.openingTime,endTime: state.dataStore.closingTime)??true?
-                              'Open':'Close',
+                            child: Text(
+                              state.dataStore.isStoreOpen ? 'Open' : 'Close',
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12,
-                                color:isNowInSchedule(daysList: state.dataStore.workingDays,startTime: state.dataStore.openingTime,endTime: state.dataStore.closingTime)??true? Color(0xff16A34A):AppColors.red,
+                                color: state.dataStore.isStoreOpen 
+                                    ? Color(0xff16A34A) 
+                                    : AppColors.red,
                               ),
                             ),
                           ),

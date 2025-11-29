@@ -8,6 +8,8 @@ abstract class OptimizedCubit<State> extends Cubit<State> {
   /// High-performance state emission with automatic comparison
   void emitOptimized(State newState) {
     if (!isClosed && state != newState) {
+      // Only emit if state actually changed to prevent unnecessary rebuilds
+      // We create new list instances in copyWith to ensure state changes are detected
       emit(newState);
     }
   }

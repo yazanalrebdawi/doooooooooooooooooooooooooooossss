@@ -12,7 +12,6 @@ import '../../../../core/services/storage/secure_storage/secure_storage_service.
 import '../../../../core/services/storage/shared_preferances/shared_preferences_service.dart';
 import '../../../../core/services/chat_id_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
 class ChatCubit extends OptimizedCubit<ChatState> {
   final ChatRemoteDataSource dataSource;
   final WebSocketService _webSocketService = di.appLocator<WebSocketService>();
@@ -106,49 +105,26 @@ class ChatCubit extends OptimizedCubit<ChatState> {
   }
 
   Future<void> loadChats() async {
-    print('ChatCubit - loadChats() called');
+    if (state.isLoading) return;
+    
     safeEmit(state.copyWith(isLoading: true, error: null));
     try {
-      print('ChatCubit - Calling dataSource.fetchChats()');
       final chats = await dataSource.fetchChats();
-      print('ChatCubit - Received ${chats.length} chats from dataSource');
       safeEmit(state.copyWith(chats: chats, isLoading: false));
-      print('ChatCubit - State updated with ${state.chats.length} chats');
     } catch (e) {
-      print('ChatCubit error: $e');
       safeEmit(state.copyWith(error: 'Failed to load chats', isLoading: false));
     }
   }
 
-  void loadMessages(int chatId, {bool forceRefresh = false}) async {
-    print(
-        'ChatCubit - loadMessages() called with chatId: $chatId, forceRefresh: $forceRefresh');
-
-    // Prevent duplicate loads if messages are already loaded for this chat and not forcing refresh
-    // But always allow load if it's a different chat or if messages are empty
-    if (!forceRefresh &&
-        state.selectedChatId == chatId &&
-        state.messages.isNotEmpty &&
-        !state.isLoadingMessages) {
-      // Check if messages are actually for this chat (not from a previous chat)
-      // If all messages have valid IDs (not pending), assume they're for this chat
-      final hasRealMessages =
-          state.messages.any((m) => m.id > 0 && m.id < 1000000000);
-      if (hasRealMessages) {
-        print(
-            '⚠️ ChatCubit - Messages already loaded for chat $chatId, skipping duplicate load');
-        return;
-      }
+  void loadMessages(int chatId) async {
+    if (state.selectedChatId == chatId && state.messages.isNotEmpty) {
+      return;
     }
 
-    // If switching to a different chat, clear old messages first
     if (state.selectedChatId != null && state.selectedChatId != chatId) {
-      print(
-          '🔄 ChatCubit - Switching from chat ${state.selectedChatId} to $chatId, clearing old messages');
       safeEmit(state.copyWith(messages: [], pendingMessages: []));
     }
 
-    // Set global chat ID
     final chatIdService = di.appLocator<ChatIdService>();
     chatIdService.setChatId(chatId);
 
@@ -160,24 +136,13 @@ class ChatCubit extends OptimizedCubit<ChatState> {
       ),
     );
     try {
-      print('ChatCubit - Calling dataSource.fetchMessages()');
       final apiMessages = await dataSource.fetchMessages(chatId);
-      print(
-          'ChatCubit - Received ${apiMessages.length} messages from dataSource');
-
-      // Merge API messages with pending messages
-      // Pending messages should be preserved and updated with API data if they match
       final apiMessageIds = apiMessages.map((m) => m.id).toSet();
-
-      // Keep pending messages that aren't in API yet (not confirmed)
       final pendingNotInApi = state.pendingMessages
           .where((p) => !apiMessageIds.contains(p.id))
           .toList();
 
-      // Combine API messages with pending messages not yet confirmed
       final mergedMessages = [...apiMessages, ...pendingNotInApi];
-
-      // Sort by timestamp
       mergedMessages.sort(
         (a, b) =>
             DateTime.parse(a.timestamp).compareTo(DateTime.parse(b.timestamp)),
@@ -190,14 +155,8 @@ class ChatCubit extends OptimizedCubit<ChatState> {
           isLoadingMessages: false,
         ),
       );
-      print(
-          'ChatCubit - State updated with ${state.messages.length} messages (${apiMessages.length} from API, ${pendingNotInApi.length} pending)');
 
-      // Mark all unread messages as read after loading
-      // First, ensure chat list is loaded to check unread count
       if (state.chats.isEmpty) {
-        print(
-            '🔵 ChatCubit - loadMessages: Chat list is empty, loading chats first');
         await loadChats();
       }
 
@@ -312,46 +271,22 @@ class ChatCubit extends OptimizedCubit<ChatState> {
         return;
       }
 
-      // Extract counts from API response for immediate update
       int? newDealerUnreadCount = apiResponse['dealer_unread_count'] as int?;
       int? newUserUnreadCount = apiResponse['user_unread_count'] as int?;
-      print(
-          '🔵 ChatCubit - API returned: dealer_unread_count=$newDealerUnreadCount, user_unread_count=$newUserUnreadCount');
 
-      // Update the chat in the list immediately with API response values
       if (newDealerUnreadCount != null || newUserUnreadCount != null) {
-        print(
-            '🔵 ChatCubit - Updating chat list. Current chats: ${state.chats.map((c) => '${c.id}(u:${c.userUnreadCount},d:${c.dealerUnreadCount})').join(', ')}');
-
-        final updatedChats = state.chats.map((chat) {
-          if (chat.id == chatId) {
-            print(
-                '🔵 ChatCubit - Found chat ${chat.id}: updating from API response');
-            return chat.copyWith(
-              dealerUnreadCount: newDealerUnreadCount ?? chat.dealerUnreadCount,
-              userUnreadCount: newUserUnreadCount ?? chat.userUnreadCount,
-            );
-          }
-          return chat;
-        }).toList();
-
-        print(
-            '🔵 ChatCubit - Updated chats: ${updatedChats.map((c) => '${c.id}(u:${c.userUnreadCount},d:${c.dealerUnreadCount})').join(', ')}');
-
+        final updatedChats = List<ChatModel>.from(
+          state.chats.map((chat) {
+            if (chat.id == chatId) {
+              return chat.copyWith(
+                dealerUnreadCount: newDealerUnreadCount ?? chat.dealerUnreadCount,
+                userUnreadCount: newUserUnreadCount ?? chat.userUnreadCount,
+              );
+            }
+            return chat;
+          })
+        );
         safeEmit(state.copyWith(chats: updatedChats));
-        print('✅ ChatCubit - State updated immediately with API response');
-      }
-
-      // Only refresh chat list if we don't have chats or if counts don't match
-      // This prevents unnecessary rebuilds and performance issues
-      if (state.chats.isEmpty) {
-        print(
-            '🔄 ChatCubit - Chat list is empty, refreshing to get updated counts');
-        await loadChats();
-      } else {
-        // Update the chat in the list with the API response values (already done above)
-        // No need to refresh the entire list, we already updated it
-        print('✅ ChatCubit - Chat list updated locally, skipping full refresh');
       }
     } catch (e, stackTrace) {
       print('❌ ChatCubit - Error marking messages as read: $e');
@@ -436,188 +371,117 @@ class ChatCubit extends OptimizedCubit<ChatState> {
       if (decoded['type'] == 'chat.message') {
         final socketMessage = SocketMessageModel.fromJson(decoded);
 
-        // Get current user ID to determine if message is from current user
-        final currentUserIdString = await TokenService.getUserId();
+        // Get current user ID
+        String? currentUserIdString = await TokenService.getUserId();
+        if (currentUserIdString == null) {
+          final secureStorage = di.appLocator<SecureStorageService>();
+          final sharedPrefsService = di.appLocator<SharedPreferencesService>();
+          bool isDealer = await secureStorage.getIsDealer();
+          if (isDealer) {
+            final dealerData = await sharedPrefsService.getDealerAuthData();
+            if (dealerData != null) {
+              currentUserIdString = dealerData.user.id.toString();
+            }
+          }
+        }
+        
         final currentUserId = int.tryParse(currentUserIdString ?? '0') ?? 0;
-        final isFromCurrentUser = socketMessage.sender == currentUserId;
+        final isMine = socketMessage.sender == currentUserId;
 
-        print(
-            '📨 WebSocket message received: ID=${socketMessage.messageId}, sender=${socketMessage.sender}, currentUser=$currentUserId, isMine=$isFromCurrentUser, text="${socketMessage.text}"');
-        print(
-            '📋 Current messages count: ${state.messages.length}, pending: ${state.pendingMessages.length}');
-        print(
-            '📋 Pending messages: ${state.pendingMessages.map((p) => 'id=${p.id}, text="${p.text}", senderId=${p.senderId}, isMine=${p.isMine}').join(', ')}');
-
-        // First check if message with this ID already exists (deduplication)
-        final existingMessageIndex = state.messages.indexWhere(
+        // Check if message already exists
+        final existingIndex = state.messages.indexWhere(
           (m) => m.id == socketMessage.messageId,
         );
 
-        if (existingMessageIndex != -1) {
-          // Message already exists (probably loaded from API), just update its status if needed
-          final existingMessage = state.messages[existingMessageIndex];
-          // Only update isMine if we have a valid currentUserId, otherwise preserve existing value
-          final shouldUpdateIsMine =
-              currentUserId != 0 && existingMessage.isMine != isFromCurrentUser;
-          final newIsMine =
-              currentUserId != 0 ? isFromCurrentUser : existingMessage.isMine;
-
-          if (existingMessage.status != socketMessage.status ||
-              shouldUpdateIsMine) {
+        if (existingIndex != -1) {
+          // Update existing message status
+          final existingMessage = state.messages[existingIndex];
+          if (existingMessage.status != socketMessage.status) {
             final updatedMessages = List<MessageModel>.from(state.messages);
-            updatedMessages[existingMessageIndex] = existingMessage.copyWith(
+            updatedMessages[existingIndex] = existingMessage.copyWith(
               status: socketMessage.status,
-              isMine: newIsMine,
             );
-
-            // Also remove any pending messages with the same text (cleanup duplicates)
-            final updatedPendingMessages = state.pendingMessages
-                .where((m) =>
-                    m.text.trim() != socketMessage.text.trim() ||
-                    m.senderId != socketMessage.sender)
-                .toList();
-
-            safeEmit(state.copyWith(
-              messages: updatedMessages,
-              pendingMessages: updatedPendingMessages,
-            ));
+            print('📨 ChatCubit - Updating existing message status: ID=${existingMessage.id}, status=${existingMessage.status} -> ${socketMessage.status}');
+            safeEmit(state.copyWith(messages: updatedMessages));
+            print('✅ ChatCubit - State emitted with updated message status');
           }
           return;
         }
 
-        // Try to find and update a pending message
-        // Match by text + timestamp (ignore senderId because it might be 0 in pending message)
-        MessageModel? matchedPendingMessage;
-        int matchedPendingIndex = -1;
-
-        try {
-          final socketTimestamp = DateTime.parse(socketMessage.timestamp);
-
-          // Find the most recent pending message with matching text
-          // We match by text + timestamp, NOT by senderId (because pending message might have senderId=0)
-          MessageModel? closestMatch;
-          int closestIndex = -1;
-          Duration closestTimeDiff = const Duration(days: 1);
-
-          for (int i = 0; i < state.messages.length; i++) {
-            final m = state.messages[i];
-            final isPending = m.status.toLowerCase() == 'pending';
-            final isSameText = m.text.trim() == socketMessage.text.trim();
-
-            if (isPending && isSameText) {
-              final messageTimestamp = DateTime.parse(m.timestamp);
-              final timeDiff =
-                  socketTimestamp.difference(messageTimestamp).abs();
-
-              // Match if pending, same text, and timestamps are within 30 seconds
-              // Keep the closest match
-              if (timeDiff.inSeconds <= 30 && timeDiff < closestTimeDiff) {
-                closestMatch = m;
-                closestIndex = i;
-                closestTimeDiff = timeDiff;
-              }
-            }
-          }
-
-          if (closestMatch != null && closestIndex != -1) {
-            matchedPendingMessage = closestMatch;
-            matchedPendingIndex = closestIndex;
-            print(
-                '✅ Matched pending message by text+timestamp (${closestTimeDiff.inSeconds}s): pendingSenderId=${closestMatch.senderId}, socketSender=${socketMessage.sender}');
-          } else {
-            print(
-                '⚠️ No pending message matched for text="${socketMessage.text}"');
-          }
-        } catch (e) {
-          print('Error matching pending message: $e');
-        }
-
-        if (matchedPendingMessage != null && matchedPendingIndex != -1) {
-          // Update the pending message with server response
-          // CRITICAL: If we matched a pending message, it means:
-          // 1. The text matches (same message content)
-          // 2. The senderId matches (same user sent it)
-          // 3. It was pending (just sent by current user)
-          // Therefore, this message is ALWAYS from the current user, so isMine MUST be TRUE
-
-          final updatedMessages = List<MessageModel>.from(state.messages);
-          // Create new message - ALWAYS set isMine to TRUE because if it was pending, it's from current user
-          updatedMessages[matchedPendingIndex] = MessageModel(
-            id: socketMessage.messageId,
-            senderId: socketMessage.sender,
-            sender: socketMessage.sender.toString(),
-            text: matchedPendingMessage.text,
-            type: socketMessage.messageType,
-            status: socketMessage.status,
-            imageUrl: socketMessage.imageUrl,
-            fileUrl: socketMessage.fileUrl,
-            fileSize: socketMessage.fileSize?.toString(),
-            timestamp: socketMessage.timestamp,
-            isMine:
-                true, // ALWAYS TRUE - if it was pending, it's from current user
+        // Try to match with pending message
+        if (isMine) {
+          final pendingIndex = state.messages.indexWhere(
+            (m) => m.status.toLowerCase() == 'pending' &&
+                m.text.trim() == socketMessage.text.trim(),
           );
 
-          print(
-              '✅ Updated pending message: PRESERVED isMine=${matchedPendingMessage.isMine}, currentUserId=$currentUserId, sender=${socketMessage.sender}, pendingSenderId=${matchedPendingMessage.senderId}');
+          if (pendingIndex != -1) {
+            // Update pending message
+            final pendingMessage = state.messages[pendingIndex];
+            final updatedMessages = List<MessageModel>.from(state.messages);
+            updatedMessages[pendingIndex] = MessageModel(
+              id: socketMessage.messageId,
+              senderId: socketMessage.sender,
+              sender: socketMessage.sender.toString(),
+              text: socketMessage.text,
+              type: socketMessage.messageType,
+              status: socketMessage.status,
+              imageUrl: socketMessage.imageUrl,
+              fileUrl: socketMessage.fileUrl,
+              fileSize: socketMessage.fileSize?.toString(),
+              timestamp: socketMessage.timestamp,
+              isMine: true,
+            );
 
-          // Remove from pending messages list
-          final updatedPendingMessages = state.pendingMessages
-              .where((m) => m.id != matchedPendingMessage!.id)
-              .toList();
+            // Remove from pending messages list
+            final updatedPendingMessages = List<MessageModel>.from(
+              state.pendingMessages.where((m) => m.id != pendingMessage.id)
+            );
 
-          updatedMessages.sort(
-            (a, b) => DateTime.parse(a.timestamp)
-                .compareTo(DateTime.parse(b.timestamp)),
-          );
+            updatedMessages.sort(
+              (a, b) => DateTime.parse(a.timestamp).compareTo(DateTime.parse(b.timestamp)),
+            );
 
-          safeEmit(state.copyWith(
-            messages: updatedMessages,
-            pendingMessages: updatedPendingMessages,
-          ));
-        } else {
-          // If message is from current user but no pending message matched,
-          // ignore it to prevent duplicates (it was already added via sendMessageOfflineSafe)
-          // Check if it's from current user:
-          // 1. isFromCurrentUser is true (valid currentUserId)
-          // 2. OR if currentUserId is 0 but we have ANY pending messages (they're all from current user)
-          // 3. OR if we have pending messages with same text (probably the same message)
-          final hasPendingMessages = state.pendingMessages.isNotEmpty;
-          final hasPendingWithSameText = state.pendingMessages
-              .any((p) => p.text.trim() == socketMessage.text.trim());
-
-          final mightBeFromCurrentUser = isFromCurrentUser ||
-              (currentUserId == 0 &&
-                  (hasPendingMessages || hasPendingWithSameText));
-
-          if (mightBeFromCurrentUser) {
-            print(
-                '⚠️ Received WebSocket echo from current user (sender=${socketMessage.sender}), but no pending message matched. Has pending: $hasPendingMessages, same text: $hasPendingWithSameText. Ignoring to prevent duplicate.');
+            print('📨 ChatCubit - Updating pending message: ID=${pendingMessage.id} -> ${socketMessage.messageId}, status=pending -> ${socketMessage.status}');
+            print('📨 ChatCubit - Total messages after update: ${updatedMessages.length}');
+            
+            safeEmit(state.copyWith(
+              messages: updatedMessages,
+              pendingMessages: updatedPendingMessages,
+            ));
+            
+            print('✅ ChatCubit - State emitted with updated message. Current message count: ${state.messages.length}');
             return;
           }
-
-          // New message from other user (not matching any pending message)
-          final newMessage = MessageModel(
-            id: socketMessage.messageId,
-            sender: socketMessage.sender.toString(),
-            senderId: socketMessage.sender,
-            text: socketMessage.text,
-            type: socketMessage.messageType,
-            status: socketMessage.status,
-            imageUrl: socketMessage.imageUrl,
-            fileUrl: socketMessage.fileUrl,
-            fileSize: socketMessage.fileSize?.toString(),
-            timestamp: socketMessage.timestamp,
-            isMine: false, // Always false for messages from other users
-          );
-
-          final finalMessages = [...state.messages, newMessage];
-          finalMessages.sort(
-            (a, b) => DateTime.parse(a.timestamp)
-                .compareTo(DateTime.parse(b.timestamp)),
-          );
-
-          safeEmit(state.copyWith(messages: finalMessages));
         }
+
+        // Add new message (either from other party, or from current user but no pending match found)
+        final newMessage = MessageModel(
+          id: socketMessage.messageId,
+          sender: socketMessage.sender.toString(),
+          senderId: socketMessage.sender,
+          text: socketMessage.text,
+          type: socketMessage.messageType,
+          status: socketMessage.status,
+          imageUrl: socketMessage.imageUrl,
+          fileUrl: socketMessage.fileUrl,
+          fileSize: socketMessage.fileSize?.toString(),
+          timestamp: socketMessage.timestamp,
+          isMine: isMine,
+        );
+
+        final finalMessages = List<MessageModel>.from([...state.messages, newMessage]);
+        finalMessages.sort(
+          (a, b) => DateTime.parse(a.timestamp).compareTo(DateTime.parse(b.timestamp)),
+        );
+
+        print('📨 ChatCubit - Adding new message via WebSocket: ID=${newMessage.id}, text="${newMessage.text}", isMine=$isMine');
+        print('📨 ChatCubit - Total messages after adding: ${finalMessages.length}');
+        
+        // Create a completely new list to ensure state change is detected
+        safeEmit(state.copyWith(messages: finalMessages));
+        
+        print('✅ ChatCubit - State emitted with new message. Current message count: ${state.messages.length}');
       }
     } catch (e) {
       print('ChatCubit: Error handling incoming message: $e');
@@ -652,6 +516,19 @@ class ChatCubit extends OptimizedCubit<ChatState> {
         isLoadingMessages: false,
       ),
     );
+  }
+
+  /// Reset chat state completely (used on logout)
+  void resetChatState() {
+    print('🔄 ChatCubit - resetChatState() called - Resetting all chat data');
+    disconnectWebSocket();
+    // Clear global chat ID
+    final chatIdService = di.appLocator<ChatIdService>();
+    chatIdService.clearChatId();
+
+    // Reset to initial state - clear all chats, messages, and unread counts
+    safeEmit(const ChatState());
+    print('✅ ChatCubit - Chat state reset successfully');
   }
 
   connectWebSocket(int chatId) => _connectToWebSocket(chatId);

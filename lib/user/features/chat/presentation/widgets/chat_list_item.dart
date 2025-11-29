@@ -30,6 +30,20 @@ class _ChatListItemState extends State<ChatListItem> {
     _checkIfDealer();
   }
 
+  @override
+  void didUpdateWidget(ChatListItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Force rebuild if chat data changed (especially unread counts)
+    if (oldWidget.chat.userUnreadCount != widget.chat.userUnreadCount ||
+        oldWidget.chat.dealerUnreadCount != widget.chat.dealerUnreadCount ||
+        oldWidget.chat.id != widget.chat.id) {
+      // Force rebuild when unread counts change
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   Future<void> _checkIfDealer() async {
     final secureStorage = di.appLocator<SecureStorageService>();
     final sharedPrefsService = di.appLocator<SharedPreferencesService>();

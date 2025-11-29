@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:dartz/dartz.dart';
 import '../network/api.dart';
 import '../network/api_request.dart';
 import '../network/api_urls.dart';
-import '../network/failure.dart';
 import 'token_service.dart';
 
 class AuthService {
@@ -80,9 +78,33 @@ class AuthService {
         (data) async {
           print('✅ Token refresh successful');
           
-          // استخراج الـ tokens الجديدة
-          final newAccessToken = data['access'] ?? data['token'] ?? '';
-          final newRefreshToken = data['refresh'] ?? refreshToken; // استخدام القديم إذا لم يتم إرسال واحد جديد
+          // استخراج الـ tokens الجديدة with proper type checking
+          String newAccessToken = '';
+          if (data['access'] != null) {
+            if (data['access'] is String) {
+              newAccessToken = data['access'] as String;
+            } else {
+              print('⚠️ AuthService - access token is not a String, type: ${data['access'].runtimeType}');
+              newAccessToken = data['access'].toString();
+            }
+          } else if (data['token'] != null) {
+            if (data['token'] is String) {
+              newAccessToken = data['token'] as String;
+            } else {
+              print('⚠️ AuthService - token is not a String, type: ${data['token'].runtimeType}');
+              newAccessToken = data['token'].toString();
+            }
+          }
+          
+          String newRefreshToken = refreshToken; // استخدام القديم افتراضياً
+          if (data['refresh'] != null) {
+            if (data['refresh'] is String) {
+              newRefreshToken = data['refresh'] as String;
+            } else {
+              print('⚠️ AuthService - refresh token is not a String, type: ${data['refresh'].runtimeType}');
+              newRefreshToken = data['refresh'].toString();
+            }
+          }
           
           if (newAccessToken.isNotEmpty) {
             // حساب تاريخ انتهاء الصلاحية (افتراضياً ساعة واحدة)

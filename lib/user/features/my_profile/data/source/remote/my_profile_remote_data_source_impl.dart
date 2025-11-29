@@ -321,6 +321,7 @@ class MyProfileRemoteDataSourceImpl implements MyProfileRemoteDataSource {
   //?----------------------------------------------------------------
   @override
   Future<Either<Failure, String>> changePasswordRemote(
+    String oldPassword,
     String newPassword,
     String phone,
   ) async {
@@ -328,7 +329,12 @@ class MyProfileRemoteDataSourceImpl implements MyProfileRemoteDataSource {
       final response = await api.post(
         apiRequest: ApiRequest(
           url: ApiUrls.changePasswordInProfile,
-          data: {"phone": phone, "new_password": newPassword},
+          data: {
+            "phone": phone, 
+            "old_password": oldPassword,
+            "re_password": newPassword,
+            "new_password": newPassword,
+          },
         ),
       );
 

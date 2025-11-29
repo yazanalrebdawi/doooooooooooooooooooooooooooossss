@@ -161,20 +161,23 @@ class _ReelsScreenContentState extends State<ReelsScreenContent> {
   }
 
   Widget _buildReelsView(BuildContext context, ReelState state, bool isDark) {
-    return PageView.builder(
-      controller: widget.pageController,
-      scrollDirection: Axis.vertical,
-      itemCount: state.reels.length,
-      onPageChanged: (index) {
-        context.read<ReelCubit>().changeReelIndex(index);
-        NativeVideoService.dispose();
-      },
-      itemBuilder: (context, index) {
-        final reel = state.reels[index];
-        final isCurrentReel = index == state.currentReelIndex;
-        return _buildReelItem(
-            context, reel, isCurrentReel, index, state, isDark);
-      },
+    return Scaffold(
+      body: PageView.builder(
+        controller: widget.pageController,
+        scrollDirection: Axis.vertical,
+        itemCount: state.reels.length,
+        onPageChanged: (index) {
+          context.read<ReelCubit>().changeReelIndex(index);
+          // Don't dispose NativeVideoService here - let individual video players manage their own lifecycle
+          // NativeVideoService.dispose(); // REMOVED: This was stopping videos when scrolling
+        },
+        itemBuilder: (context, index) {
+          final reel = state.reels[index];
+          final isCurrentReel = index == state.currentReelIndex;
+          return _buildReelItem(
+              context, reel, isCurrentReel, index, state, isDark);
+        },
+      ),
     );
   }
 
@@ -186,73 +189,111 @@ class _ReelsScreenContentState extends State<ReelsScreenContent> {
     ReelState state,
     bool isDark,
   ) {
-    return Stack(
-      children: [
-        // Video player
-        ReelVideoPlayer(
-            reel: reel, isCurrentReel: isCurrentReel, isMuted: _isMuted),
-
-        // Gradient overlay for better text readability
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.transparent,
-                  (isDark ? AppColors.black : AppColors.gray).withOpacity(0.3),
-                  (isDark ? AppColors.black : AppColors.gray).withOpacity(0.7),
-                ],
-                stops: const [0.0, 0.5, 0.8, 1.0],
-              ),
-            ),
-          ),
-        ),
-
-        // Back button
-        // ReelVideoPlayer(reel: reel, isCurrentReel: isCurrentReel),
-        Positioned(
-          top: MediaQuery.of(context).padding.top + 16.h,
-          left: 16.w,
-          child: GestureDetector(
-            onTap: () {
-              context.go(RouteNames.homeScreen);
-              context.read<HomeCubit>().updateCurrentIndex(0);
-              log("🔥🔥🔥");
-            },
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Video player
+          ReelVideoPlayer(
+              reel: reel, isCurrentReel: isCurrentReel, isMuted: _isMuted),
+      
+          // Gradient overlay for better text readability
+          Positioned.fill(
             child: Container(
-              width: 40.w,
-              height: 40.h,
               decoration: BoxDecoration(
-                color: (isDark ? AppColors.black : AppColors.white)
-                    .withOpacity(0.5),
-                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.transparent,
+                    (isDark ? AppColors.black : AppColors.gray).withOpacity(0.3),
+                    (isDark ? AppColors.black : AppColors.gray).withOpacity(0.7),
+                  ],
+                  stops: const [0.0, 0.5, 0.8, 1.0],
+                ),
               ),
-              child: Icon(Icons.arrow_back,
-                  color: isDark ? AppColors.white : AppColors.black,
-                  size: 24.sp),
             ),
           ),
-        ),
-        ReelInfoOverlay(reel: reel),
-        ReelActionsOverlay(
-          reel: reel,
-          onLike: () => _handleLike(context, reel),
-          onShare: () => _handleShare(context, reel),
-          onComment: () => _handleComment(context, reel),
-          onToggleMute: _toggleMute,
-          isMuted: _isMuted,
-        ),
-      ],
+      
+          // Back button
+          // ReelVideoPlayer(reel: reel, isCurrentReel: isCurrentReel),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16.h,
+            left: 16.w,
+            child: GestureDetector(
+              onTap: () {
+                context.go(RouteNames.homeScreen);
+                context.read<HomeCubit>().updateCurrentIndex(0);
+                log("🔥🔥🔥");
+              },
+              child: Container(
+                width: 40.w,
+                height: 40.h,
+                decoration: BoxDecoration(
+                  color: (isDark ? AppColors.black : AppColors.white)
+                      .withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.arrow_back,
+                    color: isDark ? AppColors.white : AppColors.black,
+                    size: 24.sp),
+              ),
+            ),
+          ),
+          ReelInfoOverlay(reel: reel),
+          BlocBuilder<ReelCubit, ReelState>(
+            builder: (context, state) {
+              // Get updated reel from state by ID
+              final updatedReel = state.reels.firstWhere(
+                (r) => r.id == reel.id,
+                orElse: () => reel,
+              );
+              
+              return ReelActionsOverlay(
+                reel: updatedReel,
+                onLike: () => _handleLike(context, updatedReel),
+                onShare: () => _handleShare(context, updatedReel),
+                onComment: () => _handleComment(context, updatedReel),
+                onToggleMute: _toggleMute,
+                isMuted: _isMuted,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void _handleLike(BuildContext context, ReelModel reel) {
     log('🤍 Like reel: ${reel.id}');
-    log('🤍 Like reel  fdfs: ${reel.id}');
-    context.read<ReelCubit>().likeReel(reel.id);
+    
+    // Store original values BEFORE updating (for error handling)
+    final originalLikedStatus = reel.liked;
+    final originalLikesCount = reel.likesCount;
+    
+    // Update UI immediately
+    final state = context.read<ReelCubit>().state;
+    final tempReel = reel.copyWith(
+      liked: !reel.liked,
+      likesCount: reel.liked ? reel.likesCount - 1 : reel.likesCount + 1,
+    );
+    
+    final tempReels = List<ReelModel>.from(state.reels);
+    final reelIndex = tempReels.indexWhere((r) => r.id == reel.id);
+    if (reelIndex != -1) {
+      tempReels[reelIndex] = tempReel;
+    }
+    
+    context.read<ReelCubit>().safeEmit(
+      state.copyWith(reels: tempReels),
+    );
+    
+    // Call API with original values for error handling
+    context.read<ReelCubit>().likeReel(
+      reel.id,
+      originalLikedStatus: originalLikedStatus,
+      originalLikesCount: originalLikesCount,
+    );
   }
 
   void _handleShare(BuildContext context, ReelModel reel) {

@@ -4,6 +4,7 @@ import 'package:dooss_business_app/dealer/features/Home/presentation/page/navigo
 import 'package:dooss_business_app/dealer/features/Home/presentation/page/privacy_policy_page.dart';
 import 'package:dooss_business_app/user/core/routes/route_names.dart';
 import 'package:dooss_business_app/user/core/widgets/base/splash_screen_page.dart';
+import 'package:dooss_business_app/user/core/widgets/base/privacy_policy_acceptance_screen.dart';
 import 'package:dooss_business_app/user/features/auth/presentation/pages/forget_password_screen.dart';
 import 'package:dooss_business_app/user/features/auth/presentation/pages/create_new_password_screen.dart';
 import 'package:dooss_business_app/user/features/auth/presentation/pages/login_screen.dart';
@@ -75,6 +76,10 @@ class AppRouter {
     GoRoute(
       path: RouteNames.privacyPolicy,
       builder: (context, state) => const PrivacyPolicyPage(),
+    ),
+    GoRoute(
+      path: RouteNames.privacyPolicyAcceptance,
+      builder: (context, state) => const PrivacyPolicyAcceptanceScreen(),
     ),
     GoRoute(
       path: RouteNames.onBoardingScreen,

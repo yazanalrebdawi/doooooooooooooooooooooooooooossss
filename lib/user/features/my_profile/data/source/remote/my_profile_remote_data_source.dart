@@ -18,6 +18,7 @@ abstract class MyProfileRemoteDataSource {
 
   //* Change Password
   Future<Either<Failure, String>> changePasswordRemote(
+    String oldPassword,
     String newPassword,
     String phone,
   );

@@ -40,6 +40,24 @@ class _ReelsViewerScreenState extends State<ReelsViewerScreen> {
     // Set full-screen immersive mode
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
+    // Initialize reels in ReelCubit if not already loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final cubit = di.appLocator<ReelCubit>();
+      if (cubit.state.reels.isEmpty || cubit.state.reels.length != widget.reelsList.length) {
+        // Update reels list in cubit
+        cubit.safeEmit(
+          cubit.state.copyWith(
+            reels: widget.reelsList,
+            currentReelIndex: widget.initialIndex,
+          ),
+        );
+      } else {
+        // Just update the current index
+        cubit.changeReelIndex(widget.initialIndex);
+      }
+    });
+
     print(
       '🎬 ReelsViewerScreen: Initialized with ${widget.reelsList.length} reels, starting at index ${widget.initialIndex}',
     );
@@ -61,6 +79,8 @@ class _ReelsViewerScreenState extends State<ReelsViewerScreen> {
     setState(() {
       _currentIndex = index;
     });
+    // Update the current reel index in ReelCubit
+    context.read<ReelCubit>().changeReelIndex(index);
   }
 
   @override

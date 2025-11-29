@@ -14,6 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ChangePasswordScreen extends StatelessWidget {
   ChangePasswordScreen({super.key});
 
+  final TextEditingController oldPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmNewPasswordController =
       TextEditingController();
@@ -37,6 +38,19 @@ class ChangePasswordScreen extends StatelessWidget {
                 SecurityNoticeWidget(),
                 SizedBox(height: 10.h),
 
+                // Old Password Label
+                InputLabelWidget(
+                  label: "Old Password",
+                ),
+                SizedBox(height: 5.h),
+
+                // Old Password Field
+                InputPassowrdWidget(
+                  controller: oldPasswordController,
+                  hintText: "Enter old password",
+                ),
+                SizedBox(height: 10.h),
+
                 // New Password Field
                 NewPasswordFieldWidget(
                   controller: newPasswordController,
@@ -58,6 +72,7 @@ class ChangePasswordScreen extends StatelessWidget {
 
                 // Update Button
                 ButtonUpdatePasswordWidget(
+                  oldPasswordController: oldPasswordController,
                   newPasswordController: newPasswordController,
                   confirmPasswordController: confirmNewPasswordController,
                   formState: formState,

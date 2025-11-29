@@ -133,7 +133,7 @@ class productInfoCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          item.isAvailable ? 'Available' : 'unAvailable',
+                          item.isAvailable ? 'Available' : 'Un available',
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 14,

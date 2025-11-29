@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:video_player/video_player.dart';
 import '../../../../core/cubits/optimized_cubit.dart';
 import '../../data/data_source/reel_remote_data_source.dart';
-import '../../data/models/reel_model.dart';
 import 'reels_playback_state.dart';
 
 /// Master Cubit for all reels playback functionality
@@ -99,8 +98,40 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
     if (_isDisposed || state.currentReel == null) return;
 
     final reel = state.currentReel!;
-    if (reel.video.isEmpty) {
+    final videoUrl = reel.video.trim();
+    
+    // Validate video URL
+    if (videoUrl.isEmpty) {
       print('❌ ReelsPlaybackCubit: No video URL for reel ${reel.id}');
+      safeEmit(state.copyWith(
+        error: 'Video URL is empty',
+        playbackState: ReelPlaybackState.error,
+      ));
+      return;
+    }
+
+    // Validate URL format - strict validation
+    Uri? uri;
+    try {
+      uri = Uri.parse(videoUrl);
+      // Must have scheme, host, and valid format
+      if (!uri.hasScheme || !uri.scheme.startsWith('http')) {
+        throw FormatException('Invalid video URL scheme');
+      }
+      if (uri.host.isEmpty) {
+        throw FormatException('Video URL missing host');
+      }
+      // Ensure the full URI string is valid
+      final uriString = uri.toString();
+      if (uriString.isEmpty || uriString == ':' || uriString == 'http:' || uriString == 'https:') {
+        throw FormatException('Invalid video URL format');
+      }
+    } catch (e) {
+      print('❌ ReelsPlaybackCubit: Invalid video URL format: $videoUrl');
+      safeEmit(state.copyWith(
+        error: 'Invalid video URL format',
+        playbackState: ReelPlaybackState.error,
+      ));
       return;
     }
 
@@ -112,13 +143,23 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
     try {
       safeEmit(state.copyWith(playbackState: ReelPlaybackState.initializing));
 
-      _currentController =
-          VideoPlayerController.networkUrl(Uri.parse(reel.video));
+      _currentController = VideoPlayerController.networkUrl(uri);
 
       // Add listener for video events
       _currentController!.addListener(_onVideoPlayerEvent);
 
-      await _currentController!.initialize();
+      // Add timeout for initialization (important for older devices)
+      await _currentController!.initialize().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw TimeoutException('Video initialization timed out after 15 seconds');
+        },
+      );
+      
+      // Check if controller is still valid after initialization
+      if (!_currentController!.value.isInitialized) {
+        throw Exception('Video controller failed to initialize');
+      }
 
       // Set initial volume based on mute state
       await _currentController!.setVolume(state.isMuted ? 0.0 : 1.0);
@@ -142,7 +183,7 @@ class ReelsPlaybackCubit extends OptimizedCubit<ReelsPlaybackState> {
       print('❌ ReelsPlaybackCubit: Error initializing video: $e');
       if (!_isDisposed) {
         safeEmit(state.copyWith(
-          error: 'Failed to load video: $e',
+          error: 'Failed to load video. Please try again.',
           playbackState: ReelPlaybackState.error,
         ));
       }

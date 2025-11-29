@@ -83,9 +83,8 @@ class HomePage1 extends StatelessWidget {
                             onPressed: () {
                               BlocProvider.of<AppManagerCubit>(context)
                                   .dealerLogOut();
-                              appLocator<SharedPreferencesService>()
-                                  .removeAll();
-                              // context.go(RouteNames.splashScreen);
+                              // Don't call removeAll() here - let the dialog handle it
+                              // to preserve privacy policy acceptance
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -120,15 +119,6 @@ class HomePage1 extends StatelessWidget {
                               Icons.delete_forever,
                               color: AppColors.silverDark,
                               size: 20,
-                            ),
-                          ),
-                          SizedBox(width: 10.w),
-                          GestureDetector(
-                            onTap: () {},
-                            child: CircleAvatar(
-                              radius: 18.r,
-                              backgroundColor: Colors.grey,
-                              child: Icon(Icons.person, color: Colors.white),
                             ),
                           ),
                         ],

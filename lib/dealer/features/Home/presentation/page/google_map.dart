@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import '../../../../../user/core/constants/app_config.dart';
 
 // class GoogleMap extends StatefulWidget {
 //   const GoogleMap({super.key});
@@ -304,6 +307,37 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  /// Get address from coordinates using reverse geocoding
+  Future<String?> _getAddressFromCoordinates(double lat, double lon) async {
+    try {
+      final url = '${AppConfig.googleMapsGeocodeUrl}?latlng=$lat,$lon&key=${AppConfig.googleMapsApiKey}';
+      
+      print('🗺️ MapScreen: Getting address for coordinates: $lat, $lon');
+      
+      final response = await http.get(Uri.parse(url));
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        
+        if (data['status'] == 'OK' && data['results'] != null && data['results'].isNotEmpty) {
+          // Get the formatted address from the first result
+          final formattedAddress = data['results'][0]['formatted_address'] as String;
+          print('✅ MapScreen: Got address: $formattedAddress');
+          return formattedAddress;
+        } else {
+          print('⚠️ MapScreen: No address found for coordinates');
+          return null; // Return null instead of coordinates
+        }
+      } else {
+        print('❌ MapScreen: Reverse geocoding failed: ${response.statusCode}');
+        return null; // Return null instead of coordinates
+      }
+    } catch (e) {
+      print('❌ MapScreen: Error in reverse geocoding: $e');
+      return null; // Return null instead of coordinates
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -342,15 +376,35 @@ class _MapScreenState extends State<MapScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.my_location),
-        onPressed: () {
-          // تحريك الخريطة إلى موقع الـ Marker الجديد
-          mapController.move(markerLocation, 12.0);
-          print(markerLocation.latitude);
-          print(markerLocation.longitude);
+        child: const Icon(Icons.check),
+        onPressed: () async {
+          // Update lat/lon callbacks
           widget.lat(markerLocation.latitude.toString());
           widget.lon(markerLocation.longitude.toString());
           
+          // Get address from coordinates (reverse geocoding)
+          try {
+            final address = await _getAddressFromCoordinates(
+              markerLocation.latitude,
+              markerLocation.longitude,
+            );
+            
+            // Return the address to the previous screen (only if we got a valid address)
+            if (mounted) {
+              if (address != null && address.isNotEmpty) {
+                Navigator.pop(context, address);
+              } else {
+                // If no address found, return null so the UI doesn't update
+                Navigator.pop(context, null);
+              }
+            }
+          } catch (e) {
+            print('❌ Error getting address: $e');
+            // Return null if geocoding fails
+            if (mounted) {
+              Navigator.pop(context, null);
+            }
+          }
         },
       ),
     );

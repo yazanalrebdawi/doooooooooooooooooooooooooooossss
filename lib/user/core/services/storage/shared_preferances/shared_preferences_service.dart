@@ -17,6 +17,23 @@ class SharedPreferencesService {
     } catch (_) {}
   }
 
+  //?---------------- Remove All Except Privacy Policy --------------------
+  // This method clears all data except privacy policy acceptance
+  Future<void> removeAllExceptPrivacyPolicy() async {
+    try {
+      // Save privacy policy acceptance status
+      final privacyPolicyAccepted = await getPrivacyPolicyAccepted();
+      
+      // Clear all data
+      await storagePreferences.clear();
+      
+      // Restore privacy policy acceptance if it was accepted
+      if (privacyPolicyAccepted) {
+        await savePrivacyPolicyAccepted(true);
+      }
+    } catch (_) {}
+  }
+
   //?---------------- Get Dealer Token ----------------------------------------
   Future<String?> getDealerToken() async {
     try {
@@ -180,5 +197,23 @@ class SharedPreferencesService {
     try {
       await storagePreferences.remove(CacheKeys.appLanguage);
     } catch (_) {}
+  }
+
+  //?-------------------- Privacy Policy Acceptance  ------------------------------------------
+
+  //* Save
+  Future<void> savePrivacyPolicyAccepted(bool accepted) async {
+    try {
+      await storagePreferences.setBool(CacheKeys.privacyPolicyAccepted, accepted);
+    } catch (_) {}
+  }
+
+  //* Get
+  Future<bool> getPrivacyPolicyAccepted() async {
+    try {
+      return storagePreferences.getBool(CacheKeys.privacyPolicyAccepted) ?? false;
+    } catch (_) {
+      return false;
+    }
   }
 }

@@ -48,6 +48,8 @@ class PrivacyPolicyPage extends StatelessWidget {
                   translate('howWeUseInformationText')),
               _buildSection(translate('locationInformation'),
                   translate('locationInformationText')),
+              _buildSection(translate('cameraAndPhotoAccess'),
+                  translate('cameraAndPhotoAccessText')),
               _buildSection(translate('informationSharing'),
                   translate('informationSharingText')),
               _buildSection(translate('cookies'), translate('cookiesText')),
@@ -55,8 +57,6 @@ class PrivacyPolicyPage extends StatelessWidget {
                   translate('dataSecurity'), translate('dataSecurityText')),
               _buildSection(
                   translate('dataRetention'), translate('dataRetentionText')),
-              _buildSection(
-                  translate('yourRights'), translate('yourRightsText')),
               _buildSection(translate('linksToOtherSites'),
                   translate('linksToOtherSitesText')),
               _buildSection(translate('changesToPolicy'),

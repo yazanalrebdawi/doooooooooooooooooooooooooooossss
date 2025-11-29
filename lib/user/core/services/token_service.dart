@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dooss_business_app/user/core/constants/cache_keys.dart';
 import 'package:dooss_business_app/user/core/services/locator_service.dart';
@@ -22,9 +23,93 @@ class TokenService {
   /// استرجاع userId
   static Future<String?> getUserId() async {
     try {
-      return await _storage.read(key: CacheKeys.userIdKey);
+      String? userId = await _storage.read(key: CacheKeys.userIdKey);
+      
+      // If userId is null, try to get it from dealer auth data
+      if (userId == null) {
+        log('⚠️ TokenService - User ID not found in storage, checking dealer auth data...');
+        final secureStorage = appLocator<SecureStorageService>();
+        final sharedPrefsService = appLocator<SharedPreferencesService>();
+        
+        bool isDealer = await secureStorage.getIsDealer();
+        if (isDealer) {
+          // Try SharedPreferences first
+          final dealerData = await sharedPrefsService.getDealerAuthData();
+          if (dealerData != null) {
+            userId = dealerData.user.id.toString();
+            log('✅ TokenService - Found dealer user ID from SharedPreferences: $userId');
+            // Save it for future use
+            await saveUserId(userId);
+            return userId;
+          }
+          
+          // Try SecureStorage
+          final dealerDataSecure = await secureStorage.getDealerAuthData();
+          if (dealerDataSecure != null) {
+            userId = dealerDataSecure.user.id.toString();
+            log('✅ TokenService - Found dealer user ID from SecureStorage: $userId');
+            // Save it for future use
+            await saveUserId(userId);
+            return userId;
+          }
+        }
+        
+        // Last resort: try to extract from JWT token
+        final accessToken = await getAccessToken();
+        if (accessToken != null && accessToken.isNotEmpty) {
+          userId = _extractUserIdFromToken(accessToken);
+          if (userId != null) {
+            log('✅ TokenService - Extracted user ID from JWT token: $userId');
+            // Save it for future use
+            await saveUserId(userId);
+            return userId;
+          }
+        }
+      }
+      
+      return userId;
     } catch (e) {
       log('Error getting userId: $e');
+      return null;
+    }
+  }
+  
+  /// Extract user ID from JWT token
+  static String? _extractUserIdFromToken(String token) {
+    try {
+      // JWT tokens have format: header.payload.signature
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        log('⚠️ TokenService - Invalid JWT token format');
+        return null;
+      }
+      
+      // Decode the payload (second part)
+      final payload = parts[1];
+      // Add padding if needed
+      String normalizedPayload = payload;
+      switch (payload.length % 4) {
+        case 1:
+          normalizedPayload += '===';
+          break;
+        case 2:
+          normalizedPayload += '==';
+          break;
+        case 3:
+          normalizedPayload += '=';
+          break;
+      }
+      
+      // Decode base64
+      final decodedBytes = base64Url.decode(normalizedPayload);
+      final decodedString = utf8.decode(decodedBytes);
+      final payloadMap = jsonDecode(decodedString) as Map<String, dynamic>;
+      
+      // Extract user_id
+      final userId = payloadMap['user_id']?.toString();
+      return userId;
+    } catch (e) {
+      log('⚠️ TokenService - Error extracting user ID from token: $e');
       return null;
     }
   }
@@ -36,7 +121,17 @@ class TokenService {
 
   /// حفظ الـ refresh token
   static Future<void> saveRefreshToken(String refreshToken) async {
+    log('💾 TokenService - Saving refresh token, length: ${refreshToken.length}');
+    log('💾 TokenService - Refresh token preview: ${refreshToken.length > 20 ? "${refreshToken.substring(0, 20)}..." : refreshToken}');
     await _storage.write(key: CacheKeys.refreshTokenKey, value: refreshToken);
+    
+    // Verify it was saved correctly
+    final saved = await _storage.read(key: CacheKeys.refreshTokenKey);
+    if (saved == refreshToken) {
+      log('✅ TokenService - Refresh token saved and verified correctly');
+    } else {
+      log('❌ TokenService - ERROR: Refresh token verification failed!');
+    }
   }
 
   /// حفظ تاريخ انتهاء صلاحية الـ token
@@ -54,7 +149,27 @@ class TokenService {
 
   /// استرجاع الـ refresh token
   static Future<String?> getRefreshToken() async {
-    return await _storage.read(key: CacheKeys.refreshTokenKey);
+    try {
+      final token = await _storage.read(key: CacheKeys.refreshTokenKey);
+      if (token == null || token.isEmpty) {
+        log('⚠️ TokenService - No refresh token found in storage');
+        return null;
+      }
+      // Log token info for debugging
+      log('🔍 TokenService - Refresh token retrieved, length: ${token.length}');
+      log('🔍 TokenService - Refresh token preview: ${token.length > 20 ? "${token.substring(0, 20)}..." : token}');
+      
+      // Verify it's not the same as access token
+      final accessToken = await getToken();
+      if (accessToken != null && token == accessToken) {
+        log('❌ TokenService - ERROR: Retrieved refresh token is the same as access token!');
+      }
+      
+      return token;
+    } catch (e) {
+      log('❌ TokenService - Error getting refresh token: $e');
+      return null;
+    }
   }
 
   /// استرجاع تاريخ انتهاء صلاحية الـ token
@@ -99,6 +214,10 @@ class TokenService {
     required String refreshToken,
     required DateTime expiry,
   }) async {
+    log('💾 TokenService - Saving all tokens');
+    log('💾 TokenService - Access token length: ${accessToken.length}');
+    log('💾 TokenService - Refresh token length: ${refreshToken.length}');
+    
     await saveToken(accessToken);
     await saveRefreshToken(refreshToken);
     await saveTokenExpiry(expiry);

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
@@ -46,25 +47,31 @@ class SeeAllCarsCard extends StatelessWidget {
                 topRight: Radius.circular(16.r),
               ),
               child: car.imageUrl.isNotEmpty
-                  ? Image.network(
-                      car.imageUrl,
+                  ? CachedNetworkImage(
+                      imageUrl: car.imageUrl,
                       width: double.infinity,
                       height: 192.h,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: double.infinity,
-                          height: 192.h,
-                          color: isDark
-                              ? Colors.grey[850]
-                              : AppColors.gray.withOpacity(0.2),
-                          child: Icon(
-                            Icons.directions_car,
-                            size: 40.sp,
-                            color: isDark ? Colors.grey[400] : AppColors.gray,
-                          ),
-                        );
-                      },
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: double.infinity,
+                        height: 192.h,
+                        color: isDark
+                            ? Colors.grey[850]
+                            : AppColors.gray.withOpacity(0.2),
+                        child: Icon(
+                          Icons.directions_car,
+                          size: 40.sp,
+                          color: isDark ? Colors.grey[400] : AppColors.gray,
+                        ),
+                      ),
+                      memCacheWidth: 600, // Limit image resolution for memory
+                      memCacheHeight: 400,
                     )
                   : Container(
                       width: double.infinity,

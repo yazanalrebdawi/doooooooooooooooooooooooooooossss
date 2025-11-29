@@ -43,12 +43,40 @@ class AuthResponceModel {
   }
 
   factory AuthResponceModel.fromJson(Map<String, dynamic> map) {
-    final accessToken = map['access'] ?? '';
-    final tokenField = map['token'] ?? '';
+    // Extract access token with proper type checking
+    String accessToken = '';
+    if (map['access'] != null) {
+      if (map['access'] is String) {
+        accessToken = map['access'] as String;
+      } else {
+        log('⚠️ AuthResponceModel - access token is not a String, type: ${map['access'].runtimeType}');
+        accessToken = map['access'].toString();
+      }
+    }
+    
+    // Extract token field with proper type checking
+    String tokenField = '';
+    if (map['token'] != null) {
+      if (map['token'] is String) {
+        tokenField = map['token'] as String;
+      } else {
+        log('⚠️ AuthResponceModel - token field is not a String, type: ${map['token'].runtimeType}');
+        tokenField = map['token'].toString();
+      }
+    }
+    
     final finalToken = accessToken.isNotEmpty ? accessToken : tokenField;
 
-    // استخراج الـ refresh token
-    final refreshToken = map['refresh'] ?? '';
+    // استخراج الـ refresh token with proper type checking
+    String refreshToken = '';
+    if (map['refresh'] != null) {
+      if (map['refresh'] is String) {
+        refreshToken = map['refresh'] as String;
+      } else {
+        log('⚠️ AuthResponceModel - refresh token is not a String, type: ${map['refresh'].runtimeType}');
+        refreshToken = map['refresh'].toString();
+      }
+    }
 
     // حساب تاريخ انتهاء الصلاحية (افتراضياً ساعة واحدة من الآن)
     final expiry = DateTime.now().add(const Duration(hours: 1));
@@ -59,16 +87,29 @@ class AuthResponceModel {
     log('🔍 AuthResponceModel - Final token: $finalToken');
     log('🔍 AuthResponceModel - Token length: ${finalToken.length}');
     log('🔍 AuthResponceModel - Refresh token: $refreshToken');
+    log('🔍 AuthResponceModel - Refresh token length: ${refreshToken.length}');
     log('🔍 AuthResponceModel - Expiry: $expiry');
 
+    // Validate that refresh token is different from access token
+    if (refreshToken.isNotEmpty && refreshToken == finalToken) {
+      log('⚠️ AuthResponceModel - WARNING: Refresh token is the same as access token!');
+    }
+
     // حفظ الـ tokens تلقائياً
+    // IMPORTANT: Only save if we have a valid refresh token, don't fallback to access token
     if (finalToken.isNotEmpty) {
-      TokenService.saveAllTokens(
-        accessToken: finalToken,
-        refreshToken: refreshToken.isNotEmpty ? refreshToken : finalToken,
-        expiry: expiry,
-      );
-      log('💾 AuthResponceModel - Tokens saved automatically');
+      if (refreshToken.isEmpty) {
+        log('❌ AuthResponceModel - ERROR: No refresh token in response! Cannot save tokens.');
+      } else {
+        TokenService.saveAllTokens(
+          accessToken: finalToken,
+          refreshToken: refreshToken, // Use refresh token directly, no fallback
+          expiry: expiry,
+        );
+        log('💾 AuthResponceModel - Tokens saved automatically');
+        log('💾 AuthResponceModel - Access token saved: ${finalToken.substring(0, finalToken.length > 20 ? 20 : finalToken.length)}...');
+        log('💾 AuthResponceModel - Refresh token saved: ${refreshToken.substring(0, refreshToken.length > 20 ? 20 : refreshToken.length)}...');
+      }
     }
 
     return AuthResponceModel(

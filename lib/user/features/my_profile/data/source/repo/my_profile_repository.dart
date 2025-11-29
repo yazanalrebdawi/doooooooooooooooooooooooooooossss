@@ -18,6 +18,7 @@ abstract class MyProfileRepository {
 
   //* Change Password
   Future<Either<Failure, String>> changePasswordRepo(
+    String oldPassword,
     String newPassword,
     String phone,
   );

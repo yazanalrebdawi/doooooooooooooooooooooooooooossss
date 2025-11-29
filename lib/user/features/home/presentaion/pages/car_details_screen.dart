@@ -48,16 +48,26 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
   Future<void> _initializeMap() async {
     print('🗺️ CarDetails: Initializing map...');
-    final userLocation = await LocationService.getCurrentLocation();
-    if (userLocation != null) {
-      print(
-        '✅ CarDetails: User location obtained: ${userLocation.latitude}, ${userLocation.longitude}',
-      );
-      setState(() {
-        _userLocation = userLocation;
-      });
-    } else {
-      print('❌ CarDetails: Failed to get user location');
+    try {
+      final userLocation = await LocationService.getCurrentLocation();
+      if (userLocation != null && mounted) {
+        print(
+          '✅ CarDetails: User location obtained: ${userLocation.latitude}, ${userLocation.longitude}',
+        );
+        // Use post-frame callback to avoid build during frame
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _userLocation = userLocation;
+            });
+          }
+        });
+      } else {
+        print('⚠️ CarDetails: Could not get user location (will work without it)');
+      }
+    } catch (e) {
+      print('❌ CarDetails: Error initializing map location: $e');
+      // Don't crash - app can work without location
     }
   }
 
@@ -168,7 +178,13 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
       return;
     }
     print('🗺️ CarDetails: Starting route load...');
-    setState(() => _isLoadingRoute = true);
+    
+    // Use post-frame callback to avoid build during frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() => _isLoadingRoute = true);
+      }
+    });
 
     try {
       final markers = <Marker>{
@@ -188,25 +204,58 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
       final polyline = await _getRoutePolyline(carLat, carLon);
 
-      setState(() {
-        _markers = markers;
-        if (polyline != null) {
-          _polylines = {polyline};
-        } else {
-          _polylines = {
-            Polyline(
-              polylineId: const PolylineId('route'),
-              points: [
-                LatLng(_userLocation!.latitude, _userLocation!.longitude),
-                LatLng(carLat, carLon),
-              ],
-              color: Colors.blue,
-              width: 4,
-              geodesic: true,
-            ),
-          };
+      // Use post-frame callback to avoid build during frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _markers = markers;
+            // Set polyline if we got a real route from Directions API
+            if (polyline != null) {
+              _polylines = {polyline};
+              print('✅ CarDetails: Real route polyline added to map with ${polyline.points.length} points');
+              print('✅ CarDetails: Polyline visible: ${polyline.visible}, color: ${polyline.color}, width: ${polyline.width}');
+            } else {
+              // If route failed, try one more time after a short delay
+              _polylines = {};
+              print('⚠️ CarDetails: Route not available - will retry...');
+              
+              // Retry once after a short delay
+              Future.delayed(const Duration(seconds: 2), () async {
+                if (mounted && _userLocation != null) {
+                  print('🔄 CarDetails: Retrying route request...');
+                  final retryPolyline = await _getRoutePolyline(carLat, carLon);
+                  if (mounted && retryPolyline != null) {
+                    setState(() {
+                      _polylines = {retryPolyline};
+                      print('✅ CarDetails: Route loaded successfully on retry with ${retryPolyline.points.length} points!');
+                    });
+                  } else if (mounted) {
+                    // Show error message only if retry also failed
+                    print('❌ CarDetails: Route failed even after retry');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)?.translate('errorLoadingRoute') ??
+                              'Unable to load route. Please check your internet connection and try again.',
+                        ),
+                        backgroundColor: Colors.orange,
+                        duration: const Duration(seconds: 4),
+                        action: SnackBarAction(
+                          label: 'Retry',
+                          textColor: Colors.white,
+                          onPressed: () {
+                            _loadRoute(carLat, carLon);
+                          },
+                        ),
+                      ),
+                    );
+                  }
+                }
+              });
+            }
+            _isLoadingRoute = false;
+          });
         }
-        _isLoadingRoute = false;
       });
 
       // Update camera to fit both markers
@@ -215,7 +264,12 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
       });
     } catch (e) {
       print('❌ CarDetails: Error loading route: $e');
-      setState(() => _isLoadingRoute = false);
+      // Use post-frame callback to avoid build during frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _isLoadingRoute = false);
+        }
+      });
     }
   }
 
@@ -226,54 +280,210 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     }
 
     try {
+      // Use the exact format: origin=LAT1,LNG1&destination=LAT2,LNG2&key=YOUR_KEY
+      final originLat = _userLocation!.latitude;
+      final originLng = _userLocation!.longitude;
       final url =
-          'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=$carLat,$carLon&mode=driving&key=${AppConfig.googleMapsApiKey}';
+          'https://maps.googleapis.com/maps/api/directions/json?origin=$originLat,$originLng&destination=$carLat,$carLon&key=${AppConfig.googleMapsApiKey}';
+      
       print('🗺️ CarDetails: Requesting route from Google Directions API...');
-      print(
-          '🗺️ CarDetails: Origin: ${_userLocation!.latitude}, ${_userLocation!.longitude}');
+      print('🗺️ CarDetails: Origin: $originLat, $originLng');
       print('🗺️ CarDetails: Destination: $carLat, $carLon');
+      print('🗺️ CarDetails: URL: $url');
+      
       final response = await http.get(Uri.parse(url));
       print('🗺️ CarDetails: Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(
-            '🗺️ CarDetails: Directions API response status: ${data['status']}');
+        print('🗺️ CarDetails: Directions API response status: ${data['status']}');
+        
         if (data['status'] == 'OK' &&
             data['routes'] != null &&
             data['routes'].isNotEmpty) {
-          final polylineEncoded =
-              data['routes'][0]['overview_polyline']['points'];
-          final points = _decodePolyline(polylineEncoded);
-          print('🗺️ CarDetails: Decoded ${points.length} route points');
-          if (points.isNotEmpty) {
-            print('✅ CarDetails: Route polyline created successfully');
-            return Polyline(
-              polylineId: const PolylineId('route'),
-              points: points,
-              color: Colors.blue,
-              width: 8,
-              geodesic: true,
-              patterns: [PatternItem.dot, PatternItem.gap(10)],
-              visible: true,
-            );
+          // Get the overview_polyline from the route
+          final route = data['routes'][0];
+          final overviewPolyline = route['overview_polyline'];
+          
+          if (overviewPolyline != null && overviewPolyline['points'] != null) {
+            final polylineEncoded = overviewPolyline['points'] as String;
+            print('🗺️ CarDetails: Got encoded polyline: ${polylineEncoded.substring(0, polylineEncoded.length > 50 ? 50 : polylineEncoded.length)}...');
+            
+            // Decode the polyline to get LatLng list
+            final points = _decodePolyline(polylineEncoded);
+            print('🗺️ CarDetails: Decoded ${points.length} route points');
+            
+            if (points.isNotEmpty) {
+              print('✅ CarDetails: Route polyline created successfully');
+              print('✅ CarDetails: First point: ${points.first}');
+              print('✅ CarDetails: Last point: ${points.last}');
+              
+              // Create and return the Polyline
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points, // List<LatLng> from decoded polyline
+                color: const Color(0xFF2196F3), // Bright blue
+                width: 8, // Thicker line for better visibility
+                geodesic: false, // Set to false for accurate street-level routing
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            } else {
+              print('⚠️ CarDetails: Decoded polyline has no points');
+            }
           } else {
-            print('⚠️ CarDetails: No points in decoded polyline');
+            print('⚠️ CarDetails: No overview_polyline in route response');
           }
         } else {
-          print(
-              '⚠️ CarDetails: Directions API returned status: ${data['status']}');
+          print('⚠️ CarDetails: Directions API returned status: ${data['status']}');
           if (data['error_message'] != null) {
             print('⚠️ CarDetails: Error message: ${data['error_message']}');
+          }
+          
+          // If Google API failed due to billing, try OpenRouteService as fallback
+          if (data['status'] == 'REQUEST_DENIED' || data['status'] == 'OVER_QUERY_LIMIT') {
+            print('🔄 CarDetails: Google API unavailable, trying OpenRouteService fallback...');
+            return await _getRouteFromOpenRouteService(carLat, carLon);
           }
         }
       } else {
         print('❌ CarDetails: HTTP error: ${response.statusCode}');
         print('❌ CarDetails: Response body: ${response.body}');
+        // Try OpenRouteService as fallback
+        print('🔄 CarDetails: Trying OpenRouteService fallback...');
+        return await _getRouteFromOpenRouteService(carLat, carLon);
       }
     } catch (e) {
       print('❌ CarDetails: Error getting route polyline: $e');
       print('❌ CarDetails: Stack trace: ${StackTrace.current}');
+      // Try OpenRouteService as fallback
+      print('🔄 CarDetails: Trying OpenRouteService fallback...');
+      try {
+        return await _getRouteFromOpenRouteService(carLat, carLon);
+      } catch (fallbackError) {
+        print('❌ CarDetails: OpenRouteService also failed: $fallbackError');
+      }
+    }
+
+    return null;
+  }
+
+  /// Fallback route using OpenRouteService (free alternative)
+  Future<Polyline?> _getRouteFromOpenRouteService(double carLat, double carLon) async {
+    if (_userLocation == null) return null;
+
+    try {
+      // OpenRouteService - API key should be in Authorization header with "Bearer" prefix
+      // Or use it as query parameter: ?api_key=...
+      final url =
+          'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248&start=${_userLocation!.longitude},${_userLocation!.latitude}&end=$carLon,$carLat';
+      
+      print('🗺️ CarDetails: Requesting route from OpenRouteService...');
+      print('🗺️ CarDetails: OpenRouteService URL: $url');
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'application/json, application/geo+json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['features'] != null && data['features'].isNotEmpty) {
+          final geometry = data['features'][0]['geometry'];
+          if (geometry != null && geometry['coordinates'] != null) {
+            // OpenRouteService returns coordinates as [lon, lat] pairs
+            final coordinates = geometry['coordinates'] as List;
+            final points = coordinates.map((coord) {
+              return LatLng(coord[1] as double, coord[0] as double);
+            }).toList();
+
+            if (points.isNotEmpty) {
+              print('✅ CarDetails: OpenRouteService route created with ${points.length} points');
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points,
+                color: const Color(0xFF2196F3),
+                width: 8,
+                geodesic: false,
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            }
+          }
+        }
+      } else {
+        print('⚠️ CarDetails: OpenRouteService HTTP error: ${response.statusCode}');
+        print('⚠️ CarDetails: OpenRouteService response: ${response.body}');
+        // Try OSRM as another free alternative
+        print('🔄 CarDetails: Trying OSRM as alternative...');
+        return await _getRouteFromOSRM(carLat, carLon);
+      }
+    } catch (e) {
+      print('❌ CarDetails: OpenRouteService error: $e');
+      // Try OSRM as another free alternative
+      print('🔄 CarDetails: Trying OSRM as alternative...');
+      try {
+        return await _getRouteFromOSRM(carLat, carLon);
+      } catch (osrmError) {
+        print('❌ CarDetails: OSRM also failed: $osrmError');
+      }
+    }
+
+    return null;
+  }
+
+  /// Free routing service - OSRM (Open Source Routing Machine)
+  Future<Polyline?> _getRouteFromOSRM(double carLat, double carLon) async {
+    if (_userLocation == null) return null;
+
+    try {
+      // OSRM is a free, open-source routing service (no API key needed)
+      // Format: /route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=full&geometries=geojson
+      final url =
+          'https://router.project-osrm.org/route/v1/driving/${_userLocation!.longitude},${_userLocation!.latitude};$carLon,$carLat?overview=full&geometries=geojson';
+      
+      print('🗺️ CarDetails: Requesting route from OSRM...');
+      print('🗺️ CarDetails: OSRM URL: $url');
+      
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['code'] == 'Ok' && data['routes'] != null && data['routes'].isNotEmpty) {
+          final route = data['routes'][0];
+          final geometry = route['geometry'];
+          
+          if (geometry != null && geometry['coordinates'] != null) {
+            // OSRM returns coordinates as [lon, lat] pairs in GeoJSON format
+            final coordinates = geometry['coordinates'] as List;
+            final points = coordinates.map((coord) {
+              return LatLng(coord[1] as double, coord[0] as double);
+            }).toList();
+
+            if (points.isNotEmpty) {
+              print('✅ CarDetails: OSRM route created with ${points.length} points');
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points,
+                color: const Color(0xFF2196F3),
+                width: 8,
+                geodesic: false,
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            }
+          }
+        } else {
+          print('⚠️ CarDetails: OSRM returned code: ${data['code']}');
+        }
+      } else {
+        print('⚠️ CarDetails: OSRM HTTP error: ${response.statusCode}');
+        print('⚠️ CarDetails: OSRM response: ${response.body}');
+      }
+    } catch (e) {
+      print('❌ CarDetails: OSRM error: $e');
     }
 
     return null;
@@ -503,16 +713,68 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           }
                         },
                         onMessagePressed: () {
-                          // Navigate to CreateChatScreen first to create chat and connect WebSocket
+                          print('🔵 CarDetails: Message button pressed');
+                          print('🔵 CarDetails: car.seller = ${car.seller}');
+                          print('🔵 CarDetails: car.dealerId = ${car.dealerId}');
+
                           // Use seller id if available, otherwise fallback to dealerId
-                          final sellerId = (car.seller['id'] is int
-                                  ? car.seller['id']
-                                  : int.tryParse(
-                                      car.seller['id']?.toString() ?? '')) ??
-                              car.dealerId;
+                          int? sellerId;
+
+                          // Try to get seller id from seller object
+                          if (car.seller.isNotEmpty &&
+                              car.seller.containsKey('id')) {
+                            final sellerIdValue = car.seller['id'];
+                            print(
+                                '🔵 CarDetails: Found seller id: $sellerIdValue (type: ${sellerIdValue.runtimeType})');
+
+                            if (sellerIdValue is int) {
+                              sellerId = sellerIdValue;
+                            } else if (sellerIdValue != null) {
+                              sellerId = int.tryParse(sellerIdValue.toString());
+                            }
+                          } else {
+                            print(
+                                '🔵 CarDetails: Seller object empty or no id found');
+                          }
+
+                          // Fallback to dealerId if seller id is not available
+                          if (sellerId == null || sellerId <= 0) {
+                            print(
+                                '🔵 CarDetails: Using dealerId as fallback: ${car.dealerId}');
+                            sellerId = car.dealerId;
+                          }
+
+                          print('🔵 CarDetails: Final sellerId: $sellerId');
+
+                          // Validate that we have a valid id
+                          if (sellerId <= 0) {
+                            print('❌ CarDetails: Invalid sellerId: $sellerId');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context)
+                                          ?.translate('unableToStartChat') ??
+                                      'Unable to start chat: Invalid seller information',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+
+                          final dealerName = car.seller['name']?.toString() ??
+                              car.seller['seller_name']?.toString() ??
+                              (car.sellerName.isNotEmpty
+                                  ? car.sellerName
+                                  : 'Dealer');
+
+                          print(
+                              '🔵 CarDetails: Navigating to create chat with sellerId: $sellerId, dealerName: $dealerName');
+
+                          // Navigate to CreateChatScreen first to create chat and connect WebSocket
                           context.push('/create-chat', extra: {
                             'dealerId': sellerId,
-                            'dealerName': car.sellerName,
+                            'dealerName': dealerName,
                           });
                         },
                       ),

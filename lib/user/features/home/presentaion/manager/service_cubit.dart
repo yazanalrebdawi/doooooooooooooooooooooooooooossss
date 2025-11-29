@@ -11,6 +11,113 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
 
   ServiceCubit(this.dataSource) : super(const ServiceState());
 
+  /// Clear error state - useful when permission is granted
+  void clearError() {
+    print('🧹 ServiceCubit: Clearing error state (current error: ${state.error})');
+    safeEmit(state.copyWith(clearError: true, isLoading: false));
+    print('🧹 ServiceCubit: Error cleared (new error: ${state.error})');
+  }
+
+  /// Load services without checking permission (use when permission is already granted)
+  Future<void> loadServicesWithoutPermissionCheck({
+    int limit = 5,
+    String? type,
+    int radius = 5000,
+  }) async {
+    _lastLoadedType = type;
+    // Force a state change to trigger UI rebuild
+    print('🔄 ServiceCubit: Starting load (current services: ${state.services.length})');
+    safeEmit(state.copyWith(isLoading: true, clearError: true, hasAttemptedLoad: true));
+    
+    try {
+      print('🔍 ServiceCubit: Loading services without permission check...');
+
+      // Try to get location directly (skip permission check)
+      Position? currentPosition;
+      try {
+        currentPosition = await LocationService.getCurrentLocation();
+        if (currentPosition == null) {
+          print('🔄 Retrying location fetch...');
+          await Future.delayed(const Duration(milliseconds: 500));
+          currentPosition = await LocationService.getCurrentLocation();
+        }
+      } catch (e) {
+        print('❌ Error getting location: $e');
+      }
+
+      // Use fallback if needed
+      final position = currentPosition ?? await LocationService.getLocationWithFallback();
+
+      print('📍 Location for services: lat=${position.latitude}, lon=${position.longitude}');
+
+      // Load services
+      final services = await dataSource.fetchNearbyServices(
+        lat: position.latitude,
+        lon: position.longitude,
+        type: type,
+        radius: radius,
+        limit: limit,
+        offset: 0,
+      );
+
+      print('✅ Services loaded successfully: ${services.length} services found');
+
+      // If no services found and we have a type filter, try without type as fallback
+      if (services.isEmpty && type != null) {
+        print('⚠️ No services found with type=$type, trying without type filter...');
+        try {
+          final allServices = await dataSource.fetchNearbyServices(
+            lat: position.latitude,
+            lon: position.longitude,
+            type: null, // Try without type
+            radius: radius,
+            limit: limit,
+            offset: 0,
+          );
+          if (allServices.isNotEmpty) {
+            print('✅ Found ${allServices.length} services without type filter');
+            final newState = state.copyWith(
+              services: allServices,
+              isLoading: false,
+              clearError: true,
+              hasAttemptedLoad: true,
+            );
+            safeEmit(newState);
+            await calculateServiceDistances();
+            safeEmit(state.copyWith(services: state.services, clearError: true));
+            print('📤 ServiceCubit: Emitted updated state after distance calculation');
+            return;
+          }
+        } catch (e) {
+          print('❌ Error loading services without type: $e');
+        }
+      }
+
+      // Emit new state with services - explicitly clear error using clearError flag
+      final newState = state.copyWith(
+        services: services, 
+        isLoading: false, 
+        clearError: true, // Explicitly clear error
+        hasAttemptedLoad: true,
+      );
+      safeEmit(newState);
+      print('📤 ServiceCubit: Emitted new state with ${services.length} services (error cleared: ${newState.error})');
+
+      if (services.isNotEmpty) {
+        await calculateServiceDistances();
+        // Emit again after distances are calculated to trigger UI update - make sure error is cleared
+        safeEmit(state.copyWith(services: state.services, clearError: true));
+        print('📤 ServiceCubit: Emitted updated state after distance calculation (error cleared)');
+      }
+    } catch (e) {
+      print('❌ ServiceCubit error: $e');
+      safeEmit(state.copyWith(
+        error: e.toString(),
+        isLoading: false,
+      ));
+    }
+  }
+
   //! Done ✅
   void loadServices(
       {int limit = 5,
@@ -18,12 +125,13 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
       int radius = 5000,
       bool forceRefresh = false}) async {
     // Don't reload if services already exist, same type, and we're not forcing a refresh
-    // But always reload if type parameter changes
+    // But always reload if type parameter changes OR if there's an error
     final currentType = _lastLoadedType;
     if (!forceRefresh &&
         state.services.isNotEmpty &&
         !state.isLoading &&
-        currentType == type) {
+        currentType == type &&
+        state.error == null) { // Also reload if there's an error
       print(
           '🔍 ServiceCubit: Services already loaded with same type ($type), skipping...');
       return;
@@ -31,18 +139,19 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
 
     _lastLoadedType = type;
     safeEmit(
-        state.copyWith(isLoading: true, error: null, hasAttemptedLoad: true));
+        state.copyWith(isLoading: true, clearError: true, hasAttemptedLoad: true));
     try {
       print(
           '🔍 ServiceCubit: Starting to load services (limit: $limit, type: $type, radius: $radius)...');
 
-      // Check location permission first
-      bool hasPermission = await _checkLocationPermission();
+      // Check location permission first (with force refresh to sync between packages)
+      bool hasPermission = await _checkLocationPermission(forceRefresh: forceRefresh);
       if (!hasPermission) {
         safeEmit(
           state.copyWith(
             error: 'location_permission_required',
             isLoading: false,
+            hasAttemptedLoad: true, // Ensure hasAttemptedLoad is set when permission is denied
           ),
         );
         return;
@@ -131,8 +240,10 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
     }
   }
 
-  Future<bool> _checkLocationPermission() async {
-    return await LocationService.requestLocationPermission();
+  Future<bool> _checkLocationPermission({bool forceRefresh = false}) async {
+    // Only check if permission is already granted (don't request - UI must show disclosure first)
+    // forceRefresh ensures sync between Geolocator and location packages
+    return await LocationService.checkLocationPermission(forceRefresh: forceRefresh);
   }
 
   void loadNearbyServices({
@@ -141,7 +252,7 @@ class ServiceCubit extends OptimizedCubit<ServiceState> {
     String? type,
     int radius = 5000,
   }) async {
-    safeEmit(state.copyWith(isLoading: true, error: null));
+    safeEmit(state.copyWith(isLoading: true, clearError: true));
     try {
       final services = await dataSource.fetchNearbyServices(
         lat: lat,

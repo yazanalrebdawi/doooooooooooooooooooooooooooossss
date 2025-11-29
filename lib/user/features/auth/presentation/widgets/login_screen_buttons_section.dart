@@ -27,11 +27,13 @@ import 'package:dooss_business_app/dealer/features/auth/presentation/manager/aut
 class LoginScreenButtonsSection extends StatelessWidget {
   final CreateAccountParams params;
   final TextEditingController? code;
+  final bool termsAccepted;
 
   const LoginScreenButtonsSection({
     super.key,
     required this.params,
     this.code,
+    this.termsAccepted = false,
   });
 
   @override
@@ -79,12 +81,6 @@ class LoginScreenButtonsSection extends StatelessWidget {
             return BlocSelector<AppManagerCubit, AppManagerState, bool>(
               selector: (managerState) => managerState.isDealer,
               builder: (context, isDealer) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  params.userName.clear();
-                  params.password.clear();
-                  code?.clear();
-                });
-
                 log("🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️");
 
                 return BlocConsumer<AuthCubitDealers, AuthStateDealers>(
@@ -155,6 +151,19 @@ class LoginScreenButtonsSection extends StatelessWidget {
                       onTap: dealerLoading || isLoading
                           ? null
                           : () async {
+                              // Require terms acceptance for both user and dealer login
+                              if (!termsAccepted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  customAppSnackBar(
+                                    AppLocalizations.of(context)
+                                            ?.translate('pleaseAcceptTermsAndConditions') ??
+                                        'Please accept the terms and conditions to continue',
+                                    context,
+                                  ),
+                                );
+                                return;
+                              }
+                              
                               if (params.formState.currentState!.validate()) {
                                 final signinParams = SigninParams();
                                 signinParams.email.text = params.userName.text;

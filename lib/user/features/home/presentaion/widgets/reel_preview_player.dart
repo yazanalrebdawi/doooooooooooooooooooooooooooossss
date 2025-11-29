@@ -33,8 +33,46 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
   }
 
   Future<void> _initializePreview() async {
+    // Validate video URL before attempting to initialize
+    final videoUrl = widget.reelUrl.trim();
+    if (videoUrl.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _isInitialized = false;
+        });
+      }
+      return;
+    }
+
+    // Validate URL format - strict validation
+    Uri? uri;
     try {
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.reelUrl));
+      uri = Uri.parse(videoUrl);
+      // Must have scheme, host, and valid format
+      if (!uri.hasScheme || !uri.scheme.startsWith('http')) {
+        throw FormatException('Invalid video URL scheme');
+      }
+      if (uri.host.isEmpty) {
+        throw FormatException('Video URL missing host');
+      }
+      // Ensure the full URI string is valid
+      final uriString = uri.toString();
+      if (uriString.isEmpty || uriString == ':' || uriString == 'http:' || uriString == 'https:') {
+        throw FormatException('Invalid video URL format');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _isInitialized = false;
+        });
+      }
+      return;
+    }
+
+    try {
+      _controller = VideoPlayerController.networkUrl(uri);
       await _controller!.initialize();
 
       // Set volume to 0 and pause - this is just a preview
@@ -55,6 +93,9 @@ class _ReelPreviewPlayerState extends State<ReelPreviewPlayer> {
           _isInitialized = false;
         });
       }
+      // Dispose controller on error to prevent memory leaks
+      _controller?.dispose();
+      _controller = null;
     }
   }
 

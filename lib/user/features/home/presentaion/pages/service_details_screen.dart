@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../../../core/constants/app_config.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/localization/app_localizations.dart';
@@ -147,20 +148,16 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
 
       setState(() {
         _markers = markers;
-        _polylines = polyline != null
-            ? {polyline}
-            : {
-                Polyline(
-                  polylineId: const PolylineId('route'),
-                  points: [
-                    LatLng(_userLocation!.latitude, _userLocation!.longitude),
-                    LatLng(widget.service.lat, widget.service.lon),
-                  ],
-                  color: Colors.blue,
-                  width: 4,
-                  geodesic: true,
-                ),
-              };
+        // Only set polyline if we got a real route from Directions API
+        // Don't fallback to straight line - show error or retry instead
+        if (polyline != null) {
+          _polylines = {polyline};
+          print('✅ ServiceDetails: Real route polyline added to map');
+        } else {
+          // Clear polylines if route failed - don't show straight line
+          _polylines = {};
+          print('⚠️ ServiceDetails: Route not available - no polyline shown');
+        }
         _isLoadingRoute = false;
       });
     } catch (e) {
@@ -170,37 +167,220 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
   }
 
   Future<Polyline?> _getRoutePolyline() async {
-    if (_userLocation == null) return null;
+    if (_userLocation == null) {
+      print('❌ ServiceDetails: Cannot get route polyline - user location is null');
+      return null;
+    }
+
+    final serviceLat = widget.service.lat;
+    final serviceLon = widget.service.lon;
 
     try {
-      const apiKey = 'AIzaSyCvFo9bVexv1f4O4lzdYqjPH7b-yf62k_c';
+      // Use the exact format: origin=LAT1,LNG1&destination=LAT2,LNG2&key=YOUR_KEY
+      final originLat = _userLocation!.latitude;
+      final originLng = _userLocation!.longitude;
       final url =
-          'https://maps.googleapis.com/maps/api/directions/json?origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${widget.service.lat},${widget.service.lon}&mode=driving&key=$apiKey';
-
+          'https://maps.googleapis.com/maps/api/directions/json?origin=$originLat,$originLng&destination=$serviceLat,$serviceLon&mode=driving&key=${AppConfig.googleMapsApiKey}';
+      
+      print('🗺️ ServiceDetails: Requesting route from Google Directions API...');
+      print('🗺️ ServiceDetails: Origin: $originLat, $originLng');
+      print('🗺️ ServiceDetails: Destination: $serviceLat, $serviceLon');
+      
       final response = await http.get(Uri.parse(url));
+      print('🗺️ ServiceDetails: Response status: ${response.statusCode}');
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('🗺️ ServiceDetails: Directions API response status: ${data['status']}');
+        
         if (data['status'] == 'OK' &&
             data['routes'] != null &&
             data['routes'].isNotEmpty) {
-          final polylineEncoded =
-              data['routes'][0]['overview_polyline']['points'];
-          final points = _decodePolyline(polylineEncoded);
-          if (points.isNotEmpty) {
-            return Polyline(
-              polylineId: const PolylineId('route'),
-              points: points,
-              color: Colors.blue,
-              width: 8,
-              geodesic: true,
-              patterns: [PatternItem.dot, PatternItem.gap(10)],
-            );
+          // Get the overview_polyline from the route
+          final route = data['routes'][0];
+          final overviewPolyline = route['overview_polyline'];
+          
+          if (overviewPolyline != null && overviewPolyline['points'] != null) {
+            final polylineEncoded = overviewPolyline['points'] as String;
+            print('🗺️ ServiceDetails: Got encoded polyline: ${polylineEncoded.substring(0, polylineEncoded.length > 50 ? 50 : polylineEncoded.length)}...');
+            
+            // Decode the polyline to get LatLng list
+            final points = _decodePolyline(polylineEncoded);
+            print('🗺️ ServiceDetails: Decoded ${points.length} route points');
+            
+            if (points.isNotEmpty) {
+              print('✅ ServiceDetails: Route polyline created successfully');
+              print('✅ ServiceDetails: First point: ${points.first}');
+              print('✅ ServiceDetails: Last point: ${points.last}');
+              
+              // Create and return the Polyline
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points, // List<LatLng> from decoded polyline
+                color: const Color(0xFF2196F3), // Bright blue
+                width: 8, // Thicker line for better visibility
+                geodesic: false, // Set to false for accurate street-level routing
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            } else {
+              print('⚠️ ServiceDetails: Decoded polyline has no points');
+            }
+          } else {
+            print('⚠️ ServiceDetails: No overview_polyline in route response');
+          }
+        } else {
+          print('⚠️ ServiceDetails: Directions API returned status: ${data['status']}');
+          if (data['error_message'] != null) {
+            print('⚠️ ServiceDetails: Error message: ${data['error_message']}');
+          }
+          
+          // If Google API failed due to billing, try OpenRouteService as fallback
+          if (data['status'] == 'REQUEST_DENIED' || data['status'] == 'OVER_QUERY_LIMIT') {
+            print('🔄 ServiceDetails: Google API unavailable, trying OpenRouteService fallback...');
+            return await _getRouteFromOpenRouteService(serviceLat, serviceLon);
           }
         }
+      } else {
+        print('❌ ServiceDetails: HTTP error: ${response.statusCode}');
+        print('❌ ServiceDetails: Response body: ${response.body}');
+        // Try OpenRouteService as fallback
+        print('🔄 ServiceDetails: Trying OpenRouteService fallback...');
+        return await _getRouteFromOpenRouteService(serviceLat, serviceLon);
       }
     } catch (e) {
-      print('❌ ServiceDetails: Error getting polyline: $e');
+      print('❌ ServiceDetails: Error getting route polyline: $e');
+      print('❌ ServiceDetails: Stack trace: ${StackTrace.current}');
+      // Try OpenRouteService as fallback
+      print('🔄 ServiceDetails: Trying OpenRouteService fallback...');
+      try {
+        return await _getRouteFromOpenRouteService(serviceLat, serviceLon);
+      } catch (fallbackError) {
+        print('❌ ServiceDetails: OpenRouteService also failed: $fallbackError');
+      }
     }
+
+    return null;
+  }
+
+  /// Fallback route using OpenRouteService (free alternative)
+  Future<Polyline?> _getRouteFromOpenRouteService(double serviceLat, double serviceLon) async {
+    if (_userLocation == null) return null;
+
+    try {
+      // OpenRouteService - API key should be in Authorization header with "Bearer" prefix
+      // Or use it as query parameter: ?api_key=...
+      final url =
+          'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248&start=${_userLocation!.longitude},${_userLocation!.latitude}&end=$serviceLon,$serviceLat';
+      
+      print('🗺️ ServiceDetails: Requesting route from OpenRouteService...');
+      print('🗺️ ServiceDetails: OpenRouteService URL: $url');
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'application/json, application/geo+json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['features'] != null && data['features'].isNotEmpty) {
+          final geometry = data['features'][0]['geometry'];
+          if (geometry != null && geometry['coordinates'] != null) {
+            // OpenRouteService returns coordinates as [lon, lat] pairs
+            final coordinates = geometry['coordinates'] as List;
+            final points = coordinates.map((coord) {
+              return LatLng(coord[1] as double, coord[0] as double);
+            }).toList();
+
+            if (points.isNotEmpty) {
+              print('✅ ServiceDetails: OpenRouteService route created with ${points.length} points');
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points,
+                color: const Color(0xFF2196F3),
+                width: 8,
+                geodesic: false,
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            }
+          }
+        }
+      } else {
+        print('⚠️ ServiceDetails: OpenRouteService HTTP error: ${response.statusCode}');
+        print('⚠️ ServiceDetails: OpenRouteService response: ${response.body}');
+        // Try OSRM as another free alternative
+        print('🔄 ServiceDetails: Trying OSRM as alternative...');
+        return await _getRouteFromOSRM(serviceLat, serviceLon);
+      }
+    } catch (e) {
+      print('❌ ServiceDetails: OpenRouteService error: $e');
+      // Try OSRM as another free alternative
+      print('🔄 ServiceDetails: Trying OSRM as alternative...');
+      try {
+        return await _getRouteFromOSRM(serviceLat, serviceLon);
+      } catch (osrmError) {
+        print('❌ ServiceDetails: OSRM also failed: $osrmError');
+      }
+    }
+
+    return null;
+  }
+
+  /// Free routing service - OSRM (Open Source Routing Machine)
+  Future<Polyline?> _getRouteFromOSRM(double serviceLat, double serviceLon) async {
+    if (_userLocation == null) return null;
+
+    try {
+      // OSRM is a free, open-source routing service (no API key needed)
+      // Format: /route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=full&geometries=geojson
+      final url =
+          'https://router.project-osrm.org/route/v1/driving/${_userLocation!.longitude},${_userLocation!.latitude};$serviceLon,$serviceLat?overview=full&geometries=geojson';
+      
+      print('🗺️ ServiceDetails: Requesting route from OSRM...');
+      print('🗺️ ServiceDetails: OSRM URL: $url');
+      
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['code'] == 'Ok' && data['routes'] != null && data['routes'].isNotEmpty) {
+          final route = data['routes'][0];
+          final geometry = route['geometry'];
+          
+          if (geometry != null && geometry['coordinates'] != null) {
+            // OSRM returns coordinates as [lon, lat] pairs in GeoJSON format
+            final coordinates = geometry['coordinates'] as List;
+            final points = coordinates.map((coord) {
+              return LatLng(coord[1] as double, coord[0] as double);
+            }).toList();
+
+            if (points.isNotEmpty) {
+              print('✅ ServiceDetails: OSRM route created with ${points.length} points');
+              return Polyline(
+                polylineId: const PolylineId('route'),
+                points: points,
+                color: const Color(0xFF2196F3),
+                width: 8,
+                geodesic: false,
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+                visible: true,
+              );
+            }
+          }
+        } else {
+          print('⚠️ ServiceDetails: OSRM returned code: ${data['code']}');
+        }
+      } else {
+        print('⚠️ ServiceDetails: OSRM HTTP error: ${response.statusCode}');
+        print('⚠️ ServiceDetails: OSRM response: ${response.body}');
+      }
+    } catch (e) {
+      print('❌ ServiceDetails: OSRM error: $e');
+    }
+
     return null;
   }
 

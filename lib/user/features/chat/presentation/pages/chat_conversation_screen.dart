@@ -67,17 +67,8 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
       chatIdService.setChatId(widget.chatId);
       print('✅ ChatConversationScreen - Set global chat ID: ${widget.chatId}');
 
-      // Always load messages when entering the screen
-      cubit.loadMessages(widget.chatId, forceRefresh: true);
-      
-      // Mark all messages as read after a short delay to ensure messages are loaded
-      // The BlocListener will also handle this, but this ensures it happens
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          print('ChatConversationScreen - Marking all messages as read for chat ${widget.chatId} (empty list = no body)');
-          cubit.markMessagesAsRead(widget.chatId, []);
-        }
-      });
+      // Load messages when entering the screen
+      cubit.loadMessages(widget.chatId);
 
       // Connect WebSocket if not already connected for this chat
       if (!cubit.state.isWebSocketConnected) {
@@ -117,15 +108,15 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back,
-                color: isDark ? Colors.white : AppColors.black, size: 24.sp),
-            onPressed: () {
-              context.pop();
-              log("pop🫠🫠🫠🫠🫠🫠🫠");
-            }),
+        appBar: AppBar(
+          elevation: 0,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back,
+                  color: isDark ? Colors.white : AppColors.black, size: 24.sp),
+              onPressed: () {
+                context.pop();
+                log("pop🫠🫠🫠🫠🫠🫠🫠");
+              }),
         title: Text(
           widget.dealerName,
           style: AppTextStyles.blackS18W700,
@@ -141,16 +132,23 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
       ),
       body: BlocListener<ChatCubit, ChatState>(
         listenWhen: (previous, current) {
-          // Mark as read when messages finish loading OR when entering chat with existing messages
+          // Mark as read when messages finish loading
           final messagesJustLoaded = previous.isLoadingMessages && !current.isLoadingMessages;
           final hasMessages = current.messages.isNotEmpty;
-          final selectedChatChanged = previous.selectedChatId != current.selectedChatId && current.selectedChatId == widget.chatId;
-          return (messagesJustLoaded && hasMessages) || (selectedChatChanged && hasMessages);
+          final newMessageReceived = current.messages.length > previous.messages.length;
+          
+          // Also listen for new messages to ensure UI updates
+          if (newMessageReceived) {
+            print('📨 ChatConversationScreen - New message received! Previous: ${previous.messages.length}, Current: ${current.messages.length}');
+          }
+          
+          return messagesJustLoaded && hasMessages;
         },
         listener: (context, state) {
-          // Mark all messages as read when messages are loaded or when entering chat
-          print('ChatConversationScreen - Marking all messages as read for chat ${widget.chatId} (empty list = no body)');
-          context.read<ChatCubit>().markMessagesAsRead(widget.chatId, []);
+          // Mark all messages as read when messages are loaded
+          print('ChatConversationScreen - Marking all messages as read for chat ${widget.chatId}');
+          final cubit = context.read<ChatCubit>();
+          cubit.markMessagesAsRead(widget.chatId, []);
         },
         child: Column(
           children: [
@@ -161,81 +159,101 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
             // Messages List
             Expanded(
               child: BlocBuilder<ChatCubit, ChatState>(
-              builder: (context, state) {
-                if (state.isLoadingMessages) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+                buildWhen: (previous, current) {
+                  // Always rebuild when messages change, selectedChatId changes, or loading state changes
+                  final messagesChanged = previous.messages.length != current.messages.length ||
+                      previous.messages.map((m) => m.id).join(',') != current.messages.map((m) => m.id).join(',');
+                  final chatChanged = previous.selectedChatId != current.selectedChatId;
+                  final loadingChanged = previous.isLoadingMessages != current.isLoadingMessages;
+                  final errorChanged = previous.error != current.error;
+                  
+                  if (messagesChanged) {
+                    print('🔄 ChatConversationScreen - Messages changed: ${previous.messages.length} -> ${current.messages.length}');
+                  }
+                  
+                  return messagesChanged || chatChanged || loadingChanged || errorChanged;
+                },
+                builder: (context, state) {
+                  if (state.isLoadingMessages) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                if (state.error != null) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 64.sp,
-                          color: isDark ? Colors.white : AppColors.gray,
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          AppLocalizations.of(context)
-                                  ?.translate('errorLoadingMessages') ??
-                              'Error loading messages',
-                          style: AppTextStyles.s16w500.copyWith(
+                  if (state.error != null) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64.sp,
                             color: isDark ? Colors.white : AppColors.gray,
                           ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Text(
-                          AppLocalizations.of(context)
-                                  ?.translate(state.error ?? '') ??
-                              state.error!,
-                          style: AppTextStyles.s14w400.copyWith(
-                            color: isDark ? Colors.white : AppColors.gray,
+                          SizedBox(height: 16.h),
+                          Text(
+                            AppLocalizations.of(context)
+                                    ?.translate('errorLoadingMessages') ??
+                                'Error loading messages',
+                            style: AppTextStyles.s16w500.copyWith(
+                              color: isDark ? Colors.white : AppColors.gray,
+                            ),
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-                }
+                          SizedBox(height: 8.h),
+                          Text(
+                            AppLocalizations.of(context)
+                                    ?.translate(state.error ?? '') ??
+                                state.error!,
+                            style: AppTextStyles.s14w400.copyWith(
+                              color: isDark ? Colors.white : AppColors.gray,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
-                // Only show empty state if not loading and messages are truly empty
-                if (state.messages.isEmpty && !state.isLoadingMessages) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.chat_bubble_outline,
-                            size: 64.sp, color: AppColors.gray),
-                        SizedBox(height: 16.h),
-                        Text(
-                          AppLocalizations.of(context)
-                                  ?.translate('noMessagesYet') ??
-                              'No messages yet',
-                          style: AppTextStyles.s16w500.copyWith(
-                            color: isDark ? Colors.white : AppColors.gray,
+                  // Only show empty state if not loading and messages are truly empty
+                  if (state.messages.isEmpty && !state.isLoadingMessages) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.chat_bubble_outline,
+                              size: 64.sp, color: AppColors.gray),
+                          SizedBox(height: 16.h),
+                          Text(
+                            AppLocalizations.of(context)
+                                    ?.translate('noMessagesYet') ??
+                                'No messages yet',
+                            style: AppTextStyles.s16w500.copyWith(
+                              color: isDark ? Colors.white : AppColors.gray,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Text(
-                          'Start a conversation with ${widget.participantName}',
-                          style: AppTextStyles.s14w400.copyWith(
-                            color: isDark ? Colors.white : AppColors.gray,
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Start a conversation with ${widget.participantName}',
+                            style: AppTextStyles.s14w400.copyWith(
+                              color: isDark ? Colors.white : AppColors.gray,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-                }
+                        ],
+                      ),
+                    );
+                  }
 
-                // Only scroll to bottom when messages count changes
-                if (state.messages.length != _lastMessageCount) {
-                  _lastMessageCount = state.messages.length;
-                  WidgetsBinding.instance
-                      .addPostFrameCallback((_) => _scrollToBottom());
-                }
+                  // Scroll to bottom when messages count changes or when a new message arrives
+                  if (state.messages.length != _lastMessageCount) {
+                    _lastMessageCount = state.messages.length;
+                    print('📜 ChatConversationScreen - Message count changed to ${state.messages.length}, scrolling to bottom');
+                    // Use multiple callbacks to ensure scroll happens
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _scrollToBottom();
+                    });
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      if (mounted) _scrollToBottom();
+                    });
+                  }
 
                 return ListView.builder(
                   controller: _scrollController, // attach scroll controller

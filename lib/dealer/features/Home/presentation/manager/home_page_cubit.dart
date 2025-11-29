@@ -266,6 +266,7 @@ class HomePageCubit extends Cubit<HomepageState> {
     String lat,
     String lot,
     List<String> day,
+    bool isStoreOpen,
   ) async {
     var result = await data.editDataProfile(
       name,
@@ -276,13 +277,18 @@ class HomePageCubit extends Cubit<HomepageState> {
       lat,
       lot,
       day,
+      isStoreOpen,
     );
     result.fold(
       (e) {
         emit(state.copyWith(error: e.message));
       },
       (data) {
-        emit(state.copyWith(isSuccess: true)); //تعديييييييييييييل
+        // Update the dataStore with the new data from API
+        emit(state.copyWith(
+          isSuccess: true,
+          dataStore: data, // Update with the new data
+        ));
       },
     );
   }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
@@ -44,18 +45,20 @@ class CarCardWidget extends StatelessWidget {
               topRight: Radius.circular(16.r),
             ),
             child: car.imageUrl.isNotEmpty
-                ? Image.network(
-                    car.imageUrl,
+                ? CachedNetworkImage(
+                    imageUrl: car.imageUrl,
                     width: double.infinity,
                     height: 192.h,
                     fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(child: CircularProgressIndicator());
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return _placeholderImage(isDark);
-                    },
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => _placeholderImage(isDark),
+                    memCacheWidth: 600, // Limit image resolution for memory
+                    memCacheHeight: 400,
                   )
                 : _placeholderImage(isDark),
           ),

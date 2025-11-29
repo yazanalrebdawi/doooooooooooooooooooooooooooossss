@@ -10,6 +10,7 @@ import 'package:dooss_business_app/user/core/services/token_service.dart';
 import 'package:dooss_business_app/user/core/utils/response_status_enum.dart';
 import 'package:dooss_business_app/user/features/auth/data/source/remote/auth_remote_data_source_imp.dart';
 import 'package:dooss_business_app/user/features/auth/presentation/manager/auth_log_out_stete.dart';
+import 'package:dooss_business_app/user/features/chat/presentation/manager/chat_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthLogOutCubit extends Cubit<AuthLogOutStete> {
@@ -31,6 +32,8 @@ class AuthLogOutCubit extends Cubit<AuthLogOutStete> {
       final refreshToken = await TokenService.getRefreshToken();
 
       if (refreshToken != null && refreshToken.isNotEmpty) {
+        log('🔍 AuthLogOutCubit - Refresh token type: ${refreshToken.runtimeType}, length: ${refreshToken.length}');
+        
         // إرسال طلب تسجيل الخروج للـ API
         final Either<Failure, String> result = await remote.logout(
           refreshToken,
@@ -50,6 +53,14 @@ class AuthLogOutCubit extends Cubit<AuthLogOutStete> {
             await appLocator<SharedPreferencesService>().saveThemeModeInCache(
               true,
             );
+            // Reset ChatCubit state to clear unread counts and update UI
+            try {
+              final chatCubit = appLocator<ChatCubit>();
+              chatCubit.resetChatState();
+              log("✅ AuthLogOutCubit - ChatCubit state reset successfully");
+            } catch (e) {
+              log("⚠️ AuthLogOutCubit - Could not reset ChatCubit: $e");
+            }
           },
           (successMessage) async {
             log("✅ AuthCubit - API logout successful");
@@ -61,6 +72,14 @@ class AuthLogOutCubit extends Cubit<AuthLogOutStete> {
             await appLocator<SharedPreferencesService>().saveThemeModeInCache(
               true,
             );
+            // Reset ChatCubit state to clear unread counts and update UI
+            try {
+              final chatCubit = appLocator<ChatCubit>();
+              chatCubit.resetChatState();
+              log("✅ AuthLogOutCubit - ChatCubit state reset successfully");
+            } catch (e) {
+              log("⚠️ AuthLogOutCubit - Could not reset ChatCubit: $e");
+            }
           },
         );
       } else {
@@ -68,6 +87,14 @@ class AuthLogOutCubit extends Cubit<AuthLogOutStete> {
         // إذا لم يكن هناك refresh token، نقوم بحذف البيانات محلياً فقط
         //todo await _clearLocalData();
         emit(state.copyWith(logOutStatus: ResponseStatusEnum.success));
+        // Reset ChatCubit state to clear unread counts and update UI
+        try {
+          final chatCubit = appLocator<ChatCubit>();
+          chatCubit.resetChatState();
+          log("✅ AuthLogOutCubit - ChatCubit state reset successfully");
+        } catch (e) {
+          log("⚠️ AuthLogOutCubit - Could not reset ChatCubit: $e");
+        }
       }
     } catch (e) {
       log("❌ AuthCubit - Logout failed: $e");

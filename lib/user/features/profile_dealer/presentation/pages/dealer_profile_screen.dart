@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/routes/route_names.dart';
+import '../../../../core/services/locator_service.dart' as di;
+import '../../../../core/services/native_video_service.dart';
+import '../../../home/presentaion/manager/reels_playback_cubit.dart';
 import '../manager/dealer_profile_cubit.dart';
 import '../manager/dealer_profile_state.dart';
 import '../widgets/dealer_profile_app_bar.dart';
@@ -42,11 +45,34 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
       });
     });
 
-    // Load dealer profile data and reels on initialization
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<DealerProfileCubit>().loadDealerProfile(widget.dealerId);
-        context.read<DealerProfileCubit>().loadReels(widget.dealerId);
+    // Start loading immediately - don't wait for post frame callback
+    context.read<DealerProfileCubit>().loadDealerProfile(widget.dealerId);
+    context.read<DealerProfileCubit>().loadReels(widget.dealerId);
+
+    // Stop video sound asynchronously without blocking
+    _stopVideoSoundOnEnter();
+  }
+
+  /// Stop video sound when entering dealer profile (non-blocking)
+  void _stopVideoSoundOnEnter() {
+    // Run asynchronously without blocking the UI
+    Future.microtask(() async {
+      try {
+        // Quick mute and pause - don't wait for all operations
+        NativeVideoService.setVolume(0.0).catchError((_) {});
+        NativeVideoService.pause().catchError((_) {});
+        
+        // Try to stop ReelsPlaybackCubit
+        try {
+          final cubit = di.appLocator<ReelsPlaybackCubit>();
+          cubit.setMuted(true).catchError((_) {});
+          cubit.pause().catchError((_) {});
+          cubit.onNavigationAway().catchError((_) {});
+        } catch (e) {
+          // Ignore errors
+        }
+      } catch (e) {
+        // Ignore all errors - don't block navigation
       }
     });
   }
@@ -59,15 +85,28 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: DealerProfileAppBar(dealerHandle: widget.dealerHandle),
+    return PopScope(
+      canPop: false, // Prevent default pop behavior
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          // Ensure video stays stopped (non-blocking)
+          _stopVideoSoundOnEnter();
+          // Navigate to home screen instead of popping
+          if (context.mounted) {
+            context.go(RouteNames.homeScreen);
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: DealerProfileAppBar(dealerHandle: widget.dealerHandle),
       body: BlocBuilder<DealerProfileCubit, DealerProfileState>(
         builder: (context, state) {
-          if (state.isLoading) {
+          // Show loading only if we don't have dealer data yet
+          if (state.isLoading && state.dealer == null) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state.error != null) {
+          if (state.error != null && state.dealer == null) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -185,6 +224,7 @@ class _DealerProfileScreenState extends State<DealerProfileScreen>
             ],
           );
         },
+      ),
       ),
     );
   }

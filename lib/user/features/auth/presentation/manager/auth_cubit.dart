@@ -14,6 +14,7 @@ import '../../data/models/create_account_params_model.dart';
 import '../../data/models/auth_response_model.dart';
 import '../../data/models/user_model.dart';
 import '../../data/source/remote/auth_remote_data_source_imp.dart';
+import '../../../chat/presentation/manager/chat_cubit.dart';
 import '../pages/verify_otp_page.dart';
 import 'auth_state.dart';
 
@@ -486,7 +487,18 @@ class AuthCubit extends OptimizedCubit<AuthState> {
 
     try {
       final refreshToken = await TokenService.getRefreshToken();
+      final accessToken = await TokenService.getToken();
+      
+      // Verify we're not accidentally using the access token
       if (refreshToken != null && refreshToken.isNotEmpty) {
+        log('🔍 AuthCubit - Refresh token type: ${refreshToken.runtimeType}, length: ${refreshToken.length}');
+        log('🔍 AuthCubit - Access token length: ${accessToken?.length ?? 0}');
+        
+        // Verify tokens are different (safety check)
+        if (refreshToken == accessToken) {
+          log('⚠️ AuthCubit - WARNING: Refresh token and access token are the same!');
+        }
+        
         final Either<Failure, String> result =
             await remote.logout(refreshToken);
 
@@ -531,6 +543,16 @@ class AuthCubit extends OptimizedCubit<AuthState> {
     try {
       await TokenService.clearToken();
       await UserPreferencesService.clearAuthData();
+      
+      // Reset ChatCubit state to clear unread counts and update UI
+      try {
+        final chatCubit = appLocator<ChatCubit>();
+        chatCubit.resetChatState();
+        log("✅ AuthCubit - ChatCubit state reset successfully");
+      } catch (e) {
+        log("⚠️ AuthCubit - Could not reset ChatCubit: $e");
+      }
+      
       log("✅ AuthCubit - Local data cleared successfully");
     } catch (e) {
       log("❌ AuthCubit - Error clearing local data: $e");

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
@@ -53,13 +54,21 @@ class AvailableCarCard extends StatelessWidget {
         width: AppDimensions.availableCardWidth.w,
         height: AppDimensions.availableCardImageHeight.h,
         child: car.imageUrl.isNotEmpty
-            ? Image.network(
-                car.imageUrl,
+            ? CachedNetworkImage(
+                imageUrl: car.imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Image.asset(
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primary,
+                  ),
+                ),
+                errorWidget: (context, url, error) => Image.asset(
                   AppAssets.bmwM3,
                   fit: BoxFit.cover,
                 ),
+                memCacheWidth: 400, // Limit image resolution for memory
+                memCacheHeight: 400,
               )
             : Image.asset(
                 AppAssets.bmwM3,

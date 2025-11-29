@@ -18,4 +18,5 @@ class CacheKeys {
   static const String rememberedEmail = 'REMEMBERED_EMAIL';
   static const String rememberedPassword = 'REMEMBERED_PASSWORD';
   static const String isRememberMeEnabled = 'IS_REMEMBER_ME_ENABLED';
+  static const String privacyPolicyAccepted = 'PRIVACY_POLICY_ACCEPTED';
 }

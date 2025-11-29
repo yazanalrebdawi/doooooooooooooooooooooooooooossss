@@ -1,96 +1,235 @@
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart' hide LocationAccuracy;
+import 'package:geolocator/geolocator.dart' as geolocator show LocationAccuracy;
+import 'package:permission_handler/permission_handler.dart' as permission_handler;
 import 'package:http/http.dart' as http;
+import 'dart:async';
 import 'dart:convert';
 import '../constants/app_config.dart';
 
 class LocationService {
-  static Future<bool> requestLocationPermission() async {
+  static Location location = Location();
+
+  /// Check if location permission is already granted (does NOT request permission)
+  /// Use this to check existing permission status only.
+  /// To request new permission, show LocationDisclosureScreen from UI code first.
+  /// 
+  /// [forceRefresh] - If true, will add delay, retry mechanism, and verify by actually getting location
+  static Future<bool> checkLocationPermission({bool forceRefresh = false}) async {
     try {
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      // If forceRefresh, wait longer and retry multiple times to ensure permission state is synced
+      if (forceRefresh) {
+        // Wait longer for permission state to sync after granting
+        await Future.delayed(const Duration(milliseconds: 800));
+        
+        // Retry up to 3 times with delays
+        for (int attempt = 1; attempt <= 3; attempt++) {
+          try {
+            // Check with Geolocator first (since that's what we use to request permission)
+            LocationPermission geolocatorPermission = await Geolocator.checkPermission();
+            if (geolocatorPermission == LocationPermission.whileInUse) {
+              // Verify permission actually works by trying to get location
+              try {
+                await Geolocator.getCurrentPosition(
+                  desiredAccuracy: geolocator.LocationAccuracy.low,
+                  timeLimit: const Duration(seconds: 2),
+                );
+                print('✅ LocationService: Permission granted and verified (checked via Geolocator, attempt $attempt)');
+                return true;
+              } catch (e) {
+                print('⚠️ LocationService: Permission granted but location access failed: $e');
+                if (attempt < 3) {
+                  await Future.delayed(const Duration(milliseconds: 500));
+                  continue;
+                }
+              }
+            }
+            if (geolocatorPermission == LocationPermission.deniedForever) {
+              print('❌ LocationService: Permission denied forever (checked via Geolocator)');
+              return false;
+            }
+            if (geolocatorPermission == LocationPermission.denied) {
+              // If still denied, wait a bit more and retry
+              if (attempt < 3) {
+                print('⚠️ LocationService: Permission still denied, retrying... (attempt $attempt/3)');
+                await Future.delayed(const Duration(milliseconds: 500));
+                continue;
+              }
+              print('⚠️ LocationService: Permission denied after retries (checked via Geolocator)');
+              return false;
+            }
+          } catch (e) {
+            print('⚠️ LocationService: Error checking with Geolocator (attempt $attempt): $e');
+            if (attempt < 3) {
+              await Future.delayed(const Duration(milliseconds: 500));
+              continue;
+            }
+          }
+        }
+      } else {
+        // Normal check without retry
+        try {
+          // Check with Geolocator first (since that's what we use to request permission)
+          LocationPermission geolocatorPermission = await Geolocator.checkPermission();
+          if (geolocatorPermission == LocationPermission.whileInUse) {
+            // Verify permission actually works by trying to get location
+            try {
+              await Geolocator.getCurrentPosition(
+                desiredAccuracy: geolocator.LocationAccuracy.low,
+                timeLimit: const Duration(seconds: 2),
+              );
+              print('✅ LocationService: Permission granted and verified (checked via Geolocator)');
+              return true;
+            } catch (e) {
+              print('⚠️ LocationService: Permission granted but location access failed: $e');
+              // Permission check failed, fall through to location package check
+            }
+          } else if (geolocatorPermission == LocationPermission.deniedForever) {
+            print('❌ LocationService: Permission denied forever (checked via Geolocator)');
+            return false;
+          } else if (geolocatorPermission == LocationPermission.denied) {
+            print('⚠️ LocationService: Permission denied (checked via Geolocator)');
+            return false;
+          } else if (geolocatorPermission == LocationPermission.always) {
+            // We don't want "always" permission - it's background location
+            // Reject it and fall through to location package check for consistency
+            print('⚠️ LocationService: "Always" permission detected (we only want "while in use")');
+            // Fall through to location package check
+          } else {
+            // Unknown permission status, fall through to location package check
+            print('⚠️ LocationService: Unknown permission status from Geolocator: $geolocatorPermission');
+            // Fall through to location package check
+          }
+        } catch (e) {
+          print('⚠️ LocationService: Error checking with Geolocator: $e');
+          // Fall through to location package check
+        }
+      }
+
+      // Fallback: Check if location services are enabled
+      bool serviceEnabled = await location.serviceEnabled();
       if (!serviceEnabled) {
         print('❌ LocationService: Location services are disabled');
         return false;
       }
 
-      // Check location permission
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        print('🔍 LocationService: Requesting permission...');
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          print('❌ LocationService: Permission denied');
-          return false;
-        }
-      }
+      // Fallback: Check location permission with location package
+      PermissionStatus permission = await location.hasPermission();
 
-      if (permission == LocationPermission.deniedForever) {
+      if (permission == PermissionStatus.deniedForever) {
         print('❌ LocationService: Permission denied forever');
         return false;
       }
 
-      if (permission == LocationPermission.whileInUse ||
-          permission == LocationPermission.always) {
-        print('✅ LocationService: Permission granted');
+      if (permission == PermissionStatus.granted || permission == PermissionStatus.grantedLimited) {
+        print('✅ LocationService: Permission already granted');
         return true;
       }
 
+      // Permission is denied - must show disclosure dialog first (Google Play requirement)
+      print('⚠️ LocationService: Permission denied - must show disclosure dialog first');
       return false;
     } catch (e) {
-      print('❌ LocationService Error requesting permission: $e');
+      print('❌ LocationService Error checking permission: $e');
       return false;
     }
   }
 
+  /// Check and request location service
+  static Future<void> checkAndRequestLocationService() async {
+    var isServiceEnabled = await location.serviceEnabled();
+    if (!isServiceEnabled) {
+      isServiceEnabled = await location.requestService();
+      if (!isServiceEnabled) {
+        throw LocationServiceException();
+      }
+    }
+  }
+
+  /// Check and request location permission
+  /// NOTE: This should only be called AFTER showing the prominent disclosure screen
+  /// Uses permission_handler to ensure only "while in use" permission is requested
+  static Future<void> checkAndRequestLocationPermission() async {
+    // Use permission_handler to request ONLY "while in use" permission
+    permission_handler.PermissionStatus permissionStatus = await permission_handler.Permission.locationWhenInUse.status;
+    
+    if (permissionStatus.isPermanentlyDenied) {
+      throw LocationPermissionException();
+    }
+    
+    if (permissionStatus.isDenied) {
+      permissionStatus = await permission_handler.Permission.locationWhenInUse.request();
+      if (!permissionStatus.isGranted) {
+        throw LocationPermissionException();
+      }
+    }
+  }
+
+  /// Request location permission (should only be called after showing disclosure)
+  static Future<bool> requestLocationPermission() async {
+    try {
+      await checkAndRequestLocationService();
+      await checkAndRequestLocationPermission();
+      return true;
+    } catch (e) {
+      print('❌ LocationService: Error requesting permission: $e');
+      return false;
+    }
+  }
+
+  /// Get real-time location data stream
+  static void getRealTimeLocationData(void Function(LocationData)? onData) async {
+    try {
+      await checkAndRequestLocationService();
+      await checkAndRequestLocationPermission();
+      location.onLocationChanged.listen(onData);
+    } catch (e) {
+      print('❌ LocationService: Error getting real-time location: $e');
+    }
+  }
+
+  /// Get current location (one-time)
+  static Future<LocationData?> getLocation() async {
+    try {
+      await checkAndRequestLocationService();
+      await checkAndRequestLocationPermission();
+      return await location.getLocation();
+    } catch (e) {
+      print('❌ LocationService: Error getting location: $e');
+      return null;
+    }
+  }
+
+  /// Get current location and return as Position (compatible with existing code)
   static Future<Position?> getCurrentLocation() async {
     try {
-      print('🔍 LocationService: Requesting location permission...');
-      bool hasPermission = await requestLocationPermission();
+      bool hasPermission = await checkLocationPermission();
       if (!hasPermission) {
-        print('❌ LocationService: Permission denied');
+        print('❌ LocationService: Permission not granted');
         return null;
       }
 
-      // First try to get last known position (instant, cached)
-      print('📍 LocationService: Trying last known position...');
-      Position? lastPosition = await Geolocator.getLastKnownPosition();
-      if (lastPosition != null) {
-        // Check if last position is recent (within 5 minutes)
-        final age = DateTime.now().difference(lastPosition.timestamp);
-        if (age.inMinutes < 5) {
-          print(
-              '✅ LocationService: Using cached position (${age.inSeconds}s old) - lat: ${lastPosition.latitude}, lon: ${lastPosition.longitude}');
-          return lastPosition;
-        } else {
-          print(
-              '⚠️ LocationService: Cached position too old (${age.inMinutes}m), fetching new...');
-        }
+      // Get location using location package
+      LocationData? locationData = await getLocation();
+      if (locationData == null) {
+        return null;
       }
 
-      print(
-          '✅ LocationService: Permission granted, getting current position...');
-      // Get current position with faster settings
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy:
-            LocationAccuracy.low, // Use low accuracy for fastest response
-        timeLimit: Duration(seconds: 3), // Reduced timeout to 3 seconds
+      // Convert LocationData to Position for compatibility
+      return Position(
+        longitude: locationData.longitude ?? 0,
+        latitude: locationData.latitude ?? 0,
+        timestamp: DateTime.now(),
+        accuracy: locationData.accuracy ?? 0,
+        altitude: locationData.altitude ?? 0,
+        altitudeAccuracy: 0,
+        heading: locationData.heading ?? 0,
+        speed: locationData.speed ?? 0,
+        speedAccuracy: 0,
+        headingAccuracy: 0,
       );
-
-      print(
-          '📍 LocationService: Position obtained - lat: ${position.latitude}, lon: ${position.longitude}');
-      return position;
     } catch (e) {
       print('❌ LocationService Error getting location: $e');
-
-      // Handle specific plugin errors
-      if (e.toString().contains('MissingPluginException')) {
-        print('❌ LocationService: Plugin not properly configured');
-      } else if (e.toString().contains('PermissionDenied')) {
-        print('❌ LocationService: Permission denied by user');
-      } else if (e.toString().contains('LocationServiceDisabled')) {
-        print('❌ LocationService: Location service is disabled');
-      }
-
       return null;
     }
   }
@@ -148,39 +287,59 @@ class LocationService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        final status = data['status'] as String?;
 
-        if (data['status'] == 'OK' && data['routes'].isNotEmpty) {
+        // Handle API errors gracefully - calculate fallback distance immediately
+        if (status == 'REQUEST_DENIED' || status == 'OVER_QUERY_LIMIT' || status == 'INVALID_REQUEST') {
+          print('⚠️ Google Directions API not available (${status}), calculating straight-line distance');
+          // Calculate and return fallback straight-line distance
+          final fallbackDistance = Geolocator.distanceBetween(
+            startLatitude,
+            startLongitude,
+            endLatitude,
+            endLongitude,
+          );
+          print('📏 Fallback straight-line distance: ${fallbackDistance}m');
+          return fallbackDistance;
+        }
+
+        if (status == 'OK' && data['routes'] != null && (data['routes'] as List).isNotEmpty) {
           final route = data['routes'][0];
           final legs = route['legs'];
 
-          if (legs.isNotEmpty) {
+          if (legs != null && (legs as List).isNotEmpty) {
             final distance = legs[0]['distance']['value']; // Distance in meters
             print('✅ Real road distance: ${distance}m');
             return distance.toDouble();
           }
         } else {
-          print('⚠️ Google Directions API error: ${data['status']}');
+          print('⚠️ Google Directions API error: ${status ?? 'Unknown'}');
         }
       } else {
         print('❌ HTTP error: ${response.statusCode}');
       }
 
-      // Fallback to approximated road distance
-      double straightLineDistance = Geolocator.distanceBetween(
+      // Calculate and return fallback straight-line distance
+      print('⚠️ Google Directions API failed, calculating straight-line distance');
+      final fallbackDistance = Geolocator.distanceBetween(
         startLatitude,
         startLongitude,
         endLatitude,
         endLongitude,
       );
-
-      // Apply a factor to approximate road distance
-      double roadDistance = straightLineDistance * 1.3;
-      print(
-          '📍 Fallback: Approximated road distance: ${roadDistance.toStringAsFixed(0)}m');
-      return roadDistance;
+      print('📏 Fallback straight-line distance: ${fallbackDistance}m');
+      return fallbackDistance;
     } catch (e) {
-      print('Error getting route distance: $e');
-      return 0.0;
+      print('⚠️ Error getting route distance: $e');
+      // Calculate and return fallback straight-line distance
+      final fallbackDistance = Geolocator.distanceBetween(
+        startLatitude,
+        startLongitude,
+        endLatitude,
+        endLongitude,
+      );
+      print('📏 Fallback straight-line distance: ${fallbackDistance}m');
+      return fallbackDistance;
     }
   }
 
@@ -226,3 +385,7 @@ class LocationService {
     }
   }
 }
+
+class LocationServiceException implements Exception {}
+
+class LocationPermissionException implements Exception {}

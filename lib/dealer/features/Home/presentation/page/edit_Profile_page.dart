@@ -62,14 +62,39 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
   late String close;
   late String start;
   List<String> days = [];
+  late bool isStoreOpen;
+
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
     close = widget.closeTime;
     start = widget.openTime;
     latValue = widget.lat;
     lonValue = widget.log;
-    super.initState();
+    // Initialize store status from current state
+    // Use WidgetsBinding to ensure context is ready before accessing cubit state
+    // Initialize with default value first, then update from state
+    isStoreOpen = true; // Default value
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        try {
+          final currentState = BlocProvider.of<HomePageCubit>(context).state;
+          // Access dataStore (it's required in state, but check for safety)
+          if (mounted) {
+            setState(() {
+              isStoreOpen = currentState.dataStore.isStoreOpen;
+            });
+          }
+        } catch (e) {
+          // Fallback to default if state access fails
+          if (mounted) {
+            setState(() {
+              isStoreOpen = true;
+            });
+          }
+        }
+      }
+    });
   }
 
   GlobalKey<FormState> form = GlobalKey<FormState>();
@@ -92,20 +117,8 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
       body: BlocListener<HomePageCubit, HomepageState>(
         listener: (context, state) {
           if (state.isSuccess == true) {
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     content: CustomSnakeBar(text: 'Edit profile store is Success'),
-            //     backgroundColor: Colors.transparent, // ⬅️ جعل الخلفية شفافة
-            //     elevation: 0,
-            //     behavior: SnackBarBehavior.floating,
-            //     margin: EdgeInsets.only(
-            //       top: 20, // مسافة من الأعلى
-            //       left: 10,
-            //       right: 10,
-            //     ),
-            //   ),
-            // );
-            // BlocProvider.of<HomePageCubit>(context).getDataProfile();
+            // Refresh the profile data to ensure UI is updated
+            BlocProvider.of<HomePageCubit>(context).getDataProfile();
             Navigator.pop(context);
           } else if (state.error != null) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -126,97 +139,117 @@ class _EditStoreProfileState extends State<EditStoreProfile> {
             );
           }
         },
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
-            child: Center(
-              child: Form(
-                key: form,
-                child: Column(
-                  children: [
-                    formEditProfileWidget(
-                      storeName: widget.storeName,
-                      storeDescription: widget.storeDescription,
-                    ),
-                    // AddStoreLogoWidget(),
-                    ContactInfoWidget(
-                      phone: widget.phone,
-                      email: widget.email,
-                    ),
-                    locationSelectWidget(
-                      lat: (value) {
-                        latValue = value;
-                      },
-                      lon: (value) {
-                        lonValue = value;
-                      },
-                      location: widget.location,
-                      linkGoogle: widget.email,
-                    ),
-                    // storeTypeSelectWidget(),
-                    BlocBuilder<HomePageCubit,HomepageState>(
-                      builder: (context,state) {
-                        return changeStatusStoreWidget(days:state.dataStore.workingDays ,
-                          openungTime: (String value) {
-                            start = value;
-                          },
-                          closeTime: (String value) {
-                            close = value;
-                            print(value);
-                          },
-                          day: (daysSelected) {
-                            print(daysSelected);
-                            days = daysSelected;
-                          },
-                        );
-                      }
-                    ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Calculate responsive max width (max 600px on larger screens)
+            final maxWidth =
+                constraints.maxWidth > 600 ? 600.0 : constraints.maxWidth;
+            return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Form(
+                      key: form,
+                      child: Column(
+                        children: [
+                          formEditProfileWidget(
+                            storeName: widget.storeName,
+                            storeDescription: widget.storeDescription,
+                          ),
+                          // AddStoreLogoWidget(),
+                          ContactInfoWidget(
+                            phone: widget.phone,
+                            email: widget.email,
+                          ),
+                          locationSelectWidget(
+                            lat: (value) {
+                              latValue = value;
+                            },
+                            lon: (value) {
+                              lonValue = value;
+                            },
+                            location: widget.location,
+                            linkGoogle: widget.email,
+                          ),
+                          // storeTypeSelectWidget(),
+                          BlocBuilder<HomePageCubit, HomepageState>(
+                              builder: (context, state) {
+                            return changeStatusStoreWidget(
+                              days: state.dataStore.workingDays,
+                              initialOpeningTime: state.dataStore.openingTime,
+                              initialClosingTime: state.dataStore.closingTime,
+                              openungTime: (String value) {
+                                start = value;
+                              },
+                              closeTime: (String value) {
+                                close = value;
+                                print(value);
+                              },
+                              day: (daysSelected) {
+                                print(daysSelected);
+                                days = daysSelected;
+                              },
+                            );
+                          }),
 
-                    // selectStoreStatus(
-                    //   toggleStatus: (value) {
-                    //     // print(value);
-                    //     isAvaiable = value;
-                    //     print(isAvaiable);
-                    //   },
-                    // ),
-                    BottonNavigationOfEditStore(
-                      reset: () {
-                        widget.storeName.clear();
-                        widget.storeDescription.clear();
-                        widget.phone.clear();
-                        widget.email.clear();
-                        widget.location.clear();
-                        // days = [];
-                        print('reset');
-                      },
-                      onTap: () {
-                        if (form.currentState!.validate()) {
-                          BlocProvider.of<HomePageCubit>(context)
-                              .EditDataProfile(
-                            widget.storeName.text,
-                            widget.storeDescription.text,
-                            widget.phone.text,
-                            close.toString(),
-                            start.toString(),
-                            latValue,
-                            lonValue,
-                            days,
-                          );
-                        }
-                      },
-                      isAvaialble: isAvaiable,
-                      name: widget.storeName.text,
-                      descraption: widget.storeDescription.text,
-                      phone: widget.phone.text,
-                      email: widget.email.text,
-                      location: widget.location.text,
-                      linkGoogle: widget.email.text,
+                          BlocBuilder<HomePageCubit, HomepageState>(
+                            builder: (context, state) {
+                              return selectStoreStatus(
+                                initialStatus: state.dataStore.isStoreOpen,
+                                toggleStatus: (value) {
+                                  setState(() {
+                                    isStoreOpen = value;
+                                  });
+                                  print(
+                                      'Store status changed to: ${value ? "Open" : "Closed"}');
+                                },
+                              );
+                            },
+                          ),
+                          BottonNavigationOfEditStore(
+                            reset: () {
+                              widget.storeName.clear();
+                              widget.storeDescription.clear();
+                              widget.phone.clear();
+                              widget.email.clear();
+                              widget.location.clear();
+                              // days = [];
+                              print('reset');
+                            },
+                            onTap: () {
+                              if (form.currentState!.validate()) {
+                                BlocProvider.of<HomePageCubit>(context)
+                                    .EditDataProfile(
+                                  widget.storeName.text,
+                                  widget.storeDescription.text,
+                                  widget.phone.text,
+                                  close.toString(),
+                                  start.toString(),
+                                  latValue,
+                                  lonValue,
+                                  days,
+                                  isStoreOpen,
+                                );
+                              }
+                            },
+                            isAvaialble: isAvaiable,
+                            name: widget.storeName.text,
+                            descraption: widget.storeDescription.text,
+                            phone: widget.phone.text,
+                            email: widget.email.text,
+                            location: widget.location.text,
+                            linkGoogle: widget.email.text,
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

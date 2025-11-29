@@ -36,9 +36,10 @@ class ChatState {
     bool? isCreatingChat,
   }) {
     return ChatState(
-      chats: chats ?? this.chats,
-      messages: messages ?? this.messages,
-      pendingMessages: pendingMessages ?? this.pendingMessages,
+      // Create new list instances to ensure state changes are detected
+      chats: chats != null ? List<ChatModel>.from(chats) : this.chats,
+      messages: messages != null ? List<MessageModel>.from(messages) : this.messages,
+      pendingMessages: pendingMessages != null ? List<MessageModel>.from(pendingMessages) : this.pendingMessages,
       isLoading: isLoading ?? this.isLoading,
       isLoadingMessages: isLoadingMessages ?? this.isLoadingMessages,
       error: error,

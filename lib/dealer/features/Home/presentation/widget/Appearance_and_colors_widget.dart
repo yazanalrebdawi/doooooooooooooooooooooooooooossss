@@ -7,7 +7,7 @@ import '../../../../Core/style/app_text_style.dart';
 import '../page/google_map.dart';
 import 'custom_form_with_title.dart';
 
-class AppearanceAndColorsWidget extends StatelessWidget {
+class AppearanceAndColorsWidget extends StatefulWidget {
   AppearanceAndColorsWidget({
     super.key,
     required this.color,
@@ -17,6 +17,14 @@ class AppearanceAndColorsWidget extends StatelessWidget {
   final TextEditingController color;
   final Function(double value) lat;
   final Function(double value) lon;
+  
+  @override
+  State<AppearanceAndColorsWidget> createState() => _AppearanceAndColorsWidgetState();
+}
+
+class _AppearanceAndColorsWidgetState extends State<AppearanceAndColorsWidget> {
+  String _selectedLocation = '';
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,7 +62,7 @@ class AppearanceAndColorsWidget extends StatelessWidget {
                 SizedBox(height: 20.h),
                 CustomFormWithTitleWidget(
                   validation: (value)=>  Validator.notNullValidation(value),
-                  model: color,
+                  model: widget.color,
                   hintForm: 'Metallic Red',
                   title: 'Exterior Color',
                 ),
@@ -72,33 +80,53 @@ class AppearanceAndColorsWidget extends StatelessWidget {
                 // ),
                 SizedBox(height: 16.h),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => MapScreen(
                           lat: (value) {
                             print(value);
-                            lat(double.parse(value));
+                            widget.lat(double.parse(value));
                           },
                           lon: (value) {
                             print(value);
-                            lon(double.parse(value));
+                            widget.lon(double.parse(value));
                           },
                         ),
                       ),
                     );
+                    
+                    // Update location text if address was returned
+                    if (result != null && result is String && result.isNotEmpty) {
+                      setState(() {
+                        _selectedLocation = result;
+                      });
+                    }
                   },
-                  child: Container(alignment: Alignment.centerLeft,
-                  
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'select location ',
-                          style: AppTextStyle.poppins514BlueDark,
+                        Expanded(
+                          child: Text(
+                            _selectedLocation.isEmpty
+                                ? 'select location'
+                                : (_selectedLocation.length > 35
+                                    ? '${_selectedLocation.substring(0, 35)}...'
+                                    : _selectedLocation),
+                            style: AppTextStyle.poppins514BlueDark.copyWith(
+                              color: _selectedLocation.isEmpty
+                                  ? AppColors.primary
+                                  : Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         ),
-                        Icon(Icons.location_pin,color: AppColors.red,)
+                        Icon(Icons.location_pin, color: AppColors.red),
                       ],
                     ),
                     width: 358.w,

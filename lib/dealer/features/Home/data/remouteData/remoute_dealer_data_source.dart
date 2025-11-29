@@ -421,6 +421,7 @@ class RemouteDealerDataSource {
     String lat,
     String lot,
     List<String> day,
+    bool isStoreOpen,
   ) async {
     //
     var url = '${ApiUrls.baseURl}/api/dealers/me/profile/';
@@ -436,6 +437,7 @@ class RemouteDealerDataSource {
       'closing_time': '${closeTime}',
       'latitude': '${lat}',
       'longitude': lot,
+      'is_store_open': isStoreOpen,
     });
     for (String item in day) {
       data.fields.add(MapEntry('working_days', item));

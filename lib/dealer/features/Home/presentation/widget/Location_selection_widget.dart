@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:latlong2/latlong.dart';
-
 import '../../../../Core/style/app_Colors.dart';
 import '../../../../Core/style/app_text_style.dart';
 import '../page/google_map.dart';
 
-class locationSelectWidget extends StatelessWidget {
+class locationSelectWidget extends StatefulWidget {
   const locationSelectWidget({
     super.key,
     required this.location,
@@ -20,13 +17,51 @@ class locationSelectWidget extends StatelessWidget {
   final TextEditingController linkGoogle;
   final Function(String value) lat;
   final Function(String value) lon;
+  
+  @override
+  State<locationSelectWidget> createState() => _locationSelectWidgetState();
+}
+
+class _locationSelectWidgetState extends State<locationSelectWidget> {
+  @override
+  void initState() {
+    super.initState();
+    // Listen to controller changes to update UI
+    widget.location.addListener(_onLocationChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.location.removeListener(_onLocationChanged);
+    super.dispose();
+  }
+
+  void _onLocationChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-      width: 358.w,
-      // height: 124.h,
-      decoration: BoxDecoration(
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    
+    // Debug: Print current location text
+    print('📍 Location widget build: Current text = "${widget.location.text}"');
+    
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Use responsive width - full width minus padding, max 600px
+        final containerWidth = constraints.maxWidth > 0 
+            ? constraints.maxWidth 
+            : (isSmallScreen ? screenWidth - 32.w : 358.w);
+        
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+          width: containerWidth,
+          constraints: BoxConstraints(maxWidth: 600),
+          decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: AppColors.borderColor, width: 0.5),
         color: Color(0xffffffff),
@@ -53,40 +88,56 @@ class locationSelectWidget extends StatelessWidget {
 
           InkWell(
             onTap: () async {
-              Navigator.push(
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MapScreen(
                     lat: (value) {
-                      lat(value);
+                      widget.lat(value);
                     },
                     lon: (value) {
-                      lon(value);
+                      widget.lon(value);
                     },
                   ),
                 ),
               );
-              // final LatLng? result = await Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const FlutterMapPicker(),
-              //   ),
-              // );
-
-              // if (result != null) {
-              //   print(
-              //     "تم اختيار الموقع: ${result.latitude}, ${result.longitude}",
-              //   );
-              //   // تقدر تخزنها أو تعرضها في TextField مثلاً
-              // }
+              
+              // Update location field if address was returned
+              if (result != null && result is String && result.isNotEmpty) {
+                print('📍 Location widget: Received address: $result');
+                widget.location.text = result;
+                print('📍 Location widget: Controller text set to: ${widget.location.text}');
+                // Force rebuild to update UI
+                if (mounted) {
+                  setState(() {
+                    print('📍 Location widget: setState called, text is: ${widget.location.text}');
+                  });
+                }
+              }
             },
             child: Container(
-              width: 324.w,
+              width: double.infinity,
               height: 50.h,
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('📍 Select location on map'),
+                  Expanded(
+                    child: Text(
+                      widget.location.text.isEmpty
+                          ? '📍 Select location on map'
+                          : (widget.location.text.length > 40
+                              ? '${widget.location.text.substring(0, 40)}...'
+                              : widget.location.text),
+                      style: AppTextStyle.poppins514.copyWith(
+                        color: widget.location.text.isEmpty
+                            ? Colors.grey[600]
+                            : Colors.black87,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
                   Icon(Icons.location_pin, color: AppColors.primary),
                 ],
               ),
@@ -98,10 +149,10 @@ class locationSelectWidget extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
           SizedBox(
-            width: 324.w,
+            width: double.infinity,
             height: 50.h,
             child: TextFormField(
-              controller: location,
+              controller: widget.location,
               decoration: InputDecoration(
                 hintText: '123 Main Street, Cairo, Egypt',
               ),
@@ -121,6 +172,8 @@ class locationSelectWidget extends StatelessWidget {
           // ),
         ],
       ),
+    );
+      },
     );
   }
 }

@@ -42,9 +42,9 @@ class DealerProfileAppBar extends StatelessWidget
               size: 24.sp,
             ),
             onPressed: () {
-              // Navigate to reels screen instead of pop
-              // context.go(RouteNames.reelsScreen);
-              Navigator.pop(context);
+              // Since we used pushReplacement, navigate back to home screen
+              // (where reels are shown)
+              context.go(RouteNames.homeScreen);
             },
           ),
           actions: const [],

@@ -98,13 +98,18 @@ class AppDio {
             '/users/resend-otp/',
             '/users/verify/',
             '/users/refresh/',
+            '/users/logout/',
             '/dealers/login/',
           ];
 
           final isAuthEndpoint =
-              authEndpoints.any((endpoint) => options.path.contains(endpoint));
+              authEndpoints.any((endpoint) => options.path.contains(endpoint) || options.uri.path.contains(endpoint));
 
-          if (!isAuthEndpoint) {
+          // For logout endpoint, we need the access token in the header
+          // So we don't treat it as an auth endpoint (to add the token)
+          final isLogoutEndpoint = options.path.contains('/users/logout/') || options.uri.path.contains('/users/logout/');
+
+          if (!isAuthEndpoint || isLogoutEndpoint) {
             final isTokenValid = await AuthService.refreshTokenIfNeeded();
             final token = await TokenService.getToken();
 

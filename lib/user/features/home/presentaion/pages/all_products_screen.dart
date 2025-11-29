@@ -102,6 +102,7 @@ class AllProductsScreen extends StatelessWidget {
                       Expanded(
                         child: GridView.builder(
                           padding: EdgeInsets.all(16.w),
+                          cacheExtent: 500, // Limit cache extent for memory
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,

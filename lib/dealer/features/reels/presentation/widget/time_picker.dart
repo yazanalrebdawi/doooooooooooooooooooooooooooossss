@@ -65,15 +65,37 @@ class _SelectDateWidgetState extends State<SelectDateWidget> {
 }
 
 class TimePickerWidget extends StatefulWidget {
-  TimePickerWidget({super.key, required this.editDateValue});
+  TimePickerWidget({
+    super.key, 
+    required this.editDateValue,
+    this.initialTime,
+  });
   final Function(TimeOfDay value) editDateValue;
+  final TimeOfDay? initialTime;
 
   @override
   _TimePickerWidgetState createState() => _TimePickerWidgetState();
 }
 
 class _TimePickerWidgetState extends State<TimePickerWidget> {
-  TimeOfDay selectedTime = TimeOfDay(hour: 9, minute: 0);
+  late TimeOfDay selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    // Use initial time if provided, otherwise default to 9:00 AM
+    selectedTime = widget.initialTime ?? TimeOfDay(hour: 9, minute: 0);
+  }
+
+  @override
+  void didUpdateWidget(TimePickerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update selected time if initial time changed
+    // Handle both null and non-null changes
+    if (widget.initialTime != oldWidget.initialTime) {
+      selectedTime = widget.initialTime ?? TimeOfDay(hour: 9, minute: 0);
+    }
+  }
 
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
